@@ -1,0 +1,92 @@
+[
+  {
+    "check": "(1a) cerebro del stream = alias:brain (default nuevo, sin pasar synthAlias)",
+    "ok": true,
+    "extra": "alias:brain"
+  },
+  {
+    "check": "(1b) tool.propuesta.model ~ claude (sintetizó el cerebro real, no Groq)",
+    "ok": true,
+    "extra": "models=['claude-code-opus-4.8']"
+  },
+  {
+    "check": "(1c) mcp.forjado real → pieza equipada (ok:true, path:forged)",
+    "ok": true,
+    "extra": "server=forged-disp-pokeapi-co tools=8"
+  },
+  {
+    "check": "(1d) ≥1 `sintetizando` narró la Capa 3 (round + cerebro reales)",
+    "ok": true,
+    "extra": "n=1"
+  },
+  {
+    "check": "(2a) ≥1 `forge.latido` durante la espera (elapsed_s real ≥1)",
+    "ok": true,
+    "extra": "n=23"
+  },
+  {
+    "check": "(2b) latido.stage ∈ vocabulario del contrato",
+    "ok": true,
+    "extra": "stages=['sintetizando']"
+  },
+  {
+    "check": "(1e) TMDB token forja con brain (regresión Forma 1)",
+    "ok": true,
+    "extra": "path=forged tools=8"
+  },
+  {
+    "check": "(3a) 422 → ok:false + evento error{stage:despacho,status:422} en el carril",
+    "ok": true,
+    "extra": "{'type': 'error', 'stage': 'despacho', 'status': 422, 'detail': [{'type': 'int_parsing', '"
+  },
+  {
+    "check": "(3b) drawer de evidencia AUTO-ABIERTO en fallo (con ≥1 card)",
+    "ok": true,
+    "extra": "open=True count=1"
+  },
+  {
+    "check": "(3c) HUD legible: el error nombra el campo, no es un JSON crudo",
+    "ok": true,
+    "extra": "body.max_rounds: Input should be a valid integer, unable to parse string as an i"
+  },
+  {
+    "check": "(x) 0 errores JS de página en (1)-(3)",
+    "ok": true,
+    "extra": ""
+  },
+  {
+    "check": "(4-pre) backend con shim muerto levantó",
+    "ok": true,
+    "extra": ""
+  },
+  {
+    "check": "(4a) error{stage:sintesis,degraded:true} en el stream (corte honesto)",
+    "ok": true,
+    "extra": "{'type': 'error', 'stage': 'sintesis', 'degraded': True, 'detail': 'brain no respondió tra"
+  },
+  {
+    "check": "(4b) SIN mcp.forjado ni pieza (cero falso verde, cero fallback a oss)",
+    "ok": true,
+    "extra": "reason=el cerebro (claude-code-opus-4.8) no respondió — forja degra"
+  },
+  {
+    "check": "(4c) reason visible nombra al cerebro degradado",
+    "ok": true,
+    "extra": "el cerebro (claude-code-opus-4.8) no respondió — forja degradada, no se equipó n"
+  },
+  {
+    "check": "(4d) drawer auto-abierto con la evidencia del degradado",
+    "ok": true,
+    "extra": "open=True count=14"
+  },
+  {
+    "check": "(4e) `sintetizando` narró ANTES del corte (la espera fue real)",
+    "ok": true,
+    "extra": "n=1"
+  },
+  {
+    "check": "(4x) 0 pageerrors en (4)",
+    "ok": true,
+    "extra": ""
+  }
+]

@@ -1,0 +1,679 @@
+:root {
+  /* [Aleph · 2026-08-11] LA LETRA DE LA CASA. Era Inter Variable, la del proyecto de origen.
+     Outfit está vendorizada en `frontend/workspace/public/fonts` con los MISMOS woff2 que
+     sirven las ~24 pantallas de Aleph, sin red: la app es offline-first.
+     Computer Modern NO se toca: es la serif editorial de los papers y la salida científica
+     larga, o sea el OFICIO. La jerga del oficio se conserva; lo que muere es el estilo. */
+  --font-family-sans:
+    "Outfit", "Inter Variable", Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+  --font-family-sans--font-feature-settings: normal;
+  --font-family-mono:
+    "Söhne Mono", "Sohne Mono", "IBM Plex Mono", "IBM Plex Mono Fallback", ui-monospace, SFMono-Regular, Menlo, Monaco,
+    Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-family-mono--font-feature-settings: "ss01" 1;
+  --font-family-serif: "Computer Modern", "Latin Modern Roman", Georgia, "Times New Roman", serif;
+  --font-family-serif--font-feature-settings: normal;
+
+  --font-size-2x-small: 10px;
+  --font-size-x-small: 11px;
+  --font-size-small: 12px;
+  --font-size-base: 14px;
+  --font-size-large: 16px;
+  --font-size-x-large: 20px;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --line-height-normal: 140%;
+  --line-height-large: 150%;
+  --line-height-x-large: 180%;
+  --line-height-2x-large: 200%;
+  --letter-spacing-normal: 0;
+  --letter-spacing-tight: -0.16px;
+  --letter-spacing-tightest: -0.32px;
+  --paragraph-spacing-base: 0;
+
+  /* Motion — two durations, two easings. Hover/highlight uses fast+standard;
+     movement (popups, drawers, reveals) uses slow+out-expo. */
+  --duration-fast: 120ms;
+  --duration-slow: 200ms;
+  --ease-standard: ease;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --spacing: 0.25rem;
+
+  --breakpoint-sm: 40rem;
+  --breakpoint-md: 48rem;
+  --breakpoint-lg: 64rem;
+  --breakpoint-xl: 80rem;
+  --breakpoint-2xl: 96rem;
+
+  --container-3xs: 16rem;
+  --container-2xs: 18rem;
+  --container-xs: 20rem;
+  --container-sm: 24rem;
+  --container-md: 28rem;
+  --container-lg: 32rem;
+  --container-xl: 36rem;
+  --container-2xl: 42rem;
+  --container-3xl: 48rem;
+  --container-4xl: 56rem;
+  --container-5xl: 64rem;
+  --container-6xl: 72rem;
+  --container-7xl: 80rem;
+
+  /* Soft scientific workbench scale. Small controls remain precise while
+     primary surfaces have enough curvature to float above the research canvas. */
+  --radius-xs: 0.5rem; /* 8px */
+  --radius-sm: 0.625rem; /* 10px */
+  --radius-md: 0.75rem; /* 12px */
+  --radius-lg: 1rem; /* 16px */
+  --radius-xl: 1.25rem; /* 20px */
+
+  --shadow-xs:
+    0 1px 2px -0.5px light-dark(hsl(0 0% 0% / 0.04), hsl(0 0% 0% / 0.06)),
+    0 0.5px 1.5px 0 light-dark(hsl(0 0% 0% / 0.025), hsl(0 0% 0% / 0.08)),
+    0 1px 3px 0 light-dark(hsl(0 0% 0% / 0.05), hsl(0 0% 0% / 0.1));
+  --shadow-md:
+    0 6px 12px -2px light-dark(hsl(0 0% 0% / 0.075), hsl(0 0% 0% / 0.1)),
+    0 4px 8px -2px light-dark(hsl(0 0% 0% / 0.075), hsl(0 0% 0% / 0.15)),
+    0 1px 2px light-dark(hsl(0 0% 0% / 0.1), hsl(0 0% 0% / 0.15));
+  --shadow-lg:
+    0 16px 48px -6px light-dark(hsl(0 0% 0% / 0.05), hsl(0 0% 0% / 0.15)),
+    0 6px 12px -2px light-dark(hsl(0 0% 0% / 0.025), hsl(0 0% 0% / 0.1)),
+    0 1px 2.5px light-dark(hsl(0 0% 0% / 0.025), hsl(0 0% 0% / 0.1));
+  --shadow-xxs-border: 0 0 0 0.5px var(--border-weak-base, rgba(0, 0, 0, 0.07));
+  --shadow-xs-border:
+    0 0 0 1px var(--border-base, rgba(11, 6, 0, 0.2)), 0 1px 2px -1px rgba(19, 16, 16, 0.04),
+    0 1px 2px 0 rgba(19, 16, 16, 0.06), 0 1px 3px 0 rgba(19, 16, 16, 0.08);
+  --shadow-xs-border-base:
+    0 0 0 1px var(--border-weak-base, rgba(17, 0, 0, 0.12)), 0 1px 2px -1px rgba(19, 16, 16, 0.04),
+    0 1px 2px 0 rgba(19, 16, 16, 0.06), 0 1px 3px 0 rgba(19, 16, 16, 0.08);
+  --shadow-xs-border-select:
+    0 0 0 3px var(--border-weak-selected, rgba(1, 103, 255, 0.29)),
+    0 0 0 1px var(--border-selected, rgba(0, 74, 255, 0.99)), 0 1px 2px -1px rgba(19, 16, 16, 0.25),
+    0 1px 2px 0 rgba(19, 16, 16, 0.08), 0 1px 3px 0 rgba(19, 16, 16, 0.12);
+  --shadow-xs-border-focus:
+    0 0 0 1px var(--border-base, rgba(11, 6, 0, 0.2)), 0 1px 2px -1px rgba(19, 16, 16, 0.25),
+    0 1px 2px 0 rgba(19, 16, 16, 0.08), 0 1px 3px 0 rgba(19, 16, 16, 0.12), 0 0 0 2px var(--background-weak, #f1f0f0),
+    0 0 0 3px var(--border-selected, rgba(0, 74, 255, 0.99));
+  --shadow-xs-border-hover:
+    0 0 0 1px var(--border-weak-selected, rgba(0, 112, 255, 0.22)), 0 1px 2px -1px rgba(19, 16, 16, 0.04),
+    0 1px 2px 0 rgba(19, 16, 16, 0.06), 0 1px 3px 0 rgba(19, 16, 16, 0.08);
+  --shadow-xs-border-critical-base: 0 0 0 1px var(--border-critical-selected, #fc543a);
+  --shadow-xs-border-critical-focus:
+    0 0 0 3px var(--border-critical-weak, rgba(251, 34, 0, 0.18)), 0 0 0 1px var(--border-critical-selected, #fc543a),
+    0 1px 2px -1px rgba(19, 16, 16, 0.25), 0 1px 2px 0 rgba(19, 16, 16, 0.08), 0 1px 3px 0 rgba(19, 16, 16, 0.12);
+  --shadow-lg-border-base:
+    0 0 0 1px var(--border-weak-base, rgba(0, 0, 0, 0.07)), 0 36px 80px 0 rgba(0, 0, 0, 0.03),
+    0 13.141px 29.201px 0 rgba(0, 0, 0, 0.04), 0 6.38px 14.177px 0 rgba(0, 0, 0, 0.05),
+    0 3.127px 6.95px 0 rgba(0, 0, 0, 0.06), 0 1.237px 2.748px 0 rgba(0, 0, 0, 0.09);
+
+  color-scheme: light;
+  --text-mix-blend-mode: multiply;
+
+  /* State aliases — mode-agnostic (they resolve through mode-aware tokens).
+     These names are consumed by switch/checkbox/button/toast CSS; without them
+     the declarations were invalid and the states rendered transparent. */
+  --surface-hover: var(--surface-base-hover);
+  --surface-focus: var(--border-selected);
+  --surface-disabled: var(--input-disabled);
+  --text-error: var(--text-on-critical-base);
+  --border-error: var(--border-critical-base);
+  --text-invert-stronger: var(--text-invert-strong);
+  --color-primary: var(--surface-brand-base);
+
+  /* OpenScience fallback variables (light) */
+  --background-base: #f7f4ed;
+  --background-weak: #efe9df;
+  --background-strong: #fbf9f4;
+  --background-stronger: #fffdf8;
+  --surface-base: var(--smoke-light-alpha-2);
+  --base: var(--smoke-light-alpha-2);
+  --surface-base-hover: #0500000f;
+  --surface-base-active: var(--smoke-light-alpha-3);
+  --surface-base-interactive-active: #b85c3b1f;
+  --base2: var(--smoke-light-alpha-2);
+  --base3: var(--smoke-light-alpha-2);
+  --surface-inset-base: var(--smoke-light-alpha-2);
+  --surface-inset-base-hover: var(--smoke-light-alpha-3);
+  --surface-inset-strong: #1f000017;
+  --surface-inset-strong-hover: #1f000017;
+  --surface-raised-base: var(--smoke-light-alpha-1);
+  --surface-float-base: var(--smoke-dark-1);
+  --surface-float-base-hover: var(--smoke-dark-2);
+  --surface-raised-base-hover: var(--smoke-light-alpha-2);
+  --surface-raised-base-active: var(--smoke-light-alpha-3);
+  --surface-raised-strong: #fffaf3;
+  --surface-raised-strong-hover: #fffdf9;
+  --surface-raised-stronger: #fffdf9;
+  --surface-raised-stronger-hover: #ffffff;
+  --surface-weak: var(--smoke-light-alpha-3);
+  --surface-weaker: var(--smoke-light-alpha-4);
+  --surface-strong: #fffdf9;
+  --surface-raised-stronger-non-alpha: #fffdf9;
+  --surface-brand-base: #b85c3b;
+  --surface-brand-hover: #a74f32;
+  --surface-interactive-base: #f1d9cf;
+  --surface-interactive-hover: #e8c4b5;
+  --surface-interactive-weak: #f8ebe5;
+  --surface-interactive-weak-hover: #f1d9cf;
+  --surface-success-base: var(--apple-light-3);
+  --surface-success-weak: var(--apple-light-2);
+  --surface-success-strong: var(--apple-light-9);
+  --surface-warning-base: var(--solaris-light-3);
+  --surface-warning-weak: var(--solaris-light-2);
+  --surface-warning-strong: var(--solaris-light-9);
+  --surface-critical-base: var(--ember-light-3);
+  --surface-critical-weak: var(--ember-light-2);
+  --surface-critical-strong: var(--ember-light-9);
+  --surface-info-base: var(--lilac-light-3);
+  --surface-info-weak: var(--lilac-light-2);
+  --surface-info-strong: var(--lilac-light-9);
+  --surface-diff-unchanged-base: #ffffff00;
+  --surface-diff-skip-base: var(--smoke-light-2);
+  --surface-diff-hidden-base: var(--blue-light-3);
+  --surface-diff-hidden-weak: var(--blue-light-2);
+  --surface-diff-hidden-weaker: var(--blue-light-1);
+  --surface-diff-hidden-strong: var(--blue-light-5);
+  --surface-diff-hidden-stronger: var(--blue-light-9);
+  --surface-diff-add-base: #dafbe0;
+  --surface-diff-add-weak: var(--mint-light-2);
+  --surface-diff-add-weaker: var(--mint-light-1);
+  --surface-diff-add-strong: var(--mint-light-5);
+  --surface-diff-add-stronger: var(--mint-light-9);
+  --surface-diff-delete-base: var(--ember-light-3);
+  --surface-diff-delete-weak: var(--ember-light-2);
+  --surface-diff-delete-weaker: var(--ember-light-1);
+  --surface-diff-delete-strong: var(--ember-light-6);
+  --surface-diff-delete-stronger: var(--ember-light-9);
+  --input-base: var(--smoke-light-1);
+  --input-hover: var(--smoke-light-2);
+  --input-active: #fff6f1;
+  --input-selected: #efd0c2;
+  --input-focus: #fff6f1;
+  --input-disabled: var(--smoke-light-4);
+  --text-base: #39312b;
+  --text-weak: #6f6258;
+  --text-weaker: #94867a;
+  --text-strong: #241f1a;
+  --text-invert-base: var(--smoke-dark-alpha-11);
+  --text-invert-weak: var(--smoke-dark-alpha-9);
+  --text-invert-weaker: var(--smoke-dark-alpha-8);
+  --text-invert-strong: var(--smoke-dark-alpha-12);
+  --text-interactive-base: #9d4e34;
+  --text-on-brand-base: #ffffff;
+  --text-on-interactive-base: var(--smoke-light-1);
+  --text-on-interactive-weak: var(--smoke-dark-alpha-11);
+  --text-on-success-base: var(--apple-light-10);
+  --text-on-critical-base: var(--ember-light-10);
+  --text-on-critical-weak: var(--ember-light-8);
+  --text-on-critical-strong: var(--ember-light-12);
+  --text-on-warning-base: var(--smoke-dark-alpha-11);
+  --text-on-info-base: var(--smoke-dark-alpha-11);
+  --text-diff-add-base: var(--mint-light-11);
+  --text-diff-delete-base: var(--ember-light-10);
+  --text-diff-delete-strong: var(--ember-light-12);
+  --text-diff-add-strong: var(--mint-light-12);
+  --text-on-info-weak: var(--smoke-dark-alpha-9);
+  --text-on-info-strong: var(--smoke-dark-alpha-12);
+  --text-on-warning-weak: var(--smoke-dark-alpha-9);
+  --text-on-warning-strong: var(--smoke-dark-alpha-12);
+  --text-on-success-weak: var(--apple-light-6);
+  --text-on-success-strong: var(--apple-light-12);
+  --text-on-brand-weak: #ffffff;
+  --text-on-brand-weaker: #ffffff;
+  --text-on-brand-strong: #ffffff;
+  --button-primary-base: var(--smoke-light-12);
+  --button-secondary-base: #fdfcfc;
+  --button-secondary-hover: #faf9f9;
+  --border-base: #3e2e2129;
+  --border-hover: #3e2e2138;
+  --border-active: var(--smoke-light-alpha-9);
+  --border-selected: #b85c3b;
+  --border-disabled: var(--smoke-light-alpha-8);
+  --border-focus: #b85c3b;
+  /* Focus lighting for text entry. A flat accent stroke around a field reads as
+     a validation error; light does not arrive as a hard edge. The four layers
+     stack into one falloff — a highlight where the light lands on the top edge,
+     a hairline, then two widening washes — so a focused field looks lit rather
+     than outlined. Light mode grounds the falloff in ink, because a white wash
+     is invisible on a white surface. */
+  --focus-lit-edge: rgba(255, 255, 255, 0.9);
+  --focus-lit-ring: rgba(30, 30, 27, 0.18);
+  --focus-lit-wash: rgba(30, 30, 27, 0.07);
+  --focus-lit-bloom: rgba(30, 30, 27, 0.05);
+  --focus-lit:
+    inset 0 1px 0 var(--focus-lit-edge), 0 0 0 1px var(--focus-lit-ring), 0 0 0 4px var(--focus-lit-wash),
+    0 0 16px 1px var(--focus-lit-bloom);
+  /* The halo behind an unframed field — one whose box is the glyphs themselves,
+     so nothing can be drawn on the box without landing on the text. Its crisp
+     edge is an outline instead, the only ring CSS lets you hold off the box
+     (outline-offset), which is what the accent stroke used before. This is just
+     the light spilling past it. */
+  --focus-lit-halo: 0 0 0 5px var(--focus-lit-wash), 0 0 16px 4px var(--focus-lit-bloom);
+  --border-weak-base: #3e2e2112;
+  --border-strong-base: #3e2e2147;
+  --border-strong-hover: var(--smoke-light-alpha-8);
+  --border-strong-active: var(--smoke-light-alpha-7);
+  --border-strong-selected: #b85c3b66;
+  --border-strong-disabled: var(--smoke-light-alpha-6);
+  --border-strong-focus: var(--smoke-light-alpha-7);
+  --border-weak-hover: #3e2e211f;
+  --border-weak-active: var(--smoke-light-alpha-7);
+  --border-weak-selected: #b85c3b40;
+  --border-weak-disabled: var(--smoke-light-alpha-6);
+  --border-weak-focus: var(--smoke-light-alpha-7);
+  --border-interactive-base: #cf8c71;
+  --border-interactive-hover: #c87555;
+  --border-interactive-active: #b85c3b;
+  --border-interactive-selected: #b85c3b;
+  --border-interactive-disabled: var(--smoke-light-8);
+  --border-interactive-focus: #b85c3b;
+  --border-success-base: var(--apple-light-6);
+  --border-success-hover: var(--apple-light-7);
+  --border-success-selected: var(--apple-light-9);
+  --border-warning-base: var(--solaris-light-6);
+  --border-warning-hover: var(--solaris-light-7);
+  --border-warning-selected: var(--solaris-light-9);
+  --border-critical-base: var(--ember-light-6);
+  --border-critical-hover: var(--ember-light-7);
+  --border-critical-selected: var(--ember-light-9);
+  --border-info-base: var(--lilac-light-6);
+  --border-info-hover: var(--lilac-light-7);
+  --border-info-selected: var(--lilac-light-9);
+  --icon-base: var(--smoke-light-9);
+  --icon-hover: var(--smoke-light-11);
+  --icon-active: var(--smoke-light-12);
+  --icon-selected: var(--smoke-light-12);
+  --icon-disabled: var(--smoke-light-8);
+  --icon-focus: var(--smoke-light-12);
+  --icon-invert-base: #ffffff;
+  --icon-weak-base: var(--smoke-light-7);
+  --icon-weak-hover: var(--smoke-light-8);
+  --icon-weak-active: var(--smoke-light-9);
+  --icon-weak-selected: var(--smoke-light-10);
+  --icon-weak-disabled: var(--smoke-light-6);
+  --icon-weak-focus: var(--smoke-light-9);
+  --icon-strong-base: var(--smoke-light-12);
+  --icon-strong-hover: #151313;
+  --icon-strong-active: #020202;
+  --icon-strong-selected: #020202;
+  --icon-strong-disabled: var(--smoke-light-8);
+  --icon-strong-focus: #020202;
+  --icon-brand-base: var(--smoke-light-12);
+  --icon-interactive-base: var(--cobalt-light-9);
+  --icon-success-base: var(--apple-light-7);
+  --icon-success-hover: var(--apple-light-8);
+  --icon-success-active: var(--apple-light-11);
+  --icon-warning-base: var(--amber-light-7);
+  --icon-warning-hover: var(--amber-light-8);
+  --icon-warning-active: var(--amber-light-11);
+  --icon-critical-base: var(--ember-light-10);
+  --icon-critical-hover: var(--ember-light-11);
+  --icon-critical-active: var(--ember-light-12);
+  --icon-info-base: var(--lilac-light-7);
+  --icon-info-hover: var(--lilac-light-8);
+  --icon-info-active: var(--lilac-light-11);
+  --icon-on-brand-base: #ffffff;
+  --icon-on-brand-hover: #ffffff;
+  --icon-on-brand-selected: #ffffff;
+  --icon-on-interactive-base: var(--smoke-light-1);
+  --icon-agent-plan-base: var(--purple-light-9);
+  --icon-agent-docs-base: var(--amber-light-9);
+  --icon-agent-ask-base: var(--cyan-light-9);
+  --icon-agent-build-base: var(--cobalt-light-9);
+  --icon-on-success-base: var(--apple-light-alpha-9);
+  --icon-on-success-hover: var(--apple-light-alpha-10);
+  --icon-on-success-selected: var(--apple-light-alpha-11);
+  --icon-on-warning-base: var(--amber-lightalpha-9);
+  --icon-on-warning-hover: var(--amber-lightalpha-10);
+  --icon-on-warning-selected: var(--amber-lightalpha-11);
+  --icon-on-critical-base: var(--ember-light-alpha-9);
+  --icon-on-critical-hover: var(--ember-light-alpha-10);
+  --icon-on-critical-selected: var(--ember-light-alpha-11);
+  --icon-on-info-base: var(--lilac-light-9);
+  --icon-on-info-hover: var(--lilac-light-alpha-10);
+  --icon-on-info-selected: var(--lilac-light-alpha-11);
+  --icon-diff-add-base: var(--mint-light-11);
+  --icon-diff-add-hover: var(--mint-light-12);
+  --icon-diff-add-active: var(--mint-light-12);
+  --icon-diff-delete-base: var(--ember-light-10);
+  --icon-diff-delete-hover: var(--ember-light-11);
+  --icon-diff-modified-base: var(--icon-warning-base);
+  --syntax-comment: var(--text-weak);
+  --syntax-regexp: var(--text-base);
+  --syntax-string: #397156;
+  --syntax-keyword: #a44830;
+  --syntax-primitive: #a96f1f;
+  --syntax-operator: #6f6258;
+  --syntax-variable: var(--text-strong);
+  --syntax-property: #8f4f3f;
+  --syntax-type: #4d708f;
+  --syntax-constant: #8c5f31;
+  --syntax-punctuation: var(--text-base);
+  --syntax-object: var(--text-strong);
+  --syntax-success: var(--apple-light-10);
+  --syntax-warning: var(--amber-light-10);
+  --syntax-critical: var(--ember-light-10);
+  --syntax-info: #4d708f;
+  --syntax-diff-add: var(--mint-light-11);
+  --syntax-diff-delete: var(--ember-light-11);
+  --syntax-diff-unknown: #ff0000;
+  --markdown-heading: #9d4e34;
+  --markdown-text: #39312b;
+  --markdown-link: #9d4e34;
+  --markdown-link-text: #4d708f;
+  --markdown-code: #8f4936;
+  --markdown-block-quote: #936c28;
+  --markdown-emph: #936c28;
+  --markdown-strong: #9d4e34;
+  --markdown-horizontal-rule: #d8cfc3;
+  --markdown-list-item: #9d4e34;
+  --markdown-list-enumeration: #4d708f;
+  --markdown-image: #9d4e34;
+  --markdown-image-text: #4d708f;
+  --markdown-code-block: #39312b;
+  --border-color: #ffffff;
+  --border-weaker-base: #3e2e210a;
+  --border-weaker-hover: var(--smoke-light-alpha-4);
+  --border-weaker-active: var(--smoke-light-alpha-6);
+  --border-weaker-selected: var(--cobalt-light-alpha-4);
+  --border-weaker-disabled: var(--smoke-light-alpha-2);
+  --border-weaker-focus: var(--smoke-light-alpha-6);
+  --button-ghost-hover: var(--smoke-light-alpha-2);
+  --button-ghost-hover2: var(--smoke-light-alpha-3);
+  --avatar-background-pink: #feeef8;
+  --avatar-background-mint: #e1fbf4;
+  --avatar-background-orange: #fff1e7;
+  --avatar-background-purple: #f9f1fe;
+  --avatar-background-cyan: #e7f9fb;
+  --avatar-background-lime: #eefadc;
+  --avatar-text-pink: #cd1d8d;
+  --avatar-text-mint: #147d6f;
+  --avatar-text-orange: #ed5f00;
+  --avatar-text-purple: #8445bc;
+  --avatar-text-cyan: #0894b3;
+  --avatar-text-lime: #5d770d;
+
+  @media (prefers-color-scheme: dark) {
+    color-scheme: dark;
+    --text-mix-blend-mode: plus-lighter;
+
+    /* OpenScience fallback variables (dark) */
+    --background-base: #1c1d1c;
+    --background-weak: #202120;
+    --background-strong: #181918;
+    --background-stronger: #141514;
+    --surface-base: #f2f1ec0a;
+    --base: #f2f1ec0a;
+    --surface-base-hover: #f2f1ec12;
+    --surface-base-active: #f2f1ec14;
+    --surface-base-interactive-active: #d4876529;
+    --base2: #f2f1ec0a;
+    --base3: #f2f1ec0a;
+    --surface-inset-base: #0f0f0e7f;
+    --surface-inset-base-hover: #0f0f0e7f;
+    --surface-inset-strong: #080807cc;
+    --surface-inset-strong-hover: #080807cc;
+    --surface-raised-base: #f2f1ec05;
+    --surface-float-base: #191917;
+    --surface-float-base-hover: #1e1e1b;
+    --surface-raised-base-hover: #f2f1ec0a;
+    --surface-raised-base-active: #f2f1ec14;
+    --surface-raised-strong: #252625;
+    --surface-raised-strong-hover: #2a2b2a;
+    --surface-raised-stronger: #2a2b2a;
+    --surface-raised-stronger-hover: #30312f;
+    --surface-weak: #f2f1ec14;
+    --surface-weaker: #f2f1ec1f;
+    --surface-strong: #2d2e2c;
+    --surface-raised-stronger-non-alpha: #252625;
+    --surface-brand-base: #d48765;
+    --surface-brand-hover: #e09a78;
+    --surface-interactive-base: #492d24;
+    --surface-interactive-hover: #5b3529;
+    --surface-interactive-weak: #35251f;
+    --surface-interactive-weak-hover: #492d24;
+    --surface-success-base: #111e15;
+    --surface-success-weak: #0c140e;
+    --surface-success-strong: #79b58d;
+    --surface-warning-base: #231907;
+    --surface-warning-weak: #171006;
+    --surface-warning-strong: #d4a557;
+    --surface-critical-base: var(--ember-dark-3);
+    --surface-critical-weak: var(--ember-dark-2);
+    --surface-critical-strong: var(--ember-dark-9);
+    --surface-info-base: #141c22;
+    --surface-info-weak: #0d1216;
+    --surface-info-strong: #8fb4d0;
+    --surface-diff-unchanged-base: #191917;
+    --surface-diff-skip-base: #f2f1ec05;
+    --surface-diff-hidden-base: var(--blue-dark-2);
+    --surface-diff-hidden-weak: var(--blue-dark-1);
+    --surface-diff-hidden-weaker: var(--blue-dark-3);
+    --surface-diff-hidden-strong: var(--blue-dark-5);
+    --surface-diff-hidden-stronger: var(--blue-dark-11);
+    --surface-diff-add-base: var(--mint-dark-3);
+    --surface-diff-add-weak: var(--mint-dark-4);
+    --surface-diff-add-weaker: var(--mint-dark-3);
+    --surface-diff-add-strong: var(--mint-dark-5);
+    --surface-diff-add-stronger: var(--mint-dark-11);
+    --surface-diff-delete-base: var(--ember-dark-3);
+    --surface-diff-delete-weak: var(--ember-dark-4);
+    --surface-diff-delete-weaker: var(--ember-dark-3);
+    --surface-diff-delete-strong: var(--ember-dark-5);
+    --surface-diff-delete-stronger: var(--ember-dark-11);
+    --input-base: #242421;
+    --input-hover: #292926;
+    --input-active: #2e211c;
+    --input-selected: #4a3027;
+    --input-focus: #2e211c;
+    --input-disabled: #383834;
+    --text-base: #deddd8;
+    --text-weak: #b0afa9;
+    --text-weaker: #85847f;
+    --text-strong: #f0efeb;
+    --text-invert-base: var(--smoke-dark-alpha-11);
+    --text-invert-weak: var(--smoke-dark-alpha-9);
+    --text-invert-weaker: var(--smoke-dark-alpha-8);
+    --text-invert-strong: var(--smoke-dark-alpha-12);
+    --text-interactive-base: #e09a78;
+    --text-on-brand-base: #1e1e1b;
+    --text-on-interactive-base: var(--smoke-dark-12);
+    --text-on-interactive-weak: var(--smoke-dark-alpha-11);
+    --text-on-success-base: #79b58d;
+    --text-on-critical-base: var(--ember-dark-9);
+    --text-on-critical-weak: var(--ember-dark-8);
+    --text-on-critical-strong: var(--ember-dark-12);
+    --text-on-warning-base: #b6b7b5;
+    --text-on-info-base: #b6b7b5;
+    --text-diff-add-base: var(--mint-dark-11);
+    --text-diff-delete-base: var(--ember-dark-9);
+    --text-diff-delete-strong: var(--ember-dark-12);
+    --text-diff-add-strong: var(--mint-dark-8);
+    --text-on-info-weak: #646663;
+    --text-on-info-strong: #eff0ee;
+    --text-on-warning-weak: #646663;
+    --text-on-warning-strong: #eff0ee;
+    --text-on-success-weak: #518161;
+    --text-on-success-strong: #cef3d9;
+    --text-on-brand-weak: #1e1e1b;
+    --text-on-brand-weaker: #1e1e1b;
+    --text-on-brand-strong: #1e1e1b;
+    --button-primary-base: var(--smoke-dark-12);
+    --button-secondary-base: #292926;
+    --button-secondary-hover: #30302d;
+    --border-base: #f0efeb27;
+    --border-hover: #f0efeb34;
+    --border-active: #f2f1ec67;
+    --border-selected: #d48765;
+    --border-disabled: #f2f1ec59;
+    --border-focus: #d48765;
+    /* On a dark surface the falloff is the light itself, so every layer is white. */
+    --focus-lit-edge: rgba(255, 255, 255, 0.26);
+    --focus-lit-ring: rgba(255, 255, 255, 0.2);
+    --focus-lit-wash: rgba(255, 255, 255, 0.07);
+    --focus-lit-bloom: rgba(255, 255, 255, 0.06);
+    --border-weak-base: #f0efeb12;
+    --border-strong-base: #f0efeb43;
+    --border-strong-hover: #f2f1ec3f;
+    --border-strong-active: #f2f1ec59;
+    --border-strong-selected: #d4876566;
+    --border-strong-disabled: #f2f1ec31;
+    --border-strong-focus: #f2f1ec59;
+    --border-weak-hover: #f0efeb1d;
+    --border-weak-active: #f2f1ec59;
+    --border-weak-selected: #d487654d;
+    --border-weak-disabled: #f2f1ec31;
+    --border-weak-focus: #f2f1ec59;
+    --border-interactive-base: #b66d50;
+    --border-interactive-hover: #c77a5a;
+    --border-interactive-active: #d48765;
+    --border-interactive-selected: #d48765;
+    --border-interactive-disabled: var(--smoke-light-8);
+    --border-interactive-focus: #d48765;
+    --border-success-base: #2b4a36;
+    --border-success-hover: #3c6249;
+    --border-success-selected: #79b58d;
+    --border-warning-base: #553e13;
+    --border-warning-hover: #6f521f;
+    --border-warning-selected: #d4a557;
+    --border-critical-base: var(--ember-dark-5);
+    --border-critical-hover: var(--ember-dark-7);
+    --border-critical-selected: var(--ember-dark-9);
+    --border-info-base: #324553;
+    --border-info-hover: #445b6d;
+    --border-info-selected: #8fb4d0;
+    --icon-base: #8d8a84;
+    --icon-hover: #b5b2ab;
+    --icon-active: #e2e0da;
+    --icon-selected: #f2f1ec;
+    --icon-disabled: #696966;
+    --icon-focus: #f2f1ec;
+    --icon-invert-base: #191917;
+    --icon-weak-base: #696966;
+    --icon-weak-hover: #7a7a77;
+    --icon-weak-active: #8d8a84;
+    --icon-weak-selected: #b5b2ab;
+    --icon-weak-disabled: #484845;
+    --icon-weak-focus: #8d8a84;
+    --icon-strong-base: #f2f1ec;
+    --icon-strong-hover: #f7f6f2;
+    --icon-strong-active: #fcfbf7;
+    --icon-strong-selected: #fdfcf8;
+    --icon-strong-disabled: #8d8a84;
+    --icon-strong-focus: #fdfcf8;
+    --icon-brand-base: var(--white);
+    --icon-interactive-base: var(--cobalt-dark-9);
+    --icon-success-base: #3c6249;
+    --icon-success-hover: #518161;
+    --icon-success-active: #87bd98;
+    --icon-warning-base: #6f521f;
+    --icon-warning-hover: #926d2c;
+    --icon-warning-active: #d0a662;
+    --icon-critical-base: var(--ember-dark-9);
+    --icon-critical-hover: var(--ember-dark-11);
+    --icon-critical-active: var(--ember-dark-12);
+    --icon-info-base: #445b6d;
+    --icon-info-hover: #5b798f;
+    --icon-info-active: #92b3cc;
+    --icon-on-brand-base: #1e1e1b;
+    --icon-on-brand-hover: #1e1e1b;
+    --icon-on-brand-selected: #1e1e1b;
+    --icon-on-interactive-base: var(--smoke-dark-12);
+    --icon-agent-plan-base: var(--purple-dark-9);
+    --icon-agent-docs-base: var(--amber-dark-9);
+    --icon-agent-ask-base: var(--cyan-dark-9);
+    --icon-agent-build-base: var(--cobalt-dark-11);
+    --icon-on-success-base: rgba(121, 181, 141, 0.9);
+    --icon-on-success-hover: rgba(106, 165, 126, 0.9);
+    --icon-on-success-selected: rgba(135, 189, 152, 0.9);
+    --icon-on-warning-base: rgba(212, 165, 87, 0.9);
+    --icon-on-warning-hover: rgba(196, 149, 71, 0.9);
+    --icon-on-warning-selected: rgba(208, 166, 98, 0.9);
+    --icon-on-critical-base: var(--ember-dark-alpha-9);
+    --icon-on-critical-hover: var(--ember-dark-alpha-10);
+    --icon-on-critical-selected: var(--ember-dark-alpha-11);
+    --icon-on-info-base: #8fb4d0;
+    --icon-on-info-hover: rgba(128, 164, 192, 0.9);
+    --icon-on-info-selected: rgba(146, 179, 204, 0.9);
+    --icon-diff-add-base: var(--mint-dark-11);
+    --icon-diff-add-hover: var(--mint-dark-10);
+    --icon-diff-add-active: var(--mint-dark-11);
+    --icon-diff-delete-base: var(--ember-dark-9);
+    --icon-diff-delete-hover: var(--ember-dark-10);
+    --icon-diff-modified-base: var(--icon-warning-base);
+    --syntax-comment: var(--text-weak);
+    --syntax-regexp: var(--text-base);
+    --syntax-string: #79b58d;
+    --syntax-keyword: #e39a77;
+    --syntax-primitive: #d4a557;
+    --syntax-operator: #b5b2ab;
+    --syntax-variable: var(--text-strong);
+    --syntax-property: #d48765;
+    --syntax-type: #8fb4d0;
+    --syntax-constant: #c89468;
+    --syntax-punctuation: var(--text-weak);
+    --syntax-object: var(--text-strong);
+    --syntax-success: #6aa57e;
+    --syntax-warning: #c49547;
+    --syntax-critical: var(--ember-dark-10);
+    --syntax-info: #8fb4d0;
+    --syntax-diff-add: var(--mint-dark-11);
+    --syntax-diff-delete: var(--ember-dark-11);
+    --syntax-diff-unknown: #ff0000;
+    --markdown-heading: #e09a78;
+    --markdown-text: #e2e0da;
+    --markdown-link: #d48765;
+    --markdown-link-text: #8fb4d0;
+    --markdown-code: #e39a77;
+    --markdown-block-quote: #d4a557;
+    --markdown-emph: #d4a557;
+    --markdown-strong: #e39a77;
+    --markdown-horizontal-rule: #484845;
+    --markdown-list-item: #d48765;
+    --markdown-list-enumeration: #8fb4d0;
+    --markdown-image: #d48765;
+    --markdown-image-text: #8fb4d0;
+    --markdown-code-block: #e2e0da;
+    --border-color: #ffffff;
+    --border-weaker-base: #f0efeb08;
+    --border-weaker-hover: #f2f1ec1e;
+    --border-weaker-active: #f2f1ec31;
+    --border-weaker-selected: var(--cobalt-dark-alpha-3);
+    --border-weaker-disabled: #f2f1ec0a;
+    --border-weaker-focus: #f2f1ec31;
+    --button-ghost-hover: #f2f1ec0a;
+    --button-ghost-hover2: #f2f1ec14;
+    --avatar-background-pink: #501b3f;
+    --avatar-background-mint: #033a34;
+    --avatar-background-orange: #5f2a06;
+    --avatar-background-purple: #432155;
+    --avatar-background-cyan: #0f3058;
+    --avatar-background-lime: #2b3711;
+    --avatar-text-pink: #e34ba9;
+    --avatar-text-mint: #95f3d9;
+    --avatar-text-orange: #ff802b;
+    --avatar-text-purple: #9d5bd2;
+    --avatar-text-cyan: #369eff;
+    --avatar-text-lime: #c4f042;
+  }
+}
+
+/* The in-app theme toggle writes data-color-scheme onto <html>; the
+   prefers-color-scheme block above cannot see it. Restate the focus falloff for
+   both explicit choices, so a dark app on a light OS is lit with white rather
+   than ink — and the reverse. */
+html[data-color-scheme="dark"] {
+  --focus-lit-edge: rgba(255, 255, 255, 0.26);
+  --focus-lit-ring: rgba(255, 255, 255, 0.2);
+  --focus-lit-wash: rgba(255, 255, 255, 0.07);
+  --focus-lit-bloom: rgba(255, 255, 255, 0.06);
+}
+
+html[data-color-scheme="light"] {
+  --focus-lit-edge: rgba(255, 255, 255, 0.9);
+  --focus-lit-ring: rgba(30, 30, 27, 0.18);
+  --focus-lit-wash: rgba(30, 30, 27, 0.07);
+  --focus-lit-bloom: rgba(30, 30, 27, 0.05);
+}

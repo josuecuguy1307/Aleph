@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:#DED6C7;font-family:'Hanken Grotesk',system-ui,-apple-system,sans-serif;color:#2B2925;-webkit-font-smoothing:antialiased}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes spinr{to{transform:rotate(-360deg)}}
+  @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.13)}}
+  @keyframes twinkle{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.6)}}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+  @keyframes blink{0%,92%,100%{transform:scaleY(1)}96%{transform:scaleY(.12)}}
+  @keyframes glow{0%,100%{opacity:.22;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
+  .orbit{transform-origin:32px 32px}
+  .ctr{transform-box:fill-box;transform-origin:center}
+</style>
+</helmet>
+
+<div style="min-height:100vh;padding:42px 40px 72px">
+  <div style="max-width:1180px;margin:0 auto">
+
+    <div style="font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#9A9082">Mascota · chispa × átomo</div>
+    <h1 style="font-family:'Spectral',Georgia,serif;font-weight:600;font-size:31px;margin:8px 0 6px;letter-spacing:-.015em">El cruce, en seis animaciones</h1>
+    <p style="margin:0 0 38px;color:#6F6A60;font-size:14.5px;max-width:74ch;line-height:1.6">Mitad chispa, mitad átomo — la energía de la IA con cuerpo de átomo. Cada ficha prueba un <strong>estilo de animación</strong> distinto: pasá el ojo a ver cuál movimiento le da más vida. Todos sin boca. Decime cuál combo + animación te cierra.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px">
+
+      <!-- 1 · Núcleo chispa · giro + pulso -->
+      <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+        <div style="display:flex;align-items:center;justify-content:center;height:182px;background:#16172A">
+          <svg width="108" height="108" viewBox="0 0 64 64" fill="none">
+            <g class="orbit" style="animation:spin 10s linear infinite">
+              <g transform="rotate(0 32 32)"><ellipse cx="32" cy="32" rx="24" ry="9.5" stroke="#6E6BD0" stroke-width="1.7"></ellipse><circle cx="56" cy="32" r="3" fill="#C9C6FF"></circle></g>
+              <g transform="rotate(60 32 32)"><ellipse cx="32" cy="32" rx="24" ry="9.5" stroke="#6E6BD0" stroke-width="1.7"></ellipse><circle cx="56" cy="32" r="3" fill="#C9C6FF"></circle></g>
+              <g transform="rotate(120 32 32)"><ellipse cx="32" cy="32" rx="24" ry="9.5" stroke="#6E6BD0" stroke-width="1.7"></ellipse><circle cx="56" cy="32" r="3" fill="#C9C6FF"></circle></g>
+            </g>
+            <path class="ctr" style="animation:pulse 3.2s ease-in-out infinite" d="M32 18 C33.6 28 36 30.4 46 32 C36 33.6 33.6 36 32 46 C30.4 36 28 33.6 18 32 C28 30.4 30.4 28 32 18 Z" fill="#8E8BF5"></path>
+            <circle cx="28.8" cy="32" r="2" fill="#211E3A"></circle>
+            <circle cx="35.2" cy="32" r="2" fill="#211E3A"></circle>
+          </svg>
+        </div>
+        <div style="padding:14px 16px;border-top:1px solid #F0E8D8">
+          <div style="font-family:'Spectral',serif;font-weight:600;font-size:16px">1 · Núcleo chispa</div>
+          <div style="font-size:12.5px;color:#7C766B;line-height:1.5;margin-top:3px">El núcleo es una chispa con ojos. <strong>Giro de órbitas + pulso</strong> — late mientras orbitan.</div>
+        </div>
+      </div>
+
+      <!-- 2 · Electrones chispa · giro + titileo -->
+      <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+        <div style="display:flex;align-items:center;justify-content:center;height:182px;background:#16172A">
+          <svg width="108" height="108" viewBox="0 0 64 64" fill="none">
+            <g class="orbit" style="animation:spin 11s linear infinite">
+              <g transform="rotate(0 32 32)"><ellipse cx="32" cy="32" rx="24" ry="9.5" stroke="#6E6BD0" stroke-width="1.7"></ellipse><g transform="translate(56 32)"><path class="ctr" style="animation:twinkle 2.2s ease-in-out infinite" d="M0 -5 C0.7 -1.6 1.6 -0.7 5 0 C1.6 0.7 0.7 1.6 0 5 C-0.7 1.6 -1.6 0.7 -5 0 C-1.6 -0.7 -0.7 -1.6 0 -5 Z" fill="#C9C6FF"></path></g></g>
+              <g transform="rotate(60 32 32)"><ellipse cx="32" cy="32" rx="24" ry="9.5" stroke="#6E6BD0" stroke-width="1.7"></ellipse><g transform="translate(56 32)"><path class="ctr" style="animation:twinkle 2.2s ease-in-out infinite .7s" d="M0 -5 C0.7 -1.6 1.6 -0.7 5 0 C1.6 0.7 0.7 1.6 0 5 C-0.7 1.6 -1.6 0.7 -5 0 C-1.6 -0.7 -0.7 -1.6 0 -5 Z" fill="#C9C6FF"></path></g></g>
+              <g transform="rotate(120 32 32)"><ellipse cx="32" cy="32" rx="24" ry="9.5" stroke="#6E6BD0" stroke-width="1.7"></ellipse><g transform="translate(56 32)"><path class="ctr" style="animation:twinkle 2.2s ease-in-out infinite 1.4s" d="M0 -5 C0.7 -1.6 1.6 -0.7 5 0 C1.6 0.7 0.7 1.6 0 5 C-0.7 1.6 -1.6 0.7 -5 0 C-1.6 -0.7 -0.7 -1.6 0 -5 Z" fill="#C9C6FF"></path></g></g>
+            </g>
+            <circle cx="32" cy="32" r="11.5" fill="#8E8BF5"></circle>
+            <circle cx="28" cy="32" r="2.1" fill="#211E3A"></circle>
+            <circle cx="36" cy="32" r="2.1" fill="#211E3A"></circle>
+          </svg>
+        </div>
+        <div style="padding:14px 16px;border-top:1px solid #F0E8D8">
+          <div style="font-family:'Spectral',serif;font-weight:600;font-size:16px">2 · Electrones chispa</div>
+          <div style="font-size:12.5px;color:#7C766B;line-height:1.5;margin-top:3px">Núcleo redondo, electrones que son chispitas. <strong>Giro + titileo</strong> escalonado.</div>
+        </div>
+      </div>
+
+      <!-- 3 · Chispa central + 1 anillo · flota -->
+      <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+        <div style="display:flex;align-items:center;justify-content:center;height:182px;background:#16172A">
+          <svg width="108" height="108" viewBox="0 0 64 64" fill="none" style="animation:bob 4.5s ease-in-out infinite">
+            <g class="orbit" style="animation:spin 7s linear infinite">
+              <g transform="rotate(-20 32 32)"><ellipse cx="32" cy="32" rx="25" ry="8.5" stroke="#6E6BD0" stroke-width="1.7"></ellipse><circle cx="57" cy="32" r="3.2" fill="#C9C6FF"></circle></g>
+            </g>
+            <path d="M32 17 C34 28 36 30 47 32 C36 34 34 36 32 47 C30 36 28 34 17 32 C28 30 30 28 32 17 Z" fill="#8E8BF5"></path>
+            <circle cx="28.6" cy="32" r="2.1" fill="#211E3A"></circle>
+            <circle cx="35.4" cy="32" r="2.1" fill="#211E3A"></circle>
+          </svg>
+        </div>
+        <div style="padding:14px 16px;border-top:1px solid #F0E8D8">
+          <div style="font-family:'Spectral',serif;font-weight:600;font-size:16px">3 · Chispa + un anillo</div>
+          <div style="font-size:12.5px;color:#7C766B;line-height:1.5;margin-top:3px">Chispa-cara grande con un solo anillo. <strong>Flota suave</strong> mientras gira el electrón. Limpio.</div>
+        </div>
+      </div>
+
+      <!-- 4 · Combo total -->
+      <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+        <div style="display:flex;align-items:center;justify-content:center;height:182px;background:#16172A">
+          <svg width="108" height="108" viewBox="0 0 64 64" fill="none">
+            <g class="orbit" style="animation:spin 9s linear infinite">
+              <g transform="rotate(30 32 32)"><ellipse cx="32" cy="32" rx="24" ry="8.5" stroke="#6E6BD0" stroke-width="1.7"></ellipse><g transform="translate(56 32)"><path class="ctr" style="animation:twinkle 2s ease-in-out infinite" d="M0 -4.6 C0.7 -1.5 1.5 -0.7 4.6 0 C1.5 0.7 0.7 1.5 0 4.6 C-0.7 1.5 -1.5 0.7 -4.6 0 C-1.5 -0.7 -0.7 -1.5 0 -4.6 Z" fill="#C9C6FF"></path></g></g>
+              <g transform="rotate(-30 32 32)"><ellipse cx="32" cy="32" rx="24" ry="8.5" stroke="#6E6BD0" stroke-width="1.7"></ellipse><g transform="translate(8 32)"><path class="ctr" style="animation:twinkle 2s ease-in-out infinite 1s" d="M0 -4.6 C0.7 -1.5 1.5 -0.7 4.6 0 C1.5 0.7 0.7 1.5 0 4.6 C-0.7 1.5 -1.5 0.7 -4.6 0 C-1.5 -0.7 -0.7 -1.5 0 -4.6 Z" fill="#C9C6FF"></path></g></g>
+            </g>
+            <path class="ctr" style="animation:pulse 3s ease-in-out infinite" d="M32 18 C33.6 28 36 30.4 46 32 C36 33.6 33.6 36 32 46 C30.4 36 28 33.6 18 32 C28 30.4 30.4 28 32 18 Z" fill="#8E8BF5"></path>
+            <circle cx="28.8" cy="32" r="2" fill="#211E3A"></circle>
+            <circle cx="35.2" cy="32" r="2" fill="#211E3A"></circle>
+          </svg>
+        </div>
+        <div style="padding:14px 16px;border-top:1px solid #F0E8D8">
+          <div style="font-family:'Spectral',serif;font-weight:600;font-size:16px">4 · Combo total</div>
+          <div style="font-size:12.5px;color:#7C766B;line-height:1.5;margin-top:3px">Chispa adentro y afuera. <strong>Giro + pulso + titileo</strong> juntos — el más vibrante.</div>
+        </div>
+      </div>
+
+      <!-- 5 · Destello suave · halo -->
+      <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+        <div style="display:flex;align-items:center;justify-content:center;height:182px;background:#16172A">
+          <svg width="108" height="108" viewBox="0 0 64 64" fill="none">
+            <circle class="ctr" style="animation:glow 3.4s ease-in-out infinite" cx="32" cy="32" r="17" fill="#8E8BF5"></circle>
+            <g class="orbit" style="animation:spin 12s linear infinite">
+              <g transform="rotate(0 32 32)"><ellipse cx="32" cy="32" rx="24" ry="9.5" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="56" cy="32" r="2.8" fill="#C9C6FF"></circle></g>
+              <g transform="rotate(60 32 32)"><ellipse cx="32" cy="32" rx="24" ry="9.5" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="56" cy="32" r="2.8" fill="#C9C6FF"></circle></g>
+              <g transform="rotate(120 32 32)"><ellipse cx="32" cy="32" rx="24" ry="9.5" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="56" cy="32" r="2.8" fill="#C9C6FF"></circle></g>
+            </g>
+            <circle cx="32" cy="32" r="11.5" fill="#8E8BF5"></circle>
+            <circle cx="28" cy="31.5" r="2.5" fill="#211E3A"></circle>
+            <circle cx="36" cy="31.5" r="2.5" fill="#211E3A"></circle>
+            <circle cx="29" cy="30.6" r="0.85" fill="#fff"></circle>
+            <circle cx="37" cy="30.6" r="0.85" fill="#fff"></circle>
+          </svg>
+        </div>
+        <div style="padding:14px 16px;border-top:1px solid #F0E8D8">
+          <div style="font-family:'Spectral',serif;font-weight:600;font-size:16px">5 · Destello suave</div>
+          <div style="font-size:12.5px;color:#7C766B;line-height:1.5;margin-top:3px">Átomo con un <strong>halo que respira</strong> detrás. Tranqui y sofisticado, ojos con brillo.</div>
+        </div>
+      </div>
+
+      <!-- 6 · Parpadeo + giro lento -->
+      <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+        <div style="display:flex;align-items:center;justify-content:center;height:182px;background:#16172A">
+          <svg width="108" height="108" viewBox="0 0 64 64" fill="none">
+            <g class="orbit" style="animation:spin 16s linear infinite">
+              <g transform="rotate(0 32 32)"><ellipse cx="32" cy="32" rx="24" ry="9.5" stroke="#6E6BD0" stroke-width="1.7"></ellipse><circle cx="56" cy="32" r="3" fill="#C9C6FF"></circle></g>
+              <g transform="rotate(60 32 32)"><ellipse cx="32" cy="32" rx="24" ry="9.5" stroke="#6E6BD0" stroke-width="1.7"></ellipse><circle cx="56" cy="32" r="3" fill="#C9C6FF"></circle></g>
+              <g transform="rotate(120 32 32)"><ellipse cx="32" cy="32" rx="24" ry="9.5" stroke="#6E6BD0" stroke-width="1.7"></ellipse><circle cx="56" cy="32" r="3" fill="#C9C6FF"></circle></g>
+            </g>
+            <circle cx="32" cy="32" r="11.5" fill="#8E8BF5"></circle>
+            <g class="ctr" style="animation:blink 4.5s ease-in-out infinite">
+              <circle cx="28" cy="31.5" r="2.4" fill="#211E3A"></circle>
+              <circle cx="36" cy="31.5" r="2.4" fill="#211E3A"></circle>
+            </g>
+          </svg>
+        </div>
+        <div style="padding:14px 16px;border-top:1px solid #F0E8D8">
+          <div style="font-family:'Spectral',serif;font-weight:600;font-size:16px">6 · Parpadeo + giro lento</div>
+          <div style="font-size:12.5px;color:#7C766B;line-height:1.5;margin-top:3px">Órbitas casi quietas y <strong>parpadeo</strong> cada tanto. El más «criatura viva», sin marear.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:38px;padding-top:24px;border-top:1px solid #CFC6B5">
+      <span style="font-size:13.5px;color:#6F6A60">¿Qué combo + animación te gana? La fijo y armo el lockup con «Puppet AI» + versión quieta para favicon.</span>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

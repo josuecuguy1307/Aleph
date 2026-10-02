@@ -1,0 +1,11 @@
+{
+  "schema_version": "v1",
+  "meta": { "name": "Cierre mensual", "nicho": "general",
+    "descripcion": "Arma una planilla de cierre del mes con sus números y la confirma leyéndola." },
+  "model": { "primary": "openai/gpt-oss-120b", "fallback": "llama-3.3-70b-versatile",
+    "base_url": "https://api.groq.com/openai/v1", "temperature": 0, "max_tokens": 1024, "max_turns": 8 },
+  "belt": { "belt_ref": "catalog/templates/finanzas/belt-finanzas.mcp.json",
+    "tool_filters": { "excel": ["create_workbook","write_data_to_excel","read_data_from_excel"] } },
+  "framing": { "inline": "Sos un asistente de finanzas. Armá la planilla pedida con la herramienta excel (create_workbook, write_data_to_excel) y confirmá leyéndola (read_data_from_excel). Sin inventar números." },
+  "rag": { "enabled": false }, "keys": {}, "gates": {}
+}

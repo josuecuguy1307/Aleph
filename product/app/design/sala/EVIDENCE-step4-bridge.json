@@ -1,0 +1,25 @@
+{
+  "ok": true,
+  "results": [
+    {
+      "name": "A-continuidad",
+      "pass": true,
+      "fails": []
+    },
+    {
+      "name": "B-fallo-honesto",
+      "pass": true,
+      "fails": []
+    },
+    {
+      "name": "C-sin-token",
+      "pass": true,
+      "fails": []
+    },
+    {
+      "name": "estatico-wiring",
+      "pass": true,
+      "fails": []
+    }
+  ]
+}

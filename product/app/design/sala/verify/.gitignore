@@ -1,0 +1,6 @@
+# estado local del harness: contiene session_token del usuario QA — NUNCA se commitea
+.state.json
+# resultados por-corrida (la evidencia durable son los screenshots + el output pegado)
+results/
+# descriptor efímero del stub de Gmail (N2): puertos del proceso local
+.gmail_stub.json

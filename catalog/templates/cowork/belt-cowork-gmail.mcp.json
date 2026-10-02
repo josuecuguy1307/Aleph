@@ -1,0 +1,34 @@
+{
+  "_meta": {
+    "belt": "cowork-gmail",
+    "slug": "cowork-gmail",
+    "que_es": "Mitad GMAIL del belt COWORK (Familia 3: OAuth). Prepara correos en BORRADOR; ENVIAR pasa por el send-gate (HELD sin OK). Multi-usuario: el runtime inyecta la BYOK/OAuth por-usuario (${GMAIL_TOKEN}); cero key de dev, cero global.",
+    "fuente": "catalog/belts/cowork.md + recordatorio 4-familias (conectores-4-familias-byok). Notion lo lleva otra terminal.",
+    "consumido_por": "platform/assembler/fixtures/e2e/cowork-gmail.recipe.json",
+    "verificado": "JSON-RPC init+tools/list + run E2E por el path de prod contra un stub local (sin cuenta real) el 2026-06-16: draft creado, send_email HELD (send_count=0), idempotente, inyeccion confirmada (construir!=inyectar).",
+    "REGLA_SEND_GATE": "create_draft prepara borrador (NO envia). send_email se lista A PROPOSITO en la receta de verificacion para PROBAR que el enforcer lo detiene (needs_ok forzado). En PRODUCCION la receta NO lista send_email.",
+    "base_matrix": "catalog/templates/cowork/base-matrix-cowork-gmail.json",
+    "base_matrix_nota": "Declara create_draft como escritura segura (auto-ejecuta). assemble_and_run lo auto-carga cuando el caller no pasa base_matrix. El enforcer sigue forzando money/send por encima."
+  },
+  "mcpServers": {
+    "gmail": {
+      "command": "python3",
+      "args": ["${PUPPET_BELTS}/cowork/gmail_draft_server.py"],
+      "env": {
+        "GMAIL_TOKEN": "${GMAIL_TOKEN}",
+        "GMAIL_ACCESS_TOKEN": "${GMAIL_ACCESS_TOKEN}",
+        "GMAIL_API_KEY": "${GMAIL_API_KEY}",
+        "GMAIL_API_BASE": "https://gmail.googleapis.com",
+        "GMAIL_USER": "me",
+        "PUPPET_LANG": "${PUPPET_LANG}"
+      },
+      "caso": 1,
+      "bucket": "B1-draft · B3-gate(send)",
+      "familia": 3,
+      "nichos": ["cowork"],
+      "credenciales": "OAuth Google (access-token) BYOK por-usuario via credential-broker (Familia 3).",
+      "REGLA": "create_draft prepara borrador (NO envia). send_email existe para probar el send-gate; el enforcer lo fuerza a needs_ok. En produccion NO se lista send_email.",
+      "description": "Prepara borradores de correo en Gmail. Enviar pasa por el send-gate (HELD sin OK)."
+    }
+  }
+}

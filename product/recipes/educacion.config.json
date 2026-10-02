@@ -1,0 +1,52 @@
+{
+  "schema_version": "v1",
+  "meta": {
+    "name": "Tutor STEM",
+    "nicho": "educacion",
+    "descripcion": "Tutor de ciencia/ingenieria que deriva paso a paso con rigor verificable: simbolico exacto, unidades chequeadas y graficas, no respuestas plausibles."
+  },
+  "model": {
+    "primary": "openai/gpt-oss-120b",
+    "fallback": "openai/gpt-oss-20b",
+    "base_url": "https://api.groq.com/openai/v1",
+    "temperature": 0,
+    "max_tokens": 2048,
+    "max_turns": 8
+  },
+  "belt": {
+    "belt_ref": "catalog/belts/stem.md",
+    "tool_filters": {
+      "sympy": [
+        "sympy_diff",
+        "sympy_integrate",
+        "sympy_solve",
+        "sympy_simplify",
+        "sympy_factor",
+        "sympy_limit",
+        "sympy_latex",
+        "sympy_series"
+      ],
+      "chart": [
+        "generate_line_chart"
+      ],
+      "units": [
+        "units_convert",
+        "units_check"
+      ]
+    }
+  },
+  "framing": {
+    "ref": "product/recipes/framing/educacion.md",
+    "inline": null
+  },
+  "rag": {
+    "enabled": true,
+    "mode": "manual",
+    "dir": "rag/educacion"
+  },
+  "keys": {},
+  "gates": {
+    "money_touch": "off",
+    "send": "off"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "_meta": {
+    "que_es": "Los ALIAS de env-var por provider: los nombres que NO siguen la convención.",
+    "por_que_existe": "La convención cubre casi todo — ACME_API_KEY → acme, ACME_ACCESS_TOKEN → acme, ACME_OAUTH_META → acme__oauth. Lo que queda son los servers que leen un nombre propio (un belt que lee ${HF_TOKEN} recibe la key del provider 'huggingface'). Eso es un DATO del catálogo, no lógica, y vivía duplicado: en Python para inyectar y en la cabeza de quien escribía la superficie. Dos copias de la misma tabla es la contradicción entre fuentes que el adaptador existe para delatar.",
+    "quien_lo_lee": [
+      "platform/assembler/recipe_assembler.py · _PROVIDER_ENV_ALIASES (inyecta la credencial al child_env del belt)",
+      "product/app/design/conectores/conocimiento.js · providerDeVariable (decide bajo qué nombre buscar en el vault)"
+    ],
+    "regla": "Sólo van acá los nombres que la convención NO alcanza. Un provider nuevo que use ${PROVIDER_API_KEY} no se agrega: ya funciona.",
+    "owner": "catálogo de conectores",
+    "desde": "2026-08-04"
+  },
+  "alias": {
+    "huggingface": ["HF_TOKEN"],
+    "hf": ["HF_TOKEN"],
+    "exa": ["EXA_API_KEY"],
+    "context7": ["CONTEXT7_API_KEY"],
+    "alphavantage": ["ALPHA_VANTAGE_API_KEY"],
+    "alpha_vantage": ["ALPHA_VANTAGE_API_KEY"],
+    "fred": ["FRED_API_KEY"],
+    "slack": ["SLACK_BOT_TOKEN", "SLACK_MCP_XOXP_TOKEN"],
+    "github": ["GITHUB_PERSONAL_ACCESS_TOKEN", "GITHUB_TOKEN"],
+    "google": ["GOOGLE_APPLICATION_CREDENTIALS"],
+    "gmail": ["GMAIL_TOKEN", "GMAIL_ACCESS_TOKEN"],
+    "google_drive": ["GDRIVE_TOKEN", "GOOGLE_DRIVE_TOKEN", "GDRIVE_ACCESS_TOKEN"],
+    "gdrive": ["GDRIVE_TOKEN", "GOOGLE_DRIVE_TOKEN", "GDRIVE_ACCESS_TOKEN"],
+    "probe": ["PROBE_CRED"]
+  }
+}

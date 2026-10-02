@@ -1,0 +1,50 @@
+Third-party materials in the Aleph 0.1.2 source snapshot
+=====================================================
+
+The root Apache-2.0 license does not relicense third-party materials. Retain each
+component's original copyright, license and attribution notices when redistributing
+it. Vendored changes already documented in IMPORT.md, EXTIRPACIONES.md and
+NOTICE-ALEPH.md remain documented; snapshot-only exclusions are recorded in
+SOURCE_PROVENANCE.json. ATTRIBUTIONS.md contains upstream versions/commits.
+
+Vendored components
+-------------------
+assistant-ui: MIT; third_party/assistant-ui/LICENSE and IMPORT.md.
+AG-UI: MIT; third_party/ag-ui/LICENSE and IMPORT.md.
+OpenScience: Apache-2.0; third_party/openscience/LICENSE, NOTICE,
+  NOTICE-ALEPH.md and ATTRIBUTIONS.md.
+doc.haus: MIT; third_party/dochaus/LICENSE, ATTRIBUTIONS and IMPORT.md.
+  Its separately attributed legal references retain CC BY 4.0 or the stated
+  public-domain terms. Preserve their attribution and no-endorsement conditions.
+Open CoDesign: MIT; third_party/codesign/LICENSE, NOTICE and IMPORT.md.
+DeepTutor: Apache-2.0; third_party/deeptutor/LICENSE and THIRD_PARTY_NOTICES.md.
+Vibe-Trading: MIT; third_party/vibetrading/LICENSE, NOTICE, NOTICE-ALEPH.md.
+OpenWork: MIT for the imported source; third_party/openwork/LICENSE and IMPORT.md.
+  The upstream enterprise/FSL subtree is not included.
+OfficeCLI: Apache-2.0; third_party/officecli/LICENSE, NOTICE,
+  THIRD-PARTY-NOTICES.txt and UPSTREAM-IDENTITY.json. Its executable is excluded.
+Google Workspace CLI (gws): Apache-2.0; third_party/gws/LICENSE and IMPORT.md.
+  Its executable is excluded.
+OpenCode: MIT; third_party/opencode/LICENSE and IMPORT.md.
+  Its executable is excluded.
+Local Deep Research: MIT; third_party/ldr/LICENSE and IMPORT.md.
+Vane: MIT; third_party/vane/LICENSE and IMPORT.md.
+browser-use: MIT; third_party/browser-use/LICENSE.
+
+Checked-in UI libraries and fonts
+--------------------------------
+PixiJS: MIT; product/app/design/cuarto/vendor/pixi.LICENSE.
+Mermaid: MIT; product/app/design/vendor/mermaid.LICENSE.
+Deep Chat: MIT; product/app/design/vendor/deep-chat.LICENSE.
+Other retained vendor headers/license files remain authoritative for their code.
+Fonts: SIL Open Font License 1.1; the seven *.OFL.txt files in
+  product/app/design/vendor/fonts/, and font LICENSE files in the OpenWork and
+  Vibe-Trading public/fonts directories. Reserved font names remain governed by
+  their original notices.
+CC BY 4.0 text: docs/licencias/CC-BY-4.0.txt.
+PDFium-related license texts: deploy/fase4/aleph-shell/src-tauri/resources/PDFIUM-NOTICES/.
+
+docs/THIRD-PARTY-MATRIX.json indexes the retained runtime notice files. Licenses of
+dependencies installed during a future build are governed by their packages and
+locks; this source snapshot is not an inventory of a newly built binary.
+No SearXNG runtime, guest Linux image, compiled .app or DMG is included here.

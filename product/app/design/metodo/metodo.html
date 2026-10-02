@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Método — Aleph</title>
+<link rel="stylesheet" href="../vendor/fonts.css"><!-- [Casa 2 · F1.b] fuentes locales: antes 2 preconnect + css2 de Google -->
+<script src="../auth.js"></script>
+<script src="../i18n.js"></script>
+<script src="../theme.js"></script>
+<script src="../nav.js"></script>
+<script src="../icons.js"></script>
+<link rel="stylesheet" href="../aleph-tokens.css"><!-- [identidad visual] la piel: tokens, forma y tipografía en un solo lugar -->
+<style>
+  /* [sistema 2026-07-31] Método entra al sistema "Híbrido Spatial + Soft futurism".
+     Las primitivas (.ds-plane/.ds-well/.ds-track/.ds-card/.ds-item/.ds-title/.ds-sub/…)
+     llegan solas por aleph-tokens.css → @import aleph-ds.css; acá NO se redeclara ningún
+     token. El comportamiento del Vertical Sliding Focus lo carga nav.js (aleph-ds.js).
+     Lo que cambia es la PIEL: cero bordes, cero relieves, cero hundidos — la jerarquía
+     es sombra + radio. Color 90/8/2: neutros casi todo, el violeta sólo en la identidad
+     y el elemento en foco, verde/ámbar/rojo sólo como estado.
+     Lo que NO cambia: ni un id, ni una clase que lean metodo.editor.js / metodo.graph.js /
+     verify_metodo.mjs, ni una acción, ni un texto, ni un estado. La lista sigue siendo
+     #metList con tarjetas .met-card (.nm/.meta/.rowacts/[data-act]). */
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  /* el CSS de autor (display:grid/flex/inline-flex) pisa el [hidden] del UA stylesheet
+     → sin esta regla, la vista grafo montaba DEBAJO de la biblioteca (fuera del viewport)
+     y los botones ocultos del strip fantasmeaban. Cazado por captura visual real. */
+  [hidden]{display:none!important}
+  :root{--grafo-bg:#0d0e1a}
+  html[data-theme="light"]{--grafo-bg:#14132B}
+  body{background:var(--page-bg);min-height:100vh;font-family:var(--font-ui);color:var(--ink);-webkit-font-smoothing:antialiased}
+  a{text-decoration:none;color:inherit}
+  button{font-family:inherit}
+  /* el pulgar del scroll era var(--line2) — y el sistema volvió los tokens de línea
+     transparentes, así que la barra quedaba invisible. Ahora es superficie, no línea. */
+  ::-webkit-scrollbar{width:9px;height:9px}::-webkit-scrollbar-thumb{background:var(--paper2);border-radius:var(--r-full)}
+  @keyframes fadeUp{0%{opacity:0;transform:translateY(8px)}100%{opacity:1;transform:translateY(0)}}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* ── shell biblioteca ─────────────────────────────────────────────── */
+  /* nav.js empuja el body 66px (la cápsula de cristal es más alta que la franja vieja
+     de 54): el alto útil se mide contra ese número, no contra el anterior. */
+  .met-shell{display:grid;grid-template-columns:412px 1fr;gap:18px;
+             height:calc(100vh - 66px);min-height:420px;padding:18px 24px 22px}
+  .met-side{display:flex;flex-direction:column;min-height:0;overflow-y:auto}
+  /* el PLANO DE CONTENIDO (r30 + sombra ambiental) de la biblioteca */
+  .met-side-plane{flex:none}
+  .met-side-h{margin-bottom:18px}
+  .met-side-h h1{margin:0;display:flex;align-items:center;gap:11px}
+  .met-side-h h1 .gl{color:var(--accent);font-size:23px;font-weight:300;line-height:1;flex:none}
+  .met-side-h p{margin:10px 0 0;line-height:1.55;max-width:40ch}
+  .met-side-acts{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+  .met-agent-context{margin:0 0 14px;padding:12px 14px;border:0;border-radius:var(--r-md);
+                     font:300 var(--fs-sm)/1.5 var(--font-ui);color:var(--muted);background:var(--paper2)}
+  .met-agent-context b{color:var(--ink);font-weight:400}
+  /* el equipar/equipado es ESTADO, no acento: neutro apagado, verde encendido */
+  .met-equip{border:0;border-radius:var(--r-full);padding:4px 10px;font:400 10.5px/1.35 var(--font-ui);
+             cursor:pointer;background:var(--paper2);color:var(--muted)}
+  .met-equip:hover{color:var(--ink)}
+  .met-equip.on{background:var(--green-bg);color:var(--green)}
+  /* la acción primaria INVIERTE el campo; el resto es superficie neutra, nunca línea */
+  .met-btn{border:0;border-radius:var(--r-md);padding:10px 17px;font:400 12px/1.2 var(--font-ui);
+           cursor:pointer;display:inline-flex;align-items:center;gap:7px;white-space:nowrap;
+           background:var(--paper2);color:var(--muted);transition:filter .14s,color .14s,background .14s}
+  .met-btn:hover{color:var(--ink)}
+  .met-btn.pri{background:var(--ink);color:var(--paper)}
+  .met-btn.pri:hover{filter:brightness(1.12);color:var(--paper)}
+  .met-btn.sec{background:var(--paper2);color:var(--muted)}
+  .met-btn.sec:hover{color:var(--ink)}
+  .met-btn:disabled{opacity:.45;cursor:default}
+  /* #metList sigue siendo el ÚNICO host de lista: el pozo sólo lo envuelve para que la
+     pista tenga dónde vivir y el control ^ˇ dónde anclarse. El scroll pasa al pozo. */
+  .met-list{display:flex;flex-direction:column;gap:10px;margin:0;padding:0}
+  .met-empty{color:var(--muted);font:300 12.5px/1.6 var(--font-ui);padding:12px 6px}
+  /* el gutter derecho de 38px es el sitio del control ^ˇ de la pista: sin él el cristal
+     se apoya encima del texto de la tarjeta que quede en el centro del pozo. */
+  .met-card{position:relative;background:var(--paper);border:0;border-radius:var(--r-lg);
+            padding:14px 38px 14px 18px;box-shadow:var(--sh-1);cursor:pointer;
+            display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:10px;
+            grid-template-areas:"nm acts" "meta acts";align-items:center}
+  .met-card.on{background:var(--accent-soft)}
+  .met-card .nm{grid-area:nm;font:400 var(--fs-md)/1.35 var(--font-ui);color:var(--ink)}
+  .met-card .meta{grid-area:meta;margin-top:6px;font:300 var(--fs-xs)/1.4 var(--font-ui);color:var(--muted);
+                  display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .met-card .meta .ck{color:var(--amber)}
+  /* .rowacts es además .ds-actions: su visibilidad la gobierna la pista (sólo el
+     elemento en foco las alcanza). Sin el sistema cargado quedan siempre visibles. */
+  .met-card .rowacts{grid-area:acts;position:static;display:flex;gap:6px;align-self:center}
+  .met-ic{border:0;background:var(--paper2);color:var(--muted);border-radius:var(--r-sm);width:27px;height:27px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;flex:none}
+  .met-ic:hover{color:var(--ink)}
+  .met-ic.danger:hover{color:var(--red)}
+
+  .met-main{min-width:0;overflow-y:auto}
+  .met-main-plane{min-height:100%;padding-bottom:48px}
+  .met-hero{max-width:660px;margin:7vh auto 0;text-align:center;animation:fadeUp .3s ease both}
+  .met-hero .big{font-size:44px;line-height:1;color:var(--accent);opacity:.85}
+  .met-hero h2{font:200 var(--fs-2xl)/1.25 var(--font-ui);letter-spacing:var(--tracking-title);
+               color:var(--ink);margin:16px 0 0}
+  .met-hero p{margin:12px auto 0;font:300 var(--fs-md)/1.7 var(--font-ui);color:var(--muted);max-width:56ch}
+  .met-hero .cta{margin-top:24px;display:flex;gap:10px;justify-content:center}
+
+  /* ── secciones de panel (familia osec del inspector) ──────────────── */
+  /* la barrita vertical era una LÍNEA: el sistema la cambia por un punto de estado */
+  .msec{margin:0 0 18px}
+  .msec-h{font:300 var(--fs-xs) var(--font-ui);letter-spacing:.07em;text-transform:uppercase;
+          color:var(--muted);margin:0 0 10px;display:flex;align-items:center;gap:8px}
+  .msec-h::before{content:"";width:5px;height:5px;border-radius:var(--r-full);background:var(--accent);flex:none}
+  .msec.amber .msec-h::before{background:var(--amber)}
+
+  /* ── modal base (esqueletos · traer proceso) ──────────────────────── */
+  .met-scrim{position:fixed;inset:0;z-index:60;background:rgba(6,6,8,.6);display:flex;align-items:center;justify-content:center;padding:20px}
+  .met-modal{background:var(--paper);border:0;border-radius:var(--r-xl);padding:26px 28px;width:min(560px,94vw);max-height:86vh;overflow-y:auto;box-shadow:var(--sh-3);animation:fadeUp .2s ease both}
+  .met-modal h3{font:200 var(--fs-2xl)/1.2 var(--font-ui);letter-spacing:var(--tracking-title);color:var(--ink);margin:0 0 8px}
+  .met-modal .sub{font:300 12.5px/1.6 var(--font-ui);color:var(--muted);margin:0 0 16px}
+  .met-modal .foot{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+
+  /* ── toast ─────────────────────────────────────────────────────────── */
+  #metToast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(8px);z-index:80;background:var(--paper);border:0;color:var(--ink);border-radius:var(--r-lg);padding:12px 18px;font:300 13px var(--font-ui);box-shadow:var(--sh-3);opacity:0;pointer-events:none;transition:opacity .18s,transform .18s;max-width:min(520px,92vw)}
+  #metToast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+  #metToast a{color:var(--accent-deep)}
+
+  /* ── vista GRAFO (pantalla propia — se pinta en la pieza 4) ───────── */
+  #metGrafo{height:calc(100vh - 66px);min-height:420px;display:flex;flex-direction:column;background:var(--grafo-bg)}
+  .gr-strip{display:flex;align-items:center;gap:12px;padding:12px 20px;border:0;background:color-mix(in srgb,var(--paper) 72%,transparent)}
+  .gr-strip .nm{font:400 var(--fs-lg) var(--font-ui);color:var(--ink)}
+  .gr-strip .st{font:300 var(--fs-sm) var(--font-ui);color:var(--muted)}
+  .gr-strip .sp{flex:1}
+  .gr-wrap{flex:1;position:relative;min-height:0}
+  .gr-wrap canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+  .gr-drawer{position:absolute;top:0;right:0;bottom:0;width:min(430px,92vw);background:var(--paper);border:0;border-radius:var(--r-xl) 0 0 var(--r-xl);box-shadow:var(--sh-3);transform:translateX(104%);transition:transform .22s cubic-bezier(.2,.7,.2,1);overflow-y:auto;padding:20px 22px}
+  .gr-drawer.on{transform:translateX(0)}
+
+  @media (max-width:900px){ .met-shell{grid-template-columns:1fr;padding:14px} .met-side{display:none} }
+</style>
+</head>
+<body>
+
+<!-- ══ VISTA BIBLIOTECA (default) ══════════════════════════════════════ -->
+<div class="met-shell" id="metLib">
+  <aside class="met-side" aria-label="tus métodos" data-i18n-aria="met.aria.lista">
+    <!-- el PLANO DE CONTENIDO (r30 + sombra ambiental) envuelve la biblioteca entera -->
+    <div class="ds-plane met-side-plane">
+      <div class="met-side-h">
+        <h1 class="ds-title"><span class="gl" aria-hidden="true">◇</span><span data-i18n="met.title">Método</span></h1>
+        <p class="ds-sub" data-i18n="met.sub">Tu proceso, en tus palabras — la casa lo sigue con evidencia, en orden y con tus pausas.</p>
+      </div>
+      <div class="met-side-acts">
+        <button class="met-btn pri" id="metNuevo"><span aria-hidden="true">＋</span><span data-i18n="met.nuevo">Nuevo método</span></button>
+        <button class="met-btn sec" id="metTraer"><span aria-hidden="true">⇪</span><span data-i18n="met.traer">Traer mi proceso</span></button>
+      </div>
+      <div class="met-agent-context" id="metAgentContext" hidden></div>
+      <!-- el POZO (r22, plano, sin sombra propia) es la PISTA: exactamente un método en
+           foco a tamaño real con sus acciones; el resto retrocede legible. -->
+      <div class="ds-well ds-track" data-ds-track style="padding:18px 20px">
+        <div class="met-list" id="metList" role="list"></div>
+      </div>
+    </div>
+  </aside>
+  <main class="met-main" id="metMain">
+    <div class="ds-plane met-main-plane">
+      <div class="met-hero" id="metHero">
+        <div class="big" aria-hidden="true">◇</div>
+        <h2 data-i18n="met.empty_h">Un método es tu proceso, en pasos.</h2>
+        <p data-i18n="met.empty_p">Escribe los pasos como los dirías. Tu agente decide el cómo con sus piezas; la casa garantiza el proceso: nada avanza sin evidencia real, nada se salta solo, y en tus checkpoints el trabajo te espera.</p>
+        <div class="cta">
+          <button class="met-btn pri" id="metNuevo2"><span aria-hidden="true">＋</span><span data-i18n="met.nuevo">Nuevo método</span></button>
+          <button class="met-btn sec" id="metTraer2"><span aria-hidden="true">⇪</span><span data-i18n="met.traer">Traer mi proceso</span></button>
+        </div>
+      </div>
+      <div id="metEditorHost" hidden></div>
+    </div>
+  </main>
+</div>
+
+<!-- ══ VISTA GRAFO — pantalla propia del modo workflow (ORDEN §6) ══════ -->
+<section id="metGrafo" hidden aria-label="modo workflow" data-i18n-aria="met.aria.grafo_sec">
+  <div class="gr-strip">
+    <button class="met-btn sec" id="grVolver">←&nbsp;<span data-i18n="met.gr.volver">biblioteca</span></button>
+    <span class="nm" id="grNombre" data-no-tm></span>
+    <span class="st" id="grEstado"></span>
+    <span class="sp"></span>
+    <button class="met-btn sec" id="grPausa" hidden></button>
+    <button class="met-btn sec" id="grEditar" hidden><span data-i18n="met.gr.editar">Editar</span></button>
+  </div>
+  <div class="gr-wrap" id="grWrap">
+    <canvas id="grCanvas" aria-label="grafo del método" data-i18n-aria="met.aria.canvas"></canvas>
+    <div class="gr-drawer" id="grDrawer"></div>
+  </div>
+</section>
+
+<div id="metToast" role="status" aria-live="polite"></div>
+
+<script type="module">
+  import { MetodoAPI, currentUser, phasesOf, normalizeMethod } from "./metodo.api.js";
+
+  const $ = (id) => document.getElementById(id);
+  const trM = (k, fb) => { const s = window.t ? window.t(k) : null; return (s && s !== k) ? s : fb; };
+  const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+  const Q = new URLSearchParams(location.search);
+  const ST = { methods: [], current: null, view: "lib", dirty: false,
+    puppetId: Q.get("puppet") || null, equipped: new Map() };
+  let _toastT = null;
+  function toast(html) {
+    const el = $("metToast"); el.innerHTML = html; el.classList.add("on");
+    clearTimeout(_toastT); _toastT = setTimeout(() => el.classList.remove("on"), 4200);
+  }
+
+  /* ── lista (biblioteca de la casa) ──────────────────────────────────── */
+  function renderList() {
+    const host = $("metList"); host.innerHTML = "";
+    if (!ST.methods.length) {
+      const d = document.createElement("div"); d.className = "met-empty";
+      d.textContent = trM("met.lista_empty", "Aún no hay métodos. Crea uno nuevo o trae tu proceso (texto, Word, PDF o una foto).");
+      host.appendChild(d); resyncPista(); return;
+    }
+    ST.methods.forEach((m) => {
+      const ph = phasesOf(normalizeMethod(m)).length;
+      const nCk = (m.steps || []).filter((s) => s.checkpoint).length;
+      const d = document.createElement("div");
+      // [sistema] .ds-card/.ds-item sólo cambian cómo se ALCANZAN las acciones (Vertical
+      // Sliding Focus), no cuáles son: el nodo, su onclick y sus [data-act] son los mismos.
+      d.className = "met-card ds-card ds-item" + ((ST.current && ST.current.id === m.id) ? " on" : "");
+      d.setAttribute("role", "listitem");
+      d.innerHTML = '<div class="nm" data-no-tm>' + esc(m.name || trM("met.sin_nombre", "Sin nombre")) + "</div>" +
+        '<div class="meta"><span>' + ph + " " + trM("met.fases", "fases") + " · " + (m.steps || []).length + " " + trM("met.pasos", "pasos") + "</span>" +
+        (nCk ? ('<span class="ck">' + nCk + " " + trM("met.checkpoints", "checkpoints") + "</span>") : "") +
+        (ST.puppetId ? ('<button class="met-equip ' + (ST.equipped.has(m.id) ? "on" : "") + '" data-act="equip">' +
+          (ST.equipped.has(m.id) ? "✓ equipado" : "＋ equipar") + "</button>") : "") + "</div>" +
+        '<div class="rowacts ds-actions">' +
+        '<button class="met-ic" data-act="grafo" title="' + esc(trM("met.ver_grafo", "Ver modo workflow")) + '">◇</button>' +
+        '<button class="met-ic danger" data-act="del" title="' + esc(trM("met.borrar", "Borrar")) + '">✕</button></div>';
+      d.onclick = (e) => {
+        const act = e.target && e.target.getAttribute && e.target.getAttribute("data-act");
+        if (act === "equip") { e.stopPropagation(); toggleEquip(m); return; }
+        if (act === "del") { e.stopPropagation(); delMethod(m); return; }
+        if (act === "grafo") { e.stopPropagation(); openGrafo(m.id); return; }
+        openMethod(m.id);
+      };
+      host.appendChild(d);
+    });
+    resyncPista();
+  }
+
+  /* [sistema] renderList() repinta la lista ENTERA en cada cambio. El observer de
+   * aleph-ds.js sólo re-aplica el foco cuando cambia la CANTIDAD de elementos, así que
+   * un repintado con el mismo número de métodos (abrir uno, equipar, refrescar) dejaba
+   * las tarjetas nuevas sin data-focus: ni en foco ni retrocedidas, o sea todas a tamaño
+   * completo con sus acciones alcanzables — lo contrario del patrón. Medido con
+   * Playwright: 4 items, 0 en foco, 4 sin atributo. Esto lo vuelve a aplicar sobre los
+   * nodos nuevos conservando el índice. Si el sistema no cargó, la lista queda como antes. */
+  function resyncPista() {
+    try {
+      const host = $("metList"); if (!host || !window.AlephDS) return;
+      const tr = host.closest("[data-ds-track]"); if (tr) window.AlephDS.refresh(tr);
+    } catch (e) {}
+  }
+
+  async function refreshList() {
+    try { ST.methods = await MetodoAPI.list(); }
+    catch (e) { ST.methods = []; if (e.status !== 401) toast(esc(trM("met.err_carga", "No pude cargar tus métodos.")) + " · " + esc(e.message)); }
+    if (ST.puppetId) {
+      try {
+        const methods = await MetodoAPI.equipped(ST.puppetId);
+        ST.equipped = new Map(methods.map((m) => [m.id, m]));
+      } catch (e) { toast(esc(e.message)); }
+    }
+    renderList();
+  }
+
+  async function toggleEquip(m) {
+    try {
+      if (ST.equipped.has(m.id)) {
+        await MetodoAPI.unequip(ST.puppetId, m.id); ST.equipped.delete(m.id);
+      } else {
+        const out = await MetodoAPI.equip(ST.puppetId, m.id);
+        const enriched = (out.methods || []).find((x) => x.id === m.id) || m;
+        ST.equipped.set(m.id, enriched);
+      }
+      renderList();
+    } catch (e) { toast(esc(e.message)); }
+  }
+
+  function delMethod(m) {
+    if (!confirm(trM("met.borrar_conf", "¿Borrar este método? Los agentes que lo tenían equipado dejan de verlo."))) return;
+    MetodoAPI.remove(m.id).then(() => {
+      ST.methods = ST.methods.filter((x) => x.id !== m.id);
+      if (ST.current && ST.current.id === m.id) { ST.current = null; showHero(); }
+      renderList();
+    }).catch((e) => toast(esc(e.message)));
+  }
+
+  /* ── editor (módulo aparte; se monta al abrir/crear) ────────────────── */
+  function showHero() { $("metHero").hidden = false; $("metEditorHost").hidden = true; $("metEditorHost").innerHTML = ""; window.__metodoEditor = null; }
+  let _editor = null;
+  async function mountEditor(method, opts) {
+    let mod;
+    try { mod = await import("./metodo.editor.js"); }
+    catch (e) { toast(esc(trM("met.falta_pieza", "Esta parte aún no está en esta build."))); return; }
+    $("metHero").hidden = true; const host = $("metEditorHost"); host.hidden = false; host.innerHTML = "";
+    if (_editor && _editor.destroy) _editor.destroy();
+    _editor = mod.mountEditor({
+      host, method, opts: opts || {},
+      onSaved: (saved) => {
+        const i = ST.methods.findIndex((x) => x.id === saved.id);
+        if (i >= 0) ST.methods[i] = saved; else ST.methods.unshift(saved);
+        ST.current = saved; renderList();
+        try { history.replaceState(null, "", "metodo.html?method=" + encodeURIComponent(saved.id)); } catch (e) {}
+      },
+      onOpenGrafo: (id) => openGrafo(id),
+      toast
+    });
+    window.__metodoEditor = _editor;
+  }
+
+  /* cambios sin guardar → confirmar antes de pisar el editor (verify-before-lose) */
+  function guardDirty() {
+    const e = window.__metodoEditor;
+    if (e && e.isDirty && e.isDirty()) return confirm(trM("met.ed.dirty_conf", "Tienes cambios sin guardar. ¿Descartarlos?"));
+    return true;
+  }
+
+  async function openMethod(id) {
+    if (!guardDirty()) return;
+    try {
+      const m = await MetodoAPI.get(id);
+      ST.current = m; renderList();
+      try { history.replaceState(null, "", "metodo.html?method=" + encodeURIComponent(id)); } catch (e) {}
+      mountEditor(m);
+    } catch (e) { toast(esc(trM("met.err_abrir", "No pude abrir ese método.")) + " · " + esc(e.message)); }
+  }
+
+  function nuevoMethod() { if (!guardDirty()) return; mountEditor(null, { chooser: true }); ST.current = null; renderList(); }
+  function traerProceso() { if (!guardDirty()) return; mountEditor(null, { capture: true }); ST.current = null; renderList(); }
+
+  /* ── grafo (pantalla propia; módulo de la pieza 4) ─────────────────── */
+  let _graph = null;
+  async function openGrafo(methodId, live) {
+    if (!guardDirty()) return;   // el grafo también respeta cambios sin guardar (review)
+    showHero();                  // suelta el editor de biblioteca (y su hook) antes de cambiar de vista
+    let mod;
+    try { mod = await import("./metodo.graph.js"); }
+    catch (e) { toast(esc(trM("met.falta_pieza", "Esta parte aún no está en esta build."))); return; }
+    let m = null;
+    try { m = await MetodoAPI.get(methodId); }
+    catch (e) { toast(esc(trM("met.err_abrir", "No pude abrir ese método.")) + " · " + esc(e.message)); return; }
+    $("metLib").hidden = true; const sec = $("metGrafo"); sec.hidden = false;
+    ST.view = "grafo";
+    if (_graph && _graph.destroy) _graph.destroy();
+    _graph = mod.mountGrafo({
+      section: sec, canvas: $("grCanvas"), drawer: $("grDrawer"),
+      strip: { nombre: $("grNombre"), estado: $("grEstado"), pausa: $("grPausa"), editar: $("grEditar") },
+      method: m, live: live || null, toast,
+      onEditPaso: (stepIds) => mountEditorInDrawer(m, stepIds)
+    });
+    window.__metodoGraph = _graph;
+  }
+  async function mountEditorInDrawer(method, stepIds) {
+    let mod;
+    try { mod = await import("./metodo.editor.js"); } catch (e) { return; }
+    const dr = $("grDrawer"); dr.classList.add("on"); dr.innerHTML = "";
+    if (_editor && _editor.destroy) _editor.destroy();
+    _editor = mod.mountEditor({
+      host: dr, method, opts: { compact: true, focusSteps: stepIds || null },
+      onSaved: (saved) => { if (_graph && _graph.setMethod) _graph.setMethod(saved); },
+      onClose: () => { dr.classList.remove("on"); dr.innerHTML = ""; },
+      toast
+    });
+    window.__metodoEditor = _editor;
+  }
+  $("grVolver").onclick = () => {
+    if (_graph && _graph.destroy) { _graph.destroy(); _graph = null; }
+    $("metGrafo").hidden = true; $("metLib").hidden = false; ST.view = "lib";
+    try { history.replaceState(null, "", "metodo.html" + (ST.current ? ("?method=" + encodeURIComponent(ST.current.id)) : "")); } catch (e) {}
+  };
+
+  /* ── arranque + ruteo ───────────────────────────────────────────────── */
+  $("metNuevo").onclick = nuevoMethod; $("metNuevo2").onclick = nuevoMethod;
+  $("metTraer").onclick = traerProceso; $("metTraer2").onclick = traerProceso;
+
+  // login suave: sin sesión NO se va a la puerta — se minta/reusa la LOCAL anónima (device user,
+  // POST /v1/auth/local) y se sigue. Auth queda SÓLO si el backend no ofrece auth local (control
+  // plane web). Antes: redirect DURO a Auth = el dead-end de sesión más agresivo del sweep.
+  let user = currentUser();
+  if (!user || !user.id) {
+    const A = window.AlephSession;
+    user = await ((A && A.ensureLocal) ? A.ensureLocal() : Promise.resolve(null));
+  }
+  if (!user || !user.id) {
+    location.href = "../Auth.dc.html?next=" + encodeURIComponent(location.pathname + location.search);
+  } else {
+    if (ST.puppetId) {
+      const ctx = $("metAgentContext"); ctx.hidden = false;
+      ctx.innerHTML = "<b>Métodos de este agente</b><br>Equipa o quita referencias; el semáforo se recalcula contra sus piezas.";
+    }
+    await refreshList();
+    if (Q.get("view") === "grafo" && Q.get("method")) {
+      // live SOLO si la URL trae un run/espacio real — sin eso el grafo es estático
+      const liveQ = (Q.get("space") || Q.get("run"))
+        ? { spaceId: Q.get("space") || null, runId: Q.get("run") || null, puppetId: Q.get("puppet") || null }
+        : null;
+      openGrafo(Q.get("method"), liveQ);
+    } else if (Q.get("method")) {
+      openMethod(Q.get("method"));
+    }
+  }
+
+  /* hooks de verificación (Playwright) — mismo patrón que __mesa/__cuarto */
+  window.__metodo = {
+    get state() { return ST; },
+    get view() { return ST.view; },
+    refreshList, openMethod, openGrafo, nuevoMethod, traerProceso, toast
+  };
+</script>
+</body>
+</html>

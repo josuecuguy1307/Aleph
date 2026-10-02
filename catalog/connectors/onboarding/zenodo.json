@@ -1,0 +1,89 @@
+{
+  "connector": "zenodo",
+  "auth_method": "personal_token",
+  "tier": "average",
+  "needs_base_url": false,
+  "escape_hatch": true,
+  "requires_sharing": false,
+  "deep_link": "https://zenodo.org/account/settings/applications/tokens/new",
+  "api_base": "https://zenodo.org",
+  "credential_fields": [
+    {
+      "id": "key",
+      "label": "Tu llave de Zenodo",
+      "shape": "aBcD…(60 caracteres)",
+      "secret": true
+    }
+  ],
+  "auth": {
+    "scheme": "bearer",
+    "token": "{key}"
+  },
+  "steps": [
+    {
+      "txt": "Te llevo a crear una llave en Zenodo. Ahí: pon un nombre (ej. 'Mi asistente') → marca «deposit:write» y «deposit:actions» si quieres que suba archivos, o deja solo lectura → Crear.",
+      "emphasis": [
+        "Crear"
+      ]
+    },
+    {
+      "txt": "Copia la llave que aparece. Es la única vez que Zenodo te la muestra — cópiala completa."
+    },
+    {
+      "txt": "Pega tu llave aquí."
+    }
+  ],
+  "validate": {
+    "method": "GET",
+    "path": "/api/deposit/depositions",
+    "identity_field": "-"
+  },
+  "permissions": [
+    "leer tus depósitos"
+  ],
+  "errors": {
+    "invalid": "Esa llave no funcionó o se borró — genera una nueva en Zenodo y pégala.",
+    "wrong_account": "Esa llave es de otra cuenta de Zenodo. Usa la de tu cuenta.",
+    "missing_permission:leer tus depósitos": "A la llave le falta permiso. Al crearla, marca al menos el acceso de lectura de depósitos.",
+    "network": "No pude verificar ahora — prueba de nuevo en un momento."
+  },
+  "capability_line": "Listo — ya puedo ver tus depósitos de Zenodo y citarlos.",
+  "trust_line": "Tu llave se guarda cifrada · la quitas cuando quieras.",
+  "verification": {
+    "deep_link_ok": true,
+    "anchor_ok": false,
+    "validated_with_test_key": false,
+    "notes": "Zenodo PAT = bearer (también acepta ?access_token=). validate /api/deposit/depositions devuelve lista (no trae identidad de usuario → identity_field '-' / sin saludo personal, mejorar con otro endpoint si existe). NO confirmé labels/endpoint en vivo. Sin test key, no validé."
+  },
+  "en": {
+    "steps": [
+      {
+        "txt": "I'll take you to create a token in Zenodo. There: give it a name (e.g. 'My assistant') → check «deposit:write» and «deposit:actions» if you want it to upload files, or leave it read-only → Create.",
+        "emphasis": [
+          "Create"
+        ]
+      },
+      {
+        "txt": "Copy the token that appears. This is the only time Zenodo shows it to you — copy it in full."
+      },
+      {
+        "txt": "Paste it here."
+      }
+    ],
+    "trust_line": "Your token is stored encrypted · remove it anytime.",
+    "capability_line": "Done — I can now see your Zenodo depositions and cite them.",
+    "errors": {
+      "invalid": "That token didn't work or was deleted — generate a new one in Zenodo and paste it.",
+      "wrong_account": "That token belongs to a different Zenodo account. Use the one from your account.",
+      "missing_permission:leer tus depósitos": "The token is missing a permission. When you create it, check at least read access to depositions.",
+      "network": "I couldn't verify right now — try again in a moment."
+    },
+    "credential_fields": [
+      {
+        "id": "key",
+        "label": "Your Zenodo key",
+        "shape": "aBcD…(60 characters)"
+      }
+    ]
+  }
+}

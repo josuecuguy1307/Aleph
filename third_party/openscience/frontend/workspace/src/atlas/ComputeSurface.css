@@ -1,0 +1,504 @@
+.compute-surface {
+  container: compute / inline-size;
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  flex: 1;
+  flex-direction: column;
+  overflow: hidden;
+  /* [Aleph · 2026-08-11] Superficie del panel, no el color del campo. Hay una regla gemela
+     en `styles/atlas.css` → `.compute-surface`; van las dos, porque cuál gana depende del
+     orden del bundle. Ver `.session-right-pane`. */
+  background: var(--surface-raised-strong);
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.compute-surface__panel,
+.compute-surface .kernel-panel {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+}
+
+.compute-surface .kernel-panel__body {
+  min-width: 0;
+  min-height: 0;
+  flex: 1;
+  padding: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.compute-surface .kernel-panel__message {
+  margin: 10px 12px 0;
+  padding: 8px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-bg-elevated);
+  color: var(--color-text-muted);
+  font-size: 12px;
+}
+
+.compute-surface .kernel-panel__message--error {
+  border-color: color-mix(in srgb, var(--color-error) 24%, var(--color-border));
+  color: var(--color-error);
+}
+
+.compute-surface .kernel-panel__empty {
+  display: flex;
+  min-height: 220px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 7px;
+  padding: 32px 24px;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.compute-surface .kernel-panel__empty > span {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  margin-bottom: 2px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  color: var(--color-text-faint);
+}
+
+.compute-surface .kernel-panel__empty strong {
+  color: var(--color-text);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.compute-surface .kernel-panel__empty p {
+  max-width: 310px;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.compute-surface .kernel-panel__sessions {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.compute-surface .kernel-session {
+  min-width: 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.compute-surface .kernel-session__header {
+  display: grid;
+  min-width: 0;
+  min-height: 44px;
+  box-sizing: border-box;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  background: var(--color-bg-subtle);
+  color: var(--color-text-muted);
+  font-size: 11px;
+}
+
+.compute-surface .kernel-session[data-current="true"] .kernel-session__header {
+  background: color-mix(in srgb, var(--color-bg-elevated) 72%, var(--color-bg));
+}
+
+.compute-surface .kernel-session__identity {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 7px;
+}
+
+.compute-surface .kernel-session__identity > span {
+  color: var(--color-text-faint);
+  font-size: 11px;
+}
+
+.compute-surface .kernel-session__identity strong {
+  overflow: hidden;
+  color: var(--color-text);
+  font-size: 12px;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.compute-surface .kernel-session__identity em {
+  flex: none;
+  padding: 1px 6px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  color: var(--color-text-faint);
+  font-size: 10px;
+  font-style: normal;
+}
+
+.compute-surface .kernel-session__header > span {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.compute-surface .kernel-panel__list {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0;
+}
+
+.compute-surface .kernel-card {
+  display: grid;
+  min-width: 0;
+  min-height: 62px;
+  box-sizing: border-box;
+  grid-template-columns: minmax(136px, 1fr) 54px 76px 58px 52px;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 14px;
+  border: 0;
+  border-top: 1px solid var(--color-border);
+  border-radius: 0;
+  background: var(--color-bg);
+  box-shadow: none;
+}
+
+.compute-surface .kernel-card:first-child {
+  border-top: 0;
+}
+
+.compute-surface .kernel-card__main {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 9px;
+}
+
+.compute-surface .kernel-card__language {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  flex: none;
+  place-items: center;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-bg-elevated);
+  color: var(--color-text-muted);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+.compute-surface .kernel-card__copy {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.compute-surface .kernel-card__copy strong {
+  overflow: hidden;
+  color: var(--color-text);
+  font-size: 12px;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.compute-surface .kernel-card__copy > span {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 5px;
+  overflow: hidden;
+  color: var(--color-text-faint);
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.compute-surface .kernel-card__copy i {
+  width: 6px;
+  height: 6px;
+  flex: none;
+  border-radius: 999px;
+  background: var(--color-text-faint);
+}
+
+.compute-surface .kernel-card__copy i[data-tone="active"] {
+  background: var(--color-success);
+}
+
+.compute-surface .kernel-card__copy i[data-tone="pending"] {
+  background: var(--color-warning);
+}
+
+.compute-surface .kernel-card__copy i[data-tone="danger"] {
+  background: var(--color-error);
+}
+
+.compute-surface .kernel-card__copy i[data-tone="ready"] {
+  background: var(--color-success);
+}
+
+.compute-surface .kernel-card__uptime,
+.compute-surface .kernel-card__metric {
+  color: var(--color-text-muted);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.compute-surface .kernel-card__metric {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.compute-surface .kernel-card__metric strong {
+  overflow: hidden;
+  color: var(--color-text);
+  font-size: 11px;
+  font-weight: 500;
+  text-overflow: ellipsis;
+}
+
+.compute-surface .kernel-card__metric small {
+  color: var(--color-text-faint);
+  font-size: 9px;
+  letter-spacing: 0;
+  line-height: 1;
+  text-transform: lowercase;
+}
+
+.compute-surface .kernel-card__stop {
+  min-width: 48px;
+  height: 28px;
+  padding: 0 9px;
+  border: 1px solid var(--color-border);
+  border-radius: 7px;
+  background: transparent;
+  color: var(--color-text-muted);
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.compute-surface .kernel-card__stop:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--color-error) 36%, var(--color-border));
+  color: var(--color-error);
+}
+
+.compute-surface .kernel-card__stop:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.compute-surface .kernel-card__stop:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.compute-surface .kernel-card__cell {
+  grid-column: 1 / -1;
+  min-width: 0;
+  margin: 0 0 1px 39px;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: 7px;
+  background: var(--color-bg-subtle);
+}
+
+.compute-surface .kernel-card__cell summary {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 8px;
+  color: var(--color-text-faint);
+  font-size: 10px;
+  cursor: pointer;
+  list-style-position: inside;
+}
+
+.compute-surface .kernel-card__cell summary strong,
+.compute-surface .kernel-card__cell summary small {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.compute-surface .kernel-card__cell summary strong {
+  color: var(--color-text);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.compute-surface .kernel-card__cell summary small {
+  color: var(--color-text-faint);
+  font-size: 10px;
+}
+
+.compute-surface .kernel-card__cell pre {
+  max-height: calc(5 * 1.45em + 16px);
+  margin: 0;
+  padding: 8px 10px;
+  overflow: auto;
+  border-top: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  font-family: var(--font-mono, monospace);
+  font-size: 10px;
+  line-height: 1.45;
+  white-space: pre;
+}
+
+.compute-surface .kernel-card__cell code {
+  font: inherit;
+}
+
+.compute-surface .remote-results {
+  border-top: 8px solid var(--color-bg-subtle);
+}
+
+.compute-surface .remote-job-card {
+  grid-template-columns: minmax(160px, 1fr) 64px minmax(118px, auto) auto;
+}
+
+.compute-surface .remote-job-card__result {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+  color: var(--color-text-muted);
+}
+
+.compute-surface .remote-job-card__result strong {
+  color: var(--color-text);
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.compute-surface .remote-job-card__result small {
+  overflow: hidden;
+  color: var(--color-text-faint);
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.compute-surface .remote-job-card__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 5px;
+}
+
+.compute-surface .remote-job-card__actions button {
+  height: 28px;
+  padding: 0 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 7px;
+  background: transparent;
+  color: var(--color-text-muted);
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.compute-surface .remote-job-card__actions button:hover:not(:disabled) {
+  color: var(--color-text);
+  border-color: var(--color-border-strong, var(--color-border));
+}
+
+.compute-surface .remote-job-card__actions button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.compute-surface .remote-job-card__warning,
+.compute-surface .remote-job-card__output {
+  grid-column: 1 / -1;
+  margin: 0 0 2px 39px;
+  padding: 8px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 7px;
+  background: var(--color-bg-subtle);
+  color: var(--color-text-muted);
+  font-size: 11px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.compute-surface .remote-job-card__warning {
+  border-color: color-mix(in srgb, var(--color-error) 28%, var(--color-border));
+  color: var(--color-error);
+}
+
+@container compute (max-width: 470px) {
+  .compute-surface .kernel-session__header {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 3px;
+    padding-block: 9px;
+  }
+
+  .compute-surface .kernel-session__header > span {
+    padding-left: 18px;
+  }
+
+  .compute-surface .kernel-card {
+    grid-template-columns: minmax(0, 1fr) auto auto auto;
+    gap: 8px;
+    padding: 10px 12px;
+  }
+
+  .compute-surface .kernel-card__main {
+    grid-column: 1 / -1;
+  }
+
+  .compute-surface .kernel-card__uptime {
+    padding-left: 39px;
+  }
+
+  .compute-surface .remote-job-card {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .compute-surface .remote-job-card__result {
+    padding-left: 39px;
+  }
+}
+
+@container compute (max-width: 350px) {
+  .compute-surface .kernel-card {
+    grid-template-columns: minmax(0, 1fr) auto auto;
+  }
+
+  .compute-surface .kernel-card__uptime {
+    display: none;
+  }
+
+  .compute-surface .remote-job-card__result {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .compute-surface * {
+    scroll-behavior: auto;
+  }
+}

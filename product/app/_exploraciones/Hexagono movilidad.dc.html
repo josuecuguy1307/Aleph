@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:#DED6C7;font-family:'Hanken Grotesk',system-ui,-apple-system,sans-serif;color:#2B2925;-webkit-font-smoothing:antialiased}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-2.5px)}}
+  @keyframes bobBig{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+  @keyframes drift{0%,100%{transform:translateX(-7px)}50%{transform:translateX(7px)}}
+  @keyframes strideA{0%,100%{transform:rotate(16deg)}50%{transform:rotate(-16deg)}}
+  @keyframes strideB{0%,100%{transform:rotate(-16deg)}50%{transform:rotate(16deg)}}
+  @keyframes wave{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(26deg)}}
+  @keyframes boing{0%,100%{transform:translateY(0) scaleY(1)}40%{transform:translateY(-10px) scaleY(1.04)}60%{transform:translateY(2px) scaleY(.94)}}
+  @keyframes rolll{0%{transform:translateX(-9px)}50%{transform:translateX(9px)}100%{transform:translateX(-9px)}}
+  .orbit{transform-origin:32px 32px}
+  .hip{transform-box:fill-box;transform-origin:center top}
+  .ctr{transform-box:fill-box;transform-origin:center}
+</style>
+</helmet>
+
+<div style="min-height:100vh;padding:42px 40px 72px">
+  <div style="max-width:1180px;margin:0 auto">
+
+    <div style="font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#9A9082">Mascota · darle locomoción</div>
+    <h1 style="font-family:'Spectral',Georgia,serif;font-weight:600;font-size:31px;margin:8px 0 6px;letter-spacing:-.015em">¿Cómo se mueve por la pantalla?</h1>
+    <p style="margin:0 0 38px;color:#6F6A60;font-size:14.5px;max-width:74ch;line-height:1.6">El hexágono contento, ahora con formas de desplazarse — no solo girando las órbitas. Cinco maneras de que camine, flote o ruede. Todas mantienen la cara feliz. Decime cuál le da mejor «cuerpo».</p>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px">
+
+      <!-- 1 · CON PATITAS (camina) -->
+      <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+        <div style="display:flex;align-items:center;justify-content:center;height:194px;background:#16172A">
+          <svg width="116" height="116" viewBox="0 0 64 70" fill="none">
+            <g style="animation:bob .7s ease-in-out infinite">
+              <g class="orbit" style="animation:spin 12s linear infinite">
+                <g transform="rotate(0 32 32)"><ellipse cx="32" cy="32" rx="22" ry="8.5" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="54" cy="32" r="2.7" fill="#C9C6FF"></circle></g>
+                <g transform="rotate(60 32 32)"><ellipse cx="32" cy="32" rx="22" ry="8.5" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="54" cy="32" r="2.7" fill="#C9C6FF"></circle></g>
+                <g transform="rotate(120 32 32)"><ellipse cx="32" cy="32" rx="22" ry="8.5" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="54" cy="32" r="2.7" fill="#C9C6FF"></circle></g>
+              </g>
+              <g class="hip" style="animation:strideA .7s ease-in-out infinite"><rect x="27.5" y="42" width="3.2" height="8" rx="1.6" fill="#7C79DE"></rect><circle cx="29.1" cy="50.5" r="2.2" fill="#7C79DE"></circle></g>
+              <g class="hip" style="animation:strideB .7s ease-in-out infinite"><rect x="33.3" y="42" width="3.2" height="8" rx="1.6" fill="#7C79DE"></rect><circle cx="34.9" cy="50.5" r="2.2" fill="#7C79DE"></circle></g>
+              <path d="M32 20 L42.4 26 L42.4 38 L32 44 L21.6 38 L21.6 26 Z" fill="#8E8BF5" stroke="#8E8BF5" stroke-width="4" stroke-linejoin="round"></path>
+              <path d="M26.6 33 q2.4 -3 4.8 0" stroke="#211E3A" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+              <path d="M33.6 33 q2.4 -3 4.8 0" stroke="#211E3A" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+            </g>
+          </svg>
+        </div>
+        <div style="padding:14px 16px;border-top:1px solid #F0E8D8">
+          <div style="font-family:'Spectral',serif;font-weight:600;font-size:16px">1 · Con patitas · camina</div>
+          <div style="font-size:12.5px;color:#7C766B;line-height:1.5;margin-top:3px">Dos patitas que dan pasos. Lo más personaje — puede cruzar la pantalla caminando.</div>
+        </div>
+      </div>
+
+      <!-- 2 · PATAS LARGAS -->
+      <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+        <div style="display:flex;align-items:center;justify-content:center;height:194px;background:#16172A">
+          <svg width="116" height="116" viewBox="0 0 64 70" fill="none">
+            <g style="animation:bob .85s ease-in-out infinite">
+              <g class="orbit" style="animation:spin 12s linear infinite">
+                <g transform="rotate(0 32 30)"><ellipse cx="32" cy="30" rx="21" ry="8" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="53" cy="30" r="2.6" fill="#C9C6FF"></circle></g>
+                <g transform="rotate(60 32 30)"><ellipse cx="32" cy="30" rx="21" ry="8" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="53" cy="30" r="2.6" fill="#C9C6FF"></circle></g>
+                <g transform="rotate(120 32 30)"><ellipse cx="32" cy="30" rx="21" ry="8" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="53" cy="30" r="2.6" fill="#C9C6FF"></circle></g>
+              </g>
+              <g class="hip" style="animation:strideA .85s ease-in-out infinite"><rect x="28.2" y="40" width="2.4" height="14" rx="1.2" fill="#6E6BD0"></rect><ellipse cx="29.4" cy="54.5" rx="3" ry="1.8" fill="#6E6BD0"></ellipse></g>
+              <g class="hip" style="animation:strideB .85s ease-in-out infinite"><rect x="33.4" y="40" width="2.4" height="14" rx="1.2" fill="#6E6BD0"></rect><ellipse cx="34.6" cy="54.5" rx="3" ry="1.8" fill="#6E6BD0"></ellipse></g>
+              <path d="M32 18 L42.4 24 L42.4 36 L32 42 L21.6 36 L21.6 24 Z" fill="#8E8BF5" stroke="#8E8BF5" stroke-width="4" stroke-linejoin="round"></path>
+              <path d="M26.6 31 q2.4 -3 4.8 0" stroke="#211E3A" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+              <path d="M33.6 31 q2.4 -3 4.8 0" stroke="#211E3A" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+            </g>
+          </svg>
+        </div>
+        <div style="padding:14px 16px;border-top:1px solid #F0E8D8">
+          <div style="font-family:'Spectral',serif;font-weight:600;font-size:16px">2 · Patas largas · trota</div>
+          <div style="font-size:12.5px;color:#7C766B;line-height:1.5;margin-top:3px">Patitas finas tipo robot. Más ágil y desgarbado, con un aire simpático.</div>
+        </div>
+      </div>
+
+      <!-- 3 · CON BRACITOS (saluda) -->
+      <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+        <div style="display:flex;align-items:center;justify-content:center;height:194px;background:#16172A">
+          <svg width="116" height="116" viewBox="0 0 64 70" fill="none">
+            <g style="animation:bob 1.4s ease-in-out infinite">
+              <g class="orbit" style="animation:spin 13s linear infinite">
+                <g transform="rotate(0 32 30)"><ellipse cx="32" cy="30" rx="21" ry="8" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="53" cy="30" r="2.6" fill="#C9C6FF"></circle></g>
+                <g transform="rotate(60 32 30)"><ellipse cx="32" cy="30" rx="21" ry="8" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="53" cy="30" r="2.6" fill="#C9C6FF"></circle></g>
+                <g transform="rotate(120 32 30)"><ellipse cx="32" cy="30" rx="21" ry="8" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="53" cy="30" r="2.6" fill="#C9C6FF"></circle></g>
+              </g>
+              <rect x="27.6" y="40" width="3" height="7.5" rx="1.5" fill="#7C79DE"></rect><circle cx="29.1" cy="48" r="2.1" fill="#7C79DE"></circle>
+              <rect x="33.4" y="40" width="3" height="7.5" rx="1.5" fill="#7C79DE"></rect><circle cx="34.9" cy="48" r="2.1" fill="#7C79DE"></circle>
+              <g class="hip" style="transform-origin:center;animation:wave 1s ease-in-out infinite"><rect x="41" y="28" width="2.8" height="8" rx="1.4" fill="#7C79DE" transform="rotate(35 42.4 28)"></rect><circle cx="47.5" cy="22.5" r="2.1" fill="#7C79DE"></circle></g>
+              <path d="M32 18 L42.4 24 L42.4 36 L32 42 L21.6 36 L21.6 24 Z" fill="#8E8BF5" stroke="#8E8BF5" stroke-width="4" stroke-linejoin="round"></path>
+              <path d="M26.6 31 q2.4 -3 4.8 0" stroke="#211E3A" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+              <path d="M33.6 31 q2.4 -3 4.8 0" stroke="#211E3A" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+            </g>
+          </svg>
+        </div>
+        <div style="padding:14px 16px;border-top:1px solid #F0E8D8">
+          <div style="font-family:'Spectral',serif;font-weight:600;font-size:16px">3 · Con bracitos · saluda</div>
+          <div style="font-size:12.5px;color:#7C766B;line-height:1.5;margin-top:3px">Patitas + un bracito que saluda. El más expresivo — sirve para recibir o guiar.</div>
+        </div>
+      </div>
+
+      <!-- 4 · SIN PATITAS (flota) -->
+      <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+        <div style="display:flex;align-items:center;justify-content:center;height:194px;background:#16172A">
+          <svg width="116" height="116" viewBox="0 0 64 70" fill="none">
+            <g style="animation:drift 4s ease-in-out infinite">
+              <g style="animation:bobBig 2.4s ease-in-out infinite">
+                <ellipse class="ctr" cx="32" cy="52" rx="11" ry="2.6" fill="#000" opacity="0.18" style="animation:bob 2.4s ease-in-out infinite"></ellipse>
+                <g class="orbit" style="animation:spin 11s linear infinite">
+                  <g transform="rotate(0 32 30)"><ellipse cx="32" cy="30" rx="22" ry="8.5" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="54" cy="30" r="2.7" fill="#C9C6FF"></circle></g>
+                  <g transform="rotate(60 32 30)"><ellipse cx="32" cy="30" rx="22" ry="8.5" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="54" cy="30" r="2.7" fill="#C9C6FF"></circle></g>
+                  <g transform="rotate(120 32 30)"><ellipse cx="32" cy="30" rx="22" ry="8.5" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="54" cy="30" r="2.7" fill="#C9C6FF"></circle></g>
+                </g>
+                <path d="M32 18 L42.4 24 L42.4 36 L32 42 L21.6 36 L21.6 24 Z" fill="#8E8BF5" stroke="#8E8BF5" stroke-width="4" stroke-linejoin="round"></path>
+                <path d="M26.6 31 q2.4 -3 4.8 0" stroke="#211E3A" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+                <path d="M33.6 31 q2.4 -3 4.8 0" stroke="#211E3A" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+              </g>
+            </g>
+          </svg>
+        </div>
+        <div style="padding:14px 16px;border-top:1px solid #F0E8D8">
+          <div style="font-family:'Spectral',serif;font-weight:600;font-size:16px">4 · Sin patitas · flota</div>
+          <div style="font-size:12.5px;color:#7C766B;line-height:1.5;margin-top:3px">Levita y se desliza de un lado a otro, con su sombrita debajo. Etéreo y limpio.</div>
+        </div>
+      </div>
+
+      <!-- 5 · ÓRBITA-RUEDA (rueda) -->
+      <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+        <div style="display:flex;align-items:center;justify-content:center;height:194px;background:#16172A">
+          <svg width="116" height="116" viewBox="0 0 64 70" fill="none">
+            <g style="animation:rolll 3.4s ease-in-out infinite">
+              <g class="ctr" style="transform-origin:32px 48px;animation:spin 1.4s linear infinite">
+                <circle cx="32" cy="48" r="13" stroke="#6E6BD0" stroke-width="1.8" fill="none"></circle>
+                <circle cx="32" cy="35.5" r="2.4" fill="#C9C6FF"></circle>
+                <circle cx="32" cy="60.5" r="2.4" fill="#C9C6FF"></circle>
+                <circle cx="19.5" cy="48" r="2.4" fill="#C9C6FF"></circle>
+                <circle cx="44.5" cy="48" r="2.4" fill="#C9C6FF"></circle>
+              </g>
+              <g style="animation:bob .7s ease-in-out infinite">
+                <path d="M32 12 L42.4 18 L42.4 30 L32 36 L21.6 30 L21.6 18 Z" fill="#8E8BF5" stroke="#8E8BF5" stroke-width="4" stroke-linejoin="round"></path>
+                <path d="M26.6 25 q2.4 -3 4.8 0" stroke="#211E3A" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+                <path d="M33.6 25 q2.4 -3 4.8 0" stroke="#211E3A" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+              </g>
+            </g>
+          </svg>
+        </div>
+        <div style="padding:14px 16px;border-top:1px solid #F0E8D8">
+          <div style="font-family:'Spectral',serif;font-weight:600;font-size:16px">5 · Órbita-rueda · rueda</div>
+          <div style="font-size:12.5px;color:#7C766B;line-height:1.5;margin-top:3px">La órbita se vuelve su rueda: anda como en monociclo. La idea más original — el movimiento ES la marca.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:38px;padding-top:24px;border-top:1px solid #CFC6B5">
+      <span style="font-size:13.5px;color:#6F6A60">¿Cuál le da mejor cuerpo? La elijo y armo el set completo (parado, caminando, contento) + lockup.</span>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>El Cuarto · armando un agente</title>
+<script src="../aleph-config.js"></script>
+<script src="../vendor/supabase.min.js"></script>
+<script src="../supabase-auth.js"></script>
+<script src="../paywall.js"></script>
+<script src="../theme.js"></script>
+<script src="../nav.js"></script>
+<script src="../bridge.js"></script>
+<link rel="stylesheet" href="../aleph-tokens.css"><!-- [identidad visual] la piel: tokens, forma y tipografía en un solo lugar -->
+<style>
+  :root{ --bg:#0a0910; --panel:#14101e; --panel2:#100d18; --bd:#2a2440; --bd2:#1e1a2b;
+    --ink:#efedf7; --ink2:#c4bedd; --mut:#857ea3; --nuc:#8b7ff5;
+    --fuentes:#2f9d6b; --mesa:#6f5fe0; --entrega:#c79a4e; --eco:#4fd6c0; --gate:#e0a64e; }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-ui)}
+  .mono{font-family:'Spline Sans Mono',var(--font-mono)}
+  header{padding:14px 24px;border-bottom:1px solid var(--bd2);display:flex;align-items:center;gap:14px}
+  header .dot{width:26px;height:26px;border-radius:var(--r-xs);background:linear-gradient(135deg,#8b7ff5,#6f5fe0)}
+  header h1{font-size:15px;font-weight:500;margin:0}
+  header .sub{font-size:11.5px;color:var(--mut)}
+  header .spacer{flex:1}
+  .wrap{display:flex;gap:16px;padding:16px 24px;align-items:stretch;min-height:calc(100vh - 110px)}
+  button{cursor:pointer;font:inherit;border:none;border-radius:var(--r-sm);font-weight:500}
+  .btn{background:var(--nuc);color:#0a0910;padding:9px 16px;font-size:13px}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+  .btn.wide{width:100%}
+  .btn.ghost{background:#1a1727;color:var(--ink2);border:1px solid var(--bd)}
+  input,select,textarea{background:#17131f;border:1px solid #2a2540;border-radius:var(--r-sm);color:var(--ink);padding:8px 10px;font:inherit;font-size:13px;width:100%}
+  textarea{resize:vertical;min-height:46px}
+  /* COPILOTO */
+  .copilot{width:280px;flex:none;background:var(--panel);border:1px solid var(--bd);border-radius:var(--r-md);display:flex;flex-direction:column;overflow:hidden}
+  .copilot .hd{padding:11px 14px;border-bottom:1px solid var(--bd2);font-size:12.5px;font-weight:500;color:var(--ink2)}
+  .copilot .log{flex:1;padding:13px;display:flex;flex-direction:column;gap:8px;overflow:auto;min-height:120px}
+  .msg{max-width:92%;font-size:12.5px;line-height:1.45;border-radius:var(--r-md);padding:8px 11px}
+  .msg.me{align-self:flex-end;background:#2a2440}
+  .msg.ai{align-self:flex-start;background:#17131f;border:1px solid #241f33;color:var(--ink2)}
+  .msg.eco{align-self:flex-start;background:#15211b;border:1px solid var(--fuentes);color:#cfeede;font-style:italic}
+  .composer{padding:11px;border-top:1px solid var(--bd2);display:flex;flex-direction:column;gap:7px}
+  .prop{margin-top:8px;background:#13111b;border:1px dashed var(--nuc);border-radius:var(--r-sm);padding:9px}
+  .prop .row{display:flex;gap:6px;margin-top:7px}.prop .row button{flex:1;padding:6px;font-size:12px}
+  .prop .acc{background:var(--fuentes);color:#06140d}.prop .rej{background:#241f33;color:var(--ink2)}
+  /* DIORAMA */
+  .stage{flex:1;background:var(--panel2);border:1px solid #221d31;border-radius:var(--r-lg);display:flex;flex-direction:column;min-width:0;overflow:hidden}
+  .zones-hd{display:flex;justify-content:center;padding:12px;gap:16px}.zones-hd span{font-size:11px}
+  .zhd-f{color:var(--fuentes)}.zhd-m{color:var(--mesa)}.zhd-e{color:var(--entrega)}.arrow{color:#3a3350}
+  .zones{flex:1;display:grid;grid-template-columns:1fr 1fr 1fr;position:relative}
+  .zone{border-right:1px dashed #221d31;padding:16px 12px 60px;display:flex;flex-direction:column;gap:10px;position:relative;transition:background .15s}
+  .zone:last-child{border-right:none}
+  .zone.over{background:rgba(139,127,245,.06)}
+  .zone .ztag{font-size:10px;letter-spacing:.1em;text-transform:uppercase;opacity:.6;text-align:center;margin-bottom:4px}
+  .zf .ztag{color:var(--fuentes)}.zm .ztag{color:var(--mesa)}.ze .ztag{color:var(--entrega)}
+  .nucleo{position:absolute;left:50%;top:48%;transform:translate(-50%,-50%);z-index:8;text-align:center;pointer-events:none}
+  .nucleo .orb{width:66px;height:66px;border-radius:50%;background:radial-gradient(circle at 38% 30%,#d6ccff,#7a6cf0 72%);box-shadow:0 0 26px rgba(139,127,245,.65);display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto}
+  .nucleo .nm{margin-top:5px;font-size:11px;color:var(--ink2);background:rgba(20,16,30,.7);border:1px solid #3a3158;border-radius:var(--r-xs);padding:2px 9px;display:inline-block}
+  .tile{background:#1a1727;border:1px solid var(--bd);border-radius:var(--r-sm);padding:9px 11px;position:relative;z-index:6;cursor:grab;transition:box-shadow .2s,border-color .2s}
+  .tile.zf{border-left:3px solid var(--fuentes)}.tile.zm{border-left:3px solid var(--mesa)}.tile.ze{border-left:3px solid var(--entrega)}
+  .tile.run{border-color:var(--eco);box-shadow:0 0 16px rgba(79,214,192,.5)}
+  .tile .tl{font-size:12.5px;font-weight:500;display:flex;align-items:center;gap:6px}
+  .tile .ts{font-size:10px;color:var(--mut);margin-top:2px}
+  .tile .x{position:absolute;top:5px;right:7px;color:var(--mut);font-size:13px;cursor:pointer;opacity:.6}
+  .lock{color:var(--gate);font-size:11px}
+  .conx{color:#cdb0e6;font-size:10px;border:1px solid #4a3f78;border-radius:var(--r-xs);padding:1px 5px;cursor:pointer}
+  svg.links{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:4}
+  /* DERECHA */
+  .side{width:300px;flex:none;display:flex;flex-direction:column;gap:12px;overflow:auto;max-height:calc(100vh - 130px)}
+  .card{background:var(--panel);border:1px solid var(--bd);border-radius:var(--r-md);padding:13px}
+  .card h3{margin:0 0 9px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--mut)}
+  .field{margin-bottom:9px}.field label{font-size:11px;color:var(--etiqueta,#9a93b3);display:block;margin-bottom:4px}
+  .palette{display:flex;flex-direction:column;gap:6px;max-height:240px;overflow:auto}
+  .pchip{display:flex;align-items:center;gap:8px;background:#1a1727;border:1px solid var(--bd);border-radius:var(--r-sm);padding:7px 9px;cursor:grab}
+  .pchip .zdot{width:8px;height:8px;border-radius:50%;flex:none}
+  .pchip .pl{font-size:12px;flex:1;min-width:0}.pchip .pl b{display:block;font-weight:500}.pchip .pl small{color:var(--mut);font-size:10px}
+  .pchip .pb{font-size:9px;color:var(--mut)}
+  .zdot.fuentes{background:var(--fuentes)}.zdot.mesa{background:var(--mesa)}.zdot.entrega{background:var(--entrega)}
+  .status{font-size:11px;color:var(--mut);font-family:'Spline Sans Mono',monospace}
+  .pieceModal{position:fixed;inset:0;background:rgba(8,6,14,.7);display:none;align-items:center;justify-content:center;z-index:50}
+  .pieceBox{width:560px;max-width:92vw;background:var(--panel);border:1px solid var(--bd);border-radius:var(--r-md);overflow:hidden}
+  .pieceBox .ph{padding:14px 18px;border-bottom:1px solid var(--bd2);display:flex;align-items:center;gap:10px}
+  .tabs{display:flex;gap:0;background:#16131f;border:1px solid #2a2438;border-radius:var(--r-sm);padding:3px;margin-left:auto}
+  .tabs span{font-size:12px;padding:5px 12px;border-radius:var(--r-xs);color:var(--mut)}.tabs span.on{background:var(--mesa);color:#fff}
+  .pieceBody{padding:18px;font-size:13px;color:var(--ink2);min-height:120px}
+</style>
+</head>
+<body>
+<header>
+  <div class="dot"></div>
+  <div><h1>El Cuarto · armando un agente</h1><div class="sub mono" id="subhd"></div></div>
+  <div class="spacer"></div>
+  <button class="btn" id="vida" disabled>Darle vida ▸</button>
+</header>
+
+<div class="wrap">
+  <!-- COPILOTO -->
+  <div class="copilot">
+    <div class="hd">Aleph · copiloto</div>
+    <div class="log" id="log"></div>
+    <div class="composer">
+      <textarea id="intent" placeholder="Dile qué quieres que haga…"></textarea>
+      <button class="btn ghost" id="forjar">Pídele a la forja ↑</button>
+    </div>
+  </div>
+
+  <!-- DIORAMA -->
+  <div class="stage">
+    <div class="zones-hd mono">
+      <span class="zhd-f">① FUENTES · lee</span><span class="arrow">→</span>
+      <span class="zhd-m">② MESA · procesa</span><span class="arrow">→</span>
+      <span class="zhd-e">③ ENTREGA · saca</span>
+    </div>
+    <div class="zones">
+      <div class="zone zf" id="z-fuentes" data-zone="fuentes"><div class="ztag">Fuentes</div></div>
+      <div class="zone zm" id="z-mesa" data-zone="mesa"><div class="ztag">Mesa</div></div>
+      <div class="zone ze" id="z-entrega" data-zone="entrega"><div class="ztag">Entrega</div></div>
+      <div class="nucleo" id="nucleo"><div class="orb">🧠</div><div class="nm" id="nuc-name">núcleo</div></div>
+      <svg class="links" id="links"></svg>
+    </div>
+  </div>
+
+  <!-- DERECHA -->
+  <div class="side">
+    <div class="card">
+      <h3>Núcleo</h3>
+      <div class="field"><label>Nombre</label><input id="nuc" value="Reportero"></div>
+      <div class="field"><label>Qué hace (objetivo)</label><textarea id="obj" placeholder="ej: cada lunes lee los reportes y arma el resumen"></textarea></div>
+      <div class="field"><label>Mente</label>
+        <select id="model"><option value="equilibrado">Equilibrado</option><option value="veloz">Veloz</option><option value="potente">Potente</option></select>
+      </div>
+      <button class="btn ghost wide" id="addMem">+ Memoria (lo que sabe)</button>
+    </div>
+    <div class="card">
+      <h3>Piezas — arrastra a una zona</h3>
+      <input id="psearch" placeholder="buscar pieza…" style="margin-bottom:8px">
+      <div class="palette" id="palette"><div class="status">cargando…</div></div>
+    </div>
+    <div class="status mono" id="status"></div>
+  </div>
+</div>
+
+<!-- modal de pieza abierta (3 profundidades = placeholder, Fase 5) -->
+<div class="pieceModal" id="pieceModal"><div class="pieceBox">
+  <div class="ph"><b id="pieceTitle">Pieza</b>
+    <div class="tabs"><span class="on">Chat</span><span>Opciones</span><span>Código</span></div>
+    <span style="cursor:pointer;margin-left:8px;color:var(--mut)" id="pieceClose">✕</span></div>
+  <div class="pieceBody" id="pieceBody"></div>
+</div></div>
+
+<script src="../auth.js"></script>
+<script src="projection.js"></script>
+<script>
+const ST = { user:null, catalog:[], byId:{}, nucleo:{name:"Reportero",model:"equilibrado",descripcion:"",nicho:"general"},
+             blocks:[], links:[], proposal:null, editing:null };
+const $=(id)=>document.getElementById(id);
+const ZMAP={fuentes:"z-fuentes",mesa:"z-mesa",entrega:"z-entrega"};
+function log(t,who){const d=document.createElement('div');d.className='msg '+(who||'ai');d.textContent=t;$('log').appendChild(d);$('log').scrollTop=1e9;}
+function setStatus(s){$('status').textContent=s||'';}
+
+async function ensureSession(){
+  // contrato AlephSession: sessionStorage → fallback localStorage (lo que sobrevive relaunches)
+  let u=null; try{u=JSON.parse(sessionStorage.getItem('puppet_user')||localStorage.getItem('puppet_user')||'null');}catch(e){}
+  if(u&&u.id&&u.session_token){ST.user=u;return u;}
+  const r=await fetch('/v1/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:'cuarto-skeleton@dev.local'})});
+  const d=await r.json(); u={id:d.id,session_token:d.session_token,email:d.email};
+  sessionStorage.setItem('puppet_user',JSON.stringify(u)); ST.user=u; return u;
+}
+
+async function loadCatalog(){
+  const r=await fetch('/v1/atoms/catalog?user_id='+encodeURIComponent(ST.user.id));
+  const d=await r.json(); ST.catalog=d.atoms||[]; ST.byId={}; ST.catalog.forEach(a=>ST.byId[a.id]=a);
+  renderPalette();
+}
+function renderPalette(){
+  const q=($('psearch').value||'').toLowerCase();
+  const host=$('palette'); host.innerHTML='';
+  const list=ST.catalog.filter(a=>!q||(a.label||'').toLowerCase().includes(q)||(a.server||'').toLowerCase().includes(q));
+  if(!list.length){host.innerHTML='<div class="status">sin piezas</div>';return;}
+  list.forEach(a=>{
+    const el=document.createElement('div'); el.className='pchip'; el.draggable=true; el.dataset.id=a.id;
+    el.innerHTML=`<span class="zdot ${a.zone}"></span><span class="pl"><b>${a.label||a.server}</b><small>${a.sub||a.server}</small></span><span class="pb">${a.atom==='conexion'?'🔌':''} ${a.badge||''}</span>`;
+    el.addEventListener('dragstart',e=>{e.dataTransfer.setData('text/atom',a.id);});
+    el.addEventListener('click',()=>addAtom(a.id,a.zone));
+    host.appendChild(el);
+  });
+}
+
+function addAtom(id, zone){
+  const a=ST.byId[id]; if(!a) return;
+  if(a.atom==='conexion' && a.state!=='connected'){
+    log('“'+a.label+'” necesita conectar tu cuenta — conéctala y vuelve.','ai');
+    if(a.connectable!==false) window.open('../Conectar.dc.html?c='+encodeURIComponent(a.connector||''),'_blank');
+  }
+  const bid='blk-'+a.id;
+  if(ST.blocks.some(b=>b.id===bid)){ setStatus('esa pieza ya está'); return; }
+  ST.blocks.push({id:bid,atom:a.atom,card_id:a.id,label:a.label||a.server,ref:a.server,tools:a.tools||[],
+    zone:zone||a.zone||'mesa',belt_ref:a.belt_ref,connector:a.connector||null,auth:a.auth||'keyless'});
+  ST.links.push({from:bid,to:'nucleo'});
+  renderZones(); $('vida').disabled=ST.blocks.length===0;
+}
+function addMemoria(){
+  if(ST.blocks.some(b=>b.atom==='contexto')){setStatus('ya tiene memoria');return;}
+  ST.blocks.push({id:'blk-memoria',atom:'contexto',card_id:'memoria',label:'Memoria',ref:null,tools:[],zone:'mesa',belt_ref:null});
+  ST.links.push({from:'blk-memoria',to:'nucleo'}); renderZones(); $('vida').disabled=ST.blocks.length===0;
+  log('Le agregué memoria: lo que le enseñes lo recuerda.','ai');
+}
+function removeBlock(bid){ ST.blocks=ST.blocks.filter(b=>b.id!==bid); ST.links=ST.links.filter(l=>l.from!==bid); renderZones(); $('vida').disabled=ST.blocks.length===0; }
+
+function renderZones(){
+  Object.values(ZMAP).forEach(zid=>{const z=$(zid);[...z.querySelectorAll('.tile')].forEach(t=>t.remove());});
+  const ghosts=ST.proposal?(ST.proposal.blocks||[]).map(b=>Object.assign({__ghost:true},b)):[];
+  const all=ST.blocks.concat(ghosts);
+  all.forEach(b=>{
+    const z=$(ZMAP[b.zone]); if(!z) return;
+    const isGate=(b.zone==='entrega');
+    const t=document.createElement('div'); t.className='tile z'+b.zone[0]+(b.__ghost?' ghost':''); t.id='tile-'+b.id;
+    t.draggable=!b.__ghost; t.dataset.id=b.id;
+    const conx=(b.atom==='conexion')?`<span class="conx">conexión</span>`:'';
+    const lock=isGate?`<span class="lock" title="pide tu OK antes de salir">🔒</span>`:'';
+    t.innerHTML=`${b.__ghost?'':'<span class="x" title="quitar">✕</span>'}<div class="tl">${b.label} ${lock}</div><div class="ts mono">${b.ref||'memoria'}${b.tools&&b.tools.length?(' · '+b.tools.slice(0,3).join(', ')):''} ${conx}</div>`;
+    if(!b.__ghost){
+      t.querySelector('.x').addEventListener('click',ev=>{ev.stopPropagation();removeBlock(b.id);});
+      t.addEventListener('dragstart',e=>e.dataTransfer.setData('text/move',b.id));
+      t.addEventListener('click',()=>openPiece(b));
+    }
+    z.appendChild(t);
+  });
+  drawLinks();
+}
+function drawLinks(){
+  const svg=$('links'); const box=svg.getBoundingClientRect(); svg.innerHTML='';
+  const nuc=$('nucleo').getBoundingClientRect(); const nx=nuc.left+nuc.width/2-box.left, ny=nuc.top+nuc.height/2-box.top;
+  ST.blocks.forEach(b=>{ const el=$('tile-'+b.id); if(!el)return; const r=el.getBoundingClientRect();
+    const x=r.left+r.width/2-box.left,y=r.top+r.height/2-box.top;
+    const p=document.createElementNS('http://www.w3.org/2000/svg','path');
+    p.setAttribute('d','M'+x+' '+y+' L'+nx+' '+ny); p.setAttribute('stroke','#6f5fe0'); p.setAttribute('stroke-width','2');
+    p.setAttribute('fill','none'); p.setAttribute('stroke-dasharray','3 7'); p.setAttribute('opacity','.45'); p.id='link-'+b.id; svg.appendChild(p);
+  });
+}
+// dropzones
+Object.keys(ZMAP).forEach(z=>{ const el=$(ZMAP[z]);
+  el.addEventListener('dragover',e=>{e.preventDefault();el.classList.add('over');});
+  el.addEventListener('dragleave',()=>el.classList.remove('over'));
+  el.addEventListener('drop',e=>{e.preventDefault();el.classList.remove('over');
+    const aid=e.dataTransfer.getData('text/atom'); const mid=e.dataTransfer.getData('text/move');
+    if(aid) addAtom(aid,z);
+    else if(mid){const b=ST.blocks.find(x=>x.id===mid); if(b){b.zone=z; renderZones();}}
+  });
+});
+
+// pieza abierta — 3 profundidades (placeholder, Fase 5)
+function openPiece(b){
+  $('pieceTitle').textContent=b.label;
+  $('pieceBody').innerHTML = b.atom==='contexto'
+    ? 'Aquí podrás cargarle documentos y recetas para que recuerde. <i>(Opciones y Código llegan en la próxima fase.)</i>'
+    : `Pieza <b>${b.ref}</b> · tools: ${(b.tools||[]).join(', ')||'—'} · zona ${b.zone} · de solo lectura` +
+      `<button class="qmark" type="button" data-guia="piezas#solo-lectura" title="Piezas de solo lectura" aria-label="Ayuda: piezas de solo lectura">?</button>`;
+  $('pieceModal').style.display='flex';
+}
+$('pieceClose').onclick=()=>$('pieceModal').style.display='none';
+$('pieceModal').addEventListener('click',e=>{if(e.target===$('pieceModal'))$('pieceModal').style.display='none';});
+
+// FORJA (asistente; v0 propone 1 pieza)
+async function forjar(){
+  const intent=$('intent').value.trim(); if(!intent)return;
+  log(intent,'me'); $('forjar').disabled=true;
+  try{
+    const r=await fetch('/v1/forge',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({intent,current_canvas:{blocks:ST.blocks}})});
+    const d=await r.json(); ST.proposal=d.proposal; log(d.narration,'ai'); renderZones();
+    const bl=(d.proposal&&d.proposal.blocks)||[];
+    if(!bl.length){ log('no encontré piezas para eso','ai'); $('forjar').disabled=false; return; }
+    const host=document.createElement('div'); host.className='prop';
+    host.innerHTML=`<div style="font-size:12px;color:#cfc8ee">Propongo: ${bl.map(b=>`<b>${b.label}</b>→${b.zone}`).join(' · ')}</div><div class="row"><button class="acc">Aceptar todo</button><button class="rej">No</button></div>`;
+    $('log').appendChild(host); $('log').scrollTop=1e9;
+    host.querySelector('.acc').onclick=()=>{const blks=(ST.proposal&&ST.proposal.blocks)||[]; ST.proposal=null; blks.forEach(b=>addAtom(b.card_id,b.zone)); host.remove();};
+    host.querySelector('.rej').onclick=()=>{ST.proposal=null; renderZones(); host.remove();};
+  }catch(e){log('falló la forja: '+e.message,'ai');}
+  $('forjar').disabled=false;
+}
+
+// DARLE VIDA → crear/actualizar puppet → Sala
+async function darleVida(){
+  $('vida').disabled=true; setStatus('dándole vida…');
+  try{
+    ST.nucleo.name=$('nuc').value.trim()||'Mi agente'; ST.nucleo.model=$('model').value; ST.nucleo.descripcion=$('obj').value.trim();
+    const config=Projection.canvasToRecipe(ST);
+    // validar contra el schema antes de guardar
+    const vr=await (await fetch('/v1/recipes/validate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({recipe:config})})).json();
+    if(!vr.valid){ log('la receta no es válida: '+(vr.errors||[]).join('; '),'ai'); setStatus('receta inválida'); $('vida').disabled=false; return; }
+    let pid=ST.editing;
+    if(pid){
+      await fetch('/v1/puppets/'+pid+'/config',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({config})});
+    }else{
+      const cr=await fetch('/v1/puppets',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({owner_id:ST.user.id,name:config.meta.name,nicho:config.meta.nicho,config})});
+      if(!cr.ok){const e=await cr.text(); throw new Error('crear '+cr.status+' '+e.slice(0,160));}
+      pid=(await cr.json()).id;
+    }
+    log('✦ '+config.meta.name+' cobró vida — te llevo a la Sala.','eco');
+    setStatus('listo · '+pid.slice(0,8));
+    // 4A#5 · PUENTE DE CONTINUIDAD: levanta el frame (átomo mascota + partículas convergiendo) AHORA
+    // y navega en el pico (mantiene el beat de 700ms). La Sala redibuja el MISMO frame y sólo revela
+    // cuando está lista. Fallback: si el puente no cargó, el nav directo de siempre.
+    var _href='../sala-v2/sala-v2.html?puppet='+pid;
+    if(window.AlephBridge){ AlephBridge.raise({ name:config.meta.name, href:_href, delay:700 }); }
+    else setTimeout(function(){ location.href=_href; }, 700);
+  }catch(e){log('falló darle vida: '+e.message,'ai'); setStatus('error'); $('vida').disabled=false;}
+}
+
+// REHIDRATAR (?puppet=<id>)
+async function rehydrate(pid){
+  try{
+    const list=await (await fetch('/v1/users/'+ST.user.id+'/puppets')).json();
+    const arr=Array.isArray(list)?list:(list.puppets||[]);
+    const p=arr.find(x=>x.id===pid); if(!p){log('no encontré ese agente para editar','ai');return;}
+    ST.editing=pid;
+    const st=Projection.recipeToCanvas(p.config||{}, ST.catalog);
+    ST.nucleo=st.nucleo; ST.blocks=st.blocks; ST.links=st.links;
+    $('nuc').value=ST.nucleo.name; $('obj').value=ST.nucleo.descripcion||''; $('model').value=ST.nucleo.model||'equilibrado';
+    $('nuc-name').textContent=(ST.nucleo.name||'núcleo'); $('subhd').textContent='editando un agente existente';
+    renderZones(); $('vida').disabled=ST.blocks.length===0;
+    log('Abre "'+ST.nucleo.name+'" — toca una pieza o suma más.','ai');
+  }catch(e){log('no pude rehidratar: '+e.message,'ai');}
+}
+
+// init
+$('forjar').onclick=forjar; $('vida').onclick=darleVida; $('addMem').onclick=addMemoria;
+$('psearch').oninput=renderPalette;
+$('nuc').oninput=()=>$('nuc-name').textContent=($('nuc').value.trim()||'núcleo');
+$('intent').addEventListener('keydown',e=>{if(e.key==='Enter'&&(e.metaKey||e.ctrlKey))forjar();});
+window.addEventListener('resize',drawLinks);
+(async function boot(){
+  await ensureSession(); await loadCatalog();
+  const pid=new URLSearchParams(location.search).get('puppet');
+  if(pid) await rehydrate(pid);
+  else log('Cuéntame qué quieres, o arrastra piezas del armario a las zonas.','ai');
+  renderZones();
+})();
+</script>
+</body>
+</html>

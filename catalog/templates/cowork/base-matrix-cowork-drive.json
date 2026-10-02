@@ -1,0 +1,20 @@
+{
+  "_meta": {
+    "que_es": "base_matrix de la mitad DRIVE del belt COWORK: declara create_file (crear archivo privado) como auto-ejecuta, para que el agente no quede paralizado pidiendo OK por cada archivo. El enforcer planta SIEMPRE y PRIMERO la regla mandatoria send/money: esta base NO puede aflojarla.",
+    "consumido_por": "assemble_and_run(recipe, base_matrix=<este json>) o auto-carga via _meta.base_matrix del belt.",
+    "principio": "seguro pero no paralizado — crear un archivo privado fluye; compartir/enviar pregunta.",
+    "fuente": "platform/gates/recipe_enforcer.py + platform/gates/approval_gate.py + cowork.md §2 (crear ≠ send)."
+  },
+  "tier": "average",
+  "default_level": "auto-ejecuta",
+  "rules": [
+    {
+      "id": "cowork-drive-create",
+      "match": { "server": "google_drive", "tools": ["create_file"] },
+      "level": "auto-ejecuta",
+      "what": "crear un archivo NUEVO (privado; no lo comparte)",
+      "where": "tu Google Drive (queda privado; nadie más lo ve)",
+      "preview_kind": "documento"
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+{"mcpServers":{"secedgar":{"command":"uvx","args":["sec-edgar-mcp"],"env":{"SEC_EDGAR_USER_AGENT":"PuppetAI verif contact@example.invalid"}}}}

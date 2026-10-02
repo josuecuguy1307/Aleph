@@ -1,0 +1,5 @@
+# Reproductions of public Claude Design demos live here.
+# Each demo is a folder containing:
+#   - prompt.md       — the prompt used
+#   - output.html     — the produced artifact
+#   - notes.md        — what worked, what didn't

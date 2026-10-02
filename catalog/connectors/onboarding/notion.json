@@ -1,0 +1,107 @@
+{
+  "connector": "notion",
+  "auth_method": "personal_token",
+  "tier": "average",
+  "needs_base_url": false,
+  "deep_link": "https://www.notion.so/my-integrations",
+  "api_base": "https://api.notion.com",
+  "credential_fields": [
+    {
+      "id": "key",
+      "label": "Tu llave de Notion",
+      "shape": "ntn_3920aF…7Q2 (las viejas arrancan con secret_…)",
+      "secret": true
+    }
+  ],
+  "auth": {
+    "scheme": "bearer",
+    "token": "{key}"
+  },
+  "steps": [
+    {
+      "txt": "Te llevo a tus integraciones de Notion. Ahí: toca «+ New integration» → pon un nombre (ej. 'Mi asistente') → elige tu espacio → en «Capabilities» deja marcado leer e insertar contenido → Guardar.",
+      "emphasis": [
+        "+ New integration",
+        "Capabilities",
+        "Guardar"
+      ]
+    },
+    {
+      "txt": "Abre «Internal Integration Secret» y copia la llave. Empieza con ntn_ — esa es tu llave, cópiala completa."
+    },
+    {
+      "txt": "Pega tu llave aquí."
+    }
+  ],
+  "validate": {
+    "method": "GET",
+    "path": "/v1/users/me",
+    "headers": {
+      "Notion-Version": "2022-06-28"
+    },
+    "identity_field": "name"
+  },
+  "permissions": [
+    "leer contenido",
+    "crear contenido"
+  ],
+  "requires_sharing": true,
+  "content_probe": {
+    "method": "POST",
+    "path": "/v1/search",
+    "headers": {
+      "Notion-Version": "2022-06-28"
+    },
+    "empty_when": "results.length == 0"
+  },
+  "share_instruction": "Tu llave funciona. Ahora compárteme una página para poder verla: en la página que quieras, toca «•••» → «Connections» → elige tu asistente. En cuanto la compartas, sigo solo.",
+  "restricted_fallback": "Tu espacio de Notion no te deja crear integraciones — eso lo controla un admin. Pídelo a quien administra el workspace.",
+  "errors": {
+    "invalid": "Esa llave no funcionó o expiró — genera una nueva en tus integraciones de Notion y pégala.",
+    "wrong_account": "Esa llave es de otra cuenta de Notion. Usa la del espacio donde está tu trabajo.",
+    "missing_permission:crear contenido": "A la llave le falta permiso para crear. En la integración, en «Capabilities», marca insertar/actualizar contenido.",
+    "network": "No pude verificar ahora — prueba de nuevo en un momento."
+  },
+  "escape_hatch": true,
+  "capability_line": "Listo — ya puedo leer las páginas que me compartas y crearte notas y tareas.",
+  "trust_line": "Tu llave se guarda cifrada · la quitas cuando quieras.",
+  "verification": {
+    "deep_link_ok": true,
+    "anchor_ok": false,
+    "validated_with_test_key": false,
+    "notes": "No test key available → identity/probe unconfirmed. Notion shifted internal-integration prefixes from secret_ to ntn_; accept both. Integration creation can be admin-restricted in managed workspaces → restricted_fallback applies. [v3] auth scheme declarado (bearer); es el estándar del proveedor pero NO validado en vivo sin test key."
+  },
+  "en": {
+    "steps": [
+      {
+        "txt": "I'll take you to your Notion integrations. There: tap «+ New integration» → give it a name (e.g. 'My assistant') → pick your workspace → under «Capabilities», keep read and insert content checked → Save.",
+        "emphasis": [
+          "+ New integration",
+          "Capabilities",
+          "Save"
+        ]
+      },
+      {
+        "txt": "Open «Internal Integration Secret» and copy the key. It starts with ntn_ — that's your key, copy the whole thing."
+      },
+      {
+        "txt": "Paste it here."
+      }
+    ],
+    "trust_line": "Your key is stored encrypted · remove it anytime.",
+    "capability_line": "Done — now I can read the pages you share with me and create notes and tasks for you.",
+    "errors": {
+      "invalid": "That key didn't work or expired — generate a new one in your Notion integrations and paste it.",
+      "wrong_account": "That key is from a different Notion account. Use the one from the workspace where your work lives.",
+      "missing_permission:crear contenido": "The key is missing permission to create. In the integration, under «Capabilities», check insert/update content.",
+      "network": "I couldn't verify right now — try again in a moment."
+    },
+    "credential_fields": [
+      {
+        "id": "key",
+        "label": "Your Notion key",
+        "shape": "ntn_3920aF…7Q2 (older ones start with secret_…)"
+      }
+    ]
+  }
+}

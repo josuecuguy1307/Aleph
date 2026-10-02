@@ -1,0 +1,88 @@
+{
+  "connector": "linear",
+  "auth_method": "personal_token",
+  "tier": "average",
+  "needs_base_url": false,
+  "escape_hatch": true,
+  "requires_sharing": false,
+  "deep_link": "https://linear.app/settings/account/security",
+  "api_base": "https://api.linear.app",
+  "credential_fields": [
+    {
+      "id": "key",
+      "label": "Tu llave de Linear",
+      "shape": "lin_api_3aF9…X2",
+      "secret": true
+    }
+  ],
+  "auth": {
+    "scheme": "header",
+    "name": "Authorization",
+    "value": "{key}"
+  },
+  "steps": [
+    {
+      "txt": "Te llevo a Linear → Settings → Account → Security & Access. Ahí, en «Personal API keys» toca «Create key» → pon un nombre (ej. 'Mi asistente') → Crear.",
+      "emphasis": [
+        "Create key",
+        "Crear"
+      ]
+    },
+    {
+      "txt": "Copia la llave (empieza con lin_api_). Es la única vez que te la muestra — cópiala completa."
+    },
+    {
+      "txt": "Pega tu llave aquí."
+    }
+  ],
+  "validate": {
+    "method": "POST",
+    "path": "/graphql",
+    "identity_field": "viewer.name"
+  },
+  "permissions": [],
+  "errors": {
+    "invalid": "Esa llave no funcionó o se borró — genera una nueva en Linear y pégala.",
+    "wrong_account": "Esa llave es de otro espacio de Linear. Usa la del espacio donde está tu trabajo.",
+    "network": "No pude verificar ahora — prueba de nuevo en un momento."
+  },
+  "capability_line": "Listo — ya puedo ver tus issues y proyectos de Linear.",
+  "trust_line": "Tu llave se guarda cifrada · la quitas cuando quieras.",
+  "verification": {
+    "deep_link_ok": true,
+    "anchor_ok": false,
+    "validated_with_test_key": false,
+    "notes": "OJO: Linear es GraphQL (POST /graphql; validate = query '{viewer{name}}', identity viewer.name). La key personal va en header 'Authorization' SIN prefijo 'Bearer' (por eso scheme=header, no bearer) — esto es un matiz real de Linear; confirmar en vivo. Prefijo lin_api_ conocido. Sin test key, no validé. [2026-07-06 deep-link audit] deep_link corregido /settings/api (deprecado) → /settings/account/security: la doc oficial (linear.app/docs/api-and-webhooks) manda a Settings→Account→Security & Access para crear Personal API keys. Doble-verificado high-confidence."
+  },
+  "en": {
+    "steps": [
+      {
+        "txt": "I'll take you to Linear → Settings → Account → Security & Access. There, under «Personal API keys», tap «Create key» → give it a name (e.g. 'My assistant') → Create.",
+        "emphasis": [
+          "Create key",
+          "Create"
+        ]
+      },
+      {
+        "txt": "Copy the key (it starts with lin_api_). This is the only time it's shown to you — copy it in full."
+      },
+      {
+        "txt": "Paste it here."
+      }
+    ],
+    "trust_line": "Your key is stored encrypted · remove it anytime.",
+    "capability_line": "Done — I can now see your Linear issues and projects.",
+    "errors": {
+      "invalid": "That key didn't work or was deleted — generate a new one in Linear and paste it.",
+      "wrong_account": "That key belongs to another Linear workspace. Use the one from the workspace where your work lives.",
+      "network": "I couldn't verify right now — try again in a moment."
+    },
+    "credential_fields": [
+      {
+        "id": "key",
+        "label": "Your Linear key",
+        "shape": "lin_api_3aF9…X2"
+      }
+    ]
+  }
+}

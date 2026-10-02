@@ -1,0 +1,20 @@
+{
+  "_meta": {
+    "que_es": "base_matrix de la mitad GMAIL del belt COWORK: declara create_draft (preparar borrador) como auto-ejecuta, para que el agente no quede paralizado pidiendo OK por cada borrador. El enforcer planta SIEMPRE y PRIMERO la regla mandatoria send: esta base NO puede aflojarla. send_email seguira cayendo a needs_ok.",
+    "consumido_por": "assemble_and_run(recipe, base_matrix=<este json>) o auto-carga via _meta.base_matrix del belt.",
+    "principio": "seguro pero no paralizado — preparar borradores fluye; mandar pregunta.",
+    "fuente": "platform/gates/recipe_enforcer.py + platform/gates/approval_gate.py."
+  },
+  "tier": "average",
+  "default_level": "auto-ejecuta",
+  "rules": [
+    {
+      "id": "cowork-gmail-draft",
+      "match": { "server": "gmail", "tools": ["create_draft"] },
+      "level": "auto-ejecuta",
+      "what": "preparar un borrador de correo (no lo manda)",
+      "where": "tu Gmail (queda en Borradores; no sale)",
+      "preview_kind": "mensaje"
+    }
+  ]
+}

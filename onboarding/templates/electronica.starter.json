@@ -1,0 +1,33 @@
+{
+  "schema_version": "v1",
+  "meta": {
+    "name": "Asistente de Electrónica",
+    "nicho": "electronica",
+    "descripcion": "Crea y consulta esquemáticos con KiCad (sch-api, sin GUI). Crea el esquemático, agrega componentes y conexiones, y reporta lo que las tools devuelven."
+  },
+  "model": {
+    "primary": "qwen3:8b",
+    "fallback": null,
+    "base_url": "http://127.0.0.1:11434/v1",
+    "temperature": 0,
+    "max_tokens": 1536,
+    "max_turns": 12
+  },
+  "belt": {
+    "belt_ref": "catalog/templates/electronica/belt-electronica.mcp.json",
+    "tool_filters": { "kicad": ["create_schematic", "add_component", "list_components", "get_schematic_info", "add_wire", "add_label", "save_schematic"] }
+  },
+  "framing": {
+    "ref": null,
+    "inline": "Eres un asistente de diseño de esquemáticos. Usa las tools de KiCad para crear, modificar y consultar; reporta lo que las tools devuelven, no lo que asumes."
+  },
+  "rag": { "enabled": false, "mode": "manual", "dir": null },
+  "keys": {},
+  "gates": { "money_touch": "needs_ok", "send": "needs_ok" },
+  "_onboarding": {
+    "persona": "dev",
+    "first_prompt": "Crea un esquemático 'divisor', agrega una resistencia R1 y lista los componentes.",
+    "runs_keyless": true,
+    "note": "KiCad sch-api es pure-python (no necesita la GUI). Corre keyless si el venv mcp-kicad-sch-api está instalado."
+  }
+}

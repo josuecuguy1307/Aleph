@@ -1,0 +1,585 @@
+import type { CommentRow } from '@open-codesign/shared';
+import { describe, expect, it, vi } from 'vitest';
+import { openFileTab } from '../store/slices/tabs';
+import {
+  chooseWorkspacePreviewSourceMode,
+  clampFileBrowserWidth,
+  createWorkspaceFilePreviewMessageHandlers,
+  defaultWorkspacePreviewPath,
+  detectedPreviewTarget,
+  effectivePreviewModeForDesign,
+  externalAppManagedFallbackPath,
+  findReusableWorkspaceFileCommentForSelector,
+  htmlRequiresWorkspaceDevServer,
+  isMarkdownPreviewFile,
+  isPreviewSourceUsableForSelectedPath,
+  isRenderableDesignFileKind,
+  previewKindForFile,
+  resolveReferencedWorkspacePreviewPath,
+  shouldEnableWorkspaceFilePreviewInteractions,
+  shouldShowTweakPanelForFile,
+  shouldUseDesignPreviewResolverForFile,
+  splitMarkdownFrontmatter,
+  workspaceBaseHrefForFile,
+  workspacePreviewDependencyKey,
+  workspacePreviewSourceStableKey,
+} from './FilesTabView';
+
+describe('FilesTabView preview helpers', () => {
+  const commentRow = (overrides: Partial<CommentRow> = {}): CommentRow => ({
+    schemaVersion: 1,
+    id: overrides.id ?? 'comment-1',
+    designId: overrides.designId ?? 'design-1',
+    snapshotId: overrides.snapshotId ?? 'snapshot-1',
+    kind: overrides.kind ?? 'edit',
+    selector: overrides.selector ?? '#hero',
+    tag: overrides.tag ?? 'section',
+    outerHTML: overrides.outerHTML ?? '<section id="hero">Hello</section>',
+    rect: overrides.rect ?? { top: 10, left: 20, width: 100, height: 50 },
+    text: overrides.text ?? 'Saved note',
+    status: overrides.status ?? 'pending',
+    createdAt: overrides.createdAt ?? '2026-05-13T00:00:00.000Z',
+    appliedInSnapshotId: overrides.appliedInSnapshotId ?? null,
+    ...(overrides.scope ? { scope: overrides.scope } : {}),
+    ...(overrides.parentOuterHTML ? { parentOuterHTML: overrides.parentOuterHTML } : {}),
+  });
+
+  it('clamps the file browser splitter width to usable bounds', () => {
+    expect(clampFileBrowserWidth(120, 1280)).toBe(260);
+    expect(clampFileBrowserWidth(480.4, 1280)).toBe(480);
+    expect(clampFileBrowserWidth(900, 1280)).toBe(704);
+    expect(clampFileBrowserWidth(900, 900)).toBe(495);
+  });
+
+  it('keeps native app detections on external app preview', () => {
+    expect(
+      detectedPreviewTarget({
+        schemaVersion: 1,
+        found: false,
+        url: null,
+        message: 'Use External app preview.',
+        candidates: [
+          {
+            url: 'http://localhost:1420/',
+            source: 'common local preview port',
+            status: 'native-runtime-required',
+            httpStatus: 200,
+          },
+        ],
+      }),
+    ).toEqual({ mode: 'external-app', url: 'http://localhost:1420/' });
+  });
+
+  it('connects ordinary web previews after detection', () => {
+    expect(
+      detectedPreviewTarget({
+        schemaVersion: 1,
+        found: true,
+        url: 'http://localhost:5173/',
+        message: 'Found a local preview.',
+        candidates: [
+          {
+            url: 'http://localhost:5173/',
+            source: 'package.json script',
+            status: 'matched',
+            httpStatus: 200,
+          },
+        ],
+      }),
+    ).toEqual({ mode: 'connected-url', url: 'http://localhost:5173/' });
+  });
+
+  it('keeps simple HTML workspaces on integrated preview even with package.json present', () => {
+    expect(
+      effectivePreviewModeForDesign({
+        files: [
+          {
+            path: 'index.html',
+            kind: 'html',
+            updatedAt: '2026-05-10T00:00:00.000Z',
+            size: 120,
+          },
+          {
+            path: 'package.json',
+            kind: 'text',
+            updatedAt: '2026-05-10T00:00:00.000Z',
+            size: 80,
+          },
+        ],
+      }),
+    ).toBe('managed-file');
+  });
+
+  it('detects Vite-style app entry HTML that needs a dev server', () => {
+    expect(
+      htmlRequiresWorkspaceDevServer(
+        '<div id="root"></div><script type="module" src="/src/index.tsx"></script>',
+      ),
+    ).toBe(true);
+    expect(
+      htmlRequiresWorkspaceDevServer(
+        '<div id="root"></div><script type="module" src="./src/main.jsx"></script>',
+      ),
+    ).toBe(true);
+    expect(
+      htmlRequiresWorkspaceDevServer(
+        '<main>Hello</main><script type="module">console.log("ok")</script>',
+      ),
+    ).toBe(false);
+  });
+
+  it('forwards element selection messages from file preview iframes into comment state', () => {
+    const selectCanvasElement = vi.fn();
+    const openCommentBubble = vi.fn();
+    const applyLiveRects = vi.fn();
+    const pushIframeError = vi.fn();
+    const handlers = createWorkspaceFilePreviewMessageHandlers({
+      previewZoom: 50,
+      selectCanvasElement,
+      openCommentBubble,
+      applyLiveRects,
+      pushIframeError,
+    });
+
+    handlers.onElementSelected({
+      __codesign: true,
+      type: 'ELEMENT_SELECTED',
+      selector: '#hero',
+      tag: 'section',
+      outerHTML: '<section id="hero">Hello</section>',
+      parentOuterHTML: '<main><section id="hero">Hello</section></main>',
+      rect: { top: 20, left: 40, width: 200, height: 100 },
+    });
+
+    expect(selectCanvasElement).toHaveBeenCalledWith({
+      selector: '#hero',
+      tag: 'section',
+      outerHTML: '<section id="hero">Hello</section>',
+      rect: { top: 10, left: 20, width: 100, height: 50 },
+    });
+    expect(openCommentBubble).toHaveBeenCalledWith({
+      selector: '#hero',
+      tag: 'section',
+      outerHTML: '<section id="hero">Hello</section>',
+      parentOuterHTML: '<main><section id="hero">Hello</section></main>',
+      rect: { top: 10, left: 20, width: 100, height: 50 },
+    });
+  });
+
+  it('prefills the existing pending comment when reselecting the same file preview element', () => {
+    const existing = commentRow({ id: 'comment-existing', text: 'Keep the saved note visible' });
+    const selectCanvasElement = vi.fn();
+    const openCommentBubble = vi.fn();
+    const applyLiveRects = vi.fn();
+    const pushIframeError = vi.fn();
+    const handlers = createWorkspaceFilePreviewMessageHandlers({
+      previewZoom: 100,
+      comments: [existing],
+      currentSnapshotId: existing.snapshotId,
+      selectCanvasElement,
+      openCommentBubble,
+      applyLiveRects,
+      pushIframeError,
+    });
+
+    handlers.onElementSelected({
+      __codesign: true,
+      type: 'ELEMENT_SELECTED',
+      selector: existing.selector,
+      tag: existing.tag,
+      outerHTML: existing.outerHTML,
+      rect: existing.rect,
+    });
+
+    expect(openCommentBubble).toHaveBeenCalledWith(
+      expect.objectContaining({
+        selector: existing.selector,
+        existingCommentId: existing.id,
+        initialText: existing.text,
+      }),
+    );
+  });
+
+  it('falls back to a pending comment for the same selector when the file preview has no current snapshot', () => {
+    const existing = commentRow({ id: 'comment-existing', snapshotId: 'snapshot-stale' });
+
+    expect(
+      findReusableWorkspaceFileCommentForSelector({
+        comments: [existing],
+        currentSnapshotId: null,
+        selector: existing.selector,
+      }),
+    ).toBe(existing);
+  });
+
+  it('marks html/jsx/tsx files as renderable', () => {
+    expect(isRenderableDesignFileKind('html')).toBe(true);
+    expect(isRenderableDesignFileKind('jsx')).toBe(true);
+    expect(isRenderableDesignFileKind('tsx')).toBe(true);
+    expect(isRenderableDesignFileKind('css')).toBe(false);
+    expect(isRenderableDesignFileKind('js')).toBe(false);
+    expect(isRenderableDesignFileKind('markdown')).toBe(false);
+    expect(isRenderableDesignFileKind('text')).toBe(false);
+    expect(isRenderableDesignFileKind('image')).toBe(false);
+    expect(isRenderableDesignFileKind('video')).toBe(false);
+    expect(isRenderableDesignFileKind('audio')).toBe(false);
+    expect(isRenderableDesignFileKind('pdf')).toBe(false);
+    expect(isRenderableDesignFileKind('document')).toBe(false);
+    expect(isRenderableDesignFileKind('design-system')).toBe(false);
+    expect(isRenderableDesignFileKind('asset')).toBe(false);
+  });
+
+  it('chooses broad preview kinds for common files and keeps binary assets off text reads', () => {
+    expect(isMarkdownPreviewFile('README.md', 'markdown')).toBe(true);
+    expect(isMarkdownPreviewFile('DESIGN.md', 'design-system')).toBe(true);
+    expect(previewKindForFile('App.jsx', 'jsx')).toBe('runtime');
+    expect(previewKindForFile('README.md', 'markdown')).toBe('markdown');
+    expect(previewKindForFile('notes.txt', 'text')).toBe('text');
+    expect(previewKindForFile('data.json', 'text')).toBe('text');
+    expect(previewKindForFile('style.css', 'css')).toBe('text');
+    expect(previewKindForFile('assets/logo.png', 'image')).toBe('image');
+    expect(previewKindForFile('clip.mp4', 'video')).toBe('video');
+    expect(previewKindForFile('voice.mp3', 'audio')).toBe('audio');
+    expect(previewKindForFile('brief.pdf', 'pdf')).toBe('pdf');
+    expect(previewKindForFile('references/brief.docx', 'document')).toBe('document');
+    expect(previewKindForFile('references/brief.pptx', 'asset')).toBe('document');
+    expect(previewKindForFile('Makefile', 'asset')).toBe('text');
+    expect(previewKindForFile('data.bin', 'asset')).toBe('unsupported');
+    expect(previewKindForFile('archive.zip', 'asset')).toBe('unsupported');
+  });
+
+  it('shows tweaks only for the main runtime design source preview', () => {
+    expect(
+      shouldShowTweakPanelForFile({
+        path: 'App.jsx',
+        previewKind: 'runtime',
+        hasPreviewSource: true,
+      }),
+    ).toBe(true);
+    expect(
+      shouldShowTweakPanelForFile({
+        path: 'index.html',
+        previewKind: 'runtime',
+        hasPreviewSource: true,
+      }),
+    ).toBe(true);
+    expect(
+      shouldShowTweakPanelForFile({
+        path: 'settings.jsx',
+        previewKind: 'runtime',
+        hasPreviewSource: true,
+      }),
+    ).toBe(false);
+    expect(
+      shouldShowTweakPanelForFile({
+        path: 'DESIGN.md',
+        previewKind: 'markdown',
+        hasPreviewSource: true,
+      }),
+    ).toBe(false);
+    expect(
+      shouldShowTweakPanelForFile({
+        path: 'App.jsx',
+        previewKind: 'runtime',
+        hasPreviewSource: false,
+      }),
+    ).toBe(false);
+  });
+
+  it('keeps local workspace runtime previews interactive outside dedicated file tabs', () => {
+    expect(shouldEnableWorkspaceFilePreviewInteractions({ previewKind: 'runtime' })).toBe(true);
+    expect(shouldEnableWorkspaceFilePreviewInteractions({ previewKind: 'markdown' })).toBe(false);
+    expect(shouldEnableWorkspaceFilePreviewInteractions({ previewKind: null })).toBe(false);
+  });
+
+  it('uses the design-level resolver only for generated preview fallbacks', () => {
+    expect(
+      shouldUseDesignPreviewResolverForFile({
+        path: 'App.jsx',
+        previewKind: 'runtime',
+        source: 'preview-html',
+      }),
+    ).toBe(true);
+    expect(shouldUseDesignPreviewResolverForFile({ path: 'App.jsx', previewKind: 'runtime' })).toBe(
+      false,
+    );
+    expect(
+      shouldUseDesignPreviewResolverForFile({
+        path: 'index.html',
+        previewKind: 'runtime',
+        source: 'workspace',
+      }),
+    ).toBe(false);
+    expect(
+      shouldUseDesignPreviewResolverForFile({ path: 'DESIGN.md', previewKind: 'markdown' }),
+    ).toBe(false);
+  });
+
+  it('rejects stale preview sources from another selected file', () => {
+    expect(
+      isPreviewSourceUsableForSelectedPath({
+        selectedPath: 'App.jsx',
+        previewSourcePath: 'DESIGN.md',
+        selectedPreviewKind: 'runtime',
+      }),
+    ).toBe(false);
+    expect(
+      isPreviewSourceUsableForSelectedPath({
+        selectedPath: 'App.jsx',
+        previewSourcePath: 'App.jsx',
+        selectedPreviewKind: 'runtime',
+      }),
+    ).toBe(true);
+    expect(
+      isPreviewSourceUsableForSelectedPath({
+        selectedPath: 'index.html',
+        previewSourcePath: 'src/App.jsx',
+        selectedPreviewKind: 'runtime',
+      }),
+    ).toBe(true);
+  });
+
+  it('splits YAML frontmatter before rendering markdown previews', () => {
+    expect(
+      splitMarkdownFrontmatter('---\nversion: alpha\nname: Demo\n---\n\n## Overview\nBody'),
+    ).toEqual({
+      frontmatter: 'version: alpha\nname: Demo',
+      body: '\n## Overview\nBody',
+    });
+  });
+
+  it('keeps non-frontmatter markdown unchanged', () => {
+    expect(splitMarkdownFrontmatter('--- not a frontmatter delimiter\n\nBody')).toEqual({
+      frontmatter: null,
+      body: '--- not a frontmatter delimiter\n\nBody',
+    });
+    expect(splitMarkdownFrontmatter('---\nunterminated')).toEqual({
+      frontmatter: null,
+      body: '---\nunterminated',
+    });
+  });
+
+  it('keeps the iframe source key stable for EDITMODE-only changes', () => {
+    const before = {
+      path: 'App.jsx',
+      content:
+        'const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{"accent":"#000"}/*EDITMODE-END*/;\nfunction App(){ return <main />; }',
+    };
+    const after = {
+      path: 'App.jsx',
+      content:
+        'const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{"accent":"#fff"}/*EDITMODE-END*/;\nfunction App(){ return <main />; }',
+    };
+    const structural = {
+      path: 'App.jsx',
+      content:
+        'const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{"accent":"#fff"}/*EDITMODE-END*/;\nfunction App(){ return <section />; }',
+    };
+
+    expect(workspacePreviewSourceStableKey(before)).toBe(workspacePreviewSourceStableKey(after));
+    expect(workspacePreviewSourceStableKey(after)).not.toBe(
+      workspacePreviewSourceStableKey(structural),
+    );
+  });
+
+  it('builds a workspace protocol base href for workspace-relative asset resolution', () => {
+    expect(
+      workspaceBaseHrefForFile({
+        designId: 'design-123',
+        workspacePath: '/Users/alice/My Workspace',
+        filePath: 'nested/My File.html',
+      }),
+    ).toBe('workspace://design-123/nested/');
+    expect(
+      workspaceBaseHrefForFile({
+        designId: 'design-123',
+        workspacePath: '/Users/alice/My Workspace',
+        filePath: 'index.html',
+      }),
+    ).toBe('workspace://design-123/');
+    expect(
+      workspaceBaseHrefForFile({
+        designId: null,
+        workspacePath: '/Users/alice/My Workspace',
+        filePath: 'index.html',
+      }),
+    ).toBeUndefined();
+  });
+
+  it('encodes workspace base href path segments without flattening folders', () => {
+    expect(
+      workspaceBaseHrefForFile({
+        designId: 'design-123',
+        workspacePath: '/Users/alice/My Workspace',
+        filePath: 'Aide Sketch/Dashboard V1 Hi-Fi.html',
+      }),
+    ).toBe('workspace://design-123/Aide%20Sketch/');
+  });
+
+  it('opens file tabs for JSX paths without rewriting them to index.html', () => {
+    const result = openFileTab([{ kind: 'files' }], 'src/App.jsx');
+    expect(result.tabs).toEqual([{ kind: 'files' }, { kind: 'file', path: 'src/App.jsx' }]);
+    expect(result.index).toBe(1);
+  });
+
+  it('chooses renderable entry files before non-renderable assets by default', () => {
+    expect(
+      defaultWorkspacePreviewPath([
+        { path: 'index.html', kind: 'html', updatedAt: '2026-04-26T00:00:00Z', size: 100 },
+        { path: 'App.jsx', kind: 'jsx', updatedAt: '2026-04-26T00:00:01Z', size: 100 },
+      ]),
+    ).toBe('App.jsx');
+    expect(
+      defaultWorkspacePreviewPath([
+        { path: '.DS_Store', kind: 'asset', updatedAt: '2026-04-26T00:00:00Z', size: 1 },
+        { path: 'index.jsx', kind: 'jsx', updatedAt: '2026-04-26T00:00:00Z', size: 100 },
+      ]),
+    ).toBe('index.jsx');
+    expect(
+      defaultWorkspacePreviewPath([
+        { path: 'assets/logo.png', kind: 'asset', updatedAt: '2026-04-26T00:00:00Z', size: 1 },
+        { path: 'App.tsx', kind: 'tsx', updatedAt: '2026-04-26T00:00:00Z', size: 100 },
+      ]),
+    ).toBe('App.tsx');
+    expect(
+      defaultWorkspacePreviewPath([
+        { path: 'assets/hero.png', kind: 'image', updatedAt: '2026-04-26T00:00:00Z', size: 1 },
+        {
+          path: 'design-brief.md',
+          kind: 'markdown',
+          updatedAt: '2026-04-26T00:00:00Z',
+          size: 100,
+        },
+      ]),
+    ).toBe('design-brief.md');
+    expect(
+      defaultWorkspacePreviewPath([
+        { path: 'assets/hero.png', kind: 'image', updatedAt: '2026-04-26T00:00:00Z', size: 1 },
+        { path: 'brief.pdf', kind: 'pdf', updatedAt: '2026-04-26T00:00:00Z', size: 100 },
+      ]),
+    ).toBe('brief.pdf');
+  });
+
+  it('keeps a managed preview fallback available for external-app workspaces', () => {
+    expect(
+      externalAppManagedFallbackPath({
+        selectedPath: 'App.jsx',
+        defaultPath: 'index.html',
+        hasPersistedPreview: true,
+      }),
+    ).toBe('App.jsx');
+    expect(
+      externalAppManagedFallbackPath({
+        selectedPath: null,
+        defaultPath: 'index.html',
+        hasPersistedPreview: true,
+      }),
+    ).toBe('index.html');
+    expect(
+      externalAppManagedFallbackPath({
+        selectedPath: null,
+        defaultPath: null,
+        hasPersistedPreview: true,
+      }),
+    ).toBe('App.jsx');
+    expect(
+      externalAppManagedFallbackPath({
+        selectedPath: null,
+        defaultPath: null,
+        hasPersistedPreview: false,
+      }),
+    ).toBeNull();
+  });
+
+  it('prefers actual workspace reads over previewSource when the files API is available', () => {
+    expect(
+      chooseWorkspacePreviewSourceMode({
+        path: 'index.html',
+        hasReadApi: true,
+        hasPreviewSource: true,
+      }),
+    ).toBe('read-workspace');
+    expect(
+      chooseWorkspacePreviewSourceMode({
+        path: 'src/App.tsx',
+        hasReadApi: true,
+        hasPreviewSource: true,
+      }),
+    ).toBe('read-workspace');
+  });
+
+  it('uses previewSource for virtual App.jsx fallback entries even when files.read exists', () => {
+    expect(
+      chooseWorkspacePreviewSourceMode({
+        path: 'App.jsx',
+        hasReadApi: true,
+        hasPreviewSource: true,
+        preferPreviewSource: true,
+      }),
+    ).toBe('preview-source-fallback');
+  });
+
+  it('falls back to previewSource only for App.jsx previews without files.read', () => {
+    expect(
+      chooseWorkspacePreviewSourceMode({
+        path: 'App.jsx',
+        hasReadApi: false,
+        hasPreviewSource: true,
+      }),
+    ).toBe('preview-source-fallback');
+    expect(
+      chooseWorkspacePreviewSourceMode({
+        path: 'index.html',
+        hasReadApi: false,
+        hasPreviewSource: true,
+      }),
+    ).toBe('unavailable');
+  });
+
+  it('resolves placeholder HTML previews to their referenced JSX/TSX source path', () => {
+    expect(
+      resolveReferencedWorkspacePreviewPath(
+        '<!doctype html><body><!-- artifact source lives in index.jsx --></body>',
+        'index.html',
+      ),
+    ).toBe('index.jsx');
+    expect(
+      resolveReferencedWorkspacePreviewPath(
+        '<!-- artifact source lives in App.tsx -->',
+        'ui/demo.html',
+      ),
+    ).toBe('ui/App.tsx');
+  });
+
+  it('ignores unsafe placeholder source paths', () => {
+    expect(
+      resolveReferencedWorkspacePreviewPath(
+        '<!-- artifact source lives in ../App.jsx -->',
+        'index.html',
+      ),
+    ).toBeNull();
+  });
+
+  it('does not resolve artifact source comments from non-HTML files', () => {
+    expect(
+      resolveReferencedWorkspacePreviewPath(
+        'const marker = "<!-- artifact source lives in other.jsx -->";',
+        'App.jsx',
+      ),
+    ).toBeNull();
+  });
+
+  it('tracks both the selected placeholder and resolved source file revisions', () => {
+    const files = [
+      { path: 'index.html', kind: 'html' as const, updatedAt: '2026-04-26T00:00:00Z', size: 100 },
+      { path: 'index.jsx', kind: 'jsx' as const, updatedAt: '2026-04-26T00:00:01Z', size: 200 },
+    ];
+
+    expect(workspacePreviewDependencyKey(files, 'index.html', 'index.jsx')).toBe(
+      'index.html:2026-04-26T00:00:00Z:100|index.jsx:2026-04-26T00:00:01Z:200',
+    );
+    expect(workspacePreviewDependencyKey(files, 'index.html', 'index.html')).toBe(
+      'index.html:2026-04-26T00:00:00Z:100',
+    );
+  });
+});

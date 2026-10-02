@@ -1,0 +1,26 @@
+Launch one bounded child agent for an independent unit of work.
+
+Available agent types and the tools they have access to:
+{agents}
+
+When using the Task tool, specify the subagent_type that fits the bounded task.
+
+Use the Task tool when:
+- A genuinely independent investigation or implementation can run concurrently and merge cleanly into the primary result.
+- A named biology, physics, or machine-learning specialist is needed for a distinct domain concern.
+- A custom slash command explicitly requires a child invocation.
+
+Do not use the Task tool when:
+- The work is sequential, small, already in context, or limited to a few known files. Default to zero child agents.
+- A direct Read, Glob, Grep, shell, or kernel action would answer the question more cheaply.
+- One child's result is required to define another child's task.
+- You only want a second opinion on your plan or answer.
+- You are considering several literature agents for one search. Retrieve once, share the source records, and synthesize centrally.
+
+Rules:
+1. At most two child agents can run concurrently. Use fewer when compute or kernels are already consuming the machine.
+2. The primary agent owns the outcome. Merge useful completed work without waiting for optional stragglers.
+3. A failed child must not block a usable primary answer.
+4. Each invocation is stateless unless you provide a session_id. Give it a bounded objective, relevant context, allowed actions, and an exact return contract.
+5. Treat child output as evidence to inspect, not authority to trust blindly.
+6. The child result is not directly visible to the user. Report only the useful merged outcome and material limitations.

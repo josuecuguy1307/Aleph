@@ -1,0 +1,294 @@
+// Execution sandbox settings — the permission system decides *whether* the agent
+// runs a shell command; it is not an isolation boundary. This panel turns on a
+// real one: macOS Seatbelt / Linux bubblewrap that confines the agent's writes
+// to the workspace and can deny network egress. The server
+// (routes/settings/sandbox.ts) reports backend availability, persists the
+// config, and runs the empirical self-test the browser can't. Mirrors the
+// `openscience sandbox` CLI.
+import { Component, For, Show, createResource, createSignal } from "solid-js"
+import { Select } from "@synsci/ui/select"
+import { Button } from "@synsci/ui/button"
+import { Switch } from "@synsci/ui/switch"
+import { Icon } from "@synsci/ui/icon"
+import { showToast } from "@synsci/ui/toast"
+import { useLanguage } from "@/context/language"
+import { useGlobalSDK } from "@/context/global-sdk"
+import { usePlatform } from "@/context/platform"
+import { settingsApi } from "./api"
+
+interface SandboxConfig {
+  enabled?: boolean
+  network?: "allow" | "deny"
+  allowWrite?: string[]
+  onUnavailable?: "warn" | "error" | "allow"
+}
+interface Status {
+  platform: string
+  backend: "seatbelt" | "bubblewrap" | "none"
+  available: boolean
+  tool?: string
+  reason?: string
+}
+interface Payload {
+  config: SandboxConfig
+  status: Status
+}
+interface Check {
+  name: string
+  pass: boolean
+  skipped?: boolean
+  detail?: string
+}
+interface SelfTest {
+  backend: string
+  available: boolean
+  checks: Check[]
+  ok: boolean
+}
+
+
+const Sandbox: Component = () => {
+  const language = useLanguage()
+const NETWORK_OPTS = () => [
+  { value: "allow" as const, label: language.t("settings.sandboxOwned.allow") },
+  { value: "deny" as const, label: language.t("settings.sandboxOwned.deny") },
+]
+const UNAVAILABLE_OPTS = () => [
+  { value: "warn" as const, label: language.t("settings.sandboxOwned.warn") },
+  { value: "error" as const, label: language.t("settings.sandboxOwned.refuse") },
+  { value: "allow" as const, label: language.t("settings.sandboxOwned.silently") },
+]
+
+  const sdk = useGlobalSDK()
+  const platform = usePlatform()
+  const fetchFn = platform.fetch ?? fetch
+  const call = <T,>(path: string, init?: RequestInit) =>
+    settingsApi<T>(sdk.url, fetchFn, `/settings/sandbox${path}`, init)
+
+  const [data, { mutate, refetch }] = createResource(() => call<Payload>(""))
+  const [busy, setBusy] = createSignal(false)
+  const [test, setTest] = createSignal<SelfTest>()
+  const [testing, setTesting] = createSignal(false)
+  const [newPath, setNewPath] = createSignal("")
+
+  const config = (): SandboxConfig =>
+    data()?.config ?? { enabled: true, network: "deny", allowWrite: [], onUnavailable: "error" }
+  const status = () => data()?.status
+
+  const patch = async (body: SandboxConfig, failure: string) => {
+    setBusy(true)
+    try {
+      mutate(await call<Payload>("", { method: "PUT", body: JSON.stringify(body) }))
+    } catch (err) {
+      showToast({ title: failure, description: err instanceof Error ? err.message : String(err) })
+      refetch()
+    }
+    setBusy(false)
+  }
+
+  const runTest = async () => {
+    setTesting(true)
+    try {
+      setTest(await call<SelfTest>("/test", { method: "POST" }))
+    } catch (err) {
+      showToast({ title: language.t("settings.sandboxOwned.failedTest"), description: err instanceof Error ? err.message : String(err) })
+    }
+    setTesting(false)
+  }
+
+  const addPath = () => {
+    const p = newPath().trim()
+    if (!p) return
+    if (!p.startsWith("/")) {
+      showToast({ title: language.t("settings.sandboxOwned.absolute"), description: language.t("settings.sandboxOwned.absoluteHelp") })
+      return
+    }
+    const next = [...(config().allowWrite ?? [])]
+    if (!next.includes(p)) next.push(p)
+    setNewPath("")
+    patch({ allowWrite: next }, language.t("settings.sandboxOwned.addFailed"))
+  }
+  const removePath = (p: string) =>
+    patch({ allowWrite: (config().allowWrite ?? []).filter((x) => x !== p) }, language.t("settings.sandboxOwned.removeFailed"))
+
+  return (
+    <div class="flex flex-col h-full overflow-y-auto no-scrollbar">
+      <div class="settings-page-header">
+        <div class="settings-page-header__inner">
+          <h2 class="text-16-medium text-text-strong">{language.t("settings.sandboxOwned.title")}</h2>
+          <p class="text-13-regular text-text-weak">
+            {language.t("settings.sandboxOwned.description")}
+          </p>
+        </div>
+      </div>
+
+      <div class="settings-page-body">
+        {/* ── Backend availability ── */}
+        <Show when={status()}>
+          {(s) => (
+            <div
+              class="flex items-center gap-2 rounded-[4px] border px-4 py-3 text-12-regular"
+              classList={{
+                "border-border-weak-base bg-surface-base/40 text-text-weak": s().available,
+                "border-text-warning/30 bg-text-warning/5 text-text-warning": !s().available,
+              }}
+            >
+              <Icon name={s().available ? "check" : "stop"} class={s().available ? "text-text-success" : ""} />
+              <Show
+                when={s().available}
+                fallback={
+                  <span>
+                    {language.t("settings.sandboxOwned.noBackend", { platform: s().platform, reason: s().reason ?? "" })}
+                  </span>
+                }
+              >
+                <span>
+                  {language.t("settings.sandboxOwned.ready", { backend: s().backend, tool: s().tool ?? "", platform: s().platform })}
+                </span>
+              </Show>
+            </div>
+          )}
+        </Show>
+
+        {/* ── Enable ── */}
+        <section class="flex flex-col gap-3">
+          <div class="flex items-center justify-between border border-border-weak-base rounded-[4px] px-4 py-3.5 bg-surface-base/40">
+            <div class="flex flex-col gap-0.5 min-w-0 pr-4">
+              <span class="text-14-medium text-text-strong">{language.t("settings.sandboxOwned.commands")}</span>
+              <span class="text-12-regular text-text-weak">
+                {config().enabled !== false
+                  ? language.t("settings.sandboxOwned.enabled")
+                  : language.t("settings.sandboxOwned.disabled")}
+              </span>
+            </div>
+            <Switch
+              checked={config().enabled !== false}
+              disabled={busy()}
+              onChange={(checked) => patch({ enabled: checked }, language.t("settings.sandboxOwned.updateFailed"))}
+            />
+          </div>
+        </section>
+
+        {/* ── Options (only when enabled) ── */}
+        <Show when={config().enabled !== false}>
+          <section class="flex flex-col gap-4">
+            <h3 class="text-13-medium text-text-strong">{language.t("settings.sandboxOwned.policy")}</h3>
+
+            <div class="border border-border-weak-base rounded-[4px] overflow-hidden bg-surface-base/40">
+              <div class="flex flex-wrap items-center justify-between gap-4 px-4 py-3.5 border-b border-border-weak-base">
+                <div class="flex flex-col gap-0.5 min-w-0">
+                  <span class="text-14-medium text-text-strong">{language.t("settings.sandboxOwned.network")}</span>
+                  <span class="text-12-regular text-text-weak">
+                    {language.t("settings.sandboxOwned.networkHelp")}
+                  </span>
+                </div>
+                <Select
+                  options={NETWORK_OPTS()}
+                  current={NETWORK_OPTS().find((o) => o.value === (config().network ?? "deny"))}
+                  value={(o) => o.value}
+                  label={(o) => o.label}
+                  onSelect={(o) => o && patch({ network: o.value }, language.t("settings.sandboxOwned.networkFailed"))}
+                  variant="secondary"
+                  size="small"
+                  triggerVariant="settings"
+                />
+              </div>
+
+              <div class="flex flex-wrap items-center justify-between gap-4 px-4 py-3.5">
+                <div class="flex flex-col gap-0.5 min-w-0">
+                  <span class="text-14-medium text-text-strong">{language.t("settings.sandboxOwned.unavailable")}</span>
+                  <span class="text-12-regular text-text-weak">
+                    {language.t("settings.sandboxOwned.unavailableHelp")}
+                  </span>
+                </div>
+                <Select
+                  options={UNAVAILABLE_OPTS()}
+                  current={UNAVAILABLE_OPTS().find((o) => o.value === (config().onUnavailable ?? "error"))}
+                  value={(o) => o.value}
+                  label={(o) => o.label}
+                  onSelect={(o) => o && patch({ onUnavailable: o.value }, language.t("settings.sandboxOwned.fallbackFailed"))}
+                  variant="secondary"
+                  size="small"
+                  triggerVariant="settings"
+                />
+              </div>
+            </div>
+
+            {/* extra writable paths */}
+            <div class="flex flex-col gap-2">
+              <span class="text-13-medium text-text-strong">{language.t("settings.sandboxOwned.paths")}</span>
+              <span class="text-12-regular text-text-weak/70">
+                {language.t("settings.sandboxOwned.pathsHelp")}
+              </span>
+              <For each={config().allowWrite ?? []}>
+                {(p) => (
+                  <div class="flex items-center justify-between border border-border-weak-base rounded-[4px] px-3 py-2 bg-surface-base/40">
+                    <code class="text-12-regular text-text-strong truncate">{p}</code>
+                    <Button size="small" variant="secondary" disabled={busy()} onClick={() => removePath(p)}>
+                      <Icon name="trash" />
+                    </Button>
+                  </div>
+                )}
+              </For>
+              <div class="flex items-center gap-2">
+                <input
+                  class="flex-1 bg-surface-base/40 border border-border-weak-base rounded-[4px] px-3 py-2 text-12-regular text-text-strong outline-none focus:border-border-strong"
+                  placeholder="/absolute/path"
+                  value={newPath()}
+                  onInput={(e) => setNewPath(e.currentTarget.value)}
+                  onKeyDown={(e) => e.key === "Enter" && addPath()}
+                />
+                <Button size="small" variant="secondary" disabled={busy() || !newPath().trim()} onClick={addPath}>
+                  {language.t("settings.sandboxOwned.add")}
+                </Button>
+              </div>
+            </div>
+
+            {/* self-test */}
+            <div class="flex flex-col gap-3 border border-border-weak-base rounded-[4px] p-4 bg-surface-base/40">
+              <div class="flex items-center justify-between gap-4">
+                <div class="flex flex-col gap-0.5">
+                  <span class="text-14-medium text-text-strong">{language.t("settings.sandboxOwned.verify")}</span>
+                  <span class="text-12-regular text-text-weak">
+                    {language.t("settings.sandboxOwned.verifyHelp")}
+                  </span>
+                </div>
+                <Button size="small" variant="secondary" disabled={testing() || !status()?.available} onClick={runTest}>
+                  {testing() ? language.t("settings.sandboxOwned.testing") : language.t("settings.sandboxOwned.runTest")}
+                </Button>
+              </div>
+              <Show when={test()}>
+                {(t) => (
+                  <div class="flex flex-col gap-1.5 pt-1">
+                    <For each={t().checks}>
+                      {(c) => (
+                        <div class="flex items-center gap-2 text-12-regular">
+                          <Icon
+                            name={c.skipped ? "dash" : c.pass ? "check" : "close"}
+                            class={c.skipped ? "text-text-weak" : c.pass ? "text-text-success" : "text-text-danger"}
+                          />
+                          <span class="text-text-strong">{c.name}</span>
+                          <Show when={c.detail}>
+                            <span class="text-text-weak/70">— {c.detail}</span>
+                          </Show>
+                        </div>
+                      )}
+                    </For>
+                    <span
+                      class="text-12-medium pt-1"
+                      classList={{ "text-text-success": t().ok, "text-text-danger": !t().ok }}
+                    >
+                      {t().ok ? language.t("settings.sandboxOwned.passed") : language.t("settings.sandboxOwned.failed")}
+                    </span>
+                  </div>
+                )}
+              </Show>
+            </div>
+          </section>
+        </Show>
+      </div>
+    </div>
+  )
+}
+
+export default Sandbox

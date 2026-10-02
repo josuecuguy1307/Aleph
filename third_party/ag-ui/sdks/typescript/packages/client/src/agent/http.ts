@@ -1,0 +1,84 @@
+import { AbstractAgent, RunAgentResult } from "./agent";
+import { runHttpRequest } from "@/run/http-request";
+import { HttpAgentConfig, HttpAgentFetchFn, RunAgentParameters } from "./types";
+import { RunAgentInput, BaseEvent } from "@ag-ui/core";
+import { structuredClone_ } from "@/utils";
+import { transformHttpEventStream } from "@/transform/http";
+import { Observable } from "rxjs";
+import { AgentSubscriber } from "./subscriber";
+
+interface RunHttpAgentConfig extends RunAgentParameters {
+  abortController?: AbortController;
+}
+
+export class HttpAgent extends AbstractAgent {
+  public url: string;
+  public headers: Record<string, string>;
+  public fetch: HttpAgentFetchFn;
+  public abortController: AbortController = new AbortController();
+
+  /**
+   * Returns the fetch config for the http request.
+   * Override this to customize the request.
+   *
+   * @returns The fetch config for the http request.
+   */
+  protected requestInit(input: RunAgentInput): RequestInit {
+    return {
+      method: "POST",
+      headers: {
+        ...this.headers,
+        "Content-Type": "application/json",
+        Accept: "text/event-stream",
+      },
+      body: JSON.stringify(input),
+      signal: this.abortController.signal,
+    };
+  }
+
+  public runAgent(
+    parameters?: RunHttpAgentConfig,
+    subscriber?: AgentSubscriber,
+  ): Promise<RunAgentResult> {
+    this.abortController = parameters?.abortController ?? new AbortController();
+    return super.runAgent(parameters, subscriber);
+  }
+
+  abortRun() {
+    this.abortController.abort();
+    super.abortRun();
+  }
+
+  constructor(config: HttpAgentConfig) {
+    super(config);
+    this.url = config.url;
+    this.headers = structuredClone_(config.headers ?? {});
+    // Bind the default fetch to the global object. Storing the bare `fetch`
+    // and later invoking it as `this.fetch(...)` sets the receiver to the agent
+    // instance; a browser's native fetch is a checked-receiver method and throws
+    // "Illegal invocation" when not called with `window` as `this`. (Node's fetch
+    // tolerates any receiver, so this only surfaces in the browser.)
+    this.fetch = config.fetch ?? ((url, requestInit) => fetch(url, requestInit));
+  }
+
+  run(input: RunAgentInput): Observable<BaseEvent> {
+    const httpEvents = runHttpRequest(() => this.fetch(this.url, this.requestInit(input)));
+    return transformHttpEventStream(httpEvents, this.debugLogger);
+  }
+
+  public clone(): HttpAgent {
+    const cloned = super.clone() as HttpAgent;
+    cloned.url = this.url;
+    cloned.headers = structuredClone_(this.headers ?? {});
+    cloned.fetch = this.fetch;
+
+    const newController = new AbortController();
+    const originalSignal = this.abortController.signal as AbortSignal & { reason?: unknown };
+    if (originalSignal.aborted) {
+      newController.abort(originalSignal.reason);
+    }
+    cloned.abortController = newController;
+
+    return cloned;
+  }
+}

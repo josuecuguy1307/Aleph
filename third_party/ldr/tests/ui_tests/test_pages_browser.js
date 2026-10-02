@@ -1,0 +1,376 @@
+/**
+ * Browser-based UI tests using Puppeteer
+ * Tests the actual browser rendering and JavaScript execution of pages
+ */
+
+const puppeteer = require('puppeteer');
+const AuthHelper = require('./auth_helper');
+const { getPuppeteerLaunchOptions } = require('./puppeteer_config');
+const fs = require('fs');
+const path = require('path');
+
+const DEFAULT_TIMEOUT = 10000;  // Increased for pages with many network requests
+const DEFAULT_WAIT = 3000;      // More time for JS to execute
+
+class BrowserTester {
+    constructor(baseUrl = 'http://127.0.0.1:5000') {
+        this.baseUrl = baseUrl;
+        this.browser = null;
+        this.page = null;
+    }
+
+    async setup() {
+        console.log('🚀 Starting browser test session...');
+        this.browser = await puppeteer.launch(getPuppeteerLaunchOptions());
+
+        this.page = await this.browser.newPage();
+        this.authHelper = new AuthHelper(this.page, this.baseUrl);
+
+        // Listen to console errors
+        this.page.on('console', msg => {
+            if (msg.type() === 'error') {
+                console.log(`  Browser error: ${msg.text()}`);
+            }
+        });
+
+        // Listen to JavaScript errors
+        this.page.on('pageerror', error => {
+            console.log(`❌ [JS ERROR] ${error.message}`);
+        });
+
+        // Listen to failed requests
+        this.page.on('requestfailed', request => {
+            const url = request.url();
+            const failure = request.failure();
+            const error = failure ? failure.errorText : 'Unknown error';
+            // Only log for important resources, ignore favicon etc.
+            if (!url.includes('favicon') && !url.includes('.ico')) {
+                console.log(`🔴 [REQUEST FAILED] ${url} - ${error}`);
+            }
+        });
+
+        // Listen to 404 responses to identify missing resources
+        this.page.on('response', response => {
+            if (response.status() === 404) {
+                const url = response.url();
+                if (!url.includes('favicon') && !url.includes('.ico')) {
+                    console.log(`  [404 RESPONSE] ${url}`);
+                }
+            }
+        });
+
+        // Ensure authentication before running tests
+        console.log('\n🔐 Ensuring authentication...');
+        try {
+            await this.authHelper.ensureAuthenticatedWithTimeout();
+        } catch (error) {
+            console.error('❌ Authentication failed:', error.message);
+            throw error;
+        }
+    }
+
+    async teardown() {
+        if (this.browser) {
+            await this.browser.close();
+            console.log('🏁 Browser test session ended');
+        }
+    }
+
+    async testPage(urlPath, testName, customTests = null) {
+        const url = `${this.baseUrl}${urlPath}`;
+        console.log(`\n📄 Testing ${testName}: ${url}`);
+
+        try {
+            // Skip navigation if already on the target page (avoids ERR_ABORTED from double-navigation)
+            const currentPath = new URL(this.page.url()).pathname;
+            const targetPath = new URL(url).pathname;
+            if (currentPath !== targetPath) {
+                await this.page.goto(url, {
+                    waitUntil: 'domcontentloaded',  // Don't wait for all network requests
+                    timeout: DEFAULT_TIMEOUT
+                });
+            } else {
+                console.log(`  Already on ${testName}, skipping navigation`);
+            }
+
+            console.log(`✅ ${testName} loaded successfully`);
+
+            // Wait for JavaScript to execute
+            await new Promise(resolve => setTimeout(resolve, DEFAULT_WAIT));
+
+            // Basic checks for all pages
+            const basicChecks = await this.page.evaluate(() => {
+                return {
+                    hasTitle: document.title.length > 0,
+                    hasBody: document.body !== null,
+                    hasNoJSErrors: !window.hasJavaScriptErrors, // This would need to be set by error handlers
+                    bodyVisible: document.body && window.getComputedStyle(document.body).display !== 'none'
+                };
+            });
+
+            console.log(`🔍 Basic checks for ${testName}:`);
+            console.log(`   Has title: ${basicChecks.hasTitle}`);
+            console.log(`   Has body: ${basicChecks.hasBody}`);
+            console.log(`   Body visible: ${basicChecks.bodyVisible}`);
+
+            // Run custom tests if provided and collect failures
+            const failures = [];
+            if (customTests) {
+                const customFailures = await customTests(this.page);
+                if (Array.isArray(customFailures)) {
+                    failures.push(...customFailures);
+                }
+            }
+
+            if (failures.length > 0) {
+                return { success: false, error: failures.join('; ') };
+            }
+
+            return { success: true, checks: basicChecks };
+
+        } catch (error) {
+            console.log(`❌ Error testing ${testName}: ${error.message}`);
+            return { success: false, error: error.message };
+        }
+    }
+}
+
+// Custom test functions for specific pages
+// Each returns an array of failure strings (empty = all passed)
+
+const metricsPageTests = async (page) => {
+    console.log('🧪 Running metrics-specific tests...');
+    const failures = [];
+
+    // Check if metrics elements are present
+    const metricsChecks = await page.evaluate(() => {
+        const loading = document.getElementById('loading');
+        const content = document.getElementById('metrics-content');
+        const error = document.getElementById('error');
+        const totalTokens = document.getElementById('total-tokens');
+        const totalResearches = document.getElementById('total-researches');
+
+        return {
+            hasLoadingElement: !!loading,
+            hasContentElement: !!content,
+            hasErrorElement: !!error,
+            hasTotalTokens: !!totalTokens,
+            hasTotalResearches: !!totalResearches,
+            loadingVisible: loading ? window.getComputedStyle(loading).display !== 'none' : false,
+            contentVisible: content ? window.getComputedStyle(content).display !== 'none' : false,
+            errorVisible: error ? window.getComputedStyle(error).display !== 'none' : false,
+            tokenValue: totalTokens ? totalTokens.textContent : 'NOT FOUND',
+            researchValue: totalResearches ? totalResearches.textContent : 'NOT FOUND'
+        };
+    });
+
+    console.log('📊 Metrics page checks:');
+    console.log(`   Loading visible: ${metricsChecks.loadingVisible}`);
+    console.log(`   Content visible: ${metricsChecks.contentVisible}`);
+    console.log(`   Error visible: ${metricsChecks.errorVisible}`);
+    console.log(`   Total tokens: ${metricsChecks.tokenValue}`);
+    console.log(`   Total researches: ${metricsChecks.researchValue}`);
+
+    // Either content or error element must exist (error state is valid in CI with no data)
+    if (!metricsChecks.hasContentElement && !metricsChecks.hasErrorElement) {
+        failures.push('Missing both #metrics-content and #error elements');
+    }
+    if (!metricsChecks.hasTotalTokens) failures.push('Missing #total-tokens element');
+    if (!metricsChecks.hasTotalResearches) failures.push('Missing #total-researches element');
+
+    // Take screenshot for debugging (skip in CI — diagnostic only)
+    if (!process.env.CI) {
+        try {
+            const screenshotPath = path.join(__dirname, 'screenshots', 'metrics-test.png');
+            await page.screenshot({ path: screenshotPath });
+            console.log(`📸 Screenshot saved: ${screenshotPath}`);
+        } catch (err) {
+            console.log('⚠️ Could not save screenshot:', err.message);
+        }
+    }
+
+    return failures;
+};
+
+const researchPageTests = async (page) => {
+    console.log('🧪 Running research page tests...');
+    const failures = [];
+
+    const researchChecks = await page.evaluate(() => {
+        const queryInput = document.getElementById('query');
+        const submitButton = document.querySelector('button[type="submit"]');
+        const modeSelection = document.querySelector('.ldr-mode-selection');
+        const modeRadios = document.querySelectorAll('input[name="research_mode"]');
+
+        return {
+            hasQueryInput: !!queryInput,
+            hasSubmitButton: !!submitButton,
+            hasModeSelection: !!modeSelection,
+            modeRadioCount: modeRadios.length,
+            queryInputEnabled: queryInput ? !queryInput.disabled : false,
+            submitButtonEnabled: submitButton ? !submitButton.disabled : false
+        };
+    });
+
+    console.log('🔍 Research page checks:');
+    console.log(`   Has query input: ${researchChecks.hasQueryInput}`);
+    console.log(`   Has submit button: ${researchChecks.hasSubmitButton}`);
+    console.log(`   Has mode selection: ${researchChecks.hasModeSelection}`);
+    console.log(`   Mode radio count: ${researchChecks.modeRadioCount}`);
+    console.log(`   Query input enabled: ${researchChecks.queryInputEnabled}`);
+    console.log(`   Submit button enabled: ${researchChecks.submitButtonEnabled}`);
+
+    if (!researchChecks.hasQueryInput) failures.push('Missing query input (#query)');
+    if (!researchChecks.hasSubmitButton) failures.push('Missing submit button');
+    if (!researchChecks.hasModeSelection) failures.push('Missing mode selection (.ldr-mode-selection)');
+
+    // If --search flag is provided, run a test search
+    if (process.argv.includes('--search') && researchChecks.hasQueryInput && researchChecks.hasSubmitButton) {
+        console.log('\n🔎 Running test search...');
+        await page.type('#query', 'Test search query for UI testing');
+        console.log('✅ Entered test query');
+    }
+
+    return failures;
+};
+
+const historyPageTests = async (page) => {
+    console.log('🧪 Running history page tests...');
+    const failures = [];
+
+    const historyChecks = await page.evaluate(() => {
+        const historyContainer = document.getElementById('history-container') ||
+                               document.querySelector('.ldr-history-list') ||
+                               document.querySelector('[data-testid="history"]');
+        const searchInput = document.getElementById('history-search');
+
+        return {
+            hasHistoryContainer: !!historyContainer,
+            hasSearchInput: !!searchInput,
+            historyContainerVisible: historyContainer ? window.getComputedStyle(historyContainer).display !== 'none' : false
+        };
+    });
+
+    console.log('📜 History page checks:');
+    console.log(`   Has history container: ${historyChecks.hasHistoryContainer}`);
+    console.log(`   Has search input: ${historyChecks.hasSearchInput}`);
+    console.log(`   History container visible: ${historyChecks.historyContainerVisible}`);
+
+    if (!historyChecks.hasHistoryContainer) failures.push('Missing history container');
+    if (!historyChecks.hasSearchInput) failures.push('Missing search input (#history-search)');
+
+    return failures;
+};
+
+const settingsPageTests = async (page) => {
+    console.log('🧪 Running settings page tests...');
+    const failures = [];
+
+    await page.waitForSelector('#settings-form .ldr-settings-checkbox:not([disabled])', {
+        timeout: 15000
+    });
+
+    const settingsChecks = await page.evaluate(() => {
+        const forms = document.querySelectorAll('form');
+        const inputs = document.querySelectorAll('input, select, textarea');
+        const settingsForm = document.querySelector('#settings-form');
+        const autoSaveControls = settingsForm?.querySelectorAll('.ldr-settings-checkbox:not([disabled])') ?? [];
+        const bulkSubmitButton = settingsForm?.querySelector('button[type="submit"], input[type="submit"]');
+
+        return {
+            hasForm: forms.length > 0,
+            hasInputs: inputs.length > 0,
+            hasAutoSaveControls: autoSaveControls.length > 0,
+            hasBulkSubmitButton: !!bulkSubmitButton,
+            inputCount: inputs.length,
+            formCount: forms.length
+        };
+    });
+
+    console.log('⚙️ Settings page checks:');
+    console.log(`   Has forms: ${settingsChecks.hasForm} (${settingsChecks.formCount} forms)`);
+    console.log(`   Has inputs: ${settingsChecks.hasInputs} (${settingsChecks.inputCount} inputs)`);
+    console.log(`   Has auto-save controls: ${settingsChecks.hasAutoSaveControls}`);
+    console.log(`   Has bulk submit button: ${settingsChecks.hasBulkSubmitButton}`);
+
+    if (!settingsChecks.hasInputs) failures.push('Missing input elements');
+    if (!settingsChecks.hasAutoSaveControls) failures.push('Missing auto-save controls');
+    if (settingsChecks.hasBulkSubmitButton) failures.push('Unexpected bulk submit button');
+
+    return failures;
+};
+
+// Main test runner
+async function runAllTests() {
+    const tester = new BrowserTester();
+
+    try {
+        await tester.setup();
+    } catch (error) {
+        console.error('❌ Failed to setup browser:', error.message);
+        process.exit(1);
+    }
+
+    // Ensure screenshots directory exists
+    const screenshotsDir = path.join(__dirname, 'screenshots');
+    fs.mkdirSync(screenshotsDir, { recursive: true });
+
+    const results = [];
+
+    // Test main pages
+    const testCases = [
+        { path: '/', name: 'Home/Research Page', tests: researchPageTests },
+        { path: '/metrics/', name: 'Metrics Dashboard', tests: metricsPageTests },
+        { path: '/history/', name: 'History Page', tests: historyPageTests },
+        { path: '/settings/', name: 'Settings Page', tests: settingsPageTests }
+    ];
+
+    for (const testCase of testCases) {
+        const result = await tester.testPage(testCase.path, testCase.name, testCase.tests);
+        results.push({ ...testCase, result });
+    }
+
+    await tester.teardown();
+
+    // Print summary
+    console.log('\n' + '='.repeat(50));
+    console.log('📋 TEST SUMMARY');
+    console.log('='.repeat(50));
+
+    let passCount = 0;
+    let failCount = 0;
+
+    results.forEach(({ name, result }) => {
+        const status = result.success ? '✅ PASS' : '❌ FAIL';
+        console.log(`${status} ${name}`);
+        if (!result.success) {
+            console.log(`     Error: ${result.error}`);
+            failCount++;
+        } else {
+            passCount++;
+        }
+    });
+
+    console.log('\n' + '-'.repeat(30));
+    console.log(`Total: ${results.length} tests`);
+    console.log(`Passed: ${passCount}`);
+    console.log(`Failed: ${failCount}`);
+
+    if (failCount === 0) {
+        console.log('🎉 All tests passed!');
+        process.exit(0);
+    } else {
+        console.log('💥 Some tests failed!');
+        process.exit(1);
+    }
+}
+
+// Run tests if this file is executed directly
+if (require.main === module) {
+    runAllTests().catch(error => {
+        console.error('💥 Test runner crashed:', error);
+        process.exit(1);
+    });
+}
+
+module.exports = { BrowserTester, runAllTests };

@@ -1,0 +1,27 @@
+{
+  "_meta": {
+    "belt": "gaps",
+    "que_es": "Los GAPs que Tool-belt CONSTRUYE (no-existe maduro). Caso 1 = wrapper delgado de API; Caso 2 = script-runner (genera->ejecuta en sandbox->parsea).",
+    "fuente": "org/artifacts/FASE0-tabla-tool-caso-bucket.md (regla de derivacion seccion 1 + roll-up B3/B4)",
+    "verificado": "JSON-RPC init+tools/list+tools/call reales el 2026-06-15 (ver product/belts/tests/EVIDENCE.md)"
+  },
+  "mcpServers": {
+    "scriptrunner": {
+      "command": "python3",
+      "args": ["${PUPPET_BELTS}/gaps/script_runner_mcp.py"],
+      "caso": 2,
+      "bucket": "B3",
+      "nichos": ["programacion", "finanzas", "educacion"],
+      "moat": "Motor de TODO Caso 2: genera->ejecuta en sandbox aislado->parsea. Gate de Security via needs_gate (RECIPE-SCHEMA 3.5).",
+      "description": "script-runner sandbox: run_python / run_shell (allow-list) con timeout + output cap + env aislado."
+    },
+    "apiwrapper": {
+      "command": "python3",
+      "args": ["${PUPPET_BELTS}/gaps/api_wrapper_mcp.py"],
+      "caso": 1,
+      "bucket": "B4",
+      "nichos": ["finanzas", "research"],
+      "description": "Wrapper delgado de API (Caso 1 + B4): ticker_to_cik (SEC, keyless) / http_get_json (host allow-list). Misma forma para FRED/AlphaVantage con byok_ref."
+    }
+  }
+}

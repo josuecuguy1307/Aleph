@@ -1,0 +1,24 @@
+{
+  "schema_version": "v1",
+  "meta": {
+    "name": "F1 · Extractor",
+    "nicho": "general",
+    "descripcion": "ESLABÓN 1 de la cadena de la vara MULTIAGENTE-F1: recibe el pedido del humano y extrae los números."
+  },
+  "model": {
+    "primary": "openai/gpt-oss-120b",
+    "base_url": "https://api.groq.com/openai/v1",
+    "temperature": 0,
+    "max_tokens": 512,
+    "max_turns": 4
+  },
+  "belt": {
+    "belt_ref": "platform/assembler/fixtures/belt-inline-rich.mcp.json",
+    "tool_filters": { "calc": ["add"] }
+  },
+  "framing": {
+    "inline": "Recibes un texto en español. Devuelves ÚNICAMENTE los números que aparecen en él, en el orden en que aparecen, separados por comas y sin espacios. Nada de palabras, unidades, explicaciones ni puntuación extra. Ejemplo de salida válida: 3,10,7"
+  },
+  "rag": { "enabled": false },
+  "gates": { "money_touch": "needs_ok", "send": "needs_ok" }
+}

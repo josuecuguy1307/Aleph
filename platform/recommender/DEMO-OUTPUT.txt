@@ -1,0 +1,78 @@
+DEMO recomendador v0 — corrida cruda 2026-06-11 23:08:24 — comando: python3 platform/recommender/recommend.py "<intención>"
+
+==============================================================================
+GUÍA v0 — RECOMENDADOR (nicho finanzas) — v0 determinístico SIN LLM: keywords declaradas del catálogo + prior de co-ocurrencia en kits (catálogo = prior, curado no aprendido)
+INTENCIÓN: quiero que me ayude con mis finanzas personales en Excel
+términos analizados: finanzas, personales, excel
+------------------------------------------------------------------------------
+RANKING (score = match directo + prior co-ocurrencia − fricción):
+ 1. [kit] T01 — Cierre mensual que se reconcilia solo — score 4.25 (directo 3.50 + prior 0.75 − fricción 0.00)
+      porqué: matcheó 'finanzas personales' (2.0), 'excel' (1.5); prior: usa server(s) que matchearon directo: Excel local (+0.75); fricción: ninguna (cero credenciales)
+      fuente: catalog/templates/finanzas/t01-cierre-mensual/
+ 2. [server] Excel local (excel-mcp-server) — score 4.25 (directo 3.00 + prior 1.25 − fricción 0.00)
+      porqué: matcheó 'excel' (3.0); prior: aparece en kit(s) que matchearon: t01-cierre-mensual, t10-dashboard-macro; fricción: ninguna (cero credenciales)
+      fuente: catalog/belts/finanzas.md §1 (test real ✓)
+ 3. [kit] T10 — Tablero macro en Excel que se actualiza con un comando — score 2.10 (directo 1.50 + prior 0.75 − fricción 0.15)
+      porqué: matcheó 'excel' (1.5); prior: usa server(s) que matchearon directo: Excel local (+0.75); fricción visible: necesita key gratis FRED (FRED_API_KEY, ~1 min) (−0.15)
+      fuente: catalog/templates/finanzas/t10-dashboard-macro/
+ 4. [kit] T03 — Tabla de comparables con cita al filing — score 0.75 (directo 0.00 + prior 0.75 − fricción 0.00)
+      porqué: prior: usa server(s) que matchearon directo: Excel local (+0.75); fricción: ninguna (cero credenciales)
+      fuente: catalog/templates/finanzas/t03-tabla-comparables/
+ 5. [kit] T07 — Screener de fundamentals que no alucina números — score 0.75 (directo 0.00 + prior 0.75 − fricción 0.00)
+      porqué: prior: usa server(s) que matchearon directo: Excel local (+0.75); fricción: ninguna (cero credenciales)
+      fuente: catalog/templates/finanzas/t07-screener-fundamentals/
+==============================================================================
+
+==============================================================================
+GUÍA v0 — RECOMENDADOR (nicho finanzas) — v0 determinístico SIN LLM: keywords declaradas del catálogo + prior de co-ocurrencia en kits (catálogo = prior, curado no aprendido)
+INTENCIÓN: necesito armar reportes de mercado
+términos analizados: reportes, mercado
+------------------------------------------------------------------------------
+RANKING (score = match directo + prior co-ocurrencia − fricción):
+ 1. [kit] T06 — Monitor de mercado que avisa cuando algo se mueve — score 5.47 (directo 5.00 + prior 0.62 − fricción 0.15)
+      porqué: matcheó 'mercado' (3.0), 'reporte' (2.0); prior: usa server(s) que matchearon directo: Datos de mercado Alpha Vantage (+0.62); fricción visible: necesita key gratis Alpha Vantage (ALPHA_VANTAGE_API_KEY, ~1 min) (−0.15)
+      fuente: catalog/templates/finanzas/t06-monitor-mercado/
+ 2. [server] Datos de mercado Alpha Vantage (marketdata-mcp) — score 3.60 (directo 2.50 + prior 1.25 − fricción 0.15)
+      porqué: matcheó 'mercado' (2.5); prior: aparece en kit(s) que matchearon: t06-monitor-mercado; fricción visible: necesita key gratis Alpha Vantage (ALPHA_VANTAGE_API_KEY, ~1 min) (−0.15)
+      fuente: catalog/belts/finanzas.md §4 (test real ✓ init+tools/list)
+ 3. [server] Excel local (excel-mcp-server) — score 1.50 (directo 0.00 + prior 1.50 − fricción 0.00)
+      porqué: prior: aparece en kit(s) que matchearon: t06-monitor-mercado; co-ocurre con marketdata-mcp en 1 kit(s): t06-monitor-mercado; fricción: ninguna (cero credenciales)
+      fuente: catalog/belts/finanzas.md §1 (test real ✓)
+==============================================================================
+
+==============================================================================
+GUÍA v0 — RECOMENDADOR (nicho finanzas) — v0 determinístico SIN LLM: keywords declaradas del catálogo + prior de co-ocurrencia en kits (catálogo = prior, curado no aprendido)
+INTENCIÓN: quiero analizar filings de empresas
+términos analizados: analizar, filings, empresas
+------------------------------------------------------------------------------
+RANKING (score = match directo + prior co-ocurrencia − fricción):
+ 1. [server] Fundamentals SEC EDGAR (sec-edgar-mcp) — score 7.00 (directo 4.50 + prior 2.50 − fricción 0.00)
+      porqué: matcheó 'filing' (3.0), 'empresa' (1.5); prior: aparece en kit(s) que matchearon: t03-tabla-comparables, t07-screener-fundamentals, t09-resumen-filing-edgar; fricción: ninguna (cero credenciales)
+      fuente: catalog/belts/finanzas.md §5 (test real ✓ end-to-end)
+ 2. [kit] T09 — Resumen del 10-K sin leer 200 páginas — score 6.62 (directo 5.50 + prior 1.12 − fricción 0.00)
+      porqué: matcheó 'filing' (3.0), 'analizar' (1.0), 'empresa' (1.5); prior: usa server(s) que matchearon directo: Fundamentals SEC EDGAR (+1.12); fricción: ninguna (cero credenciales)
+      fuente: catalog/templates/finanzas/t09-resumen-filing-edgar/
+ 3. [kit] T03 — Tabla de comparables con cita al filing — score 4.12 (directo 3.00 + prior 1.12 − fricción 0.00)
+      porqué: matcheó 'filing' (1.5), 'empresa' (1.5); prior: usa server(s) que matchearon directo: Fundamentals SEC EDGAR (+1.12); fricción: ninguna (cero credenciales)
+      fuente: catalog/templates/finanzas/t03-tabla-comparables/
+ 4. [kit] T07 — Screener de fundamentals que no alucina números — score 2.62 (directo 1.50 + prior 1.12 − fricción 0.00)
+      porqué: matcheó 'empresa' (1.5); prior: usa server(s) que matchearon directo: Fundamentals SEC EDGAR (+1.12); fricción: ninguna (cero credenciales)
+      fuente: catalog/templates/finanzas/t07-screener-fundamentals/
+ 5. [server] Excel local (excel-mcp-server) — score 2.02 (directo 0.00 + prior 2.02 − fricción 0.00)
+      porqué: prior: aparece en kit(s) que matchearon: t03-tabla-comparables, t07-screener-fundamentals; co-ocurre con sec-edgar-mcp en 2 kit(s): t03-tabla-comparables, t07-screener-fundamentals; fricción: ninguna (cero credenciales)
+      fuente: catalog/belts/finanzas.md §1 (test real ✓)
+==============================================================================
+
+==============================================================================
+GUÍA v0 — RECOMENDADOR (nicho finanzas) — v0 determinístico SIN LLM: keywords declaradas del catálogo + prior de co-ocurrencia en kits (catálogo = prior, curado no aprendido)
+INTENCIÓN: quiero tradear cripto con apalancamiento
+términos analizados: tradear, cripto, apalancamiento
+términos SIN cobertura en el catálogo: apalancamiento, cripto  ← honesto: el catálogo finanzas v0 no declara capacidades para esto
+------------------------------------------------------------------------------
+SIN RECOMENDACIÓN: ninguna pieza del catálogo supera el umbral de evidencia (0.50).
+El recomendador NO inventa piezas. El catálogo finanzas v0 no cubre esta intención; queda registrada como señal para el flywheel.
+------------------------------------------------------------------------------
+PIEZAS QUE MATCHEARON PERO NO ESTÁN DISPONIBLES (vinculante 0014):
+  · [kit] T08 — Backtest de estrategia que corre y muestra los números — match 2.50 (tradear)
+      NO DISPONIBLE — vinculante 0014: kit code-exec; el sandbox actual (blocklist estática) no alcanza confinamiento OS-level. No rankea ni propaga prior.
+==============================================================================

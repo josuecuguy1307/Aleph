@@ -1,0 +1,59 @@
+{
+  "arquetipo": "fred",
+  "paso": "initialize",
+  "transporte": "stdio",
+  "servidor": "fred",
+  "grabado_en": "2026-08-04T01:18:08",
+  "huella_receta": "56bce2408a9e",
+  "env_declarado": false,
+  "receta": {
+    "command": "npx",
+    "args": [
+      "-y",
+      "mcp-remote",
+      "https://feedoracle.io/mcp/macro/sse",
+      "--header",
+      "X-API-Key:[valor-del-env-redactado]"
+    ],
+    "cwd": ""
+  },
+  "peticion": {
+    "metodo": "initialize",
+    "args": {}
+  },
+  "respuesta": {
+    "ok": true
+  },
+  "diagnostico": {
+    "stderr": "[58690] Using automatically selected callback port: 14701\n[58690] Using custom headers: {\"X-API-Key\":\"[valor-del-env-redactado]\"}\n[58690] Discovering OAuth server configuration...\n[58690] [58690] Connecting to remote server: https://feedoracle.io/mcp/macro/sse\n[58690] Using transport strategy: http-first\n[58690] Connected to remote server using [secreto removido]\n[58690] Local STDIO server running\n[58690] Proxy established successfully between local STDIO and remote [secreto removido]\n[58690] Press Ctrl+C to exit\n[58690] [Local→Remote] initialize\n[58690] {\n  \"jsonrpc\": \"2.0\",\n  \"id\": 1,\n  \"method\": \"initialize\",\n  \"params\": {\n    \"_meta\": {},\n    \"protocolVersion\": \"2025-11-25\",\n    \"capabilities\": {},\n    \"clientInfo\": {\n      \"name\": \"mcp (via mcp-remote 0.1.37)\",\n      \"version\": \"0.1.0\"\n    }\n  }\n}\n[58690] [Remote→Local] \u001b[33m1\u001b[39m",
+    "exit_code": null,
+    "exit_code_fuente": "no expuesto: stdio_client (mcp 2.0.0) hace `yield read_stream, write_stream` y se queda el Process",
+    "murio": false,
+    "t_eof": null,
+    "timeouts": [],
+    "rpc_timeout_s": 60.0,
+    "stderr_lineas": 25,
+    "stderr_bytes": 876,
+    "stderr_cap_bytes": 32768,
+    "stderr_cap_lineas": 80,
+    "command": "npx",
+    "transporte": "sdk-stdio",
+    "entorno": {
+      "omitido": "ambiente de la máquina, no del veredicto"
+    },
+    "server_info": {
+      "name": "MacroOracle",
+      "version": "1.0.0"
+    },
+    "protocolo": {
+      "cliente": "2025-03-26",
+      "servidor": "2025-03-26",
+      "negociacion": "aceptada",
+      "solicitada": "2025-11-25"
+    },
+    "detail": "el proceso arrancó pero no respondió al saludo initialize de MCP ([58690] Using automatically selected callback port: 14701\n[58690] Using custom headers: {\"X-API-Key\":\"[valor-del-env-redactado]\"}\n[58690] Discovering OAuth server configuration...\n[58690] [58690] Connecting to remote server: https://feedoracle.io/mcp/macro/sse\n[58690] Using transport strategy: http-first\n[58690] Connected to remote server using [secreto removido]\n[58690] Local STDIO server running\n[58690] Proxy established successfully between local STDIO and remote [secreto removido]\n[58690] Press Ctrl+C to exit\n[58690] [Local→Remote] initialize\n[58690] {\n  \"jsonrpc\": \"2.0\",\n  \"id\": 1,\n  \"method\": \"initialize\",\n  \"params\": {\n    \"_meta\": {},\n    \"protocolVersion\": \"2025-11-25\",\n    \"capabilities\": {},\n    \"clientInfo\": {\n      \"name\": \"mcp (via mcp-remote 0.1.37)\",\n      \"version\": \"0.1.0\"\n    }\n  }\n}\n[58690] [Remote→Local] \u001b[33m1\u001b[39m)"
+  },
+  "scrubber": {
+    "hallazgos_neutralizados": 6
+  }
+}

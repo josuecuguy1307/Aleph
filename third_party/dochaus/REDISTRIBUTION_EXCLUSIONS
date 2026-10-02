@@ -1,0 +1,18 @@
+# MANIFIESTO VACÍO A PROPÓSITO — la exclusión se levantó el 2026-08-14.
+#
+# Formato: ruta relativa a third_party/dochaus, sin glob. El spec la excluye como prefijo.
+#
+# Este archivo excluía seis directorios enteros —dochaus/{playbooks,agent,skill,jurisdiction}
+# y .opencode/{agent,skills}, 113 archivos— con el motivo «contenido jurídico cuya
+# procedencia/licencia no está auditada». La auditoría se hizo: 109 originales del equipo
+# bajo el MIT del repo, 4 redistribuibles con atribución (CC BY 4.0 y dominio público, las
+# cuatro ya declaradas dentro de sus propios archivos), 0 no redistribuibles. Las cuatro
+# atribuciones y su evidencia viven en ATTRIBUTIONS, y el gate quedó en AUDITED.
+#
+# El manifiesto NO se borra: su historia es la única que explica por qué durante cuatro días
+# la .app llevó un motor legal sin agentes, sin skills, sin jurisdicciones y sin playbooks.
+#
+# ⚠️ SIN FILAS NO PROTEGE. `build_app.sh:55-60` sólo pide que el archivo NO esté vacío
+# (`[ -s ]`): estos comentarios ya lo satisfacen. Si alguien devuelve el gate a
+# EXCLUSION_MANIFEST sin reponer filas, la compuerta pasa y el bundle sale entero — con la
+# etiqueta de excluido y sin nada excluido. Volver atrás es reponer las filas Y el gate.

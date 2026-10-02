@@ -1,0 +1,24 @@
+{
+  "schema_version": "v1",
+  "meta": {
+    "name": "F1 · Informe",
+    "nicho": "general",
+    "descripcion": "ESLABÓN 3, el que ENTREGA: formatea el resultado para el humano."
+  },
+  "model": {
+    "primary": "openai/gpt-oss-120b",
+    "base_url": "https://api.groq.com/openai/v1",
+    "temperature": 0,
+    "max_tokens": 256,
+    "max_turns": 3
+  },
+  "belt": {
+    "belt_ref": "platform/assembler/fixtures/belt-inline-rich.mcp.json",
+    "tool_filters": { "calc": ["add"] }
+  },
+  "framing": {
+    "inline": "Recibes un número. Devuelves EXACTAMENTE una línea con este formato y nada más: TOTAL: <número>"
+  },
+  "rag": { "enabled": false },
+  "gates": { "money_touch": "needs_ok", "send": "needs_ok" }
+}

@@ -1,0 +1,261 @@
+import type { Tool, ToolCallReader, ToolExecuteFunction } from "./tool-types";
+import type { StandardSchemaV1 } from "@standard-schema/spec";
+import { ToolResponse } from "./ToolResponse";
+import { ToolExecutionStream } from "./ToolExecutionStream";
+import type { AssistantMessage } from "../utils/types";
+import type { ReadonlyJSONObject, ReadonlyJSONValue } from "../../utils";
+
+const isStandardSchemaV1 = (
+  schema: unknown,
+): schema is StandardSchemaV1<unknown> => {
+  return (
+    typeof schema === "object" &&
+    schema !== null &&
+    "~standard" in schema &&
+    (schema as StandardSchemaV1<unknown>)["~standard"].version === 1
+  );
+};
+
+function getToolResponse(
+  tools: Record<string, Tool> | undefined,
+  abortSignal: AbortSignal,
+  toolCall: {
+    toolCallId: string;
+    toolName: string;
+    args: ReadonlyJSONObject;
+  },
+  human: (toolCallId: string, payload: unknown) => Promise<unknown>,
+) {
+  const tool = tools?.[toolCall.toolName];
+  if (!tool?.execute) return undefined;
+
+  const getResult = async (
+    toolExecute: ToolExecuteFunction<ReadonlyJSONObject, unknown>,
+  ): Promise<ToolResponse<ReadonlyJSONValue>> => {
+    // Check if already aborted before starting
+    if (abortSignal.aborted) {
+      return new ToolResponse({
+        result: "Tool execution was cancelled.",
+        isError: true,
+      });
+    }
+
+    let executeFn = toolExecute;
+
+    if (isStandardSchemaV1(tool.parameters)) {
+      let result = tool.parameters["~standard"].validate(toolCall.args);
+      if (result instanceof Promise) result = await result;
+
+      if (result.issues) {
+        executeFn =
+          tool.experimental_onSchemaValidationError ??
+          (() => {
+            throw new Error(
+              `Function parameter validation failed. ${JSON.stringify(result.issues)}`,
+            );
+          });
+      }
+    }
+
+    // Create abort promise that resolves after 2 microtasks
+    // This gives tools that handle abort a chance to win the race
+    let onAbort!: () => void;
+    const abortPromise = new Promise<ToolResponse<ReadonlyJSONValue>>(
+      (resolve) => {
+        onAbort = () => {
+          queueMicrotask(() => {
+            queueMicrotask(() => {
+              resolve(
+                new ToolResponse({
+                  result: "Tool execution was cancelled.",
+                  isError: true,
+                }),
+              );
+            });
+          });
+        };
+        if (abortSignal.aborted) {
+          onAbort();
+        } else {
+          abortSignal.addEventListener("abort", onAbort, { once: true });
+        }
+      },
+    );
+
+    const executePromise = (async () => {
+      const result = (await executeFn(toolCall.args, {
+        toolCallId: toolCall.toolCallId,
+        abortSignal,
+        human: (payload: unknown) => human(toolCall.toolCallId, payload),
+      })) as unknown as ReadonlyJSONValue;
+      const response = ToolResponse.toResponse(result);
+      if (
+        tool.toModelOutput &&
+        !response.isError &&
+        response.modelContent === undefined
+      ) {
+        try {
+          const modelContent = await tool.toModelOutput({
+            toolCallId: toolCall.toolCallId,
+            input: toolCall.args,
+            output: response.result,
+          });
+          return new ToolResponse({
+            result: response.result,
+            artifact: response.artifact,
+            isError: response.isError,
+            messages: response.messages,
+            modelContent,
+          });
+        } catch (e) {
+          console.warn(
+            `[assistant-stream] tool "${toolCall.toolName}" toModelOutput threw; falling back to default projection.`,
+            e,
+          );
+        }
+      }
+      return response;
+    })();
+
+    try {
+      return await Promise.race([executePromise, abortPromise]);
+    } finally {
+      abortSignal.removeEventListener("abort", onAbort);
+    }
+  };
+
+  return getResult(tool.execute);
+}
+
+function getToolStreamResponse(
+  tools: Record<string, Tool> | undefined,
+  abortSignal: AbortSignal,
+  reader: ToolCallReader<any, ReadonlyJSONValue>,
+  context: {
+    toolCallId: string;
+    toolName: string;
+  },
+  human: (toolCallId: string, payload: unknown) => Promise<unknown>,
+) {
+  tools?.[context.toolName]?.streamCall?.(reader, {
+    toolCallId: context.toolCallId,
+    abortSignal,
+    human: (payload: unknown) => human(context.toolCallId, payload),
+  });
+}
+
+export async function unstable_runPendingTools(
+  message: AssistantMessage,
+  tools: Record<string, Tool> | undefined,
+  abortSignal: AbortSignal,
+  human: (toolCallId: string, payload: unknown) => Promise<unknown>,
+) {
+  const toolCallPromises = message.parts
+    .filter((part) => part.type === "tool-call")
+    .map(async (part) => {
+      const promiseOrUndefined = getToolResponse(
+        tools,
+        abortSignal,
+        part,
+        human ??
+          (async () => {
+            throw new Error(
+              "Tool human input is not supported in this context",
+            );
+          }),
+      );
+      if (promiseOrUndefined) {
+        const result = await promiseOrUndefined;
+        return {
+          toolCallId: part.toolCallId,
+          result,
+        };
+      }
+      return null;
+    });
+
+  const toolCallResults = (await Promise.all(toolCallPromises)).filter(
+    (result) => result !== null,
+  ) as { toolCallId: string; result: ToolResponse<ReadonlyJSONValue> }[];
+
+  if (toolCallResults.length === 0) {
+    return message;
+  }
+
+  const toolCallResultsById = toolCallResults.reduce(
+    (acc, { toolCallId, result }) => {
+      acc[toolCallId] = result;
+      return acc;
+    },
+    {} as Record<string, ToolResponse<ReadonlyJSONValue>>,
+  );
+
+  const updatedParts = message.parts.map((p) => {
+    if (p.type === "tool-call") {
+      const toolResponse = toolCallResultsById[p.toolCallId];
+      if (toolResponse) {
+        return {
+          ...p,
+          state: "result" as const,
+          ...(toolResponse.artifact !== undefined
+            ? { artifact: toolResponse.artifact }
+            : {}),
+          ...(toolResponse.modelContent !== undefined
+            ? { modelContent: toolResponse.modelContent }
+            : {}),
+          result: toolResponse.result as ReadonlyJSONValue,
+          isError: toolResponse.isError,
+        };
+      }
+    }
+    return p;
+  });
+
+  return {
+    ...message,
+    parts: updatedParts,
+    content: updatedParts,
+  };
+}
+
+export type ToolResultStreamOptions = {
+  /** Called immediately before a frontend tool's `execute` function runs. */
+  onExecutionStart?: (toolCallId: string, toolName: string) => void;
+  /** Called after frontend tool execution finishes or fails. */
+  onExecutionEnd?: (toolCallId: string, toolName: string) => void;
+};
+
+/**
+ * Transform stream that executes frontend tools and appends tool results.
+ *
+ * The transform watches streamed tool-call arguments, runs the matching
+ * frontend tool once its arguments are complete, and emits a result chunk for
+ * the tool call. Backend and human tools pass through according to their tool
+ * definition.
+ *
+ * @param tools Tool registry or function returning the current registry.
+ * @param abortSignal Signal, or signal getter, used for the current run.
+ * @param human Callback used to resolve human-tool requests from UI input.
+ * @param options Optional execution lifecycle callbacks.
+ */
+export function toolResultStream(
+  tools:
+    | Record<string, Tool>
+    | (() => Record<string, Tool> | undefined)
+    | undefined,
+  abortSignal: AbortSignal | (() => AbortSignal),
+  human: (toolCallId: string, payload: unknown) => Promise<unknown>,
+  options?: ToolResultStreamOptions,
+) {
+  const toolsFn = typeof tools === "function" ? tools : () => tools;
+  const abortSignalFn =
+    typeof abortSignal === "function" ? abortSignal : () => abortSignal;
+  return new ToolExecutionStream({
+    execute: (toolCall) =>
+      getToolResponse(toolsFn(), abortSignalFn(), toolCall, human),
+    streamCall: ({ reader, ...context }) =>
+      getToolStreamResponse(toolsFn(), abortSignalFn(), reader, context, human),
+    onExecutionStart: options?.onExecutionStart,
+    onExecutionEnd: options?.onExecutionEnd,
+  });
+}

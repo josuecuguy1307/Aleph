@@ -1,0 +1,38 @@
+{
+  "connector": "orcid",
+  "auth_method": "oauth",
+  "tier": "average",
+  "provider": "orcid",
+  "scopes": [
+    "/read-limited"
+  ],
+  "oauth": {
+    "authorize_url": "https://sandbox.orcid.org/oauth/authorize",
+    "token_url": "https://sandbox.orcid.org/oauth/token",
+    "scope": "/authenticate",
+    "client_id_env": "ORCID_CLIENT_ID",
+    "client_secret_env": "ORCID_CLIENT_SECRET",
+    "identity_field": "orcid",
+    "unconfigured_message": "Conectar con ORCID necesita registrar la app OAuth de Puppet (sandbox). Gateado hasta que exista la app.",
+    "notes": "v0 = ORCID SANDBOX. scope /authenticate = lo que da un cliente publico gratis (devuelve el iD del user); alcanza para probar Caso A. /read-limited es Member API (institucional). Para el bonus run autenticado, la API publica sandbox es https://pub.sandbox.orcid.org."
+  },
+  "validate": {
+    "method": "GET",
+    "path": "/v3.0/{orcid}/works",
+    "identity_field": "name"
+  },
+  "capability_line": "Listo — ya puedo ver tu producción registrada en ORCID y citarla.",
+  "trust_line": "Conectas con tu cuenta · lo desconectas cuando quieras.",
+  "escape_hatch": true,
+  "verification": {
+    "deep_link_ok": true,
+    "anchor_ok": false,
+    "validated_with_test_key": false,
+    "notes": "ORCID individual = OAuth (Caso A: botón «Conectar con ORCID», ORCID maneja el consentimiento). REQUIERE registrar una app OAuth en ORCID (client id/secret de Puppet) — diferido hasta que exista. Alternativa keyless: leer el registro PÚBLICO por iD (0000-...) sin credencial, si solo se necesita lo público. Sin app registrada, no validé."
+  },
+  "api_base": "https://pub.orcid.org",
+  "en": {
+    "capability_line": "Done — I can now see your research output registered in ORCID and cite it.",
+    "trust_line": "You connect with your own account · disconnect it anytime."
+  }
+}

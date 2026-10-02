@@ -1,0 +1,19 @@
+{
+  "belt_path": "catalog/templates/demo-test/belt-demo.mcp.json",
+  "framing_path": null,
+  "framing_fallback": "Eres un agente de planificación de menús. Planificas semanas completas de comidas equilibradas según las restricciones del usuario. Siempre generas una lista de compras ordenada.",
+  "rag_dir": null,
+  "base_url": "http://127.0.0.1:11434/v1",
+  "model": "qwen3:8b",
+  "max_turns": 8,
+  "max_tokens": 2048,
+  "temperature": 0.3,
+  "tool_filters": {},
+  "surgery_params": {
+    "personas": 2,
+    "restricciones": "",
+    "tiempo_max_min": 45,
+    "incluir_lista_compras": true
+  },
+  "api_key": {}
+}

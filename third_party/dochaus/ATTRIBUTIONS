@@ -1,0 +1,109 @@
+# Atribuciones y frontera de contenido — doc.haus
+
+## Código
+
+`doc.haus`, incluido el fork de OpenCode, se distribuye bajo MIT. Véase `LICENSE` en la
+raíz de este directorio y el commit de origen en `IMPORT.md`.
+
+**El MIT de este repo no distingue código de contenido.** Su concesión es sobre «the
+Software **and associated documentation files**», sin cláusula que separe ninguno de los
+dos ni excluya ningún directorio. Ése es el punto de partida de la auditoría de abajo, y
+lo que la versión anterior de este archivo daba por insuficiente sin haberlo comprobado.
+
+## Contenido jurídico — AUDITADO 2026-08-14
+
+Alcance auditado: **los 113 archivos** de `dochaus/{agent,skill,jurisdiction,playbooks}` y
+`.opencode/{agent,skills}` — es decir, exactamente los seis directorios que
+`REDISTRIBUTION_EXCLUSIONS` excluía. Método y evidencia completa en
+PUBLIC-PROVENANCE.md y PUBLIC-PROVENANCE.json; verificación pública reproducible del commit.
+
+| | archivos |
+|---|---|
+| Original del equipo, cubierto por el MIT del repo | **109** |
+| Redistribuible **con atribución** (abajo) | **4** |
+| No redistribuible | **0** |
+
+### Las 4 atribuciones exigidas
+
+| Material | Fuente | Autoría | Licencia | Dónde se declara en el árbol |
+|---|---|---|---|---|
+| `dochaus/skill/contract-risk-checklist/references/cuad-taxonomy.md` | CUAD — Contract Understanding Atticus Dataset (`https://www.atticusprojectai.org/cuad`) | The Atticus Project | **CC BY 4.0** | el propio archivo, líneas 9-10 |
+| `dochaus/playbooks/playbook-dpa/SKILL.md` | Common Paper DPA (`https://github.com/CommonPaper/DPA`) | Common Paper | **CC BY 4.0** | el propio archivo, líneas 375-376 |
+| `dochaus/playbooks/playbook-saas-msa/SKILL.md` | Common Paper Cloud Service Agreement standards (`https://commonpaper.com/standards/`) y Bonterms Cloud Terms v1.0 (`https://github.com/Bonterms/Cloud-Terms`) | Common Paper · Bonterms | **CC BY 4.0** | el propio archivo, líneas 336-339 |
+| `dochaus/playbooks/playbook-nda/SKILL.md` | Bonterms Playbook for the Bonterms Mutual NDA (`https://bonterms.com/resources/nda-playbook`) | Bonterms | **Dominio público**, con la condición de **no implicar el respaldo de Bonterms**. Bonterms® es marca registrada; se la nombra de forma nominativa | el propio archivo, líneas 35-40 y 316-317 |
+
+**Verificación en la fuente, 2026-08-14** — es lo que la versión anterior de este archivo
+reclamaba como faltante («no adjunta verificación/licencia»):
+
+* Common Paper — *«Common Paper agreements are free to use and modify under CC BY 4.0.»*
+* Bonterms Cloud Terms — *«The Cloud Terms and all other Bonterms Standard Agreements are
+  free to use under CC BY 4.0.»*
+* Bonterms NDA playbook — *«Public domain – you are free to use, modify, or distribute, but
+  you may not imply Bonterms' endorsement.»*
+* CUAD — publicado **CC BY 4.0** por The Atticus Project.
+
+**oneNDA no está en esta tabla y no es una omisión.** `playbook-nda/SKILL.md:30-33` instruye
+explícitamente *«never copy oneNDA text into this playbook or any firm document (it is
+licensed CC BY-ND, which prohibits derivatives)»*. El archivo nombra oneNDA y su URL para
+**reconocerlo**, no lo reproduce: no hay obra derivada que atribuir.
+
+### La evidencia de los 109
+
+1. **La licencia del repo cubre el contenido** — MIT sobre «the Software and associated
+   documentation files», sin distinguir ni excluir. Confirmado el 2026-08-14 contra el repo
+   público `https://github.com/sure-scale/doc-haus` (público, MIT, rama `dochaus`, sin
+   archivar): mismo `LICENSE` que el commit importado `f3cdfd15`.
+2. **113 de 113 nacieron dentro del repo**, en commits de sus propios mantenedores
+   (`git log --follow --diff-filter=A`): 110 de `nicksolarsoul` / `Nick Watson`
+   (`nick@solarsoul.life`), 2 de `Aiden Cline`, 1 de `Dax Raad` (autor de OpenCode upstream,
+   los tres de `.opencode/`). **Cero imports vendorizados.**
+3. **Ningún mensaje de alta cita una fuente externa como origen.** Los 20 mensajes distintos
+   son trabajo de producto (`feat(dochaus): playbooks — firm positions…`,
+   `feat(web): expand jurisdictions to 30 packs…`, `ci: auto triage issues`, …).
+4. **El equipo publicó estos activos bajo su propia licencia**: el commit `ee39b567`
+   —*«prep for public release — case-law research, demo, licensing»*, el que instala el
+   `LICENSE`— agrega en el mismo acto `dochaus/agent/research.md`, uno de los 113.
+5. **Los 30 packs de jurisdicción son punteros, no copias.** ~45 líneas y ~2 KB cada uno,
+   con bloques `<authority>/<citation>/<sources>/<style>`; sus `<sources>` citan la URL del
+   portal legislativo oficial (`uscode.house.gov`, `eur-lex.europa.eu`, `legifrance.gouv.fr`,
+   `gesetze-im-internet.de`, …, 35 portales en total) con la instrucción *«retrieve before
+   relying»*. No hay texto de estatuto reproducido.
+6. **Ninguno de los 113 declara licencia propia en su frontmatter** — y ésa era la
+   observación de la versión anterior. Se registra acá que **la ausencia de cabecera no es
+   una restricción**: obra original en un repo MIT queda cubierta por el `LICENSE` de la
+   raíz, que es justamente lo que el MIT exige conservar y este archivo conserva.
+
+### Lo que queda dicho como límite de esta auditoría
+
+* No es asesoramiento legal. Es una auditoría de procedencia documental: licencia del repo,
+  historial de git, declaraciones dentro de cada archivo y verificación de las cuatro
+  fuentes externas en su origen.
+* Las 12 referencias de `dochaus/skill/clause-library/references/` contienen redacción
+  comercial estándar en vallas ```` ```example ````. No citan fuente, se enmarcan solas como
+  *«US commercial-market reference points»* y nacieron en commits del equipo. Se las da por
+  limpias con **evidencia indiciaria, no probatoria**: no hay forma de trazar una cláusula
+  boilerplate a un autor.
+
+### Otros materiales (fuera de los 113, ya declarados antes)
+
+| Material | Estado | Procedencia |
+|---|---|---|
+| `demo/Letter-of-Engagement-Aldgate-Mills.docx` y `templates/nda.docx` | Incluido como contenido generado del proyecto | El demo se declara ficticio (`demo/README.md:1-8`) y la plantilla se genera en `templates/build.ts:1-13,97-175`; quedan bajo la atribución MIT del proyecto salvo prueba contraria. |
+
+## Gatillo ejecutable de redistribución
+
+`deploy/fase4/build_app.sh` lee el marcador siguiente con `rg` y aborta un build `public` si
+no hay auditoría o una exclusión materializable por el spec. Ningún build puede interpretar
+silencio como permiso.
+
+<!-- ALEPH_REDISTRIBUTION_GATE=AUDITED -->
+<!-- ALEPH_REDISTRIBUTION_MANIFEST=third_party/dochaus/REDISTRIBUTION_EXCLUSIONS -->
+
+**Gate en `AUDITED` desde 2026-08-14.** Con este marcador la rama de exclusión de
+`build_app.sh:55-60` no se evalúa y `REDISTRIBUTION_EXCLUSIONS` queda **sin filas**, con su
+historia adentro. Volver a `EXCLUSION_MANIFEST` exige reponer las filas del manifiesto: un
+manifiesto sin filas pasa la compuerta y no excluye nada, que es protección aparente y no
+real.
+
+Una atribución de esta tabla sólo se retira si su material sale del árbol. Material nuevo de
+terceros entra con su fila acá **antes** de entrar al árbol, no después.

@@ -1,0 +1,13 @@
+{
+  "belt_path": "fixtures/belt-dummy.mcp.json",
+  "framing_path": null,
+  "framing_fallback": "You are a helpful assistant. When asked to echo something, use the echo tool.",
+  "rag_dir": null,
+  "base_url": "http://127.0.0.1:11434/v1",
+  "model": "qwen3:8b",
+  "max_turns": 4,
+  "max_tokens": 512,
+  "temperature": 0,
+  "tool_filters": {},
+  "api_key": {}
+}

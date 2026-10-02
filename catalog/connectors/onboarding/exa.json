@@ -1,0 +1,80 @@
+{
+  "connector": "exa",
+  "auth_method": "personal_token",
+  "tier": "average",
+  "needs_base_url": false,
+  "deep_link": "https://dashboard.exa.ai/api-keys",
+  "api_base": "https://api.exa.ai",
+  "credential_fields": [
+    {
+      "id": "key",
+      "label": "Tu API key de Exa",
+      "shape": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx (formato UUID)",
+      "secret": true
+    }
+  ],
+  "auth": {
+    "scheme": "header",
+    "name": "x-api-key",
+    "value": "{key}"
+  },
+  "steps": [
+    {
+      "txt": "Te llevo al panel de Exa a crear una API key. Cópiala (Exa ofrece un plan gratuito para empezar).",
+      "emphasis": [
+        "API key"
+      ]
+    },
+    {
+      "txt": "Pega tu llave aquí."
+    }
+  ],
+  "validate": {
+    "path": "/websets/v0/websets",
+    "method": "GET",
+    "soft": true
+  },
+  "permissions": [
+    "búsqueda web neural y fetch de fuentes"
+  ],
+  "requires_sharing": false,
+  "errors": {
+    "invalid": "Esa key no funcionó — genera una nueva en el dashboard de Exa y pégala.",
+    "network": "No pude verificar ahora — prueba de nuevo en un momento."
+  },
+  "escape_hatch": true,
+  "capability_line": "Listo — ya puedo buscar en la web con Exa (búsqueda neural).",
+  "trust_line": "Tu key se guarda cifrada · la quitas cuando quieras.",
+  "verification": {
+    "deep_link_ok": true,
+    "anchor_ok": false,
+    "validated_with_test_key": false,
+    "notes": "[FIX-P11 · 2026-07-27] CORREGIDO: antes validate era solo {soft:true} SIN path, asi que connect_engine pegaba contra la raiz (GET https://api.exa.ai) que devuelve 404 -> el motor lo leia como 'status != 200' -> 'Esa llave no sirve'. Dos llaves recien generadas en el dashboard fueron rechazadas asi (caminata 2026-07-27). MEDIDO hoy: GET https://api.exa.ai/websets/v0/websets con llave invalida -> 401 {'error':'Invalid API key'}; es un GET de LISTA (no consume creditos de busqueda, a diferencia de POST /search que si cobra). Se mantiene soft:true como red: con el fix de connect_engine, un no-200 que no sea 401/403 ya no degrada a 'invalida' sino a connected_unverified."
+  },
+  "en": {
+    "steps": [
+      {
+        "txt": "I'll take you to the Exa dashboard to create an API key. Copy it (Exa offers a free tier to get started).",
+        "emphasis": [
+          "API key"
+        ]
+      },
+      {
+        "txt": "Paste it here."
+      }
+    ],
+    "trust_line": "Your key is stored encrypted · remove it anytime.",
+    "capability_line": "Done — I can now search the web with Exa (neural search).",
+    "errors": {
+      "invalid": "That key didn't work — generate a new one in the Exa dashboard and paste it.",
+      "network": "I couldn't verify right now — try again in a moment."
+    },
+    "credential_fields": [
+      {
+        "id": "key",
+        "label": "Your Exa API key",
+        "shape": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx (UUID format)"
+      }
+    ]
+  }
+}

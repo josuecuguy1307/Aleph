@@ -1,0 +1,36 @@
+{
+  "mcpServers": {
+    "finanzas": {
+      "command": "python3",
+      "args": ["${PUPPET_BELTS}/finanzas/finanzas_data_server.py"],
+      "env": {
+        "ALPHA_VANTAGE_API_KEY": "${ALPHA_VANTAGE_API_KEY}",
+        "PUPPET_WORKDIR": "${PUPPET_WORKDIR}"
+      },
+      "description": "Belt de FINANZAS (stdio, $0). Tools: worldbank_series (serie macro keyless), bce_pdf_ingest (ingestor determinista con procedencia), alphavantage_quote (mercado, BYOK del usuario), build_workbook (escribe el .xlsx con procedencia por dato desde el store)."
+    }
+  },
+  "_meta": {
+    "slug": "finanzas-data",
+    "cards": [
+      {
+        "id": "worldbank",
+        "connector": "worldbank",
+        "label": "Banco Mundial",
+        "sub": "series macro (PIB, inflación, deuda…) de cualquier país",
+        "auth": "keyless",
+        "backed_by": "finanzas",
+        "tools": ["worldbank_series"]
+      },
+      {
+        "id": "alphavantage",
+        "connector": "alphavantage",
+        "label": "Alpha Vantage",
+        "sub": "precios de mercado y series técnicas (acciones, FX)",
+        "auth": "personal_token",
+        "backed_by": "finanzas",
+        "tools": ["alphavantage_quote"]
+      }
+    ]
+  }
+}

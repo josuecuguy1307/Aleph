@@ -1,0 +1,2535 @@
+{
+  "schema_version": 1,
+  "method": "SHA256 of official HTTPS artifact versus unchanged local bytes",
+  "queries": [
+    {
+      "url": "https://fonts.googleapis.com/css2?family=Hanken%20Grotesk:ital,wght@0,400;0,500;0,600;0,700&display=swap",
+      "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+      "sha256": "16fe89326e46eb6d20851f5ef459b4be0729728893ee4d30e2f3a550e9eaafe8",
+      "css": "/* cyrillic-ext */\n@font-face {\n  font-family: 'Hanken Grotesk';\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/hankengrotesk/v12/ieVn2YZDLWuGJpnzaiwFXS9tYtpQ59CxCis4UvI.woff2) format('woff2');\n  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;\n}\n/* vietnamese */\n@font-face {\n  font-family: 'Hanken Grotesk';\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/hankengrotesk/v12/ieVn2YZDLWuGJpnzaiwFXS9tYtpS59CxCis4UvI.woff2) format('woff2');\n  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;\n}\n/* latin-ext */\n@font-face {\n  font-family: 'Hanken Grotesk';\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/hankengrotesk/v12/ieVn2YZDLWuGJpnzaiwFXS9tYtpT59CxCis4UvI.woff2) format('woff2');\n  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;\n}\n/* latin */\n@font-face {\n  font-family: 'Hanken Grotesk';\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/hankengrotesk/v12/ieVn2YZDLWuGJpnzaiwFXS9tYtpd59CxCis4.woff2) format('woff2');\n  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;\n}\n/* cyrillic-ext */\n@font-face {\n  font-family: 'Hanken Grotesk';\n  font-style: normal;\n  font-weight: 500;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/hankengrotesk/v12/ieVn2YZDLWuGJpnzaiwFXS9tYtpQ59CxCis4UvI.woff2) format('woff2');\n  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;\n}\n/* vietnamese */\n@font-face {\n  font-family: 'Hanken Grotesk';\n  font-style: normal;\n  font-weight: 500;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/hankengrotesk/v12/ieVn2YZDLWuGJpnzaiwFXS9tYtpS59CxCis4UvI.woff2) format('woff2');\n  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;\n}\n/* latin-ext */\n@font-face {\n  font-family: 'Hanken Grotesk';\n  font-style: normal;\n  font-weight: 500;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/hankengrotesk/v12/ieVn2YZDLWuGJpnzaiwFXS9tYtpT59CxCis4UvI.woff2) format('woff2');\n  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;\n}\n/* latin */\n@font-face {\n  font-family: 'Hanken Grotesk';\n  font-style: normal;\n  font-weight: 500;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/hankengrotesk/v12/ieVn2YZDLWuGJpnzaiwFXS9tYtpd59CxCis4.woff2) format('woff2');\n  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;\n}\n/* cyrillic-ext */\n@font-face {\n  font-family: 'Hanken Grotesk';\n  font-style: normal;\n  font-weight: 600;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/hankengrotesk/v12/ieVn2YZDLWuGJpnzaiwFXS9tYtpQ59CxCis4UvI.woff2) format('woff2');\n  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;\n}\n/* vietnamese */\n@font-face {\n  font-family: 'Hanken Grotesk';\n  font-style: normal;\n  font-weight: 600;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/hankengrotesk/v12/ieVn2YZDLWuGJpnzaiwFXS9tYtpS59CxCis4UvI.woff2) format('woff2');\n  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;\n}\n/* latin-ext */\n@font-face {\n  font-family: 'Hanken Grotesk';\n  font-style: normal;\n  font-weight: 600;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/hankengrotesk/v12/ieVn2YZDLWuGJpnzaiwFXS9tYtpT59CxCis4UvI.woff2) format('woff2');\n  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;\n}\n/* latin */\n@font-face {\n  font-family: 'Hanken Grotesk';\n  font-style: normal;\n  font-weight: 600;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/hankengrotesk/v12/ieVn2YZDLWuGJpnzaiwFXS9tYtpd59CxCis4.woff2) format('woff2');\n  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;\n}\n/* cyrillic-ext */\n@font-face {\n  font-family: 'Hanken Grotesk';\n  font-style: normal;\n  font-weight: 700;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/hankengrotesk/v12/ieVn2YZDLWuGJpnzaiwFXS9tYtpQ59CxCis4UvI.woff2) format('woff2');\n  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;\n}\n/* vietnamese */\n@font-face {\n  font-family: 'Hanken Grotesk';\n  font-style: normal;\n  font-weight: 700;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/hankengrotesk/v12/ieVn2YZDLWuGJpnzaiwFXS9tYtpS59CxCis4UvI.woff2) format('woff2');\n  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;\n}\n/* latin-ext */\n@font-face {\n  font-family: 'Hanken Grotesk';\n  font-style: normal;\n  font-weight: 700;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/hankengrotesk/v12/ieVn2YZDLWuGJpnzaiwFXS9tYtpT59CxCis4UvI.woff2) format('woff2');\n  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;\n}\n/* latin */\n@font-face {\n  font-family: 'Hanken Grotesk';\n  font-style: normal;\n  font-weight: 700;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/hankengrotesk/v12/ieVn2YZDLWuGJpnzaiwFXS9tYtpd59CxCis4.woff2) format('woff2');\n  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;\n}\n"
+    },
+    {
+      "url": "https://fonts.googleapis.com/css2?family=Instrument%20Serif:ital,wght@0,400&display=swap",
+      "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+      "sha256": "d1c378e8235aec47338db02545b35192d02b67a11c3b2c63cfc60afc8b9671ea",
+      "css": "/* latin-ext */\n@font-face {\n  font-family: 'Instrument Serif';\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/instrumentserif/v5/jizBRFtNs2ka5fXjeivQ4LroWlx-6zsTjnTLgNuZ5w.woff2) format('woff2');\n  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;\n}\n/* latin */\n@font-face {\n  font-family: 'Instrument Serif';\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/instrumentserif/v5/jizBRFtNs2ka5fXjeivQ4LroWlx-6zUTjnTLgNs.woff2) format('woff2');\n  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;\n}\n"
+    },
+    {
+      "url": "https://fonts.googleapis.com/css2?family=JetBrains%20Mono:ital,wght@0,400;0,500&display=swap",
+      "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+      "sha256": "150414004878b86a139f4c21821137c8209c6ba49c8f6715598a6109ccffdc9c",
+      "css": "/* cyrillic-ext */\n@font-face {\n  font-family: 'JetBrains Mono';\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPx3cwgknk-6nFg.woff2) format('woff2');\n  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;\n}\n/* cyrillic */\n@font-face {\n  font-family: 'JetBrains Mono';\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxTcwgknk-6nFg.woff2) format('woff2');\n  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;\n}\n/* greek */\n@font-face {\n  font-family: 'JetBrains Mono';\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxPcwgknk-6nFg.woff2) format('woff2');\n  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;\n}\n/* vietnamese */\n@font-face {\n  font-family: 'JetBrains Mono';\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPx_cwgknk-6nFg.woff2) format('woff2');\n  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;\n}\n/* latin-ext */\n@font-face {\n  font-family: 'JetBrains Mono';\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPx7cwgknk-6nFg.woff2) format('woff2');\n  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;\n}\n/* latin */\n@font-face {\n  font-family: 'JetBrains Mono';\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxDcwgknk-4.woff2) format('woff2');\n  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;\n}\n/* cyrillic-ext */\n@font-face {\n  font-family: 'JetBrains Mono';\n  font-style: normal;\n  font-weight: 500;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPx3cwgknk-6nFg.woff2) format('woff2');\n  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;\n}\n/* cyrillic */\n@font-face {\n  font-family: 'JetBrains Mono';\n  font-style: normal;\n  font-weight: 500;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxTcwgknk-6nFg.woff2) format('woff2');\n  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;\n}\n/* greek */\n@font-face {\n  font-family: 'JetBrains Mono';\n  font-style: normal;\n  font-weight: 500;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxPcwgknk-6nFg.woff2) format('woff2');\n  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;\n}\n/* vietnamese */\n@font-face {\n  font-family: 'JetBrains Mono';\n  font-style: normal;\n  font-weight: 500;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPx_cwgknk-6nFg.woff2) format('woff2');\n  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;\n}\n/* latin-ext */\n@font-face {\n  font-family: 'JetBrains Mono';\n  font-style: normal;\n  font-weight: 500;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPx7cwgknk-6nFg.woff2) format('woff2');\n  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;\n}\n/* latin */\n@font-face {\n  font-family: 'JetBrains Mono';\n  font-style: normal;\n  font-weight: 500;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxDcwgknk-4.woff2) format('woff2');\n  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;\n}\n"
+    },
+    {
+      "url": "https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;0,600&display=swap",
+      "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+      "sha256": "05f409dda137a621a494e1411834a5fff28804ba16785082b9d1e87c1c21a60e",
+      "css": "/* vietnamese */\n@font-face {\n  font-family: 'Newsreader';\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/newsreader/v26/cY9VfjOCX1hbuyalUrK49dLac06G1ZGsZBtoBAbCJYQ5ayZCzn4.woff2) format('woff2');\n  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;\n}\n/* latin-ext */\n@font-face {\n  font-family: 'Newsreader';\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/newsreader/v26/cY9VfjOCX1hbuyalUrK49dLac06G1ZGsZBtoBAbDJYQ5ayZCzn4.woff2) format('woff2');\n  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;\n}\n/* latin */\n@font-face {\n  font-family: 'Newsreader';\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/newsreader/v26/cY9VfjOCX1hbuyalUrK49dLac06G1ZGsZBtoBAbNJYQ5ayZC.woff2) format('woff2');\n  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;\n}\n/* vietnamese */\n@font-face {\n  font-family: 'Newsreader';\n  font-style: normal;\n  font-weight: 500;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/newsreader/v26/cY9VfjOCX1hbuyalUrK49dLac06G1ZGsZBtoBAbCJYQ5ayZCzn4.woff2) format('woff2');\n  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;\n}\n/* latin-ext */\n@font-face {\n  font-family: 'Newsreader';\n  font-style: normal;\n  font-weight: 500;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/newsreader/v26/cY9VfjOCX1hbuyalUrK49dLac06G1ZGsZBtoBAbDJYQ5ayZCzn4.woff2) format('woff2');\n  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;\n}\n/* latin */\n@font-face {\n  font-family: 'Newsreader';\n  font-style: normal;\n  font-weight: 500;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/newsreader/v26/cY9VfjOCX1hbuyalUrK49dLac06G1ZGsZBtoBAbNJYQ5ayZC.woff2) format('woff2');\n  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;\n}\n/* vietnamese */\n@font-face {\n  font-family: 'Newsreader';\n  font-style: normal;\n  font-weight: 600;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/newsreader/v26/cY9VfjOCX1hbuyalUrK49dLac06G1ZGsZBtoBAbCJYQ5ayZCzn4.woff2) format('woff2');\n  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;\n}\n/* latin-ext */\n@font-face {\n  font-family: 'Newsreader';\n  font-style: normal;\n  font-weight: 600;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/newsreader/v26/cY9VfjOCX1hbuyalUrK49dLac06G1ZGsZBtoBAbDJYQ5ayZCzn4.woff2) format('woff2');\n  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;\n}\n/* latin */\n@font-face {\n  font-family: 'Newsreader';\n  font-style: normal;\n  font-weight: 600;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/newsreader/v26/cY9VfjOCX1hbuyalUrK49dLac06G1ZGsZBtoBAbNJYQ5ayZC.woff2) format('woff2');\n  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;\n}\n"
+    },
+    {
+      "url": "https://fonts.googleapis.com/css2?family=Outfit:ital,wght@0,200;0,300;0,400;0,500&display=swap",
+      "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+      "sha256": "8c9ce6763110ecbba3995feeb262c94c603545264791ff99ec82c32bab87553d",
+      "css": "/* latin-ext */\n@font-face {\n  font-family: 'Outfit';\n  font-style: normal;\n  font-weight: 200;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/outfit/v15/QGYvz_MVcBeNP4NJuktqUYLkn8BJ.woff2) format('woff2');\n  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;\n}\n/* latin */\n@font-face {\n  font-family: 'Outfit';\n  font-style: normal;\n  font-weight: 200;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/outfit/v15/QGYvz_MVcBeNP4NJtEtqUYLknw.woff2) format('woff2');\n  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;\n}\n/* latin-ext */\n@font-face {\n  font-family: 'Outfit';\n  font-style: normal;\n  font-weight: 300;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/outfit/v15/QGYvz_MVcBeNP4NJuktqUYLkn8BJ.woff2) format('woff2');\n  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;\n}\n/* latin */\n@font-face {\n  font-family: 'Outfit';\n  font-style: normal;\n  font-weight: 300;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/outfit/v15/QGYvz_MVcBeNP4NJtEtqUYLknw.woff2) format('woff2');\n  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;\n}\n/* latin-ext */\n@font-face {\n  font-family: 'Outfit';\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/outfit/v15/QGYvz_MVcBeNP4NJuktqUYLkn8BJ.woff2) format('woff2');\n  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;\n}\n/* latin */\n@font-face {\n  font-family: 'Outfit';\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/outfit/v15/QGYvz_MVcBeNP4NJtEtqUYLknw.woff2) format('woff2');\n  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;\n}\n/* latin-ext */\n@font-face {\n  font-family: 'Outfit';\n  font-style: normal;\n  font-weight: 500;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/outfit/v15/QGYvz_MVcBeNP4NJuktqUYLkn8BJ.woff2) format('woff2');\n  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;\n}\n/* latin */\n@font-face {\n  font-family: 'Outfit';\n  font-style: normal;\n  font-weight: 500;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/outfit/v15/QGYvz_MVcBeNP4NJtEtqUYLknw.woff2) format('woff2');\n  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;\n}\n"
+    },
+    {
+      "url": "https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,200;0,300;0,400;0,500&display=swap",
+      "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+      "sha256": "6c60a79bfe5145524debd19bad1f216d00b55d1a7daed6b93f2ab6123ab49703",
+      "css": "/* devanagari */\n@font-face {\n  font-family: 'Poppins';\n  font-style: normal;\n  font-weight: 200;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLFj_Z11lFd2JQEl8qw.woff2) format('woff2');\n  unicode-range: U+0900-097F, U+1CD0-1CF9, U+200C-200D, U+20A8, U+20B9, U+20F0, U+25CC, U+A830-A839, U+A8E0-A8FF, U+11B00-11B09;\n}\n/* latin-ext */\n@font-face {\n  font-family: 'Poppins';\n  font-style: normal;\n  font-weight: 200;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLFj_Z1JlFd2JQEl8qw.woff2) format('woff2');\n  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;\n}\n/* latin */\n@font-face {\n  font-family: 'Poppins';\n  font-style: normal;\n  font-weight: 200;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLFj_Z1xlFd2JQEk.woff2) format('woff2');\n  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;\n}\n/* devanagari */\n@font-face {\n  font-family: 'Poppins';\n  font-style: normal;\n  font-weight: 300;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLDz8Z11lFd2JQEl8qw.woff2) format('woff2');\n  unicode-range: U+0900-097F, U+1CD0-1CF9, U+200C-200D, U+20A8, U+20B9, U+20F0, U+25CC, U+A830-A839, U+A8E0-A8FF, U+11B00-11B09;\n}\n/* latin-ext */\n@font-face {\n  font-family: 'Poppins';\n  font-style: normal;\n  font-weight: 300;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLDz8Z1JlFd2JQEl8qw.woff2) format('woff2');\n  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;\n}\n/* latin */\n@font-face {\n  font-family: 'Poppins';\n  font-style: normal;\n  font-weight: 300;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLDz8Z1xlFd2JQEk.woff2) format('woff2');\n  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;\n}\n/* devanagari */\n@font-face {\n  font-family: 'Poppins';\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/poppins/v24/pxiEyp8kv8JHgFVrJJbecnFHGPezSQ.woff2) format('woff2');\n  unicode-range: U+0900-097F, U+1CD0-1CF9, U+200C-200D, U+20A8, U+20B9, U+20F0, U+25CC, U+A830-A839, U+A8E0-A8FF, U+11B00-11B09;\n}\n/* latin-ext */\n@font-face {\n  font-family: 'Poppins';\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/poppins/v24/pxiEyp8kv8JHgFVrJJnecnFHGPezSQ.woff2) format('woff2');\n  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;\n}\n/* latin */\n@font-face {\n  font-family: 'Poppins';\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/poppins/v24/pxiEyp8kv8JHgFVrJJfecnFHGPc.woff2) format('woff2');\n  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;\n}\n/* devanagari */\n@font-face {\n  font-family: 'Poppins';\n  font-style: normal;\n  font-weight: 500;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLGT9Z11lFd2JQEl8qw.woff2) format('woff2');\n  unicode-range: U+0900-097F, U+1CD0-1CF9, U+200C-200D, U+20A8, U+20B9, U+20F0, U+25CC, U+A830-A839, U+A8E0-A8FF, U+11B00-11B09;\n}\n/* latin-ext */\n@font-face {\n  font-family: 'Poppins';\n  font-style: normal;\n  font-weight: 500;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLGT9Z1JlFd2JQEl8qw.woff2) format('woff2');\n  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;\n}\n/* latin */\n@font-face {\n  font-family: 'Poppins';\n  font-style: normal;\n  font-weight: 500;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLGT9Z1xlFd2JQEk.woff2) format('woff2');\n  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;\n}\n"
+    },
+    {
+      "url": "https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;0,700&display=swap",
+      "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+      "sha256": "e22c2b671a8bc5625eabe796eb14dd098620a8db54fac92860bb72cc15d45bc8",
+      "css": "/* cyrillic-ext */\n@font-face {\n  font-family: 'Spectral';\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/spectral/v15/rnCr-xNNww_2s0amA9M0knjsS_ulYHs.woff2) format('woff2');\n  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;\n}\n/* cyrillic */\n@font-face {\n  font-family: 'Spectral';\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/spectral/v15/rnCr-xNNww_2s0amA9M9knjsS_ulYHs.woff2) format('woff2');\n  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;\n}\n/* vietnamese */\n@font-face {\n  font-family: 'Spectral';\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/spectral/v15/rnCr-xNNww_2s0amA9M2knjsS_ulYHs.woff2) format('woff2');\n  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;\n}\n/* latin-ext */\n@font-face {\n  font-family: 'Spectral';\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/spectral/v15/rnCr-xNNww_2s0amA9M3knjsS_ulYHs.woff2) format('woff2');\n  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;\n}\n/* latin */\n@font-face {\n  font-family: 'Spectral';\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/spectral/v15/rnCr-xNNww_2s0amA9M5knjsS_ul.woff2) format('woff2');\n  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;\n}\n/* cyrillic-ext */\n@font-face {\n  font-family: 'Spectral';\n  font-style: normal;\n  font-weight: 500;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/spectral/v15/rnCs-xNNww_2s0amA9vKsW3MafaPWnIIMrY.woff2) format('woff2');\n  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;\n}\n/* cyrillic */\n@font-face {\n  font-family: 'Spectral';\n  font-style: normal;\n  font-weight: 500;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/spectral/v15/rnCs-xNNww_2s0amA9vKsW3FafaPWnIIMrY.woff2) format('woff2');\n  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;\n}\n/* vietnamese */\n@font-face {\n  font-family: 'Spectral';\n  font-style: normal;\n  font-weight: 500;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/spectral/v15/rnCs-xNNww_2s0amA9vKsW3OafaPWnIIMrY.woff2) format('woff2');\n  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;\n}\n/* latin-ext */\n@font-face {\n  font-family: 'Spectral';\n  font-style: normal;\n  font-weight: 500;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/spectral/v15/rnCs-xNNww_2s0amA9vKsW3PafaPWnIIMrY.woff2) format('woff2');\n  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;\n}\n/* latin */\n@font-face {\n  font-family: 'Spectral';\n  font-style: normal;\n  font-weight: 500;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/spectral/v15/rnCs-xNNww_2s0amA9vKsW3BafaPWnII.woff2) format('woff2');\n  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;\n}\n/* cyrillic-ext */\n@font-face {\n  font-family: 'Spectral';\n  font-style: normal;\n  font-weight: 600;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/spectral/v15/rnCs-xNNww_2s0amA9vmtm3MafaPWnIIMrY.woff2) format('woff2');\n  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;\n}\n/* cyrillic */\n@font-face {\n  font-family: 'Spectral';\n  font-style: normal;\n  font-weight: 600;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/spectral/v15/rnCs-xNNww_2s0amA9vmtm3FafaPWnIIMrY.woff2) format('woff2');\n  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;\n}\n/* vietnamese */\n@font-face {\n  font-family: 'Spectral';\n  font-style: normal;\n  font-weight: 600;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/spectral/v15/rnCs-xNNww_2s0amA9vmtm3OafaPWnIIMrY.woff2) format('woff2');\n  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;\n}\n/* latin-ext */\n@font-face {\n  font-family: 'Spectral';\n  font-style: normal;\n  font-weight: 600;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/spectral/v15/rnCs-xNNww_2s0amA9vmtm3PafaPWnIIMrY.woff2) format('woff2');\n  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;\n}\n/* latin */\n@font-face {\n  font-family: 'Spectral';\n  font-style: normal;\n  font-weight: 600;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/spectral/v15/rnCs-xNNww_2s0amA9vmtm3BafaPWnII.woff2) format('woff2');\n  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;\n}\n/* cyrillic-ext */\n@font-face {\n  font-family: 'Spectral';\n  font-style: normal;\n  font-weight: 700;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/spectral/v15/rnCs-xNNww_2s0amA9uCt23MafaPWnIIMrY.woff2) format('woff2');\n  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;\n}\n/* cyrillic */\n@font-face {\n  font-family: 'Spectral';\n  font-style: normal;\n  font-weight: 700;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/spectral/v15/rnCs-xNNww_2s0amA9uCt23FafaPWnIIMrY.woff2) format('woff2');\n  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;\n}\n/* vietnamese */\n@font-face {\n  font-family: 'Spectral';\n  font-style: normal;\n  font-weight: 700;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/spectral/v15/rnCs-xNNww_2s0amA9uCt23OafaPWnIIMrY.woff2) format('woff2');\n  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;\n}\n/* latin-ext */\n@font-face {\n  font-family: 'Spectral';\n  font-style: normal;\n  font-weight: 700;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/spectral/v15/rnCs-xNNww_2s0amA9uCt23PafaPWnIIMrY.woff2) format('woff2');\n  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;\n}\n/* latin */\n@font-face {\n  font-family: 'Spectral';\n  font-style: normal;\n  font-weight: 700;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/spectral/v15/rnCs-xNNww_2s0amA9uCt23BafaPWnII.woff2) format('woff2');\n  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;\n}\n"
+    },
+    {
+      "url": "https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,200..800&display=swap",
+      "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+      "sha256": "2744c35c22caa91a909b8ebf5f7ce99557805b7a05f8fec6b2255ae6418d716d",
+      "css": "/* vietnamese */\n@font-face {\n  font-family: 'Newsreader';\n  font-style: normal;\n  font-weight: 200 800;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/newsreader/v26/cY9AfjOCX1hbuyalUrK439HyjIJFJpeBZQ.woff2) format('woff2');\n  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;\n}\n/* latin-ext */\n@font-face {\n  font-family: 'Newsreader';\n  font-style: normal;\n  font-weight: 200 800;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/newsreader/v26/cY9AfjOCX1hbuyalUrK439DyjIJFJpeBZQ.woff2) format('woff2');\n  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;\n}\n/* latin */\n@font-face {\n  font-family: 'Newsreader';\n  font-style: normal;\n  font-weight: 200 800;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/newsreader/v26/cY9AfjOCX1hbuyalUrK4397yjIJFJpc.woff2) format('woff2');\n  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;\n}\n"
+    }
+  ],
+  "files": [
+    {
+      "path": "product/app/design/vendor/fonts/ieVn2YZDLWuGJpnzaiwFXS9tYtpQ59CxCis4UvI.woff2",
+      "filename": "ieVn2YZDLWuGJpnzaiwFXS9tYtpQ59CxCis4UvI.woff2",
+      "sha256": "2f52020a90793104e4178b0ae3ccd30eea28cac27e0fea8fcf4f246151777f74",
+      "bytes": 1644,
+      "local_css_faces": [
+        {
+          "family": "Hanken Grotesk",
+          "style": "normal",
+          "weight": "400",
+          "unicode_range": "U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F",
+          "path": "product/app/design/vendor/fonts/ieVn2YZDLWuGJpnzaiwFXS9tYtpQ59CxCis4UvI.woff2",
+          "css": "product/app/design/vendor/fonts.css"
+        },
+        {
+          "family": "Hanken Grotesk",
+          "style": "normal",
+          "weight": "500",
+          "unicode_range": "U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F",
+          "path": "product/app/design/vendor/fonts/ieVn2YZDLWuGJpnzaiwFXS9tYtpQ59CxCis4UvI.woff2",
+          "css": "product/app/design/vendor/fonts.css"
+        },
+        {
+          "family": "Hanken Grotesk",
+          "style": "normal",
+          "weight": "600",
+          "unicode_range": "U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F",
+          "path": "product/app/design/vendor/fonts/ieVn2YZDLWuGJpnzaiwFXS9tYtpQ59CxCis4UvI.woff2",
+          "css": "product/app/design/vendor/fonts.css"
+        },
+        {
+          "family": "Hanken Grotesk",
+          "style": "normal",
+          "weight": "700",
+          "unicode_range": "U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F",
+          "path": "product/app/design/vendor/fonts/ieVn2YZDLWuGJpnzaiwFXS9tYtpQ59CxCis4UvI.woff2",
+          "css": "product/app/design/vendor/fonts.css"
+        }
+      ],
+      "classification": "A",
+      "upstream_matches": [
+        {
+          "family": "Hanken Grotesk",
+          "style": "normal",
+          "weight": "400",
+          "unicode_range": "U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F",
+          "url": "https://fonts.gstatic.com/s/hankengrotesk/v12/ieVn2YZDLWuGJpnzaiwFXS9tYtpQ59CxCis4UvI.woff2",
+          "sha256": "2f52020a90793104e4178b0ae3ccd30eea28cac27e0fea8fcf4f246151777f74",
+          "bytes": 1644
+        },
+        {
+          "family": "Hanken Grotesk",
+          "style": "normal",
+          "weight": "500",
+          "unicode_range": "U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F",
+          "url": "https://fonts.gstatic.com/s/hankengrotesk/v12/ieVn2YZDLWuGJpnzaiwFXS9tYtpQ59CxCis4UvI.woff2",
+          "sha256": "2f52020a90793104e4178b0ae3ccd30eea28cac27e0fea8fcf4f246151777f74",
+          "bytes": 1644
+        },
+        {
+          "family": "Hanken Grotesk",
+          "style": "normal",
+          "weight": "600",
+          "unicode_range": "U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F",
+          "url": "https://fonts.gstatic.com/s/hankengrotesk/v12/ieVn2YZDLWuGJpnzaiwFXS9tYtpQ59CxCis4UvI.woff2",
+          "sha256": "2f52020a90793104e4178b0ae3ccd30eea28cac27e0fea8fcf4f246151777f74",
+          "bytes": 1644
+        },
+        {
+          "family": "Hanken Grotesk",
+          "style": "normal",
+          "weight": "700",
+          "unicode_range": "U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F",
+          "url": "https://fonts.gstatic.com/s/hankengrotesk/v12/ieVn2YZDLWuGJpnzaiwFXS9tYtpQ59CxCis4UvI.woff2",
+          "sha256": "2f52020a90793104e4178b0ae3ccd30eea28cac27e0fea8fcf4f246151777f74",
+          "bytes": 1644
+        }
+      ],
+      "official_equivalent_candidates": [],
+      "license": "OFL-1.1",
+      "license_evidence": "product/app/design/vendor/fonts/hankengrotesk.OFL.txt",
+      "copyright_notice": "Copyright 2021 The Hanken Grotesk Project Authors (https://github.com/marcologous/hanken-grotesk)",
+      "official_repository": "https://github.com/google/fonts/tree/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/hankengrotesk",
+      "repository_commit_scope": "License notice only; WOFF2 identity established separately by official artifact SHA256.",
+      "serving_versions": [
+        "12"
+      ],
+      "internal_font_version": 3.013,
+      "fontversion_fixed16_16": 197460
+    },
+    {
+      "path": "product/app/design/vendor/fonts/ieVn2YZDLWuGJpnzaiwFXS9tYtpS59CxCis4UvI.woff2",
+      "filename": "ieVn2YZDLWuGJpnzaiwFXS9tYtpS59CxCis4UvI.woff2",
+      "sha256": "2f467719b2167cc4778b5780a2fb42fadf5203b29d0fb5f1482bbab32b1b7999",
+      "bytes": 9364,
+      "local_css_faces": [
+        {
+          "family": "Hanken Grotesk",
+          "style": "normal",
+          "weight": "400",
+          "unicode_range": "U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB",
+          "path": "product/app/design/vendor/fonts/ieVn2YZDLWuGJpnzaiwFXS9tYtpS59CxCis4UvI.woff2",
+          "css": "product/app/design/vendor/fonts.css"
+        },
+        {
+          "family": "Hanken Grotesk",
+          "style": "normal",
+          "weight": "500",
+          "unicode_range": "U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB",
+          "path": "product/app/design/vendor/fonts/ieVn2YZDLWuGJpnzaiwFXS9tYtpS59CxCis4UvI.woff2",
+          "css": "product/app/design/vendor/fonts.css"
+        },
+        {
+          "family": "Hanken Grotesk",
+          "style": "normal",
+          "weight": "600",
+          "unicode_range": "U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB",
+          "path": "product/app/design/vendor/fonts/ieVn2YZDLWuGJpnzaiwFXS9tYtpS59CxCis4UvI.woff2",
+          "css": "product/app/design/vendor/fonts.css"
+        },
+        {
+          "family": "Hanken Grotesk",
+          "style": "normal",
+          "weight": "700",
+          "unicode_range": "U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB",
+          "path": "product/app/design/vendor/fonts/ieVn2YZDLWuGJpnzaiwFXS9tYtpS59CxCis4UvI.woff2",
+          "css": "product/app/design/vendor/fonts.css"
+        }
+      ],
+      "classification": "A",
+      "upstream_matches": [
+        {
+          "family": "Hanken Grotesk",
+          "style": "normal",
+          "weight": "400",
+          "unicode_range": "U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB",
+          "url": "https://fonts.gstatic.com/s/hankengrotesk/v12/ieVn2YZDLWuGJpnzaiwFXS9tYtpS59CxCis4UvI.woff2",
+          "sha256": "2f467719b2167cc4778b5780a2fb42fadf5203b29d0fb5f1482bbab32b1b7999",
+          "bytes": 9364
+        },
+        {
+          "family": "Hanken Grotesk",
+          "style": "normal",
+          "weight": "500",
+          "unicode_range": "U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB",
+          "url": "https://fonts.gstatic.com/s/hankengrotesk/v12/ieVn2YZDLWuGJpnzaiwFXS9tYtpS59CxCis4UvI.woff2",
+          "sha256": "2f467719b2167cc4778b5780a2fb42fadf5203b29d0fb5f1482bbab32b1b7999",
+          "bytes": 9364
+        },
+        {
+          "family": "Hanken Grotesk",
+          "style": "normal",
+          "weight": "600",
+          "unicode_range": "U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB",
+          "url": "https://fonts.gstatic.com/s/hankengrotesk/v12/ieVn2YZDLWuGJpnzaiwFXS9tYtpS59CxCis4UvI.woff2",
+          "sha256": "2f467719b2167cc4778b5780a2fb42fadf5203b29d0fb5f1482bbab32b1b7999",
+          "bytes": 9364
+        },
+        {
+          "family": "Hanken Grotesk",
+          "style": "normal",
+          "weight": "700",
+          "unicode_range": "U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB",
+          "url": "https://fonts.gstatic.com/s/hankengrotesk/v12/ieVn2YZDLWuGJpnzaiwFXS9tYtpS59CxCis4UvI.woff2",
+          "sha256": "2f467719b2167cc4778b5780a2fb42fadf5203b29d0fb5f1482bbab32b1b7999",
+          "bytes": 9364
+        }
+      ],
+      "official_equivalent_candidates": [],
+      "license": "OFL-1.1",
+      "license_evidence": "product/app/design/vendor/fonts/hankengrotesk.OFL.txt",
+      "copyright_notice": "Copyright 2021 The Hanken Grotesk Project Authors (https://github.com/marcologous/hanken-grotesk)",
+      "official_repository": "https://github.com/google/fonts/tree/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/hankengrotesk",
+      "repository_commit_scope": "License notice only; WOFF2 identity established separately by official artifact SHA256.",
+      "serving_versions": [
+        "12"
+      ],
+      "internal_font_version": 3.013,
+      "fontversion_fixed16_16": 197460
+    },
+    {
+      "path": "product/app/design/vendor/fonts/ieVn2YZDLWuGJpnzaiwFXS9tYtpT59CxCis4UvI.woff2",
+      "filename": "ieVn2YZDLWuGJpnzaiwFXS9tYtpT59CxCis4UvI.woff2",
+      "sha256": "a1376a563717f1efa2f5286ab23da2b61ae8dec827a77b97adfa01cad4ec4ee2",
+      "bytes": 19572,
+      "local_css_faces": [
+        {
+          "family": "Hanken Grotesk",
+          "style": "normal",
+          "weight": "400",
+          "unicode_range": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF",
+          "path": "product/app/design/vendor/fonts/ieVn2YZDLWuGJpnzaiwFXS9tYtpT59CxCis4UvI.woff2",
+          "css": "product/app/design/vendor/fonts.css"
+        },
+        {
+          "family": "Hanken Grotesk",
+          "style": "normal",
+          "weight": "500",
+          "unicode_range": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF",
+          "path": "product/app/design/vendor/fonts/ieVn2YZDLWuGJpnzaiwFXS9tYtpT59CxCis4UvI.woff2",
+          "css": "product/app/design/vendor/fonts.css"
+        },
+        {
+          "family": "Hanken Grotesk",
+          "style": "normal",
+          "weight": "600",
+          "unicode_range": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF",
+          "path": "product/app/design/vendor/fonts/ieVn2YZDLWuGJpnzaiwFXS9tYtpT59CxCis4UvI.woff2",
+          "css": "product/app/design/vendor/fonts.css"
+        },
+        {
+          "family": "Hanken Grotesk",
+          "style": "normal",
+          "weight": "700",
+          "unicode_range": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF",
+          "path": "product/app/design/vendor/fonts/ieVn2YZDLWuGJpnzaiwFXS9tYtpT59CxCis4UvI.woff2",
+          "css": "product/app/design/vendor/fonts.css"
+        }
+      ],
+      "classification": "A",
+      "upstream_matches": [
+        {
+          "family": "Hanken Grotesk",
+          "style": "normal",
+          "weight": "400",
+          "unicode_range": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF",
+          "url": "https://fonts.gstatic.com/s/hankengrotesk/v12/ieVn2YZDLWuGJpnzaiwFXS9tYtpT59CxCis4UvI.woff2",
+          "sha256": "a1376a563717f1efa2f5286ab23da2b61ae8dec827a77b97adfa01cad4ec4ee2",
+          "bytes": 19572
+        },
+        {
+          "family": "Hanken Grotesk",
+          "style": "normal",
+          "weight": "500",
+          "unicode_range": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF",
+          "url": "https://fonts.gstatic.com/s/hankengrotesk/v12/ieVn2YZDLWuGJpnzaiwFXS9tYtpT59CxCis4UvI.woff2",
+          "sha256": "a1376a563717f1efa2f5286ab23da2b61ae8dec827a77b97adfa01cad4ec4ee2",
+          "bytes": 19572
+        },
+        {
+          "family": "Hanken Grotesk",
+          "style": "normal",
+          "weight": "600",
+          "unicode_range": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF",
+          "url": "https://fonts.gstatic.com/s/hankengrotesk/v12/ieVn2YZDLWuGJpnzaiwFXS9tYtpT59CxCis4UvI.woff2",
+          "sha256": "a1376a563717f1efa2f5286ab23da2b61ae8dec827a77b97adfa01cad4ec4ee2",
+          "bytes": 19572
+        },
+        {
+          "family": "Hanken Grotesk",
+          "style": "normal",
+          "weight": "700",
+          "unicode_range": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF",
+          "url": "https://fonts.gstatic.com/s/hankengrotesk/v12/ieVn2YZDLWuGJpnzaiwFXS9tYtpT59CxCis4UvI.woff2",
+          "sha256": "a1376a563717f1efa2f5286ab23da2b61ae8dec827a77b97adfa01cad4ec4ee2",
+          "bytes": 19572
+        }
+      ],
+      "official_equivalent_candidates": [],
+      "license": "OFL-1.1",
+      "license_evidence": "product/app/design/vendor/fonts/hankengrotesk.OFL.txt",
+      "copyright_notice": "Copyright 2021 The Hanken Grotesk Project Authors (https://github.com/marcologous/hanken-grotesk)",
+      "official_repository": "https://github.com/google/fonts/tree/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/hankengrotesk",
+      "repository_commit_scope": "License notice only; WOFF2 identity established separately by official artifact SHA256.",
+      "serving_versions": [
+        "12"
+      ],
+      "internal_font_version": 3.013,
+      "fontversion_fixed16_16": 197460
+    },
+    {
+      "path": "product/app/design/vendor/fonts/ieVn2YZDLWuGJpnzaiwFXS9tYtpd59CxCis4.woff2",
+      "filename": "ieVn2YZDLWuGJpnzaiwFXS9tYtpd59CxCis4.woff2",
+      "sha256": "1f21c6eaa0000f3329cfcfac966b43d5bebf5aa610303e33294ac31bc6f4bb59",
+      "bytes": 34664,
+      "local_css_faces": [
+        {
+          "family": "Hanken Grotesk",
+          "style": "normal",
+          "weight": "400",
+          "unicode_range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD",
+          "path": "product/app/design/vendor/fonts/ieVn2YZDLWuGJpnzaiwFXS9tYtpd59CxCis4.woff2",
+          "css": "product/app/design/vendor/fonts.css"
+        },
+        {
+          "family": "Hanken Grotesk",
+          "style": "normal",
+          "weight": "500",
+          "unicode_range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD",
+          "path": "product/app/design/vendor/fonts/ieVn2YZDLWuGJpnzaiwFXS9tYtpd59CxCis4.woff2",
+          "css": "product/app/design/vendor/fonts.css"
+        },
+        {
+          "family": "Hanken Grotesk",
+          "style": "normal",
+          "weight": "600",
+          "unicode_range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD",
+          "path": "product/app/design/vendor/fonts/ieVn2YZDLWuGJpnzaiwFXS9tYtpd59CxCis4.woff2",
+          "css": "product/app/design/vendor/fonts.css"
+        },
+        {
+          "family": "Hanken Grotesk",
+          "style": "normal",
+          "weight": "700",
+          "unicode_range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD",
+          "path": "product/app/design/vendor/fonts/ieVn2YZDLWuGJpnzaiwFXS9tYtpd59CxCis4.woff2",
+          "css": "product/app/design/vendor/fonts.css"
+        }
+      ],
+      "classification": "A",
+      "upstream_matches": [
+        {
+          "family": "Hanken Grotesk",
+          "style": "normal",
+          "weight": "400",
+          "unicode_range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD",
+          "url": "https://fonts.gstatic.com/s/hankengrotesk/v12/ieVn2YZDLWuGJpnzaiwFXS9tYtpd59CxCis4.woff2",
+          "sha256": "1f21c6eaa0000f3329cfcfac966b43d5bebf5aa610303e33294ac31bc6f4bb59",
+          "bytes": 34664
+        },
+        {
+          "family": "Hanken Grotesk",
+          "style": "normal",
+          "weight": "500",
+          "unicode_range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD",
+          "url": "https://fonts.gstatic.com/s/hankengrotesk/v12/ieVn2YZDLWuGJpnzaiwFXS9tYtpd59CxCis4.woff2",
+          "sha256": "1f21c6eaa0000f3329cfcfac966b43d5bebf5aa610303e33294ac31bc6f4bb59",
+          "bytes": 34664
+        },
+        {
+          "family": "Hanken Grotesk",
+          "style": "normal",
+          "weight": "600",
+          "unicode_range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD",
+          "url": "https://fonts.gstatic.com/s/hankengrotesk/v12/ieVn2YZDLWuGJpnzaiwFXS9tYtpd59CxCis4.woff2",
+          "sha256": "1f21c6eaa0000f3329cfcfac966b43d5bebf5aa610303e33294ac31bc6f4bb59",
+          "bytes": 34664
+        },
+        {
+          "family": "Hanken Grotesk",
+          "style": "normal",
+          "weight": "700",
+          "unicode_range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD",
+          "url": "https://fonts.gstatic.com/s/hankengrotesk/v12/ieVn2YZDLWuGJpnzaiwFXS9tYtpd59CxCis4.woff2",
+          "sha256": "1f21c6eaa0000f3329cfcfac966b43d5bebf5aa610303e33294ac31bc6f4bb59",
+          "bytes": 34664
+        }
+      ],
+      "official_equivalent_candidates": [],
+      "license": "OFL-1.1",
+      "license_evidence": "product/app/design/vendor/fonts/hankengrotesk.OFL.txt",
+      "copyright_notice": "Copyright 2021 The Hanken Grotesk Project Authors (https://github.com/marcologous/hanken-grotesk)",
+      "official_repository": "https://github.com/google/fonts/tree/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/hankengrotesk",
+      "repository_commit_scope": "License notice only; WOFF2 identity established separately by official artifact SHA256.",
+      "serving_versions": [
+        "12"
+      ],
+      "internal_font_version": 3.013,
+      "fontversion_fixed16_16": 197460
+    },
+    {
+      "path": "product/app/design/vendor/fonts/instrumentserif-60c06664.woff2",
+      "filename": "instrumentserif-60c06664.woff2",
+      "sha256": "60c06664b5a95c7de6cc3e00d1f9034d78bd1e40b564016b241674449a067d4d",
+      "bytes": 15040,
+      "local_css_faces": [
+        {
+          "family": "Instrument Serif",
+          "style": "normal",
+          "weight": "400",
+          "unicode_range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD",
+          "path": "product/app/design/vendor/fonts/instrumentserif-60c06664.woff2",
+          "css": "product/app/design/vendor/fonts-estandar.css"
+        }
+      ],
+      "classification": "A",
+      "upstream_matches": [
+        {
+          "family": "Instrument Serif",
+          "style": "normal",
+          "weight": "400",
+          "unicode_range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD",
+          "url": "https://fonts.gstatic.com/s/instrumentserif/v5/jizBRFtNs2ka5fXjeivQ4LroWlx-6zUTjnTLgNs.woff2",
+          "sha256": "60c06664b5a95c7de6cc3e00d1f9034d78bd1e40b564016b241674449a067d4d",
+          "bytes": 15040
+        }
+      ],
+      "official_equivalent_candidates": [],
+      "license": "OFL-1.1",
+      "license_evidence": "product/app/design/vendor/fonts/instrumentserif.OFL.txt",
+      "copyright_notice": "Copyright 2022 The Instrument Serif Project Authors (https://github.com/Instrument/instrument-serif)",
+      "official_repository": "https://github.com/google/fonts/tree/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/instrumentserif",
+      "repository_commit_scope": "License notice only; WOFF2 identity established separately by official artifact SHA256.",
+      "serving_versions": [
+        "5"
+      ],
+      "internal_font_version": 1,
+      "fontversion_fixed16_16": 65536
+    },
+    {
+      "path": "product/app/design/vendor/fonts/instrumentserif-a8c4bd7c.woff2",
+      "filename": "instrumentserif-a8c4bd7c.woff2",
+      "sha256": "a8c4bd7cd7073180e740d2d83a616b5cb0845579b73207eeafeae8532e70c901",
+      "bytes": 7828,
+      "local_css_faces": [
+        {
+          "family": "Instrument Serif",
+          "style": "normal",
+          "weight": "400",
+          "unicode_range": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF",
+          "path": "product/app/design/vendor/fonts/instrumentserif-a8c4bd7c.woff2",
+          "css": "product/app/design/vendor/fonts-estandar.css"
+        }
+      ],
+      "classification": "A",
+      "upstream_matches": [
+        {
+          "family": "Instrument Serif",
+          "style": "normal",
+          "weight": "400",
+          "unicode_range": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF",
+          "url": "https://fonts.gstatic.com/s/instrumentserif/v5/jizBRFtNs2ka5fXjeivQ4LroWlx-6zsTjnTLgNuZ5w.woff2",
+          "sha256": "a8c4bd7cd7073180e740d2d83a616b5cb0845579b73207eeafeae8532e70c901",
+          "bytes": 7828
+        }
+      ],
+      "official_equivalent_candidates": [],
+      "license": "OFL-1.1",
+      "license_evidence": "product/app/design/vendor/fonts/instrumentserif.OFL.txt",
+      "copyright_notice": "Copyright 2022 The Instrument Serif Project Authors (https://github.com/Instrument/instrument-serif)",
+      "official_repository": "https://github.com/google/fonts/tree/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/instrumentserif",
+      "repository_commit_scope": "License notice only; WOFF2 identity established separately by official artifact SHA256.",
+      "serving_versions": [
+        "5"
+      ],
+      "internal_font_version": 1,
+      "fontversion_fixed16_16": 65536
+    },
+    {
+      "path": "product/app/design/vendor/fonts/jetbrainsmono-2c32b9b3.woff2",
+      "filename": "jetbrainsmono-2c32b9b3.woff2",
+      "sha256": "2c32b9b3ee358c119e210f6f5195f9bd34894d78a785ff2e95d60e718e400af4",
+      "bytes": 31340,
+      "local_css_faces": [
+        {
+          "family": "JetBrains Mono",
+          "style": "normal",
+          "weight": "400",
+          "unicode_range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD",
+          "path": "product/app/design/vendor/fonts/jetbrainsmono-2c32b9b3.woff2",
+          "css": "product/app/design/vendor/fonts-estandar.css"
+        },
+        {
+          "family": "JetBrains Mono",
+          "style": "normal",
+          "weight": "500",
+          "unicode_range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD",
+          "path": "product/app/design/vendor/fonts/jetbrainsmono-2c32b9b3.woff2",
+          "css": "product/app/design/vendor/fonts-estandar.css"
+        }
+      ],
+      "classification": "A",
+      "upstream_matches": [
+        {
+          "family": "JetBrains Mono",
+          "style": "normal",
+          "weight": "400",
+          "unicode_range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD",
+          "url": "https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxDcwgknk-4.woff2",
+          "sha256": "2c32b9b3ee358c119e210f6f5195f9bd34894d78a785ff2e95d60e718e400af4",
+          "bytes": 31340
+        },
+        {
+          "family": "JetBrains Mono",
+          "style": "normal",
+          "weight": "500",
+          "unicode_range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD",
+          "url": "https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxDcwgknk-4.woff2",
+          "sha256": "2c32b9b3ee358c119e210f6f5195f9bd34894d78a785ff2e95d60e718e400af4",
+          "bytes": 31340
+        }
+      ],
+      "official_equivalent_candidates": [],
+      "license": "OFL-1.1",
+      "license_evidence": "product/app/design/vendor/fonts/jetbrainsmono.OFL.txt",
+      "copyright_notice": "Copyright 2020 The JetBrains Mono Project Authors (https://github.com/JetBrains/JetBrainsMono)",
+      "official_repository": "https://github.com/google/fonts/tree/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/jetbrainsmono",
+      "repository_commit_scope": "License notice only; WOFF2 identity established separately by official artifact SHA256.",
+      "serving_versions": [
+        "24"
+      ],
+      "internal_font_version": 2.210999,
+      "fontversion_fixed16_16": 144900
+    },
+    {
+      "path": "product/app/design/vendor/fonts/jetbrainsmono-4995a9a4.woff2",
+      "filename": "jetbrainsmono-4995a9a4.woff2",
+      "sha256": "4995a9a43ac659ec32fcd8b463755cd6a07b31a6e6b3894a6a153b661cf490e2",
+      "bytes": 8892,
+      "local_css_faces": [
+        {
+          "family": "JetBrains Mono",
+          "style": "normal",
+          "weight": "400",
+          "unicode_range": "U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116",
+          "path": "product/app/design/vendor/fonts/jetbrainsmono-4995a9a4.woff2",
+          "css": "product/app/design/vendor/fonts-estandar.css"
+        },
+        {
+          "family": "JetBrains Mono",
+          "style": "normal",
+          "weight": "500",
+          "unicode_range": "U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116",
+          "path": "product/app/design/vendor/fonts/jetbrainsmono-4995a9a4.woff2",
+          "css": "product/app/design/vendor/fonts-estandar.css"
+        }
+      ],
+      "classification": "A",
+      "upstream_matches": [
+        {
+          "family": "JetBrains Mono",
+          "style": "normal",
+          "weight": "400",
+          "unicode_range": "U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116",
+          "url": "https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxTcwgknk-6nFg.woff2",
+          "sha256": "4995a9a43ac659ec32fcd8b463755cd6a07b31a6e6b3894a6a153b661cf490e2",
+          "bytes": 8892
+        },
+        {
+          "family": "JetBrains Mono",
+          "style": "normal",
+          "weight": "500",
+          "unicode_range": "U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116",
+          "url": "https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxTcwgknk-6nFg.woff2",
+          "sha256": "4995a9a43ac659ec32fcd8b463755cd6a07b31a6e6b3894a6a153b661cf490e2",
+          "bytes": 8892
+        }
+      ],
+      "official_equivalent_candidates": [],
+      "license": "OFL-1.1",
+      "license_evidence": "product/app/design/vendor/fonts/jetbrainsmono.OFL.txt",
+      "copyright_notice": "Copyright 2020 The JetBrains Mono Project Authors (https://github.com/JetBrains/JetBrainsMono)",
+      "official_repository": "https://github.com/google/fonts/tree/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/jetbrainsmono",
+      "repository_commit_scope": "License notice only; WOFF2 identity established separately by official artifact SHA256.",
+      "serving_versions": [
+        "24"
+      ],
+      "internal_font_version": 2.210999,
+      "fontversion_fixed16_16": 144900
+    },
+    {
+      "path": "product/app/design/vendor/fonts/jetbrainsmono-49c3da6c.woff2",
+      "filename": "jetbrainsmono-49c3da6c.woff2",
+      "sha256": "49c3da6c9a2b279b0f1f860f5cfb1f5dc38d88a5c7be9c9b1837bbc4e3db6111",
+      "bytes": 6800,
+      "local_css_faces": [
+        {
+          "family": "JetBrains Mono",
+          "style": "normal",
+          "weight": "400",
+          "unicode_range": "U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF",
+          "path": "product/app/design/vendor/fonts/jetbrainsmono-49c3da6c.woff2",
+          "css": "product/app/design/vendor/fonts-estandar.css"
+        },
+        {
+          "family": "JetBrains Mono",
+          "style": "normal",
+          "weight": "500",
+          "unicode_range": "U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF",
+          "path": "product/app/design/vendor/fonts/jetbrainsmono-49c3da6c.woff2",
+          "css": "product/app/design/vendor/fonts-estandar.css"
+        }
+      ],
+      "classification": "A",
+      "upstream_matches": [
+        {
+          "family": "JetBrains Mono",
+          "style": "normal",
+          "weight": "400",
+          "unicode_range": "U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF",
+          "url": "https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxPcwgknk-6nFg.woff2",
+          "sha256": "49c3da6c9a2b279b0f1f860f5cfb1f5dc38d88a5c7be9c9b1837bbc4e3db6111",
+          "bytes": 6800
+        },
+        {
+          "family": "JetBrains Mono",
+          "style": "normal",
+          "weight": "500",
+          "unicode_range": "U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF",
+          "url": "https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxPcwgknk-6nFg.woff2",
+          "sha256": "49c3da6c9a2b279b0f1f860f5cfb1f5dc38d88a5c7be9c9b1837bbc4e3db6111",
+          "bytes": 6800
+        }
+      ],
+      "official_equivalent_candidates": [],
+      "license": "OFL-1.1",
+      "license_evidence": "product/app/design/vendor/fonts/jetbrainsmono.OFL.txt",
+      "copyright_notice": "Copyright 2020 The JetBrains Mono Project Authors (https://github.com/JetBrains/JetBrainsMono)",
+      "official_repository": "https://github.com/google/fonts/tree/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/jetbrainsmono",
+      "repository_commit_scope": "License notice only; WOFF2 identity established separately by official artifact SHA256.",
+      "serving_versions": [
+        "24"
+      ],
+      "internal_font_version": 2.210999,
+      "fontversion_fixed16_16": 144900
+    },
+    {
+      "path": "product/app/design/vendor/fonts/jetbrainsmono-9343de2c.woff2",
+      "filename": "jetbrainsmono-9343de2c.woff2",
+      "sha256": "9343de2ca5d9549f792e7962375af8efb0f320c7643bfd36c884b5a30e5c396f",
+      "bytes": 1664,
+      "local_css_faces": [
+        {
+          "family": "JetBrains Mono",
+          "style": "normal",
+          "weight": "400",
+          "unicode_range": "U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F",
+          "path": "product/app/design/vendor/fonts/jetbrainsmono-9343de2c.woff2",
+          "css": "product/app/design/vendor/fonts-estandar.css"
+        },
+        {
+          "family": "JetBrains Mono",
+          "style": "normal",
+          "weight": "500",
+          "unicode_range": "U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F",
+          "path": "product/app/design/vendor/fonts/jetbrainsmono-9343de2c.woff2",
+          "css": "product/app/design/vendor/fonts-estandar.css"
+        }
+      ],
+      "classification": "A",
+      "upstream_matches": [
+        {
+          "family": "JetBrains Mono",
+          "style": "normal",
+          "weight": "400",
+          "unicode_range": "U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F",
+          "url": "https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPx3cwgknk-6nFg.woff2",
+          "sha256": "9343de2ca5d9549f792e7962375af8efb0f320c7643bfd36c884b5a30e5c396f",
+          "bytes": 1664
+        },
+        {
+          "family": "JetBrains Mono",
+          "style": "normal",
+          "weight": "500",
+          "unicode_range": "U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F",
+          "url": "https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPx3cwgknk-6nFg.woff2",
+          "sha256": "9343de2ca5d9549f792e7962375af8efb0f320c7643bfd36c884b5a30e5c396f",
+          "bytes": 1664
+        }
+      ],
+      "official_equivalent_candidates": [],
+      "license": "OFL-1.1",
+      "license_evidence": "product/app/design/vendor/fonts/jetbrainsmono.OFL.txt",
+      "copyright_notice": "Copyright 2020 The JetBrains Mono Project Authors (https://github.com/JetBrains/JetBrainsMono)",
+      "official_repository": "https://github.com/google/fonts/tree/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/jetbrainsmono",
+      "repository_commit_scope": "License notice only; WOFF2 identity established separately by official artifact SHA256.",
+      "serving_versions": [
+        "24"
+      ],
+      "internal_font_version": 2.210999,
+      "fontversion_fixed16_16": 144900
+    },
+    {
+      "path": "product/app/design/vendor/fonts/jetbrainsmono-9c38cb2d.woff2",
+      "filename": "jetbrainsmono-9c38cb2d.woff2",
+      "sha256": "9c38cb2d0d2d93c1ee6e21fa78db76f13ea7e15e15cc64214c7ca89b6aaa35c4",
+      "bytes": 11596,
+      "local_css_faces": [
+        {
+          "family": "JetBrains Mono",
+          "style": "normal",
+          "weight": "400",
+          "unicode_range": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF",
+          "path": "product/app/design/vendor/fonts/jetbrainsmono-9c38cb2d.woff2",
+          "css": "product/app/design/vendor/fonts-estandar.css"
+        },
+        {
+          "family": "JetBrains Mono",
+          "style": "normal",
+          "weight": "500",
+          "unicode_range": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF",
+          "path": "product/app/design/vendor/fonts/jetbrainsmono-9c38cb2d.woff2",
+          "css": "product/app/design/vendor/fonts-estandar.css"
+        }
+      ],
+      "classification": "A",
+      "upstream_matches": [
+        {
+          "family": "JetBrains Mono",
+          "style": "normal",
+          "weight": "400",
+          "unicode_range": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF",
+          "url": "https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPx7cwgknk-6nFg.woff2",
+          "sha256": "9c38cb2d0d2d93c1ee6e21fa78db76f13ea7e15e15cc64214c7ca89b6aaa35c4",
+          "bytes": 11596
+        },
+        {
+          "family": "JetBrains Mono",
+          "style": "normal",
+          "weight": "500",
+          "unicode_range": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF",
+          "url": "https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPx7cwgknk-6nFg.woff2",
+          "sha256": "9c38cb2d0d2d93c1ee6e21fa78db76f13ea7e15e15cc64214c7ca89b6aaa35c4",
+          "bytes": 11596
+        }
+      ],
+      "official_equivalent_candidates": [],
+      "license": "OFL-1.1",
+      "license_evidence": "product/app/design/vendor/fonts/jetbrainsmono.OFL.txt",
+      "copyright_notice": "Copyright 2020 The JetBrains Mono Project Authors (https://github.com/JetBrains/JetBrainsMono)",
+      "official_repository": "https://github.com/google/fonts/tree/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/jetbrainsmono",
+      "repository_commit_scope": "License notice only; WOFF2 identity established separately by official artifact SHA256.",
+      "serving_versions": [
+        "24"
+      ],
+      "internal_font_version": 2.210999,
+      "fontversion_fixed16_16": 144900
+    },
+    {
+      "path": "product/app/design/vendor/fonts/jetbrainsmono-d44eb193.woff2",
+      "filename": "jetbrainsmono-d44eb193.woff2",
+      "sha256": "d44eb1936043a56038eb02dd70b243f379bef65783f94ec12f277550720411f1",
+      "bytes": 5872,
+      "local_css_faces": [
+        {
+          "family": "JetBrains Mono",
+          "style": "normal",
+          "weight": "400",
+          "unicode_range": "U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB",
+          "path": "product/app/design/vendor/fonts/jetbrainsmono-d44eb193.woff2",
+          "css": "product/app/design/vendor/fonts-estandar.css"
+        },
+        {
+          "family": "JetBrains Mono",
+          "style": "normal",
+          "weight": "500",
+          "unicode_range": "U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB",
+          "path": "product/app/design/vendor/fonts/jetbrainsmono-d44eb193.woff2",
+          "css": "product/app/design/vendor/fonts-estandar.css"
+        }
+      ],
+      "classification": "A",
+      "upstream_matches": [
+        {
+          "family": "JetBrains Mono",
+          "style": "normal",
+          "weight": "400",
+          "unicode_range": "U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB",
+          "url": "https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPx_cwgknk-6nFg.woff2",
+          "sha256": "d44eb1936043a56038eb02dd70b243f379bef65783f94ec12f277550720411f1",
+          "bytes": 5872
+        },
+        {
+          "family": "JetBrains Mono",
+          "style": "normal",
+          "weight": "500",
+          "unicode_range": "U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB",
+          "url": "https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPx_cwgknk-6nFg.woff2",
+          "sha256": "d44eb1936043a56038eb02dd70b243f379bef65783f94ec12f277550720411f1",
+          "bytes": 5872
+        }
+      ],
+      "official_equivalent_candidates": [],
+      "license": "OFL-1.1",
+      "license_evidence": "product/app/design/vendor/fonts/jetbrainsmono.OFL.txt",
+      "copyright_notice": "Copyright 2020 The JetBrains Mono Project Authors (https://github.com/JetBrains/JetBrainsMono)",
+      "official_repository": "https://github.com/google/fonts/tree/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/jetbrainsmono",
+      "repository_commit_scope": "License notice only; WOFF2 identity established separately by official artifact SHA256.",
+      "serving_versions": [
+        "24"
+      ],
+      "internal_font_version": 2.210999,
+      "fontversion_fixed16_16": 144900
+    },
+    {
+      "path": "product/app/design/vendor/fonts/newsreader-2879c96c.woff2",
+      "filename": "newsreader-2879c96c.woff2",
+      "sha256": "68ef9a14f1462e2218ecd03c39d26236402ff6a9e78da39ba5591a430a229824",
+      "bytes": 27204,
+      "local_css_faces": [
+        {
+          "family": "Newsreader",
+          "style": "normal",
+          "weight": "400",
+          "unicode_range": "U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB",
+          "path": "product/app/design/vendor/fonts/newsreader-2879c96c.woff2",
+          "css": "product/app/design/vendor/fonts-sistema.css"
+        },
+        {
+          "family": "Newsreader",
+          "style": "normal",
+          "weight": "500",
+          "unicode_range": "U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB",
+          "path": "product/app/design/vendor/fonts/newsreader-2879c96c.woff2",
+          "css": "product/app/design/vendor/fonts-sistema.css"
+        },
+        {
+          "family": "Newsreader",
+          "style": "normal",
+          "weight": "600",
+          "unicode_range": "U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB",
+          "path": "product/app/design/vendor/fonts/newsreader-2879c96c.woff2",
+          "css": "product/app/design/vendor/fonts-sistema.css"
+        }
+      ],
+      "classification": "A",
+      "upstream_matches": [
+        {
+          "family": "Newsreader",
+          "style": "normal",
+          "weight": "200 800",
+          "unicode_range": "U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB",
+          "url": "https://fonts.gstatic.com/s/newsreader/v26/cY9AfjOCX1hbuyalUrK439HyjIJFJpeBZQ.woff2",
+          "sha256": "68ef9a14f1462e2218ecd03c39d26236402ff6a9e78da39ba5591a430a229824",
+          "bytes": 27204
+        }
+      ],
+      "official_equivalent_candidates": [],
+      "license": "OFL-1.1",
+      "license_evidence": "product/app/design/vendor/fonts/newsreader.OFL.txt",
+      "copyright_notice": "Copyright 2020 The Newsreader Project Authors (http://github.com/productiontype/Newsreader)",
+      "official_repository": "https://github.com/google/fonts/tree/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/newsreader",
+      "repository_commit_scope": "License notice only; WOFF2 identity established separately by official artifact SHA256.",
+      "serving_versions": [
+        "26"
+      ],
+      "internal_font_version": 1.003006,
+      "fontversion_fixed16_16": 65733
+    },
+    {
+      "path": "product/app/design/vendor/fonts/newsreader-4aa9bb70.woff2",
+      "filename": "newsreader-4aa9bb70.woff2",
+      "sha256": "01817351be3edfc1714fe6d60ddea6a22a169a5ebd033b50c7f9495e5d9c386a",
+      "bytes": 131848,
+      "local_css_faces": [
+        {
+          "family": "Newsreader",
+          "style": "normal",
+          "weight": "400",
+          "unicode_range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD",
+          "path": "product/app/design/vendor/fonts/newsreader-4aa9bb70.woff2",
+          "css": "product/app/design/vendor/fonts-sistema.css"
+        },
+        {
+          "family": "Newsreader",
+          "style": "normal",
+          "weight": "500",
+          "unicode_range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD",
+          "path": "product/app/design/vendor/fonts/newsreader-4aa9bb70.woff2",
+          "css": "product/app/design/vendor/fonts-sistema.css"
+        },
+        {
+          "family": "Newsreader",
+          "style": "normal",
+          "weight": "600",
+          "unicode_range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD",
+          "path": "product/app/design/vendor/fonts/newsreader-4aa9bb70.woff2",
+          "css": "product/app/design/vendor/fonts-sistema.css"
+        }
+      ],
+      "classification": "A",
+      "upstream_matches": [
+        {
+          "family": "Newsreader",
+          "style": "normal",
+          "weight": "200 800",
+          "unicode_range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD",
+          "url": "https://fonts.gstatic.com/s/newsreader/v26/cY9AfjOCX1hbuyalUrK4397yjIJFJpc.woff2",
+          "sha256": "01817351be3edfc1714fe6d60ddea6a22a169a5ebd033b50c7f9495e5d9c386a",
+          "bytes": 131848
+        }
+      ],
+      "official_equivalent_candidates": [],
+      "license": "OFL-1.1",
+      "license_evidence": "product/app/design/vendor/fonts/newsreader.OFL.txt",
+      "copyright_notice": "Copyright 2020 The Newsreader Project Authors (http://github.com/productiontype/Newsreader)",
+      "official_repository": "https://github.com/google/fonts/tree/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/newsreader",
+      "repository_commit_scope": "License notice only; WOFF2 identity established separately by official artifact SHA256.",
+      "serving_versions": [
+        "26"
+      ],
+      "internal_font_version": 1.003006,
+      "fontversion_fixed16_16": 65733
+    },
+    {
+      "path": "product/app/design/vendor/fonts/newsreader-997f7492.woff2",
+      "filename": "newsreader-997f7492.woff2",
+      "sha256": "cbca001188852d514d8654be7ddc97868f039bdf986b926ec5c985c117853cfd",
+      "bytes": 86628,
+      "local_css_faces": [
+        {
+          "family": "Newsreader",
+          "style": "normal",
+          "weight": "400",
+          "unicode_range": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF",
+          "path": "product/app/design/vendor/fonts/newsreader-997f7492.woff2",
+          "css": "product/app/design/vendor/fonts-sistema.css"
+        },
+        {
+          "family": "Newsreader",
+          "style": "normal",
+          "weight": "500",
+          "unicode_range": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF",
+          "path": "product/app/design/vendor/fonts/newsreader-997f7492.woff2",
+          "css": "product/app/design/vendor/fonts-sistema.css"
+        },
+        {
+          "family": "Newsreader",
+          "style": "normal",
+          "weight": "600",
+          "unicode_range": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF",
+          "path": "product/app/design/vendor/fonts/newsreader-997f7492.woff2",
+          "css": "product/app/design/vendor/fonts-sistema.css"
+        }
+      ],
+      "classification": "A",
+      "upstream_matches": [
+        {
+          "family": "Newsreader",
+          "style": "normal",
+          "weight": "200 800",
+          "unicode_range": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF",
+          "url": "https://fonts.gstatic.com/s/newsreader/v26/cY9AfjOCX1hbuyalUrK439DyjIJFJpeBZQ.woff2",
+          "sha256": "cbca001188852d514d8654be7ddc97868f039bdf986b926ec5c985c117853cfd",
+          "bytes": 86628
+        }
+      ],
+      "official_equivalent_candidates": [],
+      "license": "OFL-1.1",
+      "license_evidence": "product/app/design/vendor/fonts/newsreader.OFL.txt",
+      "copyright_notice": "Copyright 2020 The Newsreader Project Authors (http://github.com/productiontype/Newsreader)",
+      "official_repository": "https://github.com/google/fonts/tree/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/newsreader",
+      "repository_commit_scope": "License notice only; WOFF2 identity established separately by official artifact SHA256.",
+      "serving_versions": [
+        "26"
+      ],
+      "internal_font_version": 1.003006,
+      "fontversion_fixed16_16": 65733
+    },
+    {
+      "path": "product/app/design/vendor/fonts/outfit-74499760.woff2",
+      "filename": "outfit-74499760.woff2",
+      "sha256": "9e38b3f1575daba3435ef09d33a202585ed5bd204bd0a8c744955c750c2b9091",
+      "bytes": 14760,
+      "local_css_faces": [
+        {
+          "family": "Outfit",
+          "style": "normal",
+          "weight": "200",
+          "unicode_range": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF",
+          "path": "product/app/design/vendor/fonts/outfit-74499760.woff2",
+          "css": "product/app/design/vendor/fonts-sistema.css"
+        },
+        {
+          "family": "Outfit",
+          "style": "normal",
+          "weight": "300",
+          "unicode_range": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF",
+          "path": "product/app/design/vendor/fonts/outfit-74499760.woff2",
+          "css": "product/app/design/vendor/fonts-sistema.css"
+        },
+        {
+          "family": "Outfit",
+          "style": "normal",
+          "weight": "400",
+          "unicode_range": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF",
+          "path": "product/app/design/vendor/fonts/outfit-74499760.woff2",
+          "css": "product/app/design/vendor/fonts-sistema.css"
+        },
+        {
+          "family": "Outfit",
+          "style": "normal",
+          "weight": "500",
+          "unicode_range": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF",
+          "path": "product/app/design/vendor/fonts/outfit-74499760.woff2",
+          "css": "product/app/design/vendor/fonts-sistema.css"
+        }
+      ],
+      "classification": "A",
+      "upstream_matches": [
+        {
+          "family": "Outfit",
+          "style": "normal",
+          "weight": "200",
+          "unicode_range": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF",
+          "url": "https://fonts.gstatic.com/s/outfit/v15/QGYvz_MVcBeNP4NJuktqUYLkn8BJ.woff2",
+          "sha256": "9e38b3f1575daba3435ef09d33a202585ed5bd204bd0a8c744955c750c2b9091",
+          "bytes": 14760
+        },
+        {
+          "family": "Outfit",
+          "style": "normal",
+          "weight": "300",
+          "unicode_range": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF",
+          "url": "https://fonts.gstatic.com/s/outfit/v15/QGYvz_MVcBeNP4NJuktqUYLkn8BJ.woff2",
+          "sha256": "9e38b3f1575daba3435ef09d33a202585ed5bd204bd0a8c744955c750c2b9091",
+          "bytes": 14760
+        },
+        {
+          "family": "Outfit",
+          "style": "normal",
+          "weight": "400",
+          "unicode_range": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF",
+          "url": "https://fonts.gstatic.com/s/outfit/v15/QGYvz_MVcBeNP4NJuktqUYLkn8BJ.woff2",
+          "sha256": "9e38b3f1575daba3435ef09d33a202585ed5bd204bd0a8c744955c750c2b9091",
+          "bytes": 14760
+        },
+        {
+          "family": "Outfit",
+          "style": "normal",
+          "weight": "500",
+          "unicode_range": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF",
+          "url": "https://fonts.gstatic.com/s/outfit/v15/QGYvz_MVcBeNP4NJuktqUYLkn8BJ.woff2",
+          "sha256": "9e38b3f1575daba3435ef09d33a202585ed5bd204bd0a8c744955c750c2b9091",
+          "bytes": 14760
+        }
+      ],
+      "official_equivalent_candidates": [],
+      "license": "OFL-1.1",
+      "license_evidence": "product/app/design/vendor/fonts/outfit.OFL.txt",
+      "copyright_notice": "Copyright 2021 The Outfit Project Authors (https://github.com/Outfitio/Outfit-Fonts)",
+      "official_repository": "https://github.com/google/fonts/tree/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/outfit",
+      "repository_commit_scope": "License notice only; WOFF2 identity established separately by official artifact SHA256.",
+      "serving_versions": [
+        "15"
+      ],
+      "internal_font_version": 1.100006,
+      "fontversion_fixed16_16": 72090
+    },
+    {
+      "path": "product/app/design/vendor/fonts/outfit-ebadd8b7.woff2",
+      "filename": "outfit-ebadd8b7.woff2",
+      "sha256": "92684e4acde79ef07758cd09380b7e01e9824d8b061eddeda046f78c166d7b12",
+      "bytes": 32228,
+      "local_css_faces": [
+        {
+          "family": "Outfit",
+          "style": "normal",
+          "weight": "200",
+          "unicode_range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD",
+          "path": "product/app/design/vendor/fonts/outfit-ebadd8b7.woff2",
+          "css": "product/app/design/vendor/fonts-sistema.css"
+        },
+        {
+          "family": "Outfit",
+          "style": "normal",
+          "weight": "300",
+          "unicode_range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD",
+          "path": "product/app/design/vendor/fonts/outfit-ebadd8b7.woff2",
+          "css": "product/app/design/vendor/fonts-sistema.css"
+        },
+        {
+          "family": "Outfit",
+          "style": "normal",
+          "weight": "400",
+          "unicode_range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD",
+          "path": "product/app/design/vendor/fonts/outfit-ebadd8b7.woff2",
+          "css": "product/app/design/vendor/fonts-sistema.css"
+        },
+        {
+          "family": "Outfit",
+          "style": "normal",
+          "weight": "500",
+          "unicode_range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD",
+          "path": "product/app/design/vendor/fonts/outfit-ebadd8b7.woff2",
+          "css": "product/app/design/vendor/fonts-sistema.css"
+        }
+      ],
+      "classification": "A",
+      "upstream_matches": [
+        {
+          "family": "Outfit",
+          "style": "normal",
+          "weight": "200",
+          "unicode_range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD",
+          "url": "https://fonts.gstatic.com/s/outfit/v15/QGYvz_MVcBeNP4NJtEtqUYLknw.woff2",
+          "sha256": "92684e4acde79ef07758cd09380b7e01e9824d8b061eddeda046f78c166d7b12",
+          "bytes": 32228
+        },
+        {
+          "family": "Outfit",
+          "style": "normal",
+          "weight": "300",
+          "unicode_range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD",
+          "url": "https://fonts.gstatic.com/s/outfit/v15/QGYvz_MVcBeNP4NJtEtqUYLknw.woff2",
+          "sha256": "92684e4acde79ef07758cd09380b7e01e9824d8b061eddeda046f78c166d7b12",
+          "bytes": 32228
+        },
+        {
+          "family": "Outfit",
+          "style": "normal",
+          "weight": "400",
+          "unicode_range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD",
+          "url": "https://fonts.gstatic.com/s/outfit/v15/QGYvz_MVcBeNP4NJtEtqUYLknw.woff2",
+          "sha256": "92684e4acde79ef07758cd09380b7e01e9824d8b061eddeda046f78c166d7b12",
+          "bytes": 32228
+        },
+        {
+          "family": "Outfit",
+          "style": "normal",
+          "weight": "500",
+          "unicode_range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD",
+          "url": "https://fonts.gstatic.com/s/outfit/v15/QGYvz_MVcBeNP4NJtEtqUYLknw.woff2",
+          "sha256": "92684e4acde79ef07758cd09380b7e01e9824d8b061eddeda046f78c166d7b12",
+          "bytes": 32228
+        }
+      ],
+      "official_equivalent_candidates": [],
+      "license": "OFL-1.1",
+      "license_evidence": "product/app/design/vendor/fonts/outfit.OFL.txt",
+      "copyright_notice": "Copyright 2021 The Outfit Project Authors (https://github.com/Outfitio/Outfit-Fonts)",
+      "official_repository": "https://github.com/google/fonts/tree/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/outfit",
+      "repository_commit_scope": "License notice only; WOFF2 identity established separately by official artifact SHA256.",
+      "serving_versions": [
+        "15"
+      ],
+      "internal_font_version": 1.100006,
+      "fontversion_fixed16_16": 72090
+    },
+    {
+      "path": "product/app/design/vendor/fonts/poppins-1fae5e73.woff2",
+      "filename": "poppins-1fae5e73.woff2",
+      "sha256": "1fae5e73d2788ee1dea1d76eca3a9f157a0386de6be8c280d076a53a64c358a1",
+      "bytes": 5640,
+      "local_css_faces": [
+        {
+          "family": "Poppins",
+          "style": "normal",
+          "weight": "400",
+          "unicode_range": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF",
+          "path": "product/app/design/vendor/fonts/poppins-1fae5e73.woff2",
+          "css": "product/app/design/vendor/fonts-estandar.css"
+        }
+      ],
+      "classification": "A",
+      "upstream_matches": [
+        {
+          "family": "Poppins",
+          "style": "normal",
+          "weight": "400",
+          "unicode_range": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF",
+          "url": "https://fonts.gstatic.com/s/poppins/v24/pxiEyp8kv8JHgFVrJJnecnFHGPezSQ.woff2",
+          "sha256": "1fae5e73d2788ee1dea1d76eca3a9f157a0386de6be8c280d076a53a64c358a1",
+          "bytes": 5640
+        }
+      ],
+      "official_equivalent_candidates": [],
+      "license": "OFL-1.1",
+      "license_evidence": "product/app/design/vendor/fonts/poppins.OFL.txt",
+      "copyright_notice": "Copyright 2020 The Poppins Project Authors (https://github.com/itfoundry/Poppins)",
+      "official_repository": "https://github.com/google/fonts/tree/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/poppins",
+      "repository_commit_scope": "License notice only; WOFF2 identity established separately by official artifact SHA256.",
+      "serving_versions": [
+        "24"
+      ],
+      "internal_font_version": 4.003998,
+      "fontversion_fixed16_16": 262406
+    },
+    {
+      "path": "product/app/design/vendor/fonts/poppins-23617a1b.woff2",
+      "filename": "poppins-23617a1b.woff2",
+      "sha256": "23617a1bf667dd6a29e2724ac6595e75924549d1c25e8672e2346ef38bc9984a",
+      "bytes": 39504,
+      "local_css_faces": [
+        {
+          "family": "Poppins",
+          "style": "normal",
+          "weight": "400",
+          "unicode_range": "U+0900-097F, U+1CD0-1CF9, U+200C-200D, U+20A8, U+20B9, U+20F0, U+25CC, U+A830-A839, U+A8E0-A8FF, U+11B00-11B09",
+          "path": "product/app/design/vendor/fonts/poppins-23617a1b.woff2",
+          "css": "product/app/design/vendor/fonts-estandar.css"
+        }
+      ],
+      "classification": "A",
+      "upstream_matches": [
+        {
+          "family": "Poppins",
+          "style": "normal",
+          "weight": "400",
+          "unicode_range": "U+0900-097F, U+1CD0-1CF9, U+200C-200D, U+20A8, U+20B9, U+20F0, U+25CC, U+A830-A839, U+A8E0-A8FF, U+11B00-11B09",
+          "url": "https://fonts.gstatic.com/s/poppins/v24/pxiEyp8kv8JHgFVrJJbecnFHGPezSQ.woff2",
+          "sha256": "23617a1bf667dd6a29e2724ac6595e75924549d1c25e8672e2346ef38bc9984a",
+          "bytes": 39504
+        }
+      ],
+      "official_equivalent_candidates": [],
+      "license": "OFL-1.1",
+      "license_evidence": "product/app/design/vendor/fonts/poppins.OFL.txt",
+      "copyright_notice": "Copyright 2020 The Poppins Project Authors (https://github.com/itfoundry/Poppins)",
+      "official_repository": "https://github.com/google/fonts/tree/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/poppins",
+      "repository_commit_scope": "License notice only; WOFF2 identity established separately by official artifact SHA256.",
+      "serving_versions": [
+        "24"
+      ],
+      "internal_font_version": 4.003998,
+      "fontversion_fixed16_16": 262406
+    },
+    {
+      "path": "product/app/design/vendor/fonts/poppins-244dd57d.woff2",
+      "filename": "poppins-244dd57d.woff2",
+      "sha256": "244dd57da310b3fe9a789ef87179bb433b8628016354c4ce80896fd7e4e53968",
+      "bytes": 7896,
+      "local_css_faces": [
+        {
+          "family": "Poppins",
+          "style": "normal",
+          "weight": "200",
+          "unicode_range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD",
+          "path": "product/app/design/vendor/fonts/poppins-244dd57d.woff2",
+          "css": "product/app/design/vendor/fonts-estandar.css"
+        }
+      ],
+      "classification": "A",
+      "upstream_matches": [
+        {
+          "family": "Poppins",
+          "style": "normal",
+          "weight": "200",
+          "unicode_range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD",
+          "url": "https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLFj_Z1xlFd2JQEk.woff2",
+          "sha256": "244dd57da310b3fe9a789ef87179bb433b8628016354c4ce80896fd7e4e53968",
+          "bytes": 7896
+        }
+      ],
+      "official_equivalent_candidates": [],
+      "license": "OFL-1.1",
+      "license_evidence": "product/app/design/vendor/fonts/poppins.OFL.txt",
+      "copyright_notice": "Copyright 2020 The Poppins Project Authors (https://github.com/itfoundry/Poppins)",
+      "official_repository": "https://github.com/google/fonts/tree/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/poppins",
+      "repository_commit_scope": "License notice only; WOFF2 identity established separately by official artifact SHA256.",
+      "serving_versions": [
+        "24"
+      ],
+      "internal_font_version": 4.003998,
+      "fontversion_fixed16_16": 262406
+    },
+    {
+      "path": "product/app/design/vendor/fonts/poppins-289e0afc.woff2",
+      "filename": "poppins-289e0afc.woff2",
+      "sha256": "289e0afc8be731a86822349e54557296f145926496bd2138db1bac0db77f77a2",
+      "bytes": 7740,
+      "local_css_faces": [
+        {
+          "family": "Poppins",
+          "style": "normal",
+          "weight": "500",
+          "unicode_range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD",
+          "path": "product/app/design/vendor/fonts/poppins-289e0afc.woff2",
+          "css": "product/app/design/vendor/fonts-estandar.css"
+        }
+      ],
+      "classification": "A",
+      "upstream_matches": [
+        {
+          "family": "Poppins",
+          "style": "normal",
+          "weight": "500",
+          "unicode_range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD",
+          "url": "https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLGT9Z1xlFd2JQEk.woff2",
+          "sha256": "289e0afc8be731a86822349e54557296f145926496bd2138db1bac0db77f77a2",
+          "bytes": 7740
+        }
+      ],
+      "official_equivalent_candidates": [],
+      "license": "OFL-1.1",
+      "license_evidence": "product/app/design/vendor/fonts/poppins.OFL.txt",
+      "copyright_notice": "Copyright 2020 The Poppins Project Authors (https://github.com/itfoundry/Poppins)",
+      "official_repository": "https://github.com/google/fonts/tree/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/poppins",
+      "repository_commit_scope": "License notice only; WOFF2 identity established separately by official artifact SHA256.",
+      "serving_versions": [
+        "24"
+      ],
+      "internal_font_version": 4.003998,
+      "fontversion_fixed16_16": 262406
+    },
+    {
+      "path": "product/app/design/vendor/fonts/poppins-3dc5d0c5.woff2",
+      "filename": "poppins-3dc5d0c5.woff2",
+      "sha256": "3dc5d0c52428fe1696264907a1054ebbaac07f8cbe45832c105f819c2ae397c0",
+      "bytes": 7900,
+      "local_css_faces": [
+        {
+          "family": "Poppins",
+          "style": "normal",
+          "weight": "400",
+          "unicode_range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD",
+          "path": "product/app/design/vendor/fonts/poppins-3dc5d0c5.woff2",
+          "css": "product/app/design/vendor/fonts-estandar.css"
+        }
+      ],
+      "classification": "A",
+      "upstream_matches": [
+        {
+          "family": "Poppins",
+          "style": "normal",
+          "weight": "400",
+          "unicode_range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD",
+          "url": "https://fonts.gstatic.com/s/poppins/v24/pxiEyp8kv8JHgFVrJJfecnFHGPc.woff2",
+          "sha256": "3dc5d0c52428fe1696264907a1054ebbaac07f8cbe45832c105f819c2ae397c0",
+          "bytes": 7900
+        }
+      ],
+      "official_equivalent_candidates": [],
+      "license": "OFL-1.1",
+      "license_evidence": "product/app/design/vendor/fonts/poppins.OFL.txt",
+      "copyright_notice": "Copyright 2020 The Poppins Project Authors (https://github.com/itfoundry/Poppins)",
+      "official_repository": "https://github.com/google/fonts/tree/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/poppins",
+      "repository_commit_scope": "License notice only; WOFF2 identity established separately by official artifact SHA256.",
+      "serving_versions": [
+        "24"
+      ],
+      "internal_font_version": 4.003998,
+      "fontversion_fixed16_16": 262406
+    },
+    {
+      "path": "product/app/design/vendor/fonts/poppins-45d9ed43.woff2",
+      "filename": "poppins-45d9ed43.woff2",
+      "sha256": "45d9ed43e433b923a0c0498dc68131e0d4bd27893169ffcb102b78ad76cf7b82",
+      "bytes": 5532,
+      "local_css_faces": [
+        {
+          "family": "Poppins",
+          "style": "normal",
+          "weight": "200",
+          "unicode_range": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF",
+          "path": "product/app/design/vendor/fonts/poppins-45d9ed43.woff2",
+          "css": "product/app/design/vendor/fonts-estandar.css"
+        }
+      ],
+      "classification": "A",
+      "upstream_matches": [
+        {
+          "family": "Poppins",
+          "style": "normal",
+          "weight": "200",
+          "unicode_range": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF",
+          "url": "https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLFj_Z1JlFd2JQEl8qw.woff2",
+          "sha256": "45d9ed43e433b923a0c0498dc68131e0d4bd27893169ffcb102b78ad76cf7b82",
+          "bytes": 5532
+        }
+      ],
+      "official_equivalent_candidates": [],
+      "license": "OFL-1.1",
+      "license_evidence": "product/app/design/vendor/fonts/poppins.OFL.txt",
+      "copyright_notice": "Copyright 2020 The Poppins Project Authors (https://github.com/itfoundry/Poppins)",
+      "official_repository": "https://github.com/google/fonts/tree/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/poppins",
+      "repository_commit_scope": "License notice only; WOFF2 identity established separately by official artifact SHA256.",
+      "serving_versions": [
+        "24"
+      ],
+      "internal_font_version": 4.003998,
+      "fontversion_fixed16_16": 262406
+    },
+    {
+      "path": "product/app/design/vendor/fonts/poppins-643e38d8.woff2",
+      "filename": "poppins-643e38d8.woff2",
+      "sha256": "643e38d8c288a1da34a14a68a5012441929108d50054414ce8cc33fad36a2354",
+      "bytes": 7844,
+      "local_css_faces": [
+        {
+          "family": "Poppins",
+          "style": "normal",
+          "weight": "300",
+          "unicode_range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD",
+          "path": "product/app/design/vendor/fonts/poppins-643e38d8.woff2",
+          "css": "product/app/design/vendor/fonts-estandar.css"
+        }
+      ],
+      "classification": "A",
+      "upstream_matches": [
+        {
+          "family": "Poppins",
+          "style": "normal",
+          "weight": "300",
+          "unicode_range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD",
+          "url": "https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLDz8Z1xlFd2JQEk.woff2",
+          "sha256": "643e38d8c288a1da34a14a68a5012441929108d50054414ce8cc33fad36a2354",
+          "bytes": 7844
+        }
+      ],
+      "official_equivalent_candidates": [],
+      "license": "OFL-1.1",
+      "license_evidence": "product/app/design/vendor/fonts/poppins.OFL.txt",
+      "copyright_notice": "Copyright 2020 The Poppins Project Authors (https://github.com/itfoundry/Poppins)",
+      "official_repository": "https://github.com/google/fonts/tree/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/poppins",
+      "repository_commit_scope": "License notice only; WOFF2 identity established separately by official artifact SHA256.",
+      "serving_versions": [
+        "24"
+      ],
+      "internal_font_version": 4.003998,
+      "fontversion_fixed16_16": 262406
+    },
+    {
+      "path": "product/app/design/vendor/fonts/poppins-9c8c47ee.woff2",
+      "filename": "poppins-9c8c47ee.woff2",
+      "sha256": "9c8c47ee0aeaa2d378f4e5d5719ecbf05a601a35c285d0d48b888106bb15cf49",
+      "bytes": 39160,
+      "local_css_faces": [
+        {
+          "family": "Poppins",
+          "style": "normal",
+          "weight": "500",
+          "unicode_range": "U+0900-097F, U+1CD0-1CF9, U+200C-200D, U+20A8, U+20B9, U+20F0, U+25CC, U+A830-A839, U+A8E0-A8FF, U+11B00-11B09",
+          "path": "product/app/design/vendor/fonts/poppins-9c8c47ee.woff2",
+          "css": "product/app/design/vendor/fonts-estandar.css"
+        }
+      ],
+      "classification": "A",
+      "upstream_matches": [
+        {
+          "family": "Poppins",
+          "style": "normal",
+          "weight": "500",
+          "unicode_range": "U+0900-097F, U+1CD0-1CF9, U+200C-200D, U+20A8, U+20B9, U+20F0, U+25CC, U+A830-A839, U+A8E0-A8FF, U+11B00-11B09",
+          "url": "https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLGT9Z11lFd2JQEl8qw.woff2",
+          "sha256": "9c8c47ee0aeaa2d378f4e5d5719ecbf05a601a35c285d0d48b888106bb15cf49",
+          "bytes": 39160
+        }
+      ],
+      "official_equivalent_candidates": [],
+      "license": "OFL-1.1",
+      "license_evidence": "product/app/design/vendor/fonts/poppins.OFL.txt",
+      "copyright_notice": "Copyright 2020 The Poppins Project Authors (https://github.com/itfoundry/Poppins)",
+      "official_repository": "https://github.com/google/fonts/tree/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/poppins",
+      "repository_commit_scope": "License notice only; WOFF2 identity established separately by official artifact SHA256.",
+      "serving_versions": [
+        "24"
+      ],
+      "internal_font_version": 4.003998,
+      "fontversion_fixed16_16": 262406
+    },
+    {
+      "path": "product/app/design/vendor/fonts/poppins-a17766e2.woff2",
+      "filename": "poppins-a17766e2.woff2",
+      "sha256": "a17766e20e5ec85b66150bc637ed9f4f1de7f6b75dc012444c0ec8a312b3a21c",
+      "bytes": 39176,
+      "local_css_faces": [
+        {
+          "family": "Poppins",
+          "style": "normal",
+          "weight": "200",
+          "unicode_range": "U+0900-097F, U+1CD0-1CF9, U+200C-200D, U+20A8, U+20B9, U+20F0, U+25CC, U+A830-A839, U+A8E0-A8FF, U+11B00-11B09",
+          "path": "product/app/design/vendor/fonts/poppins-a17766e2.woff2",
+          "css": "product/app/design/vendor/fonts-estandar.css"
+        }
+      ],
+      "classification": "A",
+      "upstream_matches": [
+        {
+          "family": "Poppins",
+          "style": "normal",
+          "weight": "200",
+          "unicode_range": "U+0900-097F, U+1CD0-1CF9, U+200C-200D, U+20A8, U+20B9, U+20F0, U+25CC, U+A830-A839, U+A8E0-A8FF, U+11B00-11B09",
+          "url": "https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLFj_Z11lFd2JQEl8qw.woff2",
+          "sha256": "a17766e20e5ec85b66150bc637ed9f4f1de7f6b75dc012444c0ec8a312b3a21c",
+          "bytes": 39176
+        }
+      ],
+      "official_equivalent_candidates": [],
+      "license": "OFL-1.1",
+      "license_evidence": "product/app/design/vendor/fonts/poppins.OFL.txt",
+      "copyright_notice": "Copyright 2020 The Poppins Project Authors (https://github.com/itfoundry/Poppins)",
+      "official_repository": "https://github.com/google/fonts/tree/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/poppins",
+      "repository_commit_scope": "License notice only; WOFF2 identity established separately by official artifact SHA256.",
+      "serving_versions": [
+        "24"
+      ],
+      "internal_font_version": 4.003998,
+      "fontversion_fixed16_16": 262406
+    },
+    {
+      "path": "product/app/design/vendor/fonts/poppins-c2857fb5.woff2",
+      "filename": "poppins-c2857fb5.woff2",
+      "sha256": "c2857fb5c3f971df45e8c2764709acbcc5c6d60b9e47d945ae2e7bc51415afeb",
+      "bytes": 5540,
+      "local_css_faces": [
+        {
+          "family": "Poppins",
+          "style": "normal",
+          "weight": "300",
+          "unicode_range": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF",
+          "path": "product/app/design/vendor/fonts/poppins-c2857fb5.woff2",
+          "css": "product/app/design/vendor/fonts-estandar.css"
+        }
+      ],
+      "classification": "A",
+      "upstream_matches": [
+        {
+          "family": "Poppins",
+          "style": "normal",
+          "weight": "300",
+          "unicode_range": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF",
+          "url": "https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLDz8Z1JlFd2JQEl8qw.woff2",
+          "sha256": "c2857fb5c3f971df45e8c2764709acbcc5c6d60b9e47d945ae2e7bc51415afeb",
+          "bytes": 5540
+        }
+      ],
+      "official_equivalent_candidates": [],
+      "license": "OFL-1.1",
+      "license_evidence": "product/app/design/vendor/fonts/poppins.OFL.txt",
+      "copyright_notice": "Copyright 2020 The Poppins Project Authors (https://github.com/itfoundry/Poppins)",
+      "official_repository": "https://github.com/google/fonts/tree/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/poppins",
+      "repository_commit_scope": "License notice only; WOFF2 identity established separately by official artifact SHA256.",
+      "serving_versions": [
+        "24"
+      ],
+      "internal_font_version": 4.003998,
+      "fontversion_fixed16_16": 262406
+    },
+    {
+      "path": "product/app/design/vendor/fonts/poppins-f019bf8f.woff2",
+      "filename": "poppins-f019bf8f.woff2",
+      "sha256": "f019bf8fa642981b9f12647688e825ccad3522d51f2f2859b1af372d5dc1ac31",
+      "bytes": 39416,
+      "local_css_faces": [
+        {
+          "family": "Poppins",
+          "style": "normal",
+          "weight": "300",
+          "unicode_range": "U+0900-097F, U+1CD0-1CF9, U+200C-200D, U+20A8, U+20B9, U+20F0, U+25CC, U+A830-A839, U+A8E0-A8FF, U+11B00-11B09",
+          "path": "product/app/design/vendor/fonts/poppins-f019bf8f.woff2",
+          "css": "product/app/design/vendor/fonts-estandar.css"
+        }
+      ],
+      "classification": "A",
+      "upstream_matches": [
+        {
+          "family": "Poppins",
+          "style": "normal",
+          "weight": "300",
+          "unicode_range": "U+0900-097F, U+1CD0-1CF9, U+200C-200D, U+20A8, U+20B9, U+20F0, U+25CC, U+A830-A839, U+A8E0-A8FF, U+11B00-11B09",
+          "url": "https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLDz8Z11lFd2JQEl8qw.woff2",
+          "sha256": "f019bf8fa642981b9f12647688e825ccad3522d51f2f2859b1af372d5dc1ac31",
+          "bytes": 39416
+        }
+      ],
+      "official_equivalent_candidates": [],
+      "license": "OFL-1.1",
+      "license_evidence": "product/app/design/vendor/fonts/poppins.OFL.txt",
+      "copyright_notice": "Copyright 2020 The Poppins Project Authors (https://github.com/itfoundry/Poppins)",
+      "official_repository": "https://github.com/google/fonts/tree/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/poppins",
+      "repository_commit_scope": "License notice only; WOFF2 identity established separately by official artifact SHA256.",
+      "serving_versions": [
+        "24"
+      ],
+      "internal_font_version": 4.003998,
+      "fontversion_fixed16_16": 262406
+    },
+    {
+      "path": "product/app/design/vendor/fonts/poppins-f8f0c286.woff2",
+      "filename": "poppins-f8f0c286.woff2",
+      "sha256": "f8f0c28661c88edbcee022a4a80657619e8931af8c2a47c28e230307e2af30e5",
+      "bytes": 5496,
+      "local_css_faces": [
+        {
+          "family": "Poppins",
+          "style": "normal",
+          "weight": "500",
+          "unicode_range": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF",
+          "path": "product/app/design/vendor/fonts/poppins-f8f0c286.woff2",
+          "css": "product/app/design/vendor/fonts-estandar.css"
+        }
+      ],
+      "classification": "A",
+      "upstream_matches": [
+        {
+          "family": "Poppins",
+          "style": "normal",
+          "weight": "500",
+          "unicode_range": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF",
+          "url": "https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLGT9Z1JlFd2JQEl8qw.woff2",
+          "sha256": "f8f0c28661c88edbcee022a4a80657619e8931af8c2a47c28e230307e2af30e5",
+          "bytes": 5496
+        }
+      ],
+      "official_equivalent_candidates": [],
+      "license": "OFL-1.1",
+      "license_evidence": "product/app/design/vendor/fonts/poppins.OFL.txt",
+      "copyright_notice": "Copyright 2020 The Poppins Project Authors (https://github.com/itfoundry/Poppins)",
+      "official_repository": "https://github.com/google/fonts/tree/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/poppins",
+      "repository_commit_scope": "License notice only; WOFF2 identity established separately by official artifact SHA256.",
+      "serving_versions": [
+        "24"
+      ],
+      "internal_font_version": 4.003998,
+      "fontversion_fixed16_16": 262406
+    },
+    {
+      "path": "product/app/design/vendor/fonts/rnCr-xNNww_2s0amA9M0knjsS_ulYHs.woff2",
+      "filename": "rnCr-xNNww_2s0amA9M0knjsS_ulYHs.woff2",
+      "sha256": "9d95c480ed17a573649ca7c3dad392239dfd7bec6daf3fa86ef229d5ba2f696a",
+      "bytes": 3340,
+      "local_css_faces": [
+        {
+          "family": "Spectral",
+          "style": "normal",
+          "weight": "400",
+          "unicode_range": "U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F",
+          "path": "product/app/design/vendor/fonts/rnCr-xNNww_2s0amA9M0knjsS_ulYHs.woff2",
+          "css": "product/app/design/vendor/fonts.css"
+        }
+      ],
+      "classification": "A",
+      "upstream_matches": [
+        {
+          "family": "Spectral",
+          "style": "normal",
+          "weight": "400",
+          "unicode_range": "U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F",
+          "url": "https://fonts.gstatic.com/s/spectral/v15/rnCr-xNNww_2s0amA9M0knjsS_ulYHs.woff2",
+          "sha256": "9d95c480ed17a573649ca7c3dad392239dfd7bec6daf3fa86ef229d5ba2f696a",
+          "bytes": 3340
+        }
+      ],
+      "official_equivalent_candidates": [],
+      "license": "OFL-1.1",
+      "license_evidence": "product/app/design/vendor/fonts/spectral.OFL.txt",
+      "copyright_notice": "Copyright 2017 The Spectral Project Authors (https://github.com/productiontype/Spectral)",
+      "official_repository": "https://github.com/google/fonts/tree/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/spectral",
+      "repository_commit_scope": "License notice only; WOFF2 identity established separately by official artifact SHA256.",
+      "serving_versions": [
+        "15"
+      ],
+      "internal_font_version": 2.005005,
+      "fontversion_fixed16_16": 131400
+    },
+    {
+      "path": "product/app/design/vendor/fonts/rnCr-xNNww_2s0amA9M2knjsS_ulYHs.woff2",
+      "filename": "rnCr-xNNww_2s0amA9M2knjsS_ulYHs.woff2",
+      "sha256": "ae7786642b55f76c12636756c694d0ec6d8bc90aca2965a6c1c68e3222307379",
+      "bytes": 4204,
+      "local_css_faces": [
+        {
+          "family": "Spectral",
+          "style": "normal",
+          "weight": "400",
+          "unicode_range": "U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB",
+          "path": "product/app/design/vendor/fonts/rnCr-xNNww_2s0amA9M2knjsS_ulYHs.woff2",
+          "css": "product/app/design/vendor/fonts.css"
+        }
+      ],
+      "classification": "A",
+      "upstream_matches": [
+        {
+          "family": "Spectral",
+          "style": "normal",
+          "weight": "400",
+          "unicode_range": "U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB",
+          "url": "https://fonts.gstatic.com/s/spectral/v15/rnCr-xNNww_2s0amA9M2knjsS_ulYHs.woff2",
+          "sha256": "ae7786642b55f76c12636756c694d0ec6d8bc90aca2965a6c1c68e3222307379",
+          "bytes": 4204
+        }
+      ],
+      "official_equivalent_candidates": [],
+      "license": "OFL-1.1",
+      "license_evidence": "product/app/design/vendor/fonts/spectral.OFL.txt",
+      "copyright_notice": "Copyright 2017 The Spectral Project Authors (https://github.com/productiontype/Spectral)",
+      "official_repository": "https://github.com/google/fonts/tree/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/spectral",
+      "repository_commit_scope": "License notice only; WOFF2 identity established separately by official artifact SHA256.",
+      "serving_versions": [
+        "15"
+      ],
+      "internal_font_version": 2.005005,
+      "fontversion_fixed16_16": 131400
+    },
+    {
+      "path": "product/app/design/vendor/fonts/rnCr-xNNww_2s0amA9M3knjsS_ulYHs.woff2",
+      "filename": "rnCr-xNNww_2s0amA9M3knjsS_ulYHs.woff2",
+      "sha256": "a62b9bdf669d8fb395c8685321cbf86c2f2bc324e0b28ecf867a036095383d49",
+      "bytes": 12660,
+      "local_css_faces": [
+        {
+          "family": "Spectral",
+          "style": "normal",
+          "weight": "400",
+          "unicode_range": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF",
+          "path": "product/app/design/vendor/fonts/rnCr-xNNww_2s0amA9M3knjsS_ulYHs.woff2",
+          "css": "product/app/design/vendor/fonts.css"
+        }
+      ],
+      "classification": "A",
+      "upstream_matches": [
+        {
+          "family": "Spectral",
+          "style": "normal",
+          "weight": "400",
+          "unicode_range": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF",
+          "url": "https://fonts.gstatic.com/s/spectral/v15/rnCr-xNNww_2s0amA9M3knjsS_ulYHs.woff2",
+          "sha256": "a62b9bdf669d8fb395c8685321cbf86c2f2bc324e0b28ecf867a036095383d49",
+          "bytes": 12660
+        }
+      ],
+      "official_equivalent_candidates": [],
+      "license": "OFL-1.1",
+      "license_evidence": "product/app/design/vendor/fonts/spectral.OFL.txt",
+      "copyright_notice": "Copyright 2017 The Spectral Project Authors (https://github.com/productiontype/Spectral)",
+      "official_repository": "https://github.com/google/fonts/tree/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/spectral",
+      "repository_commit_scope": "License notice only; WOFF2 identity established separately by official artifact SHA256.",
+      "serving_versions": [
+        "15"
+      ],
+      "internal_font_version": 2.005005,
+      "fontversion_fixed16_16": 131400
+    },
+    {
+      "path": "product/app/design/vendor/fonts/rnCr-xNNww_2s0amA9M5knjsS_ul.woff2",
+      "filename": "rnCr-xNNww_2s0amA9M5knjsS_ul.woff2",
+      "sha256": "bcb83e9c56d40c5111a2bdbc3d8bdabf66bd31337e968f1c223b61879b8d3cad",
+      "bytes": 14028,
+      "local_css_faces": [
+        {
+          "family": "Spectral",
+          "style": "normal",
+          "weight": "400",
+          "unicode_range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD",
+          "path": "product/app/design/vendor/fonts/rnCr-xNNww_2s0amA9M5knjsS_ul.woff2",
+          "css": "product/app/design/vendor/fonts.css"
+        }
+      ],
+      "classification": "A",
+      "upstream_matches": [
+        {
+          "family": "Spectral",
+          "style": "normal",
+          "weight": "400",
+          "unicode_range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD",
+          "url": "https://fonts.gstatic.com/s/spectral/v15/rnCr-xNNww_2s0amA9M5knjsS_ul.woff2",
+          "sha256": "bcb83e9c56d40c5111a2bdbc3d8bdabf66bd31337e968f1c223b61879b8d3cad",
+          "bytes": 14028
+        }
+      ],
+      "official_equivalent_candidates": [],
+      "license": "OFL-1.1",
+      "license_evidence": "product/app/design/vendor/fonts/spectral.OFL.txt",
+      "copyright_notice": "Copyright 2017 The Spectral Project Authors (https://github.com/productiontype/Spectral)",
+      "official_repository": "https://github.com/google/fonts/tree/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/spectral",
+      "repository_commit_scope": "License notice only; WOFF2 identity established separately by official artifact SHA256.",
+      "serving_versions": [
+        "15"
+      ],
+      "internal_font_version": 2.005005,
+      "fontversion_fixed16_16": 131400
+    },
+    {
+      "path": "product/app/design/vendor/fonts/rnCr-xNNww_2s0amA9M9knjsS_ulYHs.woff2",
+      "filename": "rnCr-xNNww_2s0amA9M9knjsS_ulYHs.woff2",
+      "sha256": "32457570dd484b9ba601e401e87da25ac826fee759885ed7c29469694db87821",
+      "bytes": 9404,
+      "local_css_faces": [
+        {
+          "family": "Spectral",
+          "style": "normal",
+          "weight": "400",
+          "unicode_range": "U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116",
+          "path": "product/app/design/vendor/fonts/rnCr-xNNww_2s0amA9M9knjsS_ulYHs.woff2",
+          "css": "product/app/design/vendor/fonts.css"
+        }
+      ],
+      "classification": "A",
+      "upstream_matches": [
+        {
+          "family": "Spectral",
+          "style": "normal",
+          "weight": "400",
+          "unicode_range": "U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116",
+          "url": "https://fonts.gstatic.com/s/spectral/v15/rnCr-xNNww_2s0amA9M9knjsS_ulYHs.woff2",
+          "sha256": "32457570dd484b9ba601e401e87da25ac826fee759885ed7c29469694db87821",
+          "bytes": 9404
+        }
+      ],
+      "official_equivalent_candidates": [],
+      "license": "OFL-1.1",
+      "license_evidence": "product/app/design/vendor/fonts/spectral.OFL.txt",
+      "copyright_notice": "Copyright 2017 The Spectral Project Authors (https://github.com/productiontype/Spectral)",
+      "official_repository": "https://github.com/google/fonts/tree/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/spectral",
+      "repository_commit_scope": "License notice only; WOFF2 identity established separately by official artifact SHA256.",
+      "serving_versions": [
+        "15"
+      ],
+      "internal_font_version": 2.005005,
+      "fontversion_fixed16_16": 131400
+    },
+    {
+      "path": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9uCt23BafaPWnII.woff2",
+      "filename": "rnCs-xNNww_2s0amA9uCt23BafaPWnII.woff2",
+      "sha256": "1125ec621f11c8669efc3a86cc05d9e9e221853d2b1c9658d9e30de9d3b90bba",
+      "bytes": 15180,
+      "local_css_faces": [
+        {
+          "family": "Spectral",
+          "style": "normal",
+          "weight": "700",
+          "unicode_range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD",
+          "path": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9uCt23BafaPWnII.woff2",
+          "css": "product/app/design/vendor/fonts.css"
+        }
+      ],
+      "classification": "A",
+      "upstream_matches": [
+        {
+          "family": "Spectral",
+          "style": "normal",
+          "weight": "700",
+          "unicode_range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD",
+          "url": "https://fonts.gstatic.com/s/spectral/v15/rnCs-xNNww_2s0amA9uCt23BafaPWnII.woff2",
+          "sha256": "1125ec621f11c8669efc3a86cc05d9e9e221853d2b1c9658d9e30de9d3b90bba",
+          "bytes": 15180
+        }
+      ],
+      "official_equivalent_candidates": [],
+      "license": "OFL-1.1",
+      "license_evidence": "product/app/design/vendor/fonts/spectral.OFL.txt",
+      "copyright_notice": "Copyright 2017 The Spectral Project Authors (https://github.com/productiontype/Spectral)",
+      "official_repository": "https://github.com/google/fonts/tree/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/spectral",
+      "repository_commit_scope": "License notice only; WOFF2 identity established separately by official artifact SHA256.",
+      "serving_versions": [
+        "15"
+      ],
+      "internal_font_version": 2.005005,
+      "fontversion_fixed16_16": 131400
+    },
+    {
+      "path": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9uCt23FafaPWnIIMrY.woff2",
+      "filename": "rnCs-xNNww_2s0amA9uCt23FafaPWnIIMrY.woff2",
+      "sha256": "4ee603d108f6a84bf0159922ab06d474159e54cdce53adb546996ea2dc4c573d",
+      "bytes": 10752,
+      "local_css_faces": [
+        {
+          "family": "Spectral",
+          "style": "normal",
+          "weight": "700",
+          "unicode_range": "U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116",
+          "path": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9uCt23FafaPWnIIMrY.woff2",
+          "css": "product/app/design/vendor/fonts.css"
+        }
+      ],
+      "classification": "A",
+      "upstream_matches": [
+        {
+          "family": "Spectral",
+          "style": "normal",
+          "weight": "700",
+          "unicode_range": "U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116",
+          "url": "https://fonts.gstatic.com/s/spectral/v15/rnCs-xNNww_2s0amA9uCt23FafaPWnIIMrY.woff2",
+          "sha256": "4ee603d108f6a84bf0159922ab06d474159e54cdce53adb546996ea2dc4c573d",
+          "bytes": 10752
+        }
+      ],
+      "official_equivalent_candidates": [],
+      "license": "OFL-1.1",
+      "license_evidence": "product/app/design/vendor/fonts/spectral.OFL.txt",
+      "copyright_notice": "Copyright 2017 The Spectral Project Authors (https://github.com/productiontype/Spectral)",
+      "official_repository": "https://github.com/google/fonts/tree/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/spectral",
+      "repository_commit_scope": "License notice only; WOFF2 identity established separately by official artifact SHA256.",
+      "serving_versions": [
+        "15"
+      ],
+      "internal_font_version": 2.005005,
+      "fontversion_fixed16_16": 131400
+    },
+    {
+      "path": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9uCt23MafaPWnIIMrY.woff2",
+      "filename": "rnCs-xNNww_2s0amA9uCt23MafaPWnIIMrY.woff2",
+      "sha256": "8fac3805a2c1e55db72cf8b4ec7ed1e16471f96880398a1b663a36e7910d0cd2",
+      "bytes": 3596,
+      "local_css_faces": [
+        {
+          "family": "Spectral",
+          "style": "normal",
+          "weight": "700",
+          "unicode_range": "U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F",
+          "path": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9uCt23MafaPWnIIMrY.woff2",
+          "css": "product/app/design/vendor/fonts.css"
+        }
+      ],
+      "classification": "A",
+      "upstream_matches": [
+        {
+          "family": "Spectral",
+          "style": "normal",
+          "weight": "700",
+          "unicode_range": "U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F",
+          "url": "https://fonts.gstatic.com/s/spectral/v15/rnCs-xNNww_2s0amA9uCt23MafaPWnIIMrY.woff2",
+          "sha256": "8fac3805a2c1e55db72cf8b4ec7ed1e16471f96880398a1b663a36e7910d0cd2",
+          "bytes": 3596
+        }
+      ],
+      "official_equivalent_candidates": [],
+      "license": "OFL-1.1",
+      "license_evidence": "product/app/design/vendor/fonts/spectral.OFL.txt",
+      "copyright_notice": "Copyright 2017 The Spectral Project Authors (https://github.com/productiontype/Spectral)",
+      "official_repository": "https://github.com/google/fonts/tree/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/spectral",
+      "repository_commit_scope": "License notice only; WOFF2 identity established separately by official artifact SHA256.",
+      "serving_versions": [
+        "15"
+      ],
+      "internal_font_version": 2.005005,
+      "fontversion_fixed16_16": 131400
+    },
+    {
+      "path": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9uCt23OafaPWnIIMrY.woff2",
+      "filename": "rnCs-xNNww_2s0amA9uCt23OafaPWnIIMrY.woff2",
+      "sha256": "2a39c85474451d160b3a1fa083ec77678bcfd88f4519d39f4cf181e8a52b1bdb",
+      "bytes": 4280,
+      "local_css_faces": [
+        {
+          "family": "Spectral",
+          "style": "normal",
+          "weight": "700",
+          "unicode_range": "U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB",
+          "path": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9uCt23OafaPWnIIMrY.woff2",
+          "css": "product/app/design/vendor/fonts.css"
+        }
+      ],
+      "classification": "A",
+      "upstream_matches": [
+        {
+          "family": "Spectral",
+          "style": "normal",
+          "weight": "700",
+          "unicode_range": "U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB",
+          "url": "https://fonts.gstatic.com/s/spectral/v15/rnCs-xNNww_2s0amA9uCt23OafaPWnIIMrY.woff2",
+          "sha256": "2a39c85474451d160b3a1fa083ec77678bcfd88f4519d39f4cf181e8a52b1bdb",
+          "bytes": 4280
+        }
+      ],
+      "official_equivalent_candidates": [],
+      "license": "OFL-1.1",
+      "license_evidence": "product/app/design/vendor/fonts/spectral.OFL.txt",
+      "copyright_notice": "Copyright 2017 The Spectral Project Authors (https://github.com/productiontype/Spectral)",
+      "official_repository": "https://github.com/google/fonts/tree/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/spectral",
+      "repository_commit_scope": "License notice only; WOFF2 identity established separately by official artifact SHA256.",
+      "serving_versions": [
+        "15"
+      ],
+      "internal_font_version": 2.005005,
+      "fontversion_fixed16_16": 131400
+    },
+    {
+      "path": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9uCt23PafaPWnIIMrY.woff2",
+      "filename": "rnCs-xNNww_2s0amA9uCt23PafaPWnIIMrY.woff2",
+      "sha256": "e06de276e6b69b3501de2ff0e45a7f159ba71bcca576f401098e09c0355e1ced",
+      "bytes": 13312,
+      "local_css_faces": [
+        {
+          "family": "Spectral",
+          "style": "normal",
+          "weight": "700",
+          "unicode_range": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF",
+          "path": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9uCt23PafaPWnIIMrY.woff2",
+          "css": "product/app/design/vendor/fonts.css"
+        }
+      ],
+      "classification": "A",
+      "upstream_matches": [
+        {
+          "family": "Spectral",
+          "style": "normal",
+          "weight": "700",
+          "unicode_range": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF",
+          "url": "https://fonts.gstatic.com/s/spectral/v15/rnCs-xNNww_2s0amA9uCt23PafaPWnIIMrY.woff2",
+          "sha256": "e06de276e6b69b3501de2ff0e45a7f159ba71bcca576f401098e09c0355e1ced",
+          "bytes": 13312
+        }
+      ],
+      "official_equivalent_candidates": [],
+      "license": "OFL-1.1",
+      "license_evidence": "product/app/design/vendor/fonts/spectral.OFL.txt",
+      "copyright_notice": "Copyright 2017 The Spectral Project Authors (https://github.com/productiontype/Spectral)",
+      "official_repository": "https://github.com/google/fonts/tree/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/spectral",
+      "repository_commit_scope": "License notice only; WOFF2 identity established separately by official artifact SHA256.",
+      "serving_versions": [
+        "15"
+      ],
+      "internal_font_version": 2.005005,
+      "fontversion_fixed16_16": 131400
+    },
+    {
+      "path": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9vKsW3BafaPWnII.woff2",
+      "filename": "rnCs-xNNww_2s0amA9vKsW3BafaPWnII.woff2",
+      "sha256": "79ce505722da87b9a2fa21a16cd0d7f426f1624fd16413e11be377bc9e922a3b",
+      "bytes": 15084,
+      "local_css_faces": [
+        {
+          "family": "Spectral",
+          "style": "normal",
+          "weight": "500",
+          "unicode_range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD",
+          "path": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9vKsW3BafaPWnII.woff2",
+          "css": "product/app/design/vendor/fonts.css"
+        }
+      ],
+      "classification": "A",
+      "upstream_matches": [
+        {
+          "family": "Spectral",
+          "style": "normal",
+          "weight": "500",
+          "unicode_range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD",
+          "url": "https://fonts.gstatic.com/s/spectral/v15/rnCs-xNNww_2s0amA9vKsW3BafaPWnII.woff2",
+          "sha256": "79ce505722da87b9a2fa21a16cd0d7f426f1624fd16413e11be377bc9e922a3b",
+          "bytes": 15084
+        }
+      ],
+      "official_equivalent_candidates": [],
+      "license": "OFL-1.1",
+      "license_evidence": "product/app/design/vendor/fonts/spectral.OFL.txt",
+      "copyright_notice": "Copyright 2017 The Spectral Project Authors (https://github.com/productiontype/Spectral)",
+      "official_repository": "https://github.com/google/fonts/tree/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/spectral",
+      "repository_commit_scope": "License notice only; WOFF2 identity established separately by official artifact SHA256.",
+      "serving_versions": [
+        "15"
+      ],
+      "internal_font_version": 2.005005,
+      "fontversion_fixed16_16": 131400
+    },
+    {
+      "path": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9vKsW3FafaPWnIIMrY.woff2",
+      "filename": "rnCs-xNNww_2s0amA9vKsW3FafaPWnIIMrY.woff2",
+      "sha256": "874d49c9c14d00047a53ddd496de773d56215f85582262a2aeeab2ab41d41ae9",
+      "bytes": 10612,
+      "local_css_faces": [
+        {
+          "family": "Spectral",
+          "style": "normal",
+          "weight": "500",
+          "unicode_range": "U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116",
+          "path": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9vKsW3FafaPWnIIMrY.woff2",
+          "css": "product/app/design/vendor/fonts.css"
+        }
+      ],
+      "classification": "A",
+      "upstream_matches": [
+        {
+          "family": "Spectral",
+          "style": "normal",
+          "weight": "500",
+          "unicode_range": "U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116",
+          "url": "https://fonts.gstatic.com/s/spectral/v15/rnCs-xNNww_2s0amA9vKsW3FafaPWnIIMrY.woff2",
+          "sha256": "874d49c9c14d00047a53ddd496de773d56215f85582262a2aeeab2ab41d41ae9",
+          "bytes": 10612
+        }
+      ],
+      "official_equivalent_candidates": [],
+      "license": "OFL-1.1",
+      "license_evidence": "product/app/design/vendor/fonts/spectral.OFL.txt",
+      "copyright_notice": "Copyright 2017 The Spectral Project Authors (https://github.com/productiontype/Spectral)",
+      "official_repository": "https://github.com/google/fonts/tree/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/spectral",
+      "repository_commit_scope": "License notice only; WOFF2 identity established separately by official artifact SHA256.",
+      "serving_versions": [
+        "15"
+      ],
+      "internal_font_version": 2.005005,
+      "fontversion_fixed16_16": 131400
+    },
+    {
+      "path": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9vKsW3MafaPWnIIMrY.woff2",
+      "filename": "rnCs-xNNww_2s0amA9vKsW3MafaPWnIIMrY.woff2",
+      "sha256": "aff97997277cce4f2798af35dff14fd4b9cb88fac5a8310924b7eb678489e3a4",
+      "bytes": 3584,
+      "local_css_faces": [
+        {
+          "family": "Spectral",
+          "style": "normal",
+          "weight": "500",
+          "unicode_range": "U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F",
+          "path": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9vKsW3MafaPWnIIMrY.woff2",
+          "css": "product/app/design/vendor/fonts.css"
+        }
+      ],
+      "classification": "A",
+      "upstream_matches": [
+        {
+          "family": "Spectral",
+          "style": "normal",
+          "weight": "500",
+          "unicode_range": "U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F",
+          "url": "https://fonts.gstatic.com/s/spectral/v15/rnCs-xNNww_2s0amA9vKsW3MafaPWnIIMrY.woff2",
+          "sha256": "aff97997277cce4f2798af35dff14fd4b9cb88fac5a8310924b7eb678489e3a4",
+          "bytes": 3584
+        }
+      ],
+      "official_equivalent_candidates": [],
+      "license": "OFL-1.1",
+      "license_evidence": "product/app/design/vendor/fonts/spectral.OFL.txt",
+      "copyright_notice": "Copyright 2017 The Spectral Project Authors (https://github.com/productiontype/Spectral)",
+      "official_repository": "https://github.com/google/fonts/tree/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/spectral",
+      "repository_commit_scope": "License notice only; WOFF2 identity established separately by official artifact SHA256.",
+      "serving_versions": [
+        "15"
+      ],
+      "internal_font_version": 2.005005,
+      "fontversion_fixed16_16": 131400
+    },
+    {
+      "path": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9vKsW3OafaPWnIIMrY.woff2",
+      "filename": "rnCs-xNNww_2s0amA9vKsW3OafaPWnIIMrY.woff2",
+      "sha256": "217390471a430a687e52e33c3d694d1d814e6c3de0c8e37906dcc2f8a073e175",
+      "bytes": 4260,
+      "local_css_faces": [
+        {
+          "family": "Spectral",
+          "style": "normal",
+          "weight": "500",
+          "unicode_range": "U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB",
+          "path": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9vKsW3OafaPWnIIMrY.woff2",
+          "css": "product/app/design/vendor/fonts.css"
+        }
+      ],
+      "classification": "A",
+      "upstream_matches": [
+        {
+          "family": "Spectral",
+          "style": "normal",
+          "weight": "500",
+          "unicode_range": "U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB",
+          "url": "https://fonts.gstatic.com/s/spectral/v15/rnCs-xNNww_2s0amA9vKsW3OafaPWnIIMrY.woff2",
+          "sha256": "217390471a430a687e52e33c3d694d1d814e6c3de0c8e37906dcc2f8a073e175",
+          "bytes": 4260
+        }
+      ],
+      "official_equivalent_candidates": [],
+      "license": "OFL-1.1",
+      "license_evidence": "product/app/design/vendor/fonts/spectral.OFL.txt",
+      "copyright_notice": "Copyright 2017 The Spectral Project Authors (https://github.com/productiontype/Spectral)",
+      "official_repository": "https://github.com/google/fonts/tree/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/spectral",
+      "repository_commit_scope": "License notice only; WOFF2 identity established separately by official artifact SHA256.",
+      "serving_versions": [
+        "15"
+      ],
+      "internal_font_version": 2.005005,
+      "fontversion_fixed16_16": 131400
+    },
+    {
+      "path": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9vKsW3PafaPWnIIMrY.woff2",
+      "filename": "rnCs-xNNww_2s0amA9vKsW3PafaPWnIIMrY.woff2",
+      "sha256": "38331492f5916e46a39699c66a1d76294b6f7b56f8a702f09cfb35fd9fd3043c",
+      "bytes": 13216,
+      "local_css_faces": [
+        {
+          "family": "Spectral",
+          "style": "normal",
+          "weight": "500",
+          "unicode_range": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF",
+          "path": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9vKsW3PafaPWnIIMrY.woff2",
+          "css": "product/app/design/vendor/fonts.css"
+        }
+      ],
+      "classification": "A",
+      "upstream_matches": [
+        {
+          "family": "Spectral",
+          "style": "normal",
+          "weight": "500",
+          "unicode_range": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF",
+          "url": "https://fonts.gstatic.com/s/spectral/v15/rnCs-xNNww_2s0amA9vKsW3PafaPWnIIMrY.woff2",
+          "sha256": "38331492f5916e46a39699c66a1d76294b6f7b56f8a702f09cfb35fd9fd3043c",
+          "bytes": 13216
+        }
+      ],
+      "official_equivalent_candidates": [],
+      "license": "OFL-1.1",
+      "license_evidence": "product/app/design/vendor/fonts/spectral.OFL.txt",
+      "copyright_notice": "Copyright 2017 The Spectral Project Authors (https://github.com/productiontype/Spectral)",
+      "official_repository": "https://github.com/google/fonts/tree/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/spectral",
+      "repository_commit_scope": "License notice only; WOFF2 identity established separately by official artifact SHA256.",
+      "serving_versions": [
+        "15"
+      ],
+      "internal_font_version": 2.005005,
+      "fontversion_fixed16_16": 131400
+    },
+    {
+      "path": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9vmtm3BafaPWnII.woff2",
+      "filename": "rnCs-xNNww_2s0amA9vmtm3BafaPWnII.woff2",
+      "sha256": "1fb6ca29fc243e8bfdfce12d8d6806f322bcc62d38036986812be28fb1f41f0a",
+      "bytes": 15164,
+      "local_css_faces": [
+        {
+          "family": "Spectral",
+          "style": "normal",
+          "weight": "600",
+          "unicode_range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD",
+          "path": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9vmtm3BafaPWnII.woff2",
+          "css": "product/app/design/vendor/fonts.css"
+        }
+      ],
+      "classification": "A",
+      "upstream_matches": [
+        {
+          "family": "Spectral",
+          "style": "normal",
+          "weight": "600",
+          "unicode_range": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD",
+          "url": "https://fonts.gstatic.com/s/spectral/v15/rnCs-xNNww_2s0amA9vmtm3BafaPWnII.woff2",
+          "sha256": "1fb6ca29fc243e8bfdfce12d8d6806f322bcc62d38036986812be28fb1f41f0a",
+          "bytes": 15164
+        }
+      ],
+      "official_equivalent_candidates": [],
+      "license": "OFL-1.1",
+      "license_evidence": "product/app/design/vendor/fonts/spectral.OFL.txt",
+      "copyright_notice": "Copyright 2017 The Spectral Project Authors (https://github.com/productiontype/Spectral)",
+      "official_repository": "https://github.com/google/fonts/tree/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/spectral",
+      "repository_commit_scope": "License notice only; WOFF2 identity established separately by official artifact SHA256.",
+      "serving_versions": [
+        "15"
+      ],
+      "internal_font_version": 2.005005,
+      "fontversion_fixed16_16": 131400
+    },
+    {
+      "path": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9vmtm3FafaPWnIIMrY.woff2",
+      "filename": "rnCs-xNNww_2s0amA9vmtm3FafaPWnIIMrY.woff2",
+      "sha256": "9a6738241702381e65e80d1ee5f172ce12be2049dfedeb33016a5096444bc03b",
+      "bytes": 10744,
+      "local_css_faces": [
+        {
+          "family": "Spectral",
+          "style": "normal",
+          "weight": "600",
+          "unicode_range": "U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116",
+          "path": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9vmtm3FafaPWnIIMrY.woff2",
+          "css": "product/app/design/vendor/fonts.css"
+        }
+      ],
+      "classification": "A",
+      "upstream_matches": [
+        {
+          "family": "Spectral",
+          "style": "normal",
+          "weight": "600",
+          "unicode_range": "U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116",
+          "url": "https://fonts.gstatic.com/s/spectral/v15/rnCs-xNNww_2s0amA9vmtm3FafaPWnIIMrY.woff2",
+          "sha256": "9a6738241702381e65e80d1ee5f172ce12be2049dfedeb33016a5096444bc03b",
+          "bytes": 10744
+        }
+      ],
+      "official_equivalent_candidates": [],
+      "license": "OFL-1.1",
+      "license_evidence": "product/app/design/vendor/fonts/spectral.OFL.txt",
+      "copyright_notice": "Copyright 2017 The Spectral Project Authors (https://github.com/productiontype/Spectral)",
+      "official_repository": "https://github.com/google/fonts/tree/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/spectral",
+      "repository_commit_scope": "License notice only; WOFF2 identity established separately by official artifact SHA256.",
+      "serving_versions": [
+        "15"
+      ],
+      "internal_font_version": 2.005005,
+      "fontversion_fixed16_16": 131400
+    },
+    {
+      "path": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9vmtm3MafaPWnIIMrY.woff2",
+      "filename": "rnCs-xNNww_2s0amA9vmtm3MafaPWnIIMrY.woff2",
+      "sha256": "3f8d833b64a1e7e1b8be07cd73513004cc680a466b84d6459fdcd2f1c1fcf0b3",
+      "bytes": 3608,
+      "local_css_faces": [
+        {
+          "family": "Spectral",
+          "style": "normal",
+          "weight": "600",
+          "unicode_range": "U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F",
+          "path": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9vmtm3MafaPWnIIMrY.woff2",
+          "css": "product/app/design/vendor/fonts.css"
+        }
+      ],
+      "classification": "A",
+      "upstream_matches": [
+        {
+          "family": "Spectral",
+          "style": "normal",
+          "weight": "600",
+          "unicode_range": "U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F",
+          "url": "https://fonts.gstatic.com/s/spectral/v15/rnCs-xNNww_2s0amA9vmtm3MafaPWnIIMrY.woff2",
+          "sha256": "3f8d833b64a1e7e1b8be07cd73513004cc680a466b84d6459fdcd2f1c1fcf0b3",
+          "bytes": 3608
+        }
+      ],
+      "official_equivalent_candidates": [],
+      "license": "OFL-1.1",
+      "license_evidence": "product/app/design/vendor/fonts/spectral.OFL.txt",
+      "copyright_notice": "Copyright 2017 The Spectral Project Authors (https://github.com/productiontype/Spectral)",
+      "official_repository": "https://github.com/google/fonts/tree/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/spectral",
+      "repository_commit_scope": "License notice only; WOFF2 identity established separately by official artifact SHA256.",
+      "serving_versions": [
+        "15"
+      ],
+      "internal_font_version": 2.005005,
+      "fontversion_fixed16_16": 131400
+    },
+    {
+      "path": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9vmtm3OafaPWnIIMrY.woff2",
+      "filename": "rnCs-xNNww_2s0amA9vmtm3OafaPWnIIMrY.woff2",
+      "sha256": "74dc7e33abf296a6a7129a327d7b9c5bc02b11eb9ffb47447a0887997c863102",
+      "bytes": 4244,
+      "local_css_faces": [
+        {
+          "family": "Spectral",
+          "style": "normal",
+          "weight": "600",
+          "unicode_range": "U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB",
+          "path": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9vmtm3OafaPWnIIMrY.woff2",
+          "css": "product/app/design/vendor/fonts.css"
+        }
+      ],
+      "classification": "A",
+      "upstream_matches": [
+        {
+          "family": "Spectral",
+          "style": "normal",
+          "weight": "600",
+          "unicode_range": "U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB",
+          "url": "https://fonts.gstatic.com/s/spectral/v15/rnCs-xNNww_2s0amA9vmtm3OafaPWnIIMrY.woff2",
+          "sha256": "74dc7e33abf296a6a7129a327d7b9c5bc02b11eb9ffb47447a0887997c863102",
+          "bytes": 4244
+        }
+      ],
+      "official_equivalent_candidates": [],
+      "license": "OFL-1.1",
+      "license_evidence": "product/app/design/vendor/fonts/spectral.OFL.txt",
+      "copyright_notice": "Copyright 2017 The Spectral Project Authors (https://github.com/productiontype/Spectral)",
+      "official_repository": "https://github.com/google/fonts/tree/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/spectral",
+      "repository_commit_scope": "License notice only; WOFF2 identity established separately by official artifact SHA256.",
+      "serving_versions": [
+        "15"
+      ],
+      "internal_font_version": 2.005005,
+      "fontversion_fixed16_16": 131400
+    },
+    {
+      "path": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9vmtm3PafaPWnIIMrY.woff2",
+      "filename": "rnCs-xNNww_2s0amA9vmtm3PafaPWnIIMrY.woff2",
+      "sha256": "ccb889e04368c402021b9b73196f26fc903d6cb269028138fefb68bd56cc5c19",
+      "bytes": 13288,
+      "local_css_faces": [
+        {
+          "family": "Spectral",
+          "style": "normal",
+          "weight": "600",
+          "unicode_range": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF",
+          "path": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9vmtm3PafaPWnIIMrY.woff2",
+          "css": "product/app/design/vendor/fonts.css"
+        }
+      ],
+      "classification": "A",
+      "upstream_matches": [
+        {
+          "family": "Spectral",
+          "style": "normal",
+          "weight": "600",
+          "unicode_range": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF",
+          "url": "https://fonts.gstatic.com/s/spectral/v15/rnCs-xNNww_2s0amA9vmtm3PafaPWnIIMrY.woff2",
+          "sha256": "ccb889e04368c402021b9b73196f26fc903d6cb269028138fefb68bd56cc5c19",
+          "bytes": 13288
+        }
+      ],
+      "official_equivalent_candidates": [],
+      "license": "OFL-1.1",
+      "license_evidence": "product/app/design/vendor/fonts/spectral.OFL.txt",
+      "copyright_notice": "Copyright 2017 The Spectral Project Authors (https://github.com/productiontype/Spectral)",
+      "official_repository": "https://github.com/google/fonts/tree/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/spectral",
+      "repository_commit_scope": "License notice only; WOFF2 identity established separately by official artifact SHA256.",
+      "serving_versions": [
+        "15"
+      ],
+      "internal_font_version": 2.005005,
+      "fontversion_fixed16_16": 131400
+    }
+  ],
+  "verified_on": "2026-09-13",
+  "result": {
+    "A": 49,
+    "B": 0,
+    "C": 0
+  },
+  "limitations": [
+    "Exact identity to official hosted WOFF2 artifacts, not evidence of the historic downloader or reconstruction of Google's compilation pipeline.",
+    "Google Fonts serving version /vN/ and internal font version identify artifact versions; the Google/fonts commit below pins license notices only, not the compiled WOFF2 build."
+  ],
+  "license_notices": [
+    {
+      "family_directory": "instrumentserif",
+      "repository": "https://github.com/google/fonts",
+      "commit": "809e4d8b8d7e9364a914909bb777679606c178b8",
+      "url": "https://raw.githubusercontent.com/google/fonts/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/instrumentserif/OFL.txt",
+      "sha256": "129ed7618959716959f2941fdd5b49e0ad6e6c1d78726761786a00253d865521",
+      "local_path": "product/app/design/vendor/fonts/instrumentserif.OFL.txt",
+      "local_match": true,
+      "copyright_notice": "Copyright 2022 The Instrument Serif Project Authors (https://github.com/Instrument/instrument-serif)",
+      "local_sha256": "129ed7618959716959f2941fdd5b49e0ad6e6c1d78726761786a00253d865521",
+      "local_bytes": 4405,
+      "license": "OFL-1.1",
+      "textual_match": true
+    },
+    {
+      "family_directory": "jetbrainsmono",
+      "repository": "https://github.com/google/fonts",
+      "commit": "809e4d8b8d7e9364a914909bb777679606c178b8",
+      "url": "https://raw.githubusercontent.com/google/fonts/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/jetbrainsmono/OFL.txt",
+      "sha256": "b2fe5e8987594e9ffd1d2ca52a2f5d73eb8335243893c5d6254b5ad69269591d",
+      "local_path": "product/app/design/vendor/fonts/jetbrainsmono.OFL.txt",
+      "local_match": true,
+      "copyright_notice": "Copyright 2020 The JetBrains Mono Project Authors (https://github.com/JetBrains/JetBrainsMono)",
+      "local_sha256": "b2fe5e8987594e9ffd1d2ca52a2f5d73eb8335243893c5d6254b5ad69269591d",
+      "local_bytes": 4399,
+      "license": "OFL-1.1",
+      "textual_match": true
+    },
+    {
+      "family_directory": "poppins",
+      "repository": "https://github.com/google/fonts",
+      "commit": "809e4d8b8d7e9364a914909bb777679606c178b8",
+      "url": "https://raw.githubusercontent.com/google/fonts/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/poppins/OFL.txt",
+      "sha256": "6be04893d770899a015649c7aa3b582f871b272f8747a92b78b17c3e5c8b2573",
+      "local_path": "product/app/design/vendor/fonts/poppins.OFL.txt",
+      "local_match": true,
+      "copyright_notice": "Copyright 2020 The Poppins Project Authors (https://github.com/itfoundry/Poppins)",
+      "local_sha256": "6be04893d770899a015649c7aa3b582f871b272f8747a92b78b17c3e5c8b2573",
+      "local_bytes": 4385,
+      "license": "OFL-1.1",
+      "textual_match": true
+    },
+    {
+      "family_directory": "outfit",
+      "repository": "https://github.com/google/fonts",
+      "commit": "809e4d8b8d7e9364a914909bb777679606c178b8",
+      "url": "https://raw.githubusercontent.com/google/fonts/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/outfit/OFL.txt",
+      "sha256": "c676351bf8576b9aba743cd5eaa8c0e7ee0d51f805d720447b4df4ddb6a2e416",
+      "local_path": "product/app/design/vendor/fonts/outfit.OFL.txt",
+      "local_match": true,
+      "copyright_notice": "Copyright 2021 The Outfit Project Authors (https://github.com/Outfitio/Outfit-Fonts)",
+      "local_sha256": "c676351bf8576b9aba743cd5eaa8c0e7ee0d51f805d720447b4df4ddb6a2e416",
+      "local_bytes": 4389,
+      "license": "OFL-1.1",
+      "textual_match": true
+    },
+    {
+      "family_directory": "newsreader",
+      "repository": "https://github.com/google/fonts",
+      "commit": "809e4d8b8d7e9364a914909bb777679606c178b8",
+      "url": "https://raw.githubusercontent.com/google/fonts/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/newsreader/OFL.txt",
+      "sha256": "fdfad38143ec470553cae82a1e45320bdd1b9ec70415d37bd0171051d8a4ded8",
+      "local_path": "product/app/design/vendor/fonts/newsreader.OFL.txt",
+      "local_match": false,
+      "copyright_notice": "Copyright 2020 The Newsreader Project Authors (http://github.com/productiontype/Newsreader)",
+      "local_sha256": "806bdd7d159dc2965b41a80078851b8a549b97103f0b64519849aa662b371297",
+      "local_bytes": 4395,
+      "license": "OFL-1.1",
+      "notice_transformation": "Local notice appends one final LF to upstream text; no other textual differences (verified by diff).",
+      "textual_match": true
+    },
+    {
+      "family_directory": "hankengrotesk",
+      "repository": "https://github.com/google/fonts",
+      "commit": "809e4d8b8d7e9364a914909bb777679606c178b8",
+      "url": "https://raw.githubusercontent.com/google/fonts/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/hankengrotesk/OFL.txt",
+      "sha256": "e02ccb89a86839b22feff7872ff5cc355cc0f58318d29eee20e2cf83a612f16d",
+      "local_path": "product/app/design/vendor/fonts/hankengrotesk.OFL.txt",
+      "local_match": true,
+      "copyright_notice": "Copyright 2021 The Hanken Grotesk Project Authors (https://github.com/marcologous/hanken-grotesk)",
+      "local_sha256": "e02ccb89a86839b22feff7872ff5cc355cc0f58318d29eee20e2cf83a612f16d",
+      "local_bytes": 4402,
+      "license": "OFL-1.1",
+      "textual_match": true
+    },
+    {
+      "family_directory": "spectral",
+      "repository": "https://github.com/google/fonts",
+      "commit": "809e4d8b8d7e9364a914909bb777679606c178b8",
+      "url": "https://raw.githubusercontent.com/google/fonts/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/spectral/OFL.txt",
+      "sha256": "501d6ceca8e552630fe3aa9442b9a818565680a1a2f79f3fb8c13d6f309a9e98",
+      "local_path": "product/app/design/vendor/fonts/spectral.OFL.txt",
+      "local_match": false,
+      "copyright_notice": "Copyright 2017 The Spectral Project Authors (https://github.com/productiontype/Spectral)",
+      "local_sha256": "0f781c7527185c45e6572d4fafdd3614a09b67eb0465735e8c8b9a22de220506",
+      "local_bytes": 4393,
+      "license": "OFL-1.1",
+      "notice_transformation": "Local notice appends one final LF to upstream text; no other textual differences (verified by diff).",
+      "textual_match": true
+    }
+  ]
+}

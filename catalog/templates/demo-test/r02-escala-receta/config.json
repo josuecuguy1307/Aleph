@@ -1,0 +1,21 @@
+{
+  "belt_path": "catalog/templates/demo-test/belt-demo.mcp.json",
+  "framing_path": null,
+  "framing_fallback": "Eres un agente de cocina especializado en escalado de recetas. Escalas cantidades con precisión matemática y ajustas tiempos de cocción. Nunca redondeas ingredientes sin avisarlo.",
+  "rag_dir": null,
+  "base_url": "http://127.0.0.1:11434/v1",
+  "model": "qwen3:8b",
+  "max_turns": 6,
+  "max_tokens": 2048,
+  "temperature": 0,
+  "tool_filters": {},
+  "surgery_params": {
+    "nombre_receta": "__REQUIRED__",
+    "porciones_original": 4,
+    "porciones_objetivo": 20,
+    "ajustar_tiempos": true
+  },
+  "api_key": {
+    "env_var": "SPOONACULAR_API_KEY"
+  }
+}

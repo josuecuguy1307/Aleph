@@ -1,0 +1,92 @@
+{
+  "_meta": {
+    "belt": "stem",
+    "slug": "stem",
+    "que_es": "Cinturon MCP del tutor STEM-ES (nicho educacion). Computo simbolico exacto + graficacion + verificacion dimensional. Cero credenciales: todo keyless/local.",
+    "fuente": "catalog/belts/stem.md + org/artifacts/FASE0-tabla-tool-caso-bucket.md (seccion 4) + M002 (wrapper Pint construido).",
+    "consumido_por": "product/recipes/educacion.config.json (belt_ref: catalog/belts/stem.md -> slug stem)",
+    "verificado": "JSON-RPC init + tools/list reales el 2026-06-15 (ver catalog/templates/stem/SMOKE-belt-stem.md). 2026-07-04 PASS-gate verify_catalog_batch.py (batch a05-huerfanos, cliente de PROD assembler.MCPServer, tools/call REAL): sympy PASS — mcp-sympy 3.4.2, 171 tools, sympy_diff(x**2)→'2*x' simbolico real; chart PASS — @antv/mcp-server-chart 0.8.x, 27 tools, generate_line_chart→URL de render REAL del servicio AntV (requiere red); units PASS — wrapper Pint local (units-pint 1.27.2 via venv tutor-stem), units_convert(60 km/hour→m/s)→'16.666667 meter / second' (el check adversarial '5 m/s + 3 kg' rechaza con DimensionalityError, isError honesto). Cards nuevas = los 3 servers surfacean en /v1/atoms/catalog. Evidencia: reports/catalog-wave-a/evidence-a05-huerfanos.json.",
+    "cards": [
+      {
+        "id": "sympy",
+        "label": "Cómputo simbólico (SymPy)",
+        "sub": "deriva, integra, resuelve y simplifica de forma exacta · LaTeX del resultado · local, sin llave",
+        "auth": "keyless",
+        "armario": "datos",
+        "backed_by": "sympy",
+        "tools": [
+          "sympy_diff",
+          "sympy_integrate",
+          "sympy_solve",
+          "sympy_simplify",
+          "sympy_factor",
+          "sympy_limit",
+          "sympy_series",
+          "sympy_latex"
+        ]
+      },
+      {
+        "id": "chart",
+        "label": "Gráficas (AntV)",
+        "sub": "líneas, barras, pastel, dispersión, histograma · render real vía servicio AntV (red) · sin llave",
+        "auth": "keyless",
+        "armario": "datos",
+        "backed_by": "chart",
+        "tools": [
+          "generate_line_chart",
+          "generate_bar_chart",
+          "generate_column_chart",
+          "generate_pie_chart",
+          "generate_scatter_chart",
+          "generate_area_chart",
+          "generate_histogram_chart"
+        ]
+      },
+      {
+        "id": "units",
+        "label": "Unidades (Pint)",
+        "sub": "verifica coherencia dimensional (rechaza '5 m/s + 3 kg') y convierte unidades · local, sin llave",
+        "auth": "keyless",
+        "armario": "datos",
+        "backed_by": "units",
+        "tools": [
+          "units_check",
+          "units_convert"
+        ]
+      }
+    ]
+  },
+  "mcpServers": {
+    "sympy": {
+      "command": "uvx",
+      "args": ["mcp-sympy"],
+      "caso": 1,
+      "bucket": "B1",
+      "nichos": ["educacion"],
+      "credenciales": "ninguna (100% local)",
+      "ajuste_framing": "Expone 171 tools; la receta recorta a ~8 via tool_filters (sympy_diff/integrate/solve/simplify/factor/limit/latex/series) para no saturar contexto.",
+      "description": "Computo simbolico exacto + LaTeX (mismo server: sympy_latex). Diferenciacion/integracion/solve/limit/series simbolicos, no numericos."
+    },
+    "chart": {
+      "command": "npx",
+      "args": ["-y", "@antv/mcp-server-chart"],
+      "caso": 1,
+      "bucket": "B1",
+      "nichos": ["educacion"],
+      "credenciales": "ninguna",
+      "requiere_red": "si — renderiza via servicio remoto gratuito de AntV. Deployment privado: env VIS_REQUEST_SERVER. Fallback sin re-cableado: @gongrzhe/quickchart-mcp-server.",
+      "description": "Graficacion de funciones (27 tipos). El tutor usa generate_line_chart para visualizar el resultado de sympy."
+    },
+    "units": {
+      "command": "product/tutor-stem/.venv/bin/python",
+      "args": ["product/tutor-stem/tools/units_mcp.py"],
+      "caso": 2,
+      "bucket": "B3",
+      "nichos": ["educacion"],
+      "credenciales": "ninguna (Pint local; venv tutor-stem trae pint 0.25.3 + mcp[cli])",
+      "moat": "El units_check adversarial rechaza '5 m/s + 3 kg' (DimensionalityError). Esa es la diferencia del tutor vs ChatGPT pelado (M002).",
+      "portabilidad": "Path absoluto al venv tutor-stem porque pint no esta en system python. Reproducible: pip install pint mcp[cli] en un venv y apuntar command/args alli.",
+      "description": "Verificacion dimensional (units_check) + conversion (units_convert) con Pint. Wrapper MCP minimo construido en M002."
+    }
+  }
+}

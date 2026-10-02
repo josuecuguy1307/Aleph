@@ -1,0 +1,22 @@
+{
+  "schema_version": "v1",
+  "meta": {
+    "name": "Sub-agente Cómputo QA",
+    "nicho": "general",
+    "descripcion": "sub-agente QA equipable como agent_ref: computa DE VERDAD (run_python del belt inline-rich, auto-ejecuta probado en S3) y devuelve el dato. Existe porque research-sub (belt-calc pelado) cae en el fail-closed del enforcer y su tool queda HELD — un hijo gated es un callejón sin salida (el approve no se reenvía al hijo por RIEL #1)."
+  },
+  "model": {
+    "primary": "openai/gpt-oss-120b",
+    "base_url": "https://api.groq.com/openai/v1",
+    "temperature": 0,
+    "max_tokens": 1024,
+    "max_turns": 6
+  },
+  "belt": {
+    "belt_ref": "platform/assembler/fixtures/belt-inline-rich.mcp.json",
+    "tool_filters": { "pysandbox": ["run_python"] }
+  },
+  "framing": { "inline": "Computas lo que te pidan con run_python (ejecución real, jamás de memoria) y devuelves el resultado en una frase corta, repitiendo cualquier etiqueta o código que venga en la tarea." },
+  "rag": { "enabled": false },
+  "gates": { "money_touch": "needs_ok", "send": "needs_ok" }
+}

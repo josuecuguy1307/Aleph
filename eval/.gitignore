@@ -1,0 +1,7 @@
+# transient run logs (stdout); evidence lives in runs.jsonl + matriz.{md,json}
+report/run.log
+report/run-opus.log
+report/run*.log
+report/shim.log
+__pycache__/
+*.pyc

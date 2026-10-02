@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "wikipedia": {
+      "command": "python3",
+      "args": ["${PUPPET_BELTS}/generalistas/wikipedia_server.py"],
+      "description": "Wikipedia/Wikimedia MCP (stdio, keyless, read-only). 2 tools: search_pages (busca artículos) y get_summary (extracto por título). Tier B Caso 1: REST APIs públicas de Wikimedia sin key ni OAuth. Cinturón del nicho educación/OER (recurso educativo abierto), default español."
+    }
+  }
+}

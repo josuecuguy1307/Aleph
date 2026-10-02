@@ -1,0 +1,9 @@
+{
+  "schema_version": "v1",
+  "meta": { "name": "byok_sub", "nicho": "general", "descripcion": "sub-agente que SOLO declara su propia key (child_svc)" },
+  "model": { "primary": "stub", "base_url": "stub://local", "temperature": 0, "max_tokens": 256, "max_turns": 6 },
+  "belt": { "belt_ref": "platform/assembler/deleg_fixtures/belt-deleg.mcp.json", "tool_filters": { "deleg": ["read_data"] } },
+  "keys": { "child_svc": { "byok_ref": "CHILD_REF" } },
+  "rag": { "enabled": false },
+  "gates": { "money_touch": "needs_ok", "send": "needs_ok" }
+}

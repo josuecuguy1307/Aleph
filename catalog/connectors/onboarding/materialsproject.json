@@ -1,0 +1,58 @@
+{
+  "connector": "materialsproject",
+  "provider": "Materials Project",
+  "auth_method": "personal_token",
+  "tier": "average",
+  "needs_base_url": false,
+  "deep_link": "https://next-gen.materialsproject.org/api",
+  "api_base": "https://api.materialsproject.org",
+  "credential_fields": [
+    {
+      "key": "MP_API_KEY",
+      "label": "Tu API key de Materials Project",
+      "secret": true
+    }
+  ],
+  "steps": [
+    {
+      "txt": "Entra a materialsproject.org con tu cuenta (es gratis)."
+    },
+    {
+      "txt": "Copia tu API key desde la página de API."
+    },
+    {
+      "txt": "Pega tu llave aquí; Aleph la guarda cifrada."
+    }
+  ],
+  "validate": {
+    "method": "GET",
+    "path": "/materials/summary/?_limit=1",
+    "auth": "header",
+    "header": "X-API-KEY",
+    "identity_field": null
+  },
+  "permissions": [
+    "consultar materiales, estructuras y propiedades"
+  ],
+  "capability_line": "Listo — ya puedo consultar Materials Project.",
+  "trust_line": "Tu API key se guarda cifrada · la quitas cuando quieras.",
+  "errors": {
+    "network": "El servicio no responde por ahora. Prueba de nuevo en un momento."
+  },
+  "en": {
+    "credential_fields": [{"key": "MP_API_KEY", "label": "Your Materials Project API key", "secret": true}],
+    "steps": [
+      {"txt": "Sign in to materialsproject.org with your account (it is free)."},
+      {"txt": "Copy your API key from the API page."},
+      {"txt": "Paste your key here; Aleph stores it encrypted."}
+    ],
+    "permissions": ["read materials, structures and properties"],
+    "capability_line": "Done — I can now query Materials Project.",
+    "trust_line": "Your API key is stored encrypted; remove it whenever you want.",
+    "errors": {"network": "The service is not responding. Please try again shortly."}
+  },
+  "verification": {
+    "validated_with_test_key": false,
+    "notes": "Ficha creada 2026-08-04: el censo del widget único la encontró AUSENTE — la pieza existía como servidor de belt sin nada que declarar, así que el widget no tenía de dónde derivar su trámite."
+  }
+}

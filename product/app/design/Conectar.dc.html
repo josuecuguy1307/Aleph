@@ -1,0 +1,611 @@
+<!doctype html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conectar · Aleph</title>
+<!-- ══ QUÉ QUEDA DE ESTA PANTALLA, Y QUÉ SE FUE ═══════════════════════════════════════
+     La lista de conectores y el catálogo público viven en Conectores.dc.html. Lo único
+     que sigue viviendo acá es EL WIZARD DE UN CONECTOR: `?c=<conector>` abre su trámite, y
+     es a donde vuelve el consentimiento de OAuth desde el proveedor
+     (`connectors_router.py` → `Conectar.dc.html?c=<name>&oauth=ok|partial|cancelled`).
+
+     ⚠️ LA EXCEPCIÓN DEL SHIM CAMBIÓ DE `catalogo=publico` A `c=<conector>`, y no es un
+     detalle: `?catalogo=publico` era la PUERTA VIEJA al registro —enterrada por la Obra 4,
+     porque mostraba un flujo que ya no es el real— y `?c=` es el wizard, que sí sigue vivo.
+     Con la excepción anterior pasaba lo contrario de lo que hacía falta: la puerta muerta
+     entraba y el wizard no, así que la vuelta de OAuth se redirigía a Conectores y el ✓ de
+     «autorizaste tu cuenta» se perdía en el camino. Medido sobre main.
+
+     `?catalogo=publico` sigue funcionando como enlace: cae en Conectores, que lo reconoce y
+     abre la sección con la búsqueda puesta. Un enlace viejo lleva a donde llevaba, no a un
+     dead-end. -->
+<script>
+  (function () {
+    try {
+      var old = new URLSearchParams(location.search);
+      // el wizard de UN conector: se queda acá (y con él la vuelta de OAuth)
+      if (old.get("c")) return;
+      var next = new URLSearchParams();
+      var q = old.get("q") || old.get("svc") || old.get("slug");
+      if (q) next.set("q", q);
+      var back = old.get("return") || old.get("volver");
+      if (back) next.set("return", back);
+      // la puerta vieja al registro se convierte en la sección nueva, sin perder la query
+      if (old.get("catalogo") === "publico") next.set("catalogo", "publico");
+      location.replace("Conectores.dc.html" + (next.toString() ? "?" + next : ""));
+    } catch (e) {
+      location.replace("Conectores.dc.html");
+    }
+  })();
+</script>
+<link rel="stylesheet" href="vendor/fonts.css"><!-- [Casa 2 · F1.b] fuentes locales: antes 2 preconnect + css2 de Google -->
+<script src="./aleph-config.js"></script>
+<script src="./vendor/supabase.min.js"></script>
+<script src="./supabase-auth.js"></script>
+<script src="auth.js"></script>
+<script src="paywall.js"></script>
+<link rel="stylesheet" href="aleph-tokens.css"><!-- [identidad visual] la piel: tokens, forma y tipografía en un solo lugar -->
+<style>
+  /* [sistema 2026-07-31] Conectar entra al sistema "Híbrido Spatial + Soft futurism", igual
+     que su hermana Conectores. Las primitivas (.ds-plane/.ds-well/.ds-track/.ds-card/
+     .ds-item/.ds-title/…) llegan por aleph-tokens.css → @import aleph-ds.css; acá NO se
+     redeclara ningún token. Cambia la PIEL: cero bordes, cero relieves, cero hundidos — la
+     jerarquía es sombra + radio. Color 90/8/2.
+     Lo que NO cambia: ni un id, ni una clase que lean los módulos, ni un handler, ni un
+     endpoint, ni el flujo de credenciales (wizard, validación, guardado, OAuth).
+     LOS LOGOS DE MARCA NO SE TOCAN: la cara de cada servicio la sigue pintando Brandface. */
+
+  *{box-sizing:border-box}
+  [hidden]{display:none!important}
+  body{margin:0;min-height:100vh;background:var(--page-bg);font-family:var(--font-ui);
+       color:var(--ink);-webkit-font-smoothing:antialiased}
+  button,input{font:inherit}
+  button{color:inherit}
+  .wrap{max-width:900px;margin:0 auto;padding:30px 20px 80px}
+  .sub{color:var(--muted);font:300 13px/1.55 var(--font-ui);margin:0 0 22px}
+  /* la lista de conectores vive en una PISTA: una fila en foco, el resto retrocede */
+  .grid{display:flex;flex-direction:column;gap:10px}
+  .controls{display:flex;flex-direction:column;gap:10px;margin:18px 0 14px}
+  /* el campo: sin borde, fondo de pozo, radio del sistema. El foco se tiñe, no se subraya. */
+  .search{width:100%;border:0;background:var(--paper2);border-radius:var(--r-md);padding:12px 16px;
+          font:300 13.5px var(--font-ui);color:var(--ink);outline:none}
+  .search:focus{background:var(--accent-soft)}
+  .seg{display:flex;gap:6px;background:transparent;border:0;padding:0;overflow:auto}
+  .seg button{border:0;background:var(--paper2);color:var(--muted);border-radius:var(--r-full);
+              padding:7px 15px;font:400 var(--fs-sm) var(--font-ui);cursor:pointer;white-space:nowrap}
+  .seg button:hover{color:var(--ink)}
+  .seg button.on{background:var(--accent-soft);color:var(--accent-deep)}
+  /* la tarjeta es un elemento SOBRE el pozo: papel + radio + sombra corta. Sin línea. */
+  .card{background:var(--paper);border:0;border-radius:var(--r-md);box-shadow:var(--sh-1);
+        padding:14px 18px;display:flex;flex-direction:column;gap:7px}
+  .card .top{display:flex;align-items:center;gap:11px}
+  .mono{width:34px;height:34px;border-radius:var(--r-xs);background:var(--accent-soft);color:var(--accent-deep);
+        display:flex;align-items:center;justify-content:center;font:400 14px var(--font-ui);flex:none;text-transform:capitalize}
+  /* los logos de marca se conservan tal cual: sólo se armoniza el radio y se saca el hundido */
+  .svcface{box-shadow:none;background:transparent;border-radius:var(--r-xs)}
+  .nm{font:400 var(--fs-md) var(--font-ui);text-transform:capitalize}
+  .fam{font:300 var(--fs-xs) var(--font-ui);color:var(--faint);margin-top:2px}
+  .cap{font:300 12px/1.45 var(--font-ui);color:var(--muted);
+       display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  /* el sistema prohíbe el borde: chip neutro, campo invertido (primaria) o fantasma */
+  .btn{border:0;background:var(--paper2);color:var(--ink);border-radius:var(--r-md);
+       padding:10px 16px;font:400 12px var(--font-ui);cursor:pointer;text-align:center;
+       text-decoration:none;white-space:nowrap}
+  .btn:hover{filter:brightness(1.18)}
+  .btn.primary{background:var(--ink);color:var(--paper)}
+  .btn.primary:hover{filter:brightness(1.12);color:var(--paper)}
+  .btn.ghost{background:transparent;color:var(--muted)}
+  .btn.ghost:hover{color:var(--ink);background:var(--paper2)}
+  .actions{display:flex;gap:8px;align-items:center;margin-top:2px}
+  .actions .btn{flex:0 1 auto;min-width:148px}
+  .pill{font:400 10.5px var(--font-ui);border:0;border-radius:var(--r-full);padding:3px 10px;display:inline-block}
+  .pill.ok{color:var(--green);background:var(--green-bg)}
+  .pill.warn{color:var(--amber);background:var(--amber-bg)}
+  .pill.kind{color:var(--muted);background:var(--paper2)}
+  .pill.kind.built_in_piece{color:var(--accent-deep);background:var(--accent-soft)}
+  .pill.kind.account_connector{color:var(--green);background:var(--green-bg)}
+  /* [Obra 4] el CSS de la puerta vieja al registro (.cur / #regWrap / .pill.official) se fue con ella. */
+  /* modal */
+  .scrim{position:fixed;inset:0;background:rgba(8,8,16,.62);display:none;align-items:center;justify-content:center;padding:18px;z-index:50}
+  .scrim.on{display:flex}
+  .modal{width:100%;max-width:460px;background:var(--paper);border:0;border-radius:var(--r-xl);
+         box-shadow:var(--sh-3);overflow:hidden;animation:up .16s ease both}
+  @keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .mhead{padding:20px 22px 14px;border:0;display:flex;align-items:center;gap:12px}
+  .mbody{padding:4px 22px 22px}
+  .step{display:flex;gap:10px;font:300 13px/1.5 var(--font-ui);color:var(--muted);margin-bottom:11px}
+  .step .n{width:20px;height:20px;border-radius:50%;background:var(--accent-soft);color:var(--accent-deep);
+           font:400 11px var(--font-ui);display:flex;align-items:center;justify-content:center;flex:none;margin-top:1px}
+  .step em{color:var(--accent-deep);font-style:normal;background:var(--accent-soft);border-radius:var(--r-xs);padding:0 5px}
+  label{display:block;font:300 var(--fs-xs) var(--font-ui);color:var(--faint);margin:14px 0 6px}
+  input.f{width:100%;border:0;background:var(--paper2);border-radius:var(--r-md);padding:12px 15px;
+          font:300 13.5px var(--font-ui);color:var(--ink);outline:none}
+  input.f:focus{background:var(--accent-soft)}
+  .shape{font:400 11px var(--font-mono);color:var(--faint);margin-top:5px}
+  .deep{display:inline-flex;align-items:center;gap:7px;text-decoration:none;border:0;
+        background:var(--paper2);color:var(--accent-deep);border-radius:var(--r-md);
+        padding:10px 14px;font:400 12px var(--font-ui);margin-bottom:6px}
+  .deep:hover{filter:brightness(1.18)}
+  .trust{font:300 11.5px var(--font-ui);color:var(--faint);margin-top:12px;display:flex;align-items:center;gap:6px}
+  .status{margin-top:14px;border:0;border-radius:var(--r-md);padding:12px 14px;
+          font:300 13px/1.5 var(--font-ui);display:none}
+  .status.on{display:block}
+  .status.ok{color:var(--green);background:var(--green-bg)}
+  .status.bad{color:var(--red);background:var(--red-bg)}
+  .status.amber{color:var(--amber);background:var(--amber-bg)}
+  .status.work{color:var(--accent-deep);background:var(--accent-soft)}
+  /* el spinner SIN borde: un anillo de gradiente enmascarado, no una línea */
+  .spin{width:13px;height:13px;border:0;border-radius:50%;display:inline-block;vertical-align:-2px;
+        margin-right:7px;background:conic-gradient(from 0deg,transparent 0deg,var(--accent) 310deg);
+        -webkit-mask:radial-gradient(circle,transparent 3.4px,#000 4px);
+        mask:radial-gradient(circle,transparent 3.4px,#000 4px);animation:sp .7s linear infinite}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  .row{display:flex;gap:9px;margin-top:16px}
+  .row .btn{flex:1}
+  .note{font:300 11.5px/1.5 var(--font-ui);color:var(--faint);margin-top:10px}
+  @media(max-width:520px){
+    .wrap{padding-inline:12px}
+    .actions{flex-wrap:wrap}
+    .actions .btn{flex:1 1 100%}
+  }
+</style>
+<script src="./i18n.js"></script>
+<script src="./brandface.js"></script>
+<style id="aleph-theme-style">
+
+</style>
+<script src="./theme.js"></script>
+<script src="./nav.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <!-- el PLANO DE CONTENIDO (r30 + sombra ambiental) envuelve toda la pantalla -->
+  <div class="ds-plane">
+    <h1 id="catalogTitle" class="ds-title">Conecta tus herramientas</h1>
+    <p class="sub" id="catalogLead" style="margin-top:9px">Tu agente usa lo que tú le des acceso. Algunas cosas ya funcionan solas; otras te piden conectar tu cuenta — tú decides, se guarda cifrado y lo quitas cuando quieras.</p>
+    <!-- [cierre de Conexiones] El Centro murió y sus familias se repartieron por lo que SON:
+         la cognición (incluido · cli · api) se fue a Modelos, que ya las listaba; las cuentas
+         y los servidores MCP son CONECTORES y aterrizan acá. Es una lista honesta con el
+         estado real, no la vista rica — ésa es su propio ticket. -->
+    <section id="cxYa" hidden style="margin:0 0 22px">
+      <h2 style="font:400 var(--fs-lg) var(--font-ui);letter-spacing:-.01em;margin:0 0 8px" data-i18n="conectar.ya.h">Lo que ya conectaste</h2>
+      <div class="ds-well" style="padding:14px 18px">
+        <ul id="cxYaLista" style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:7px"></ul>
+      </div>
+    </section>
+    <div class="controls">
+      <input class="search" id="catalogSearch" type="search" placeholder="Buscar MCP, pieza o conector…" autocomplete="off">
+      <div class="seg" id="kindFilter">
+        <button data-v="" class="on">Todo</button>
+        <button data-v="public_mcp">MCPs públicos</button>
+        <button data-v="built_in_piece">Piezas incluidas</button>
+        <button data-v="account_connector">Conectores de cuenta</button>
+      </div>
+    </div>
+    <!-- el POZO (r22, plano, sin sombra propia) es la PISTA: exactamente un conector en foco.
+         #grid sigue siendo el único host de lista; el pozo sólo lo envuelve para que el
+         control ^ˇ tenga dónde vivir (y para que innerHTML='' no se lo lleve puesto). -->
+    <div class="ds-well ds-track" id="gridPista" data-ds-track style="padding:18px 20px">
+      <div class="grid" id="grid"></div>
+    </div>
+
+    <!-- [Obra 4] ACÁ VIVÍA LA PUERTA AL REGISTRO PÚBLICO (#regWrap / #regGrid), y se fue
+         entera a la SECCIÓN de Conectores. No se mudó una lista: se mudó un flujo que acá
+         mentía —mostraba «Curar y equipar» sin decir qué avisa la pieza, sin las tres caras
+         del veredicto y sin el viaje— y que en la sección sale de los mismos endpoints
+         diciendo la verdad. Una sola superficie para el catálogo público. -->
+  </div>
+</div>
+
+<div class="scrim" id="scrim">
+  <div class="modal" id="modal"></div>
+</div>
+
+<script>
+/* [sistema 2026-07-31] PIEL, no lógica.
+ * Las tarjetas de esta pantalla las escriben renderCatalog(), que NO se
+ * tocan: son los dueños de la funcionalidad (conectar, curar, equipar, credenciales). Para
+ * que las listas entren al patrón Vertical Sliding Focus hay que ponerle a cada .card las
+ * clases del sistema (.ds-card .ds-item) y marcar su contenedor de acciones como
+ * .ds-actions. Eso es todo lo que hace esta capa: AGREGA clases y refleja el `hidden` que
+ * ya decidió el módulo (el pozo no puede quedar visible y vacío cuando su lista está
+ * oculta). No crea ni borra acciones, no mueve nodos, no toca textos ni credenciales; los
+ * onclick que puso el render viajan con el nodo. Si AlephDS no cargó, se ve como siempre.
+ */
+(function () {
+  'use strict';
+  var HOSTS = [['grid', 'gridPista']];
+  function decorar() {
+    HOSTS.forEach(function (par) {
+      var host = document.getElementById(par[0]);
+      var pista = document.getElementById(par[1]);
+      if (!host || !pista) return;
+      // el pozo sigue al host: oculto si el host está oculto o todavía no tiene tarjetas
+      var vacia = host.hidden || !host.querySelector('.card');
+      if (pista.hidden !== vacia) pista.hidden = vacia;
+      var cards = host.querySelectorAll('.card');
+      var toco = false;
+      for (var i = 0; i < cards.length; i++) {
+        var c = cards[i];
+        if (!c.classList.contains('ds-item')) { c.classList.add('ds-card', 'ds-item'); toco = true; }
+        var act = c.querySelector('.actions');
+        if (act && !act.classList.contains('ds-actions')) { act.classList.add('ds-actions'); toco = true; }
+      }
+      if (toco && window.AlephDS) { window.AlephDS.init(document); window.AlephDS.refresh(pista); }
+    });
+  }
+  function arrancar() {
+    decorar();
+    if (!window.MutationObserver) return;
+    HOSTS.forEach(function (par) {
+      var host = document.getElementById(par[0]);
+      if (!host) return;
+      new MutationObserver(decorar).observe(host, { childList: true, subtree: true, attributes: true, attributeFilter: ['hidden'] });
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', arrancar);
+  else arrancar();
+})();
+</script>
+
+<!-- LO QUE YA ESTÁ CONECTADO — cuentas y servidores MCP, con su estado REAL. Se lee del
+     mismo motor que leía el Centro (/v1/conexiones), así que no hay una segunda verdad. -->
+<script type="module">
+  import * as CXAPI from "./conexiones/centro.api.js";
+  const CX_MIAS = new Set(["cuenta", "mcp"]);      // lo que NO es cognición: eso vive en Modelos
+  const cxLuz = { probado: ["●", "var(--green)"], detectado: ["◐", "var(--amber)"],
+                  roto: ["●", "var(--red)"], no_configurado: ["○", "var(--faint)"],
+                  premium: ["◆", "var(--accent)"] };
+  (async function () {
+    if (new URLSearchParams(location.search).get("catalogo") === "publico") return;
+    const sec = document.getElementById("cxYa"), ul = document.getElementById("cxYaLista");
+    if (!sec || !ul) return;
+    try {
+      const d = await CXAPI.listar();
+      const filas = (d.filas || []).filter((f) => CX_MIAS.has(f.familia));
+      if (!filas.length) return;                    // sin nada conectado, no se inventa una caja
+      sec.hidden = false;
+      ul.innerHTML = filas.map((f) => {
+        const [g, c] = cxLuz[f.estado] || cxLuz.no_configurado;
+        const et = String(f.estado || "").replace(/_/g, " ");
+        return '<li style="display:flex;align-items:center;gap:9px;font-size:13px">' +
+          '<span aria-hidden="true" style="color:' + c + '">' + g + '</span>' +
+          '<b>' + String(f.label || f.ref || "").replace(/[<>]/g, "") + '</b>' +
+          '<span class="sub" style="margin:0">' + et + '</span></li>';
+      }).join("");
+    } catch (e) {
+      // §4h · si no se puede leer, se dice — nunca una sección muda ni una lista fingida.
+      sec.hidden = false;
+      const enUI = (function () { try { return String((window.AlephI18n && AlephI18n.lang && AlephI18n.lang()) || "es").startsWith("en"); } catch (x) { return false; } })();
+      ul.innerHTML = '<li class="sub" style="margin:0">' +
+        (enUI ? "Couldn't read what you already connected: " : "Todavía no se ve lo que conectaste. ") +
+        String((e && e.message) || e).replace(/[<>]/g, "") + '</li>';
+    }
+  })();
+</script>
+
+<script type="module">
+import { loadCapabilityCatalog, catalogEntryMatches } from './cuarto/cuarto.catalog.js';
+// [Obra 4] se fue el import de `curateAndEquipRegistry`: equipar desde el registro es de la
+// sección de Conectores. El módulo sigue en el árbol porque el Cuarto lo usa.
+
+const $ = (s,r=document)=>r.querySelector(s);
+const FAMILY = {
+  keyless:      {tag:'Ya funciona', cta:null},
+  personal_token:{tag:'Pegas tu token', cta:'Conectar'},
+  oauth:        {tag:'Autorizas tu cuenta', cta:'Conectar'},
+  admin_oauth:  {tag:'Lo habilita tu organización', cta:null},
+};
+function esc(s){
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function initialsFace(name, size){
+  return `<div class="mono" style="width:${size}px;height:${size}px">${esc((name||'?').slice(0,2))}</div>`;
+}
+function serviceFace(x, size, label){
+  const data = (x && typeof x === 'object') ? x : {connector:x, label:label||x};
+  if(window.AlephBrand) return AlephBrand.faceHTML(data, {size:size, cls:'svcface'});
+  return initialsFace(data.label||data.connector||data.server||'?', size);
+}
+function brandReadySoon(){
+  if(!window.AlephBrand || !AlephBrand.ready) return Promise.resolve();
+  return Promise.race([AlephBrand.ready.catch(()=>null), new Promise(res=>setTimeout(res, 900))]);
+}
+const KIND_STYLE = {
+  public_mcp: 'public_mcp',
+  built_in_piece: 'built_in_piece',
+  account_connector: 'account_connector',
+};
+let CAPCAT = { entries: [], byKey: {}, total: 0 };
+let CONN = { connected: new Set(), partial: new Set() };
+let filters = { q:'', kind:'' };
+// login suave + relaunch: leer por AlephSession.get() (rehidrata desde localStorage). Leer
+// sessionStorage directo dejaba el grid mostrando TODO como "Conectar" tras relanzar la .app (la
+// sesión y las llaves viven, pero session()=null borraba el estado "conectado") — una de las
+// incongruencias de estado que reportó la caminata.
+function session(){ try{ if(window.AlephSession && window.AlephSession.get) return window.AlephSession.get(); return JSON.parse(sessionStorage.getItem('puppet_user')||'null'); }catch(e){ return null; } }
+// Familia 4 GUARDA por-usuario (BYOK): sin un user_id, el token se valida pero NO se persiste
+// y el broker no tendría qué inyectar. LOGIN SUAVE: minta/reusa la sesión LOCAL anónima (device
+// user, POST /v1/auth/local vía AlephSession.ensureLocal) — la MISMA identidad que usa el resto de
+// la app. Antes abría un login TOY compartido (zotero-toy@demo.ai): las conexiones quedaban en OTRA
+// cuenta → "conectado" acá y ausente en Settings/Cuarto. Ahora la cara Y el estado son congruentes.
+async function ensureSession(){
+  let u = session();
+  if(u && u.id && u.session_token) return u;
+  try{ const A=window.AlephSession; if(A && A.ensureLocal){ const nu = await A.ensureLocal(); if(nu && nu.id) return nu; } }catch(e){}
+  return null;
+}
+
+async function loadList(){
+  const grid = $('#grid');
+  grid.innerHTML = '<p class="sub">Cargando…</p>';
+  try{ const u = session(); CAPCAT = await loadCapabilityCatalog({ userId: u && u.id, force:true }); }
+  catch(e){
+    // [T6 §8.1] no-se-pudo + causa + botón (jamás una pared con una pregunta retórica)
+    grid.innerHTML = '<p class="sub">El catálogo no está disponible por ahora. <button class="btn ghost" id="gridRetry">↻ Reintentar</button></p>';
+    const rb=$('#gridRetry'); if(rb) rb.onclick=()=>loadList();
+    return;
+  }
+  // ESTADO PERSISTENTE [Caso 2 · 2B]: marcar los conectores YA conectados (el token vive
+  // cifrado en el vault) — sin esto la card vuelve a "Conectar" y miente que no hay llave.
+  const connected = new Set(), partial = new Set();
+  try{
+    const u = session();
+    if(u && u.id){
+      const ks = await (await fetch('/v1/users/'+u.id+'/keys')).json();
+      (ks.keys || ks || []).forEach(k=>{
+        if(!k || !k.provider) return;
+        // "<name>__oauth_partial" / "<name>__oauth" son marcadores de salud del conector
+        // base, no tarjetas propias.
+        if(k.provider.endsWith('__oauth_partial')){ partial.add(k.provider.slice(0, -('__oauth_partial'.length))); return; }
+        if(k.provider.endsWith('__oauth')) return;
+        connected.add(k.provider);
+      });
+    }
+  }catch(e){}
+  CONN = { connected, partial };
+  await brandReadySoon();
+  renderCatalog();
+}
+
+function equipUrl(entry){
+  return 'cuarto/cuarto.pixi.html?equip=' + encodeURIComponent(entry.key || entry.id || '');
+}
+
+function renderCatalog(){
+  const grid = $('#grid');
+  grid.innerHTML='';
+  const list = (CAPCAT.entries||[]).filter(e=>catalogEntryMatches(e, filters));
+  if(!list.length){ grid.innerHTML = '<p class="sub">Nada coincide con esa búsqueda.</p>'; return; }
+  list.forEach(c=>{
+    const fam = FAMILY[c.auth] || FAMILY[c.auth_method] || {tag:c.auth||c.auth_method||'catálogo', cta:'Conectar'};
+    const isAccount = c.catalogKind === 'account_connector';
+    const canEquip = !c.connectorOnly;
+    const canConnect = isAccount && c.connector;
+    const isPartial = !!(c.connector && CONN.partial.has(c.connector));
+    const isConnected = !isPartial && !!(c.connector && CONN.connected.has(c.connector));
+    // [Centro de Conexiones] lo YA conectado (o conectado a medias) no se "gestiona" acá
+    // re-pegando la llave: se manda al CENTRO, a SU fila, donde vive el checklist real y
+    // el arreglo. Sólo lo que todavía no está conectado abre el flujo de conexión.
+    // [cierre de Conexiones] el estado de lo conectado se ve ACÁ («Lo que ya conectaste»),
+    // no en otra pantalla: el Centro murió y este catálogo ES Conectores.
+    const centroUrl = `Conectar.dc.html#cxYa`;
+    const primary = canConnect
+      ? (isConnected || isPartial
+          ? `<a class="btn ${isPartial?'primary':'ghost'}" href="${esc(centroUrl)}" style="text-decoration:none">${isPartial?'Arreglar conexión':'Ver conexión'}</a>`
+          : `<button class="btn primary" data-c="${esc(c.connector)}">Conectar</button>`)
+      : canEquip
+        ? `<a class="btn primary" href="${esc(equipUrl(c))}" style="text-decoration:none">Equipar</a>`
+        : '';
+    const secondary = canConnect && canEquip
+      ? `<a class="btn ghost" href="${esc(equipUrl(c))}" style="text-decoration:none">Equipar</a>`
+      : '';
+    const source = c.kindLabel || 'Catálogo';
+    const detail = c.server ? `MCP: ${c.server}${c.tools&&c.tools.length?' · '+c.tools.length+' tools':''}`
+      : c.connector ? `Cuenta: ${c.connector}` : 'Pieza del Cuarto';
+    // La CARA de la pieza es Brandface (logo real curado o iniciales+color deterministas),
+    // jamás el mono genérico: el grid viejo lo hacía y 6d805c4 lo perdió (0/73 caras).
+    const face = serviceFace({connector:c.connector, server:c.server, name:c.id, label:c.label||c.connector||c.id}, 34);
+    const statePill = isPartial
+      ? `<span class="pill warn" title="Autorizaste tu cuenta, pero no llegó un permiso de larga duración (refresh). El acceso caduca en ~1 h y habrá que volver a conectar.">⚠ Parcial — caduca pronto</span>`
+      : isConnected ? '<span class="pill ok">✓ Conectado</span>' : '';
+    const el = document.createElement('div'); el.className='card';
+    el.innerHTML = `
+      <div class="top">
+        ${face}
+        <div><div class="nm">${esc(c.label||c.connector)}</div><div class="fam">${esc(detail)}</div></div>
+      </div>
+      <div><span class="pill kind ${KIND_STYLE[c.catalogKind]||''}">${esc(source)}</span> ${statePill} ${c.auth==='keyless'?'<span class="pill ok">✓ Sin llave</span>':''}</div>
+      <div class="cap">${esc(c.sub||c.capability_line||fam.tag||'')}</div>
+      <div class="actions">${primary}${secondary}</div>`;
+    el.querySelectorAll('button[data-c]').forEach(b=>b.onclick = ()=>openWizard(b.dataset.c));
+    grid.appendChild(el);
+  });
+}
+
+async function openWizard(name){
+  const modal = $('#modal'); const scrim = $('#scrim');
+  scrim.classList.add('on');
+  modal.innerHTML = '<div class="mbody"><span class="spin"></span>Cargando…</div>';
+  let obj;
+  // [T6 §8.1] espera con plazo + salida con camino: causa + [Reintentar] (jamás una pared)
+  try{
+    const ac = new AbortController(); const t = setTimeout(()=>ac.abort(), 15000);
+    try { obj = await (await fetch('/v1/connectors/'+name, {signal: ac.signal})).json(); }
+    finally { clearTimeout(t); }
+  }
+  catch(e){
+    modal.innerHTML='<div class="mbody">Este conector no está disponible por ahora. <button class="btn primary" id="wzRetry">↻ Reintentar</button> <button class="btn ghost" id="wzClose">Cerrar</button></div>';
+    $('#wzRetry').onclick=()=>openWizard(name); $('#wzClose').onclick=()=>scrim.classList.remove('on');
+    return;
+  }
+
+  const fields = obj.credential_fields||[];
+  const stepsHtml = (obj.steps||[]).map((s,i)=>{
+    let t = s.txt||'';
+    (s.emphasis||[]).forEach(e=> t = t.split(e).join('<em>'+e+'</em>'));
+    return `<div class="step"><span class="n">${i+1}</span><span>${t}</span></div>`;
+  }).join('');
+
+  const deep = obj.deep_link ? `<a class="deep" href="${obj.deep_link}" target="_blank" rel="noopener">↗ Crear tu llave en ${name}</a>` : '';
+  const baseUrl = obj.needs_base_url ? `<label>Tu dominio</label><input class="f" id="f_base" placeholder="https://tu-servidor…">` : '';
+  const fieldsHtml = fields.map(f=>`
+      <label>${f.label||'Tu token'}</label>
+      <input class="f" id="cf_${f.id}" type="${f.secret?'password':'text'}" placeholder="${(f.shape||'').slice(0,40)}" autocomplete="off">
+      ${f.shape?`<div class="shape">formato: ${f.shape}</div>`:''}`).join('');
+
+  const isToken = obj.auth_method==='personal_token';
+  const cta = (FAMILY[obj.auth_method]||{}).cta;
+  const safeName = esc(name);
+  const modalFace = serviceFace(name, 34, name);
+
+  modal.innerHTML = `
+    <div class="mhead">${modalFace}
+      <div><div class="nm" style="font-size:16px">${safeName}</div>
+      <div class="fam">${esc(obj.capability_line||'')}</div></div></div>
+    <div class="mbody">
+      ${ isToken ? `${deep}${stepsHtml}${baseUrl}${fieldsHtml}
+          <div class="trust">🔒 ${obj.trust_line||'Tu llave se guarda cifrada · la quitas cuando quieras.'}</div>`
+        : obj.auth_method==='oauth' ? `<p class="sub" style="margin:0">Te vamos a llevar a ${safeName} para que autorices tu propia cuenta. El permiso es tuyo y lo revocas cuando quieras.</p>`
+        : obj.auth_method==='admin_oauth' ? `<p class="sub" style="margin:0">Esta función la habilita tu organización. Avisa a quien administra tu cuenta.</p>`
+        : `<p class="sub" style="margin:0">Esta herramienta ya funciona sin conectar nada.</p>` }
+      <div class="status" id="st"></div>
+      <div class="row">
+        <button class="btn ghost" id="cancel">Cerrar</button>
+        ${ cta ? `<button class="btn primary" id="go">${cta}</button>` : '' }
+      </div>
+      ${ session() ? '' : '<div class="note">Sin sesión iniciada: guardo tu conexión bajo una cuenta de prueba para esta demo (cifrada igual). En el producto, queda en tu cuenta.</div>' }
+    </div>`;
+
+  $('#cancel').onclick = ()=> scrim.classList.remove('on');
+  const go = $('#go');
+  if(go) go.onclick = ()=> doConnect(name, obj, fields);
+}
+
+async function doConnect(name, obj, fields){
+  const st = $('#st'); const go = $('#go');
+  const creds = {};
+  fields.forEach(f=>{ const v = ($('#cf_'+f.id)||{}).value || ''; if(v) creds[f.id]=v; });
+  if(obj.auth_method==='personal_token' && Object.keys(creds).length===0){
+    show(st,'bad','Pega tu llave primero.'); return;
+  }
+  const body = { creds };
+  const baseEl = $('#f_base'); if(baseEl && baseEl.value) body.base_url = baseEl.value;
+  // GARANTIZAR sesión ANTES de guardar: sin user_id el token no se persiste (y el broker
+  // no tendría qué inyectar). auth.js adjunta el Bearer de la sesión a la llamada /v1.
+  const u = await ensureSession(); if(u && u.id) body.user_id = u.id;
+
+  go.disabled = true;
+  show(st,'work','<span class="spin"></span>Conectando con '+name+'…');
+  let res;
+  try{ res = await (await fetch('/v1/connectors/'+name+'/connect',{
+      method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)
+    })).json(); }
+  catch(e){ show(st,'bad', (obj.errors&&obj.errors.network)||'No pude verificar ahora.'); go.disabled=false; return; }
+  go.disabled = false;
+
+  const state = res.state;
+  if(state==='oauth_redirect' && res.authorize_url){
+    // Caso A · handoff REAL: navegamos al consent del proveedor. El backend nos trae
+    // de vuelta a ?c=<name>&oauth=ok|cancelled tras intercambiar el code por token.
+    show(st,'work','<span class="spin"></span>Te llevamos a '+name+' para que autorices tu cuenta…');
+    window.location.assign(res.authorize_url);
+    return;
+  }
+  if(state==='connected'){
+    const who = res.identity ? ' ('+res.identity+')' : '';
+    if(res.stored && u && u.id){
+      // self-verify: leer la lista de keys de tu cuenta y confirmar que 'zotero' quedó.
+      let ok=false;
+      try{
+        const ks = await (await fetch('/v1/users/'+u.id+'/keys')).json();
+        const arr = ks.keys || ks || [];
+        ok = Array.isArray(arr) && arr.some(k => (k.provider||k)===name);
+      }catch(e){}
+      if(ok) show(st,'ok','✓ '+(res.message||obj.capability_line||'Listo')+who+'. Guardado y VERIFICADO en tu cuenta.'+volverHtml());
+      else   show(st,'ok','✓ '+(res.message||obj.capability_line||'Listo')+who+'. Guardado.'+volverHtml());
+    } else {
+      // [T6 §8.1] el arreglo es UN botón, no una instrucción de teclado
+      show(st,'amber','✓ Validó contra '+name+who+', PERO no se guardó (sin sesión). <button class="btn primary" id="stReload">↻ Recargar y reintentar</button>');
+      const rb=$('#stReload'); if(rb) rb.onclick=()=>location.reload();
+    }
+    setTimeout(loadList, 400);
+  } else if(state==='connected_unverified'){
+    // ej. Alpha Vantage: la key se guarda pero no se puede validar al conectar (se confirma en el 1er uso).
+    if(res.stored && u && u.id) show(st,'amber','✓ '+(res.message||obj.unverified_line||obj.capability_line||'Guardé tu llave')+volverHtml());
+    else show(st,'amber','Guardé tu llave, pero sin sesión no persistió. Recarga y vuelve a pegar.');
+    setTimeout(loadList, 400);
+  } else if(state==='connected_empty'){
+    show(st,'amber', res.message||'Conectado, pero no veo contenido todavía.');
+  } else if(state==='oauth_pending'){
+    show(st,'work', res.message||'Falta habilitar el acceso OAuth (lo registra Puppet).');
+  } else if(state==='gate'){
+    show(st,'amber', res.message||'Lo habilita tu organización.');
+  } else if(state==='network'){
+    show(st,'bad', res.message||(obj.errors&&obj.errors.network)||'No pude verificar ahora.');
+  } else { // invalid
+    show(st,'bad', res.message||(obj.errors&&obj.errors.invalid)||'Esa llave no funcionó.');
+  }
+}
+function show(el,kind,html){ el.className='status on '+kind; el.innerHTML=html; }
+// VOLVER: si llegamos desde la Sala (?return=…), ofrecemos volver — el @conector queda enganchado allá.
+const RETURN_URL = new URLSearchParams(location.search).get('return') || '';
+function volverHtml(){ return RETURN_URL ? '<a class="btn primary" href="'+RETURN_URL.replace(/"/g,'%22')+'" style="margin-top:10px;display:inline-block;text-decoration:none">← Volver y usarlo</a>' : ''; }
+
+// [Obra 4] LA PUERTA AL REGISTRO PÚBLICO SE FUE A LA SECCIÓN de Conectores.
+//
+// Acá vivían searchRegistry / renderRegistry / curateEquip y su listener de #regGrid: la
+// puerta vieja al catálogo. Mostraba «Curar y equipar» sin decir qué avisa la pieza, sin
+// las tres caras del veredicto y sin el viaje — un flujo que ya no es el real.
+//
+// Lo que NO se tocó, y por eso este borrado fue con cuidado: `esc`, `session`,
+// `ensureSession`, `serviceFace`, `initialsFace`, `loadList`, `show`, `volverHtml`,
+// `openWizard` y `doConnect` los comparte EL WIZARD, que sigue vivo y es lo único que
+// queda en esta pantalla.
+
+// deep-link: Conectar.dc.html?c=zotero abre el wizard de ese conector directo
+// (así cualquier botón "Conectar Zotero" de otra pantalla cae acá con el flujo abierto).
+$('#catalogSearch').addEventListener('input', e=>{
+  const v=(e.target.value||'').trim();
+  // [Obra 4] filtra SÓLO la lista local. El debounce que además consultaba el registro
+  // público se fue con la puerta vieja: esa búsqueda vive en la sección de Conectores.
+  filters.q=v.toLowerCase(); renderCatalog();
+});
+$('#kindFilter').addEventListener('click', e=>{
+  const b=e.target.closest('button'); if(!b) return;
+  $('#kindFilter').querySelectorAll('button').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on'); filters.kind=b.dataset.v||''; renderCatalog();
+});
+loadList().then(()=>{
+  const qs = new URLSearchParams(location.search);
+  const c = qs.get('c');
+  if(c) openWizard(c);
+  // VUELTA del consent OAuth (Caso A): el callback del backend nos redirige acá con ?oauth=…
+  // El ✓ aparece SOLO acá (post-callback), nunca al apretar Conectar.
+  const oa = qs.get('oauth');
+  if(c && oa){
+    const paint = ()=>{ const st = $('#st'); if(!st){ setTimeout(paint, 120); return; }
+      if(oa==='ok'){ const id = qs.get('id');
+        show(st,'ok','✓ Conectado'+(id?' ('+id+')':'')+' — autorizaste tu cuenta y quedó guardada cifrada. Ya puedes cerrar.');
+        setTimeout(loadList, 400);
+      } else if(oa==='partial'){ const id = qs.get('id');
+        // [A3] autorización PARCIAL: se pidió acceso de larga duración pero el proveedor no
+        // devolvió refresh_token → el acceso caduca a la ~1 h. Honesto, no un ✓ falso.
+        show(st,'amber','⚠ Conectado a medias'+(id?' ('+id+')':'')+' — tu cuenta no entregó un permiso de larga duración (refresh). El acceso caduca en ~1 h y habrá que reconectar. Vuelve a autorizar marcando el acceso permanente/offline.');
+        setTimeout(loadList, 400);
+      } else if(oa==='cancelled'){
+        show(st,'amber','Cancelaste la autorización. Cuando quieras, pulsa Conectar de nuevo.');
+      } else {
+        show(st,'bad','No pude completar la conexión'+(qs.get('reason')?' ('+qs.get('reason')+')':'')+'. Prueba de nuevo.');
+      }
+      // limpiar la query para que un refresh no re-dispare el cartel
+      try{ history.replaceState({}, '', location.pathname + '?c=' + encodeURIComponent(c)); }catch(e){}
+    };
+    paint();
+  }
+});
+window.addEventListener('aleph:brands', ()=>{ const grid=$('#grid'); if(grid && grid.children.length) loadList(); });
+</script>
+</body>
+</html>

@@ -1,0 +1,1117 @@
+{
+  "tag_commit": "e402d2853259177aba05ee6f79d38b7e1ff067ae",
+  "tag_object": "4104770e1add9f3b0726e0ca6ad6443dfa71bc4d",
+  "tag_signed": false,
+  "published_at": "2026-08-25T16:29:03Z",
+  "release_url": "https://github.com/iOfficeAI/OfficeCLI/releases/tag/v1.0.145",
+  "asset": {
+    "name": "officecli-mac-arm64",
+    "id": 529408471,
+    "url": "https://github.com/iOfficeAI/OfficeCLI/releases/download/v1.0.145/officecli-mac-arm64",
+    "digest": "sha256:d66763a563bc844c3cc67036ebc7c4a9caa9319b9592814d9acd3706da231fc1",
+    "size": 33764912
+  },
+  "SHA256SUMS": "efa66ea3d3576c0298caf990125296fec0f717627a5b98d77f64b1810ffb5823  officecli-linux-alpine-arm64\n1063a0137d7864055b78ea58b07217f1c3ae019f6cc1145328f9370b7df08888  officecli-linux-alpine-x64\nd38233bb7df4f0f5fb40313de1f00c0f0e575dc96b4164742709711ceec148c5  officecli-linux-arm64\n449f0e6a1298e3c6d7da792d26ab53d04ba77bd990f299b51123c7aef383d2ce  officecli-linux-x64\nd66763a563bc844c3cc67036ebc7c4a9caa9319b9592814d9acd3706da231fc1  officecli-mac-arm64\nd7dc7013f7bf0af6345ae16a7913e6cf041947460d7f2fa3e024f0b27073d0a2  officecli-mac-x64\n9ab800745ef06f4d30b8fd41729c516a4b28c86a24a32af8764d12a6a5226d57  officecli-win-arm64.exe\n760696b262f3d6bd2cd174577220d54541b6e1e04ec58dee051f1897395638b8  officecli-win-x64.exe\n",
+  "recipes": [
+    {
+      "path": "src/officecli/officecli.csproj",
+      "url": "https://raw.githubusercontent.com/iOfficeAI/OfficeCLI/e402d2853259177aba05ee6f79d38b7e1ff067ae/src/officecli/officecli.csproj",
+      "sha256": "ec34eb7756f94aa5937f730e135be63eeb8be59096c121c6cb801fc59b03c005",
+      "text": "<Project Sdk=\"Microsoft.NET.Sdk\">\n\n  <PropertyGroup>\n    <OutputType>Exe</OutputType>\n    <TargetFramework>net10.0</TargetFramework>\n    <RootNamespace>OfficeCli</RootNamespace>\n    <AssemblyName>officecli</AssemblyName>\n    <Version>1.0.145</Version>\n    <Authors>goworm</Authors>\n    <Company>OfficeCLI</Company>\n    <Copyright>Copyright © 2026 OfficeCLI (https://OfficeCLI.AI)</Copyright>\n    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>\n    <PublishSingleFile>true</PublishSingleFile>\n    <SelfContained>true</SelfContained>\n    <PublishTrimmed>true</PublishTrimmed>\n    <CETCompat>false</CETCompat>\n    <ImplicitUsings>enable</ImplicitUsings>\n    <Nullable>enable</Nullable>\n  </PropertyGroup>\n\n  <ItemGroup>\n    <PackageReference Include=\"DocumentFormat.OpenXml\" Version=\"3.4.1\" />\n    <PackageReference Include=\"System.CommandLine\" Version=\"3.0.0-preview.2.26159.112\" />\n  </ItemGroup>\n\n  <ItemGroup>\n    <EmbeddedResource Include=\"Resources/preview.css\" />\n    <EmbeddedResource Include=\"Resources/preview.js\" />\n    <EmbeddedResource Include=\"Resources/watch-sse-core.js\" />\n    <EmbeddedResource Include=\"Resources/watch-overlay.js\" />\n    <EmbeddedResource Include=\"Resources/cx-gallery/index.json\">\n      <LogicalName>OfficeCli.Resources.cx-gallery.index.json</LogicalName>\n    </EmbeddedResource>\n    <EmbeddedResource Include=\"Resources/cx-gallery/fragments/*.xml\">\n      <LogicalName>OfficeCli.Resources.cx-gallery.fragments.%(Filename)%(Extension)</LogicalName>\n    </EmbeddedResource>\n    <EmbeddedResource Include=\"Resources/chartex-colors.xml\" />\n    <EmbeddedResource Include=\"Resources/chartex-style.xml\" />\n    <EmbeddedResource Include=\"Handlers/Pptx/EffectTemplates/*.xml\">\n      <LogicalName>OfficeCli.Handlers.Pptx.EffectTemplates.%(Filename)%(Extension)</LogicalName>\n    </EmbeddedResource>\n  </ItemGroup>\n\n  <ItemGroup>\n    <!-- %(RecursiveDir) uses '\\' on Windows and '/' on Linux/macOS; normalize to '/'\n         so SkillInstaller's `skills/{folder}/…` prefix lookup works on all platforms. -->\n    <EmbeddedResource Include=\"../../skills/**/*\" LogicalName=\"skills/$([System.String]::Copy('%(RecursiveDir)').Replace('\\','/'))%(Filename)%(Extension)\" />\n    <EmbeddedResource Remove=\"../../skills/**/*.glb\" />\n  </ItemGroup>\n\n  <!-- Embed help schemas into the assembly so SchemaHelpLoader can read\n       them via Assembly.GetManifestResourceStream — no on-disk extraction\n       required (single-file installer ships only the .exe). -->\n  <ItemGroup>\n    <EmbeddedResource Include=\"..\\..\\schemas\\help\\**\\*.json\" LogicalName=\"schemas/help/%(RecursiveDir)%(Filename)%(Extension)\" />\n  </ItemGroup>\n\n</Project>\n"
+    },
+    {
+      "path": ".github/workflows/build.yml",
+      "url": "https://raw.githubusercontent.com/iOfficeAI/OfficeCLI/e402d2853259177aba05ee6f79d38b7e1ff067ae/.github/workflows/build.yml",
+      "sha256": "e4746afc0d4642d16861ec70a208f38932a0f78ef88328973edf857a4d1fee22",
+      "text": "name: Build\n\non:\n  workflow_dispatch:\n  push:\n    tags:\n      - 'v*'\n\npermissions:\n  contents: read\n\njobs:\n  build:\n    strategy:\n      matrix:\n        include:\n          - rid: osx-arm64\n            name: officecli-mac-arm64\n            os: macos-latest\n          - rid: osx-x64\n            name: officecli-mac-x64\n            os: macos-latest\n          - rid: linux-x64\n            name: officecli-linux-x64\n            os: ubuntu-latest\n          - rid: linux-arm64\n            name: officecli-linux-arm64\n            os: ubuntu-latest\n          - rid: linux-musl-x64\n            name: officecli-linux-alpine-x64\n            os: ubuntu-latest\n          - rid: linux-musl-arm64\n            name: officecli-linux-alpine-arm64\n            os: ubuntu-latest\n          - rid: win-x64\n            name: officecli-win-x64.exe\n            os: windows-latest\n          - rid: win-arm64\n            name: officecli-win-arm64.exe\n            os: windows-latest\n    runs-on: ${{ matrix.os }}\n\n    defaults:\n      run:\n        shell: bash\n\n    steps:\n      - uses: actions/checkout@v5\n\n      - name: Setup .NET\n        uses: actions/setup-dotnet@v5\n        with:\n          dotnet-version: '10.0.x'\n\n      - name: Publish\n        run: dotnet publish src/officecli/officecli.csproj -c Release -r ${{ matrix.rid }} -o publish --nologo\n\n      - name: Rename output\n        run: |\n          if [ -f publish/officecli.exe ]; then\n            mv publish/officecli.exe publish/${{ matrix.name }}\n          else\n            mv publish/officecli publish/${{ matrix.name }}\n          fi\n\n      - name: Setup macOS code signing\n        if: startsWith(matrix.rid, 'osx-')\n        env:\n          BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}\n          P12_PASSWORD: ${{ secrets.P12_PASSWORD }}\n          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}\n        run: |\n          CERT_PATH=\"$RUNNER_TEMP/build_certificate.p12\"\n          KEYCHAIN_PATH=\"$RUNNER_TEMP/build.keychain-db\"\n\n          echo -n \"$BUILD_CERTIFICATE_BASE64\" | base64 --decode > \"$CERT_PATH\"\n\n          security create-keychain -p \"$KEYCHAIN_PASSWORD\" \"$KEYCHAIN_PATH\"\n          security set-keychain-settings -lut 21600 \"$KEYCHAIN_PATH\"\n          security unlock-keychain -p \"$KEYCHAIN_PASSWORD\" \"$KEYCHAIN_PATH\"\n          security import \"$CERT_PATH\" -P \"$P12_PASSWORD\" -A -t cert -f pkcs12 -k \"$KEYCHAIN_PATH\"\n          security set-key-partition-list -S apple-tool:,apple:,codesign: -k \"$KEYCHAIN_PASSWORD\" \"$KEYCHAIN_PATH\"\n          security list-keychain -d user -s \"$KEYCHAIN_PATH\" login.keychain-db\n          rm -f \"$CERT_PATH\"\n\n      - name: Codesign (macOS)\n        if: startsWith(matrix.rid, 'osx-')\n        run: |\n          IDENTITY=$(security find-identity -v -p codesigning | grep \"Developer ID Application\" | head -n 1 | sed -E 's/.*\"(.+)\"/\\1/')\n          echo \"Signing with: $IDENTITY\"\n          # --options runtime (Hardened Runtime, required by notarization) denies the\n          # self-contained CoreCLR's MAP_JIT executable memory by default, so the runtime\n          # fails to start with \"Failed to create CoreCLR, HRESULT: 0x80070008\" on every\n          # command. build/officecli.entitlements re-permits exactly allow-jit (the plist\n          # holds no XML comments — codesign's AMFI parser rejects them).\n          codesign --force --options runtime --entitlements build/officecli.entitlements --timestamp --sign \"$IDENTITY\" publish/${{ matrix.name }}\n          codesign --verify --strict --verbose=2 publish/${{ matrix.name }}\n          # Fail the build if allow-jit did not actually embed (e.g. a malformed plist\n          # makes codesign silently drop entitlements) — otherwise the bug ships again.\n          codesign -d --entitlements - --xml publish/${{ matrix.name }} | grep -q allow-jit\n\n      - name: Notarize (macOS)\n        if: startsWith(matrix.rid, 'osx-')\n        env:\n          APPLE_ID: ${{ secrets.APPLE_ID }}\n          APP_SPECIFIC_PASSWORD: ${{ secrets.APP_SPECIFIC_PASSWORD }}\n          TEAM_ID: ${{ secrets.TEAM_ID }}\n        run: |\n          # A bare Mach-O binary cannot be stapled; notarytool requires a\n          # zip/pkg/dmg container. Submit a zip — the notarization ticket is\n          # recorded on Apple's servers and Gatekeeper validates online.\n          ditto -c -k --keepParent publish/${{ matrix.name }} \"$RUNNER_TEMP/notarize.zip\"\n          xcrun notarytool submit \"$RUNNER_TEMP/notarize.zip\" \\\n            --apple-id \"$APPLE_ID\" \\\n            --team-id \"$TEAM_ID\" \\\n            --password \"$APP_SPECIFIC_PASSWORD\" \\\n            --wait\n          rm -f \"$RUNNER_TEMP/notarize.zip\"\n\n      - name: Smoke test - create document\n        if: >-\n          (matrix.rid == 'osx-arm64' && runner.arch == 'ARM64') ||\n          (matrix.rid == 'osx-x64' && runner.arch == 'X64') ||\n          (matrix.rid == 'linux-x64' && runner.os == 'Linux') ||\n          (matrix.rid == 'win-x64' && runner.os == 'Windows')\n        env:\n          # Disable Git Bash (MSYS) POSIX-to-Windows path conversion on\n          # windows-latest, which otherwise mangles `/body` into\n          # `C:/Program Files/Git/body` before it reaches the CLI.\n          MSYS_NO_PATHCONV: '1'\n          MSYS2_ARG_CONV_EXCL: '*'\n        run: |\n          chmod +x publish/${{ matrix.name }}\n          publish/${{ matrix.name }} create test_smoke.docx\n          publish/${{ matrix.name }} add test_smoke.docx /body --type paragraph --prop text=\"Hello from CI\"\n          publish/${{ matrix.name }} get test_smoke.docx '/body/p[1]'\n          publish/${{ matrix.name }} close test_smoke.docx\n          rm -f test_smoke.docx\n\n      - name: Smoke test - .NET 8-only runtime (linux-x64)\n        if: matrix.rid == 'linux-x64' && runner.os == 'Linux'\n        run: |\n          chmod +x publish/${{ matrix.name }}\n          mkdir -p smoke_net8\n          docker run --rm \\\n            -v \"$PWD/publish:/app:ro\" \\\n            -v \"$PWD/smoke_net8:/work\" \\\n            -w /work \\\n            mcr.microsoft.com/dotnet/runtime:8.0 \\\n            bash -c \"set -e; \\\n              /app/${{ matrix.name }} create issue115.docx; \\\n              /app/${{ matrix.name }} add issue115.docx /body --type paragraph --prop text='net8 smoke'; \\\n              /app/${{ matrix.name }} close issue115.docx; \\\n              /app/${{ matrix.name }} view issue115.docx text --json\"\n\n      - name: Smoke test - install\n        if: >-\n          (matrix.rid == 'osx-arm64' && runner.arch == 'ARM64') ||\n          (matrix.rid == 'osx-x64' && runner.arch == 'X64') ||\n          (matrix.rid == 'linux-x64' && runner.os == 'Linux') ||\n          (matrix.rid == 'win-x64' && runner.os == 'Windows')\n        env:\n          MSYS_NO_PATHCONV: '1'\n          MSYS2_ARG_CONV_EXCL: '*'\n        run: |\n          publish/${{ matrix.name }} install\n          if [ \"$RUNNER_OS\" == \"Windows\" ]; then\n            test -f \"$LOCALAPPDATA/OfficeCLI/officecli.exe\" || { echo \"FAIL: officecli.exe not found in %LOCALAPPDATA%\\\\OfficeCLI\"; exit 1; }\n            \"$LOCALAPPDATA/OfficeCLI/officecli.exe\" --version\n          else\n            test -f \"$HOME/.local/bin/officecli\" || { echo \"FAIL: officecli not found in ~/.local/bin\"; exit 1; }\n            \"$HOME/.local/bin/officecli\" --version\n          fi\n\n      - name: Smoke test - install.sh / install.ps1\n        # Exercises the shell installers themselves (separate from the CLI's\n        # own `install` subcommand tested above). Downloads from\n        # d.officecli.ai with github fallback — validates the production\n        # mirror is reachable AND the in-repo script is syntactically and\n        # logically correct on each platform.\n        if: >-\n          (matrix.rid == 'osx-arm64' && runner.arch == 'ARM64') ||\n          (matrix.rid == 'osx-x64' && runner.arch == 'X64') ||\n          (matrix.rid == 'linux-x64' && runner.os == 'Linux') ||\n          (matrix.rid == 'win-x64' && runner.os == 'Windows')\n        shell: bash\n        env:\n          MSYS_NO_PATHCONV: '1'\n          MSYS2_ARG_CONV_EXCL: '*'\n        run: |\n          if [ \"$RUNNER_OS\" == \"Windows\" ]; then\n            pwsh -NoProfile -ExecutionPolicy Bypass -File ./install.ps1\n            test -f \"$LOCALAPPDATA/OfficeCLI/officecli.exe\" || { echo \"FAIL: officecli.exe not installed\"; exit 1; }\n            \"$LOCALAPPDATA/OfficeCLI/officecli.exe\" --version\n          else\n            bash install.sh\n            test -f \"$HOME/.local/bin/officecli\" || { echo \"FAIL: officecli not installed at ~/.local/bin\"; exit 1; }\n            \"$HOME/.local/bin/officecli\" --version\n          fi\n\n      - name: Upload artifact\n        uses: actions/upload-artifact@v6\n        with:\n          name: ${{ matrix.name }}\n          path: publish/${{ matrix.name }}\n\n  release:\n    needs: build\n    runs-on: ubuntu-latest\n    if: startsWith(github.ref, 'refs/tags/v')\n    permissions:\n      contents: write\n    steps:\n      - name: Download all artifacts\n        uses: actions/download-artifact@v8\n        with:\n          path: artifacts\n\n      - name: Flatten artifacts and generate checksums\n        run: |\n          mkdir -p flat\n          find artifacts -type f -exec mv {} flat/ \\;\n          rm -rf artifacts\n          mv flat artifacts\n          cd artifacts\n          sha256sum officecli-* > SHA256SUMS\n          echo \"=== SHA256SUMS ===\"\n          cat SHA256SUMS\n\n      - name: Create Draft Release\n        uses: softprops/action-gh-release@v3\n        with:\n          files: artifacts/**/*\n          generate_release_notes: true\n          draft: true\n"
+    }
+  ],
+  "technical": {
+    "uuid": "EAEBC164-E13D-3F82-ACD3-FA6CABA77E27",
+    "minos": "12.0",
+    "sdk": "15.5",
+    "libraries": [
+      "\t/System/Library/Frameworks/GSS.framework/Versions/A/GSS (compatibility version 1.0.0, current version 1.0.0)",
+      "\t/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation (compatibility version 300.0.0, current version 3502.1.255)",
+      "\t/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation (compatibility version 150.0.0, current version 3502.1.255)",
+      "\t/System/Library/Frameworks/Security.framework/Versions/A/Security (compatibility version 1.0.0, current version 61439.120.27)",
+      "\t/System/Library/Frameworks/Network.framework/Versions/A/Network (compatibility version 1.0.0, current version 4277.121.5)",
+      "\t/System/Library/Frameworks/CryptoKit.framework/Versions/A/CryptoKit (compatibility version 1.0.0, current version 1.0.0)",
+      "\t/usr/lib/libobjc.A.dylib (compatibility version 1.0.0, current version 228.0.0)",
+      "\t/usr/lib/swift/libswiftCore.dylib (compatibility version 1.0.0, current version 0.0.0)",
+      "\t/usr/lib/swift/libswiftFoundation.dylib (compatibility version 1.0.0, current version 120.100.0)",
+      "\t/System/Library/Frameworks/CoreServices.framework/Versions/A/CoreServices (compatibility version 1.0.0, current version 1226.0.0)",
+      "\t/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1351.0.0)",
+      "\t/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 1900.180.0)",
+      "\t/usr/lib/swift/libswiftCoreFoundation.dylib (compatibility version 1.0.0, current version 120.100.0, weak)",
+      "\t/usr/lib/swift/libswiftDarwin.dylib (compatibility version 1.0.0, current version 310.100.8, weak)",
+      "\t/usr/lib/swift/libswiftDispatch.dylib (compatibility version 1.0.0, current version 54.0.0, weak)",
+      "\t/usr/lib/swift/libswiftIOKit.dylib (compatibility version 1.0.0, current version 1.0.0, weak)",
+      "\t/usr/lib/swift/libswiftObjectiveC.dylib (compatibility version 1.0.0, current version 940.4.0, weak)",
+      "\t/usr/lib/swift/libswiftXPC.dylib (compatibility version 1.0.0, current version 69.120.3, weak)"
+    ],
+    "signature": "Executable=LOCAL_BINARY\nIdentifier=officecli-mac-arm64\nFormat=Mach-O thin (arm64)\nCodeDirectory v=20500 size=66143 flags=0x10000(runtime) hashes=2056+7 location=embedded\nVersionPlatform=1\nVersionMin=786432\nVersionSDK=984320\nHash type=sha256 size=32\nCandidateCDHash sha256=43b0060943ced2ed5b80022331f4ae57bfc9ebfe\nCandidateCDHashFull sha256=43b0060943ced2ed5b80022331f4ae57bfc9ebfe2073a9c16d974535b10ec178\nHash choices=sha256\nCMSDigest=43b0060943ced2ed5b80022331f4ae57bfc9ebfe2073a9c16d974535b10ec178\nCMSDigestType=2\nExecutable Segment base=0\nExecutable Segment limit=8126464\nExecutable Segment flags=0x1\nPage size=16384\nCDHash=43b0060943ced2ed5b80022331f4ae57bfc9ebfe\nSignature size=9043\nAuthority=Developer ID Application: AionUi Inc. (52JQX2HUSC)\nAuthority=Developer ID Certification Authority\nAuthority=Apple Root CA\nTimestamp=25 Aug 2026 at 10:38:58 AM\nInfo.plist=not bound\nTeamIdentifier=52JQX2HUSC\nRuntime Version=15.5.0\nSealed Resources=none\nInternal requirements count=1 size=180\n",
+    "entitlements": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"https://www.apple.com/DTDs/PropertyList-1.0.dtd\"><plist version=\"1.0\"><dict><key>com.apple.security.cs.allow-jit</key><true/></dict></plist>\n",
+    "entitlements_stderr": "Executable=LOCAL_BINARY\nwarning: Specifying ':' in the path is deprecated and will not work in a future release\n",
+    "signature_verify_exit": 0
+  },
+  "verified_on": "2026-09-13",
+  "result": "A — local binary identical to official v1.0.145 asset",
+  "local_path": "third_party/officecli/bin/officecli-macos-arm64",
+  "local_sha256": "d66763a563bc844c3cc67036ebc7c4a9caa9319b9592814d9acd3706da231fc1",
+  "local_size": 33764912,
+  "byte_equality_with_download": true,
+  "declared_commit_relation": {
+    "declared_commit": "459b1a473faf33f2f52e697ac6d265a3f67b176a",
+    "status": "ancestor of tag commit, 22 commits behind",
+    "evidence_url": "https://api.github.com/repos/iOfficeAI/OfficeCLI/compare/459b1a473faf33f2f52e697ac6d265a3f67b176a...e402d2853259177aba05ee6f79d38b7e1ff067ae"
+  },
+  "license_notices": [
+    {
+      "path": "third_party/officecli/LICENSE",
+      "url": "https://raw.githubusercontent.com/iOfficeAI/OfficeCLI/e402d2853259177aba05ee6f79d38b7e1ff067ae/LICENSE",
+      "sha256": "7e282402a5a6db33995fe638bb3fe79013f9884d8f7d15a42e481c1e86aadda1",
+      "local_upstream_byte_equal": true
+    },
+    {
+      "path": "third_party/officecli/NOTICE",
+      "url": "https://raw.githubusercontent.com/iOfficeAI/OfficeCLI/e402d2853259177aba05ee6f79d38b7e1ff067ae/NOTICE",
+      "sha256": "3a4715b268e148a8e9566f5e835f766f5c95c3da4d6e5ddd908806a258a2f07b",
+      "local_upstream_byte_equal": true
+    },
+    {
+      "path": "third_party/officecli/THIRD-PARTY-NOTICES.txt",
+      "url": "https://raw.githubusercontent.com/iOfficeAI/OfficeCLI/e402d2853259177aba05ee6f79d38b7e1ff067ae/THIRD-PARTY-NOTICES.txt",
+      "sha256": "7e79e54cddf05f25681198429eb42e1401c1c53a3b29bf63744dc09411c029d8",
+      "local_upstream_byte_equal": true
+    }
+  ],
+  "limitations": [
+    "Release asset identity is demonstrated by official GitHub API digest, SHA256SUMS and downloaded bytes. No independent source-to-binary rebuild or supply-chain attestation is claimed.",
+    "The annotated tag is unsigned. Source commit is the commit associated by upstream with this release, not independently reproduced compiler provenance.",
+    "Prior MACHO-COMPARISON.json compares v1.0.145 local with v1.0.143 official; valid differences but no longer an unexplained local-origin blocker."
+  ],
+  "tests": {
+    "local": {
+      "sha256": "d66763a563bc844c3cc67036ebc7c4a9caa9319b9592814d9acd3706da231fc1",
+      "serverInfo": {
+        "name": "officecli",
+        "version": "1.0.145"
+      },
+      "status": "PASS",
+      "sandbox": {
+        "sibling_read_denied": true,
+        "sibling_write_denied": true,
+        "network_probe_exit": 1,
+        "network_probe_stderr": "PermissionError: [Errno 1] Operation not permitted"
+      },
+      "records": [
+        {
+          "argv": [
+            "load_skill",
+            "word"
+          ],
+          "isError": false,
+          "output_sha256": "9c4f157bf5880196ead220ee976d1b4f1243ac8441df7ed03f7c49993b9d4ae0",
+          "output": "---\nname: officecli-docx\ndescription: \"Use this skill any time a .docx file is involved -- as input, output, or both. This includes: creating Word documents, reports, letters, memos, or proposals; reading, parsing, or extracting text from any .docx file; e"
+        },
+        {
+          "argv": [
+            "load_skill",
+            "excel"
+          ],
+          "isError": false,
+          "output_sha256": "e8019d177c06c14e414a2a119b28886d8f5ca2f8fa843a7f15a614376d975dfe",
+          "output": "---\nname: officecli-xlsx\ndescription: \"Use this skill any time a .xlsx file is involved -- as input, output, or both. This includes: creating spreadsheets, financial models, dashboards, or trackers; reading, parsing, or extracting data from any .xlsx file;"
+        },
+        {
+          "argv": [
+            "load_skill",
+            "pptx"
+          ],
+          "isError": false,
+          "output_sha256": "340d511ad571c2b9f5a0720c9311c20522bd9c560e303e115f8a4acafe447b4e",
+          "output": "---\nname: officecli-pptx\ndescription: \"Use this skill any time a .pptx file is involved -- as input, output, or both. This includes: creating slide decks, pitch decks, or presentations; reading, parsing, or extracting text from any .pptx file; editing, mod"
+        },
+        {
+          "argv": [
+            "help",
+            "docx",
+            "paragraph",
+            "--json"
+          ],
+          "isError": false,
+          "output_sha256": "b4c2c902651e5b1b0b1054e2e849856a1236eab52cc1edd92712cf4a5c7cf18d",
+          "output": "{\n  \"$schema\": \"../_schema.json\",\n  \"element\": \"paragraph\",\n  \"properties\": {\n    \"lineRule\": {\n      \"type\": \"enum\",\n      \"description\": \"line spacing rule paired with lineSpacing (Word-only: w:spacing@w:lineRule). \\u0027auto\\u0027 = multiplier (default "
+        },
+        {
+          "argv": [
+            "help",
+            "xlsx",
+            "cell",
+            "--json"
+          ],
+          "isError": false,
+          "output_sha256": "eba499063dcc466822f90f6dcd9ceae59d7069c333b7df88e3c0a8f6e55eefd6",
+          "output": "{\n  \"$schema\": \"../_schema.json\",\n  \"format\": \"xlsx\",\n  \"element\": \"cell\",\n  \"parent\": \"sheet\",\n  \"operations\": {\n    \"add\": true,\n    \"set\": true,\n    \"get\": true,\n    \"query\": true,\n    \"remove\": true\n  },\n  \"paths\": {\n    \"stable\": [\n      \"/\\u003Csheet"
+        },
+        {
+          "argv": [
+            "help",
+            "pptx",
+            "shape",
+            "--json"
+          ],
+          "isError": false,
+          "output_sha256": "05b644fc841353012ef2a5d46638c1af4c44d01ae34ac2bbc5609cf2d54022bb",
+          "output": "{\n  \"$schema\": \"../_schema.json\",\n  \"element\": \"shape\",\n  \"properties\": {\n    \"size\": {\n      \"type\": \"font-size\",\n      \"description\": \"font size \\u2014 Add/Set forwards to the first run; Get returns the bare size when every run shares the same explicit F"
+        },
+        {
+          "argv": [
+            "create",
+            "TEST_ONLY.docx"
+          ],
+          "isError": false,
+          "output_sha256": "49f17d13859cc2bb86e99d41adb34c542f7fcccd83f17876ec8cf1947b280738",
+          "output": "Created: TEST_ONLY.docx"
+        },
+        {
+          "argv": [
+            "add",
+            "TEST_ONLY.docx",
+            "/body",
+            "--type",
+            "paragraph",
+            "--prop",
+            "text=TEST_ONLY_ORIGINAL"
+          ],
+          "isError": false,
+          "output_sha256": "debde4d34dc1ea320f8729f77e0cffa8e015b1da1ffd1bbeb0bfa1e5317a94f4",
+          "output": "Added paragraph at /body/p[@paraId=00100000]"
+        },
+        {
+          "argv": [
+            "set",
+            "TEST_ONLY.docx",
+            "/body/p[1]",
+            "--prop",
+            "text=TEST_ONLY_UPDATED"
+          ],
+          "isError": false,
+          "output_sha256": "e22fffb2d8e8e8297567cf3866be7a0f9a6fabf817dc360fa3b62c8dcd615117",
+          "output": "Updated /body/p[1]: text=TEST_ONLY_UPDATED"
+        },
+        {
+          "argv": [
+            "add",
+            "TEST_ONLY.docx",
+            "/body",
+            "--type",
+            "paragraph",
+            "--prop",
+            "text=TEST_ONLY_PRESERVED"
+          ],
+          "isError": false,
+          "output_sha256": "aa5fa02ee6c55ea81171c903a00fd9bab83a5b78ff584ea6c8ff9320ecc4a979",
+          "output": "Added paragraph at /body/p[@paraId=00100003]"
+        },
+        {
+          "argv": [
+            "query",
+            "TEST_ONLY.docx",
+            "p",
+            "--json"
+          ],
+          "isError": false,
+          "output_sha256": "f0498c49c438896c4bea14a80e29544ca7aa3847d27d5e9d3599fce43b942eaf",
+          "output": "{\n  \"success\": true,\n  \"data\": {\n    \"matches\": 2,\n    \"results\": [\n      {\n        \"path\": \"/body/p[@paraId=00100000]\",\n        \"type\": \"paragraph\",\n        \"text\": \"TEST_ONLY_UPDATED\",\n        \"preview\": \"TEST_ONLY_UPDATED\",\n        \"style\": \"Normal\",\n        \"childCount\": 1,\n        \"format\": {\n          \"paraId\": \"00100000\",\n          \"effective.size\": \"11pt\",\n          \"effective.size.src\": \"/docDefaults\",\n          \"effective.font.ascii\": \"Calibri\",\n          \"effective.font.ascii.src\": \"/docDefaults\",\n          \"effective.font.hAnsi\": \"Calibri\",\n          \"effective.font.hAnsi.src\": \"/docDefaults\"\n        },\n        \"children\": [\n          {\n            \"path\": \"/body/p[@paraId=00100000]/r[1]\",\n            \"type\": \"run\",\n            \"text\": \"TEST_ONLY_UPDATED\",\n            \"childCount\": 0,\n            \"format\": {\n              \"effective.size\": \"11pt\",\n              \"effective.size.src\": \"/docDefaults\",\n              \"effective.font.ascii\": \"Calibri\",\n              \"effective.font.ascii.src\": \"/docDefaults\",\n              \"effective.font.hAnsi\": \"Calibri\",\n              \"effective.font.hAnsi.src\": \"/docDefaults\"\n            },\n            \"children\": []\n          }\n        ]\n      },\n      {\n        \"path\": \"/body/p[@paraId=00100003]\",\n        \"type\": \"paragraph\",\n        \"text\": \"TEST_ONLY_PRESERVED\",\n        \"preview\": \"TEST_ONLY_PRESERVED\",\n        \"style\": \"Normal\",\n        \"childCount\": 1,\n        \"format\": {\n          \"paraId\": \"00100003\",\n          \"effective.size\": \"11pt\",\n          \"effective.size.src\": \"/docDefaults\",\n          \"effective.font.ascii\": \"Calibri\",\n          \"effective.font.ascii.src\": \"/docDefaults\",\n          \"effective.font.hAnsi\": \"Calibri\",\n          \"effective.font.hAnsi.src\": \"/docDefaults\"\n        },\n        \"children\": [\n          {\n            \"path\": \"/body/p[@paraId=00100003]/r[1]\",\n            \"type\": \"run\",\n            \"text\": \"TEST_ONLY_PRESERVED\",\n            \"childCount\": 0,\n            \"format\": {\n              \"effective.size\": \"11pt\",\n              \"effective.size.src\": \"/docDefaults\",\n              \"effective.font.ascii\": \"Calibri\",\n              \"effective.font.ascii.src\": \"/docDefaults\",\n              \"effective.font.hAnsi\": \"Calibri\",\n              \"effective.font.hAnsi.src\": \"/docDefaults\"\n            },\n            \"children\": []\n          }\n        ]\n      }\n    ]\n  }\n}"
+        },
+        {
+          "argv": [
+            "create",
+            "TEST_ONLY.xlsx"
+          ],
+          "isError": false,
+          "output_sha256": "b12e18640138813c406309f198d218920cdd1cda677c155e1a77aafeb8f45719",
+          "output": "Created: TEST_ONLY.xlsx"
+        },
+        {
+          "argv": [
+            "set",
+            "TEST_ONLY.xlsx",
+            "/Sheet1/A1",
+            "--prop",
+            "value=TEST_ONLY_UPDATED"
+          ],
+          "isError": false,
+          "output_sha256": "46bb52688394a1a172255f40ff09c2dbccd9569c17c48d5d9c2000cb54658918",
+          "output": "Updated /Sheet1/A1: value=TEST_ONLY_UPDATED"
+        },
+        {
+          "argv": [
+            "set",
+            "TEST_ONLY.xlsx",
+            "/Sheet1/B1",
+            "--prop",
+            "value=42"
+          ],
+          "isError": false,
+          "output_sha256": "d2e2dd3eeda2c8a5d7debc3c6f040b74aecfa270fd83e31c33b0c8ee31055a90",
+          "output": "Updated /Sheet1/B1: value=42"
+        },
+        {
+          "argv": [
+            "get",
+            "TEST_ONLY.xlsx",
+            "/Sheet1/B1",
+            "--json"
+          ],
+          "isError": false,
+          "output_sha256": "6b6ff0ca4c436ac6b24b939e39c9c94006ea0d437ad3555e4e1d339b7b4d0878",
+          "output": "{\n  \"success\": true,\n  \"data\": {\n    \"matches\": 1,\n    \"results\": [\n      {\n        \"path\": \"/Sheet1/B1\",\n        \"type\": \"cell\",\n        \"text\": \"42\",\n        \"preview\": \"B1\",\n        \"childCount\": 0,\n        \"format\": {\n          \"type\": \"Number\"\n        },\n        \"children\": []\n      }\n    ]\n  }\n}"
+        },
+        {
+          "argv": [
+            "create",
+            "TEST_ONLY.pptx"
+          ],
+          "isError": false,
+          "output_sha256": "cc86cc499eb6c788e17c4220a17c87d48f93bb185d421b36ecaf47d5ba11246d",
+          "output": "Created: TEST_ONLY.pptx\n  totalSlides: 0\n  slideWidth: 960pt\n  slideHeight: 540pt"
+        },
+        {
+          "argv": [
+            "add",
+            "TEST_ONLY.pptx",
+            "/",
+            "--type",
+            "slide",
+            "--prop",
+            "layout=blank"
+          ],
+          "isError": false,
+          "output_sha256": "dbed8d4cb090bf0df996be1d51d8509e92e7cb571b50b04de8dd7f3d4057d8d4",
+          "output": "Added slide at /slide[1]"
+        },
+        {
+          "argv": [
+            "add",
+            "TEST_ONLY.pptx",
+            "/slide[1]",
+            "--type",
+            "shape",
+            "--prop",
+            "text=TEST_ONLY_ORIGINAL"
+          ],
+          "isError": false,
+          "output_sha256": "dc2bce9f6317599b9058ab99a648d9c9c568cf50fee523c159b5554680def5ce",
+          "output": "Added shape at /slide[1]/shape[@id=100000]\n  x: 0cm  y: 0cm  width: 10cm  height: 5cm"
+        },
+        {
+          "argv": [
+            "set",
+            "TEST_ONLY.pptx",
+            "/slide[1]/shape[1]",
+            "--prop",
+            "text=TEST_ONLY_UPDATED"
+          ],
+          "isError": false,
+          "output_sha256": "518841d1769ecae9d44de7760e24ae729381ca1aabf6d8148b23140de2bae8be",
+          "output": "Updated /slide[1]/shape[1]: text=TEST_ONLY_UPDATED"
+        },
+        {
+          "argv": [
+            "add",
+            "TEST_ONLY.pptx",
+            "/slide[1]",
+            "--type",
+            "shape",
+            "--prop",
+            "text=TEST_ONLY_REMOVE"
+          ],
+          "isError": false,
+          "output_sha256": "5e5f93ab0362ef566f9a02c4de3a0b31ee9f3a68418c0203c7b70752b39628b4",
+          "output": "Added shape at /slide[1]/shape[@id=100001]\n  x: 0cm  y: 0cm  width: 10cm  height: 5cm"
+        },
+        {
+          "argv": [
+            "remove",
+            "TEST_ONLY.pptx",
+            "/slide[1]/shape[2]"
+          ],
+          "isError": false,
+          "output_sha256": "ae112261ce13dad8f41db03ba764fbdfd92a34c6720ba5106ce1f3b868b75dac",
+          "output": "Removed /slide[1]/shape[2]"
+        },
+        {
+          "argv": [
+            "save",
+            "TEST_ONLY.docx"
+          ],
+          "isError": false,
+          "output_sha256": "428f679a52782ccd3edda7732ff1d58784cfb30dd06badd15818ff8ab1192333",
+          "output": "TEST_ONLY.docx is already saved to disk."
+        },
+        {
+          "argv": [
+            "view",
+            "TEST_ONLY.docx",
+            "text"
+          ],
+          "isError": false,
+          "output_sha256": "f00c448c7f09682bf7850cc734203493a972fea53dc47c52ed160685607c98f5",
+          "output": "[/body/p[@paraId=00100000]] TEST_ONLY_UPDATED\n[/body/p[@paraId=00100003]] TEST_ONLY_PRESERVED"
+        },
+        {
+          "argv": [
+            "validate",
+            "TEST_ONLY.docx",
+            "--json"
+          ],
+          "isError": false,
+          "output_sha256": "1ae479b4b208bc6c4bdb7da4f2001f3695d7dbd094c9b247627513ac8a5933c9",
+          "output": "{\n  \"success\": true,\n  \"data\": {\n    \"count\": 0,\n    \"errors\": []\n  }\n}"
+        },
+        {
+          "argv": [
+            "save",
+            "TEST_ONLY.xlsx"
+          ],
+          "isError": false,
+          "output_sha256": "57da57c8801d3b81e8fe1e190767de65ff68ee886c5d543f8de63eaec0cdf869",
+          "output": "TEST_ONLY.xlsx is already saved to disk."
+        },
+        {
+          "argv": [
+            "view",
+            "TEST_ONLY.xlsx",
+            "text"
+          ],
+          "isError": false,
+          "output_sha256": "50c7d2adddd91e77954e5231c70610b5ce04f0e6fc8d28e27a991600f57f8469",
+          "output": "=== Sheet: Sheet1 ===\n[/Sheet1/row[1]] A1=TEST_ONLY_UPDATED\tB1=42"
+        },
+        {
+          "argv": [
+            "validate",
+            "TEST_ONLY.xlsx",
+            "--json"
+          ],
+          "isError": false,
+          "output_sha256": "1ae479b4b208bc6c4bdb7da4f2001f3695d7dbd094c9b247627513ac8a5933c9",
+          "output": "{\n  \"success\": true,\n  \"data\": {\n    \"count\": 0,\n    \"errors\": []\n  }\n}"
+        },
+        {
+          "argv": [
+            "save",
+            "TEST_ONLY.pptx"
+          ],
+          "isError": false,
+          "output_sha256": "5b3390959a5c1097f5c473ecac5f216ac5fe40ff0f28198e5cacf6d3d8512870",
+          "output": "TEST_ONLY.pptx is already saved to disk."
+        },
+        {
+          "argv": [
+            "view",
+            "TEST_ONLY.pptx",
+            "text"
+          ],
+          "isError": false,
+          "output_sha256": "7c734a18088cf7af826fb3b710577a66abcab2534aadb42b2d7108cd8eaf9c9a",
+          "output": "=== /slide[1] ===\nTEST_ONLY_UPDATED"
+        },
+        {
+          "argv": [
+            "validate",
+            "TEST_ONLY.pptx",
+            "--json"
+          ],
+          "isError": false,
+          "output_sha256": "1ae479b4b208bc6c4bdb7da4f2001f3695d7dbd094c9b247627513ac8a5933c9",
+          "output": "{\n  \"success\": true,\n  \"data\": {\n    \"count\": 0,\n    \"errors\": []\n  }\n}"
+        }
+      ]
+    },
+    "official_v145": {
+      "sha256": "d66763a563bc844c3cc67036ebc7c4a9caa9319b9592814d9acd3706da231fc1",
+      "serverInfo": {
+        "name": "officecli",
+        "version": "1.0.145"
+      },
+      "status": "PASS",
+      "sandbox": {
+        "sibling_read_denied": true,
+        "sibling_write_denied": true,
+        "network_probe_exit": 1,
+        "network_probe_stderr": "PermissionError: [Errno 1] Operation not permitted"
+      },
+      "records": [
+        {
+          "argv": [
+            "load_skill",
+            "word"
+          ],
+          "isError": false,
+          "output_sha256": "9c4f157bf5880196ead220ee976d1b4f1243ac8441df7ed03f7c49993b9d4ae0",
+          "output": "---\nname: officecli-docx\ndescription: \"Use this skill any time a .docx file is involved -- as input, output, or both. This includes: creating Word documents, reports, letters, memos, or proposals; reading, parsing, or extracting text from any .docx file; e"
+        },
+        {
+          "argv": [
+            "load_skill",
+            "excel"
+          ],
+          "isError": false,
+          "output_sha256": "e8019d177c06c14e414a2a119b28886d8f5ca2f8fa843a7f15a614376d975dfe",
+          "output": "---\nname: officecli-xlsx\ndescription: \"Use this skill any time a .xlsx file is involved -- as input, output, or both. This includes: creating spreadsheets, financial models, dashboards, or trackers; reading, parsing, or extracting data from any .xlsx file;"
+        },
+        {
+          "argv": [
+            "load_skill",
+            "pptx"
+          ],
+          "isError": false,
+          "output_sha256": "340d511ad571c2b9f5a0720c9311c20522bd9c560e303e115f8a4acafe447b4e",
+          "output": "---\nname: officecli-pptx\ndescription: \"Use this skill any time a .pptx file is involved -- as input, output, or both. This includes: creating slide decks, pitch decks, or presentations; reading, parsing, or extracting text from any .pptx file; editing, mod"
+        },
+        {
+          "argv": [
+            "help",
+            "docx",
+            "paragraph",
+            "--json"
+          ],
+          "isError": false,
+          "output_sha256": "b4c2c902651e5b1b0b1054e2e849856a1236eab52cc1edd92712cf4a5c7cf18d",
+          "output": "{\n  \"$schema\": \"../_schema.json\",\n  \"element\": \"paragraph\",\n  \"properties\": {\n    \"lineRule\": {\n      \"type\": \"enum\",\n      \"description\": \"line spacing rule paired with lineSpacing (Word-only: w:spacing@w:lineRule). \\u0027auto\\u0027 = multiplier (default "
+        },
+        {
+          "argv": [
+            "help",
+            "xlsx",
+            "cell",
+            "--json"
+          ],
+          "isError": false,
+          "output_sha256": "eba499063dcc466822f90f6dcd9ceae59d7069c333b7df88e3c0a8f6e55eefd6",
+          "output": "{\n  \"$schema\": \"../_schema.json\",\n  \"format\": \"xlsx\",\n  \"element\": \"cell\",\n  \"parent\": \"sheet\",\n  \"operations\": {\n    \"add\": true,\n    \"set\": true,\n    \"get\": true,\n    \"query\": true,\n    \"remove\": true\n  },\n  \"paths\": {\n    \"stable\": [\n      \"/\\u003Csheet"
+        },
+        {
+          "argv": [
+            "help",
+            "pptx",
+            "shape",
+            "--json"
+          ],
+          "isError": false,
+          "output_sha256": "05b644fc841353012ef2a5d46638c1af4c44d01ae34ac2bbc5609cf2d54022bb",
+          "output": "{\n  \"$schema\": \"../_schema.json\",\n  \"element\": \"shape\",\n  \"properties\": {\n    \"size\": {\n      \"type\": \"font-size\",\n      \"description\": \"font size \\u2014 Add/Set forwards to the first run; Get returns the bare size when every run shares the same explicit F"
+        },
+        {
+          "argv": [
+            "create",
+            "TEST_ONLY.docx"
+          ],
+          "isError": false,
+          "output_sha256": "49f17d13859cc2bb86e99d41adb34c542f7fcccd83f17876ec8cf1947b280738",
+          "output": "Created: TEST_ONLY.docx"
+        },
+        {
+          "argv": [
+            "add",
+            "TEST_ONLY.docx",
+            "/body",
+            "--type",
+            "paragraph",
+            "--prop",
+            "text=TEST_ONLY_ORIGINAL"
+          ],
+          "isError": false,
+          "output_sha256": "debde4d34dc1ea320f8729f77e0cffa8e015b1da1ffd1bbeb0bfa1e5317a94f4",
+          "output": "Added paragraph at /body/p[@paraId=00100000]"
+        },
+        {
+          "argv": [
+            "set",
+            "TEST_ONLY.docx",
+            "/body/p[1]",
+            "--prop",
+            "text=TEST_ONLY_UPDATED"
+          ],
+          "isError": false,
+          "output_sha256": "e22fffb2d8e8e8297567cf3866be7a0f9a6fabf817dc360fa3b62c8dcd615117",
+          "output": "Updated /body/p[1]: text=TEST_ONLY_UPDATED"
+        },
+        {
+          "argv": [
+            "add",
+            "TEST_ONLY.docx",
+            "/body",
+            "--type",
+            "paragraph",
+            "--prop",
+            "text=TEST_ONLY_PRESERVED"
+          ],
+          "isError": false,
+          "output_sha256": "aa5fa02ee6c55ea81171c903a00fd9bab83a5b78ff584ea6c8ff9320ecc4a979",
+          "output": "Added paragraph at /body/p[@paraId=00100003]"
+        },
+        {
+          "argv": [
+            "query",
+            "TEST_ONLY.docx",
+            "p",
+            "--json"
+          ],
+          "isError": false,
+          "output_sha256": "f0498c49c438896c4bea14a80e29544ca7aa3847d27d5e9d3599fce43b942eaf",
+          "output": "{\n  \"success\": true,\n  \"data\": {\n    \"matches\": 2,\n    \"results\": [\n      {\n        \"path\": \"/body/p[@paraId=00100000]\",\n        \"type\": \"paragraph\",\n        \"text\": \"TEST_ONLY_UPDATED\",\n        \"preview\": \"TEST_ONLY_UPDATED\",\n        \"style\": \"Normal\",\n        \"childCount\": 1,\n        \"format\": {\n          \"paraId\": \"00100000\",\n          \"effective.size\": \"11pt\",\n          \"effective.size.src\": \"/docDefaults\",\n          \"effective.font.ascii\": \"Calibri\",\n          \"effective.font.ascii.src\": \"/docDefaults\",\n          \"effective.font.hAnsi\": \"Calibri\",\n          \"effective.font.hAnsi.src\": \"/docDefaults\"\n        },\n        \"children\": [\n          {\n            \"path\": \"/body/p[@paraId=00100000]/r[1]\",\n            \"type\": \"run\",\n            \"text\": \"TEST_ONLY_UPDATED\",\n            \"childCount\": 0,\n            \"format\": {\n              \"effective.size\": \"11pt\",\n              \"effective.size.src\": \"/docDefaults\",\n              \"effective.font.ascii\": \"Calibri\",\n              \"effective.font.ascii.src\": \"/docDefaults\",\n              \"effective.font.hAnsi\": \"Calibri\",\n              \"effective.font.hAnsi.src\": \"/docDefaults\"\n            },\n            \"children\": []\n          }\n        ]\n      },\n      {\n        \"path\": \"/body/p[@paraId=00100003]\",\n        \"type\": \"paragraph\",\n        \"text\": \"TEST_ONLY_PRESERVED\",\n        \"preview\": \"TEST_ONLY_PRESERVED\",\n        \"style\": \"Normal\",\n        \"childCount\": 1,\n        \"format\": {\n          \"paraId\": \"00100003\",\n          \"effective.size\": \"11pt\",\n          \"effective.size.src\": \"/docDefaults\",\n          \"effective.font.ascii\": \"Calibri\",\n          \"effective.font.ascii.src\": \"/docDefaults\",\n          \"effective.font.hAnsi\": \"Calibri\",\n          \"effective.font.hAnsi.src\": \"/docDefaults\"\n        },\n        \"children\": [\n          {\n            \"path\": \"/body/p[@paraId=00100003]/r[1]\",\n            \"type\": \"run\",\n            \"text\": \"TEST_ONLY_PRESERVED\",\n            \"childCount\": 0,\n            \"format\": {\n              \"effective.size\": \"11pt\",\n              \"effective.size.src\": \"/docDefaults\",\n              \"effective.font.ascii\": \"Calibri\",\n              \"effective.font.ascii.src\": \"/docDefaults\",\n              \"effective.font.hAnsi\": \"Calibri\",\n              \"effective.font.hAnsi.src\": \"/docDefaults\"\n            },\n            \"children\": []\n          }\n        ]\n      }\n    ]\n  }\n}"
+        },
+        {
+          "argv": [
+            "create",
+            "TEST_ONLY.xlsx"
+          ],
+          "isError": false,
+          "output_sha256": "b12e18640138813c406309f198d218920cdd1cda677c155e1a77aafeb8f45719",
+          "output": "Created: TEST_ONLY.xlsx"
+        },
+        {
+          "argv": [
+            "set",
+            "TEST_ONLY.xlsx",
+            "/Sheet1/A1",
+            "--prop",
+            "value=TEST_ONLY_UPDATED"
+          ],
+          "isError": false,
+          "output_sha256": "46bb52688394a1a172255f40ff09c2dbccd9569c17c48d5d9c2000cb54658918",
+          "output": "Updated /Sheet1/A1: value=TEST_ONLY_UPDATED"
+        },
+        {
+          "argv": [
+            "set",
+            "TEST_ONLY.xlsx",
+            "/Sheet1/B1",
+            "--prop",
+            "value=42"
+          ],
+          "isError": false,
+          "output_sha256": "d2e2dd3eeda2c8a5d7debc3c6f040b74aecfa270fd83e31c33b0c8ee31055a90",
+          "output": "Updated /Sheet1/B1: value=42"
+        },
+        {
+          "argv": [
+            "get",
+            "TEST_ONLY.xlsx",
+            "/Sheet1/B1",
+            "--json"
+          ],
+          "isError": false,
+          "output_sha256": "6b6ff0ca4c436ac6b24b939e39c9c94006ea0d437ad3555e4e1d339b7b4d0878",
+          "output": "{\n  \"success\": true,\n  \"data\": {\n    \"matches\": 1,\n    \"results\": [\n      {\n        \"path\": \"/Sheet1/B1\",\n        \"type\": \"cell\",\n        \"text\": \"42\",\n        \"preview\": \"B1\",\n        \"childCount\": 0,\n        \"format\": {\n          \"type\": \"Number\"\n        },\n        \"children\": []\n      }\n    ]\n  }\n}"
+        },
+        {
+          "argv": [
+            "create",
+            "TEST_ONLY.pptx"
+          ],
+          "isError": false,
+          "output_sha256": "cc86cc499eb6c788e17c4220a17c87d48f93bb185d421b36ecaf47d5ba11246d",
+          "output": "Created: TEST_ONLY.pptx\n  totalSlides: 0\n  slideWidth: 960pt\n  slideHeight: 540pt"
+        },
+        {
+          "argv": [
+            "add",
+            "TEST_ONLY.pptx",
+            "/",
+            "--type",
+            "slide",
+            "--prop",
+            "layout=blank"
+          ],
+          "isError": false,
+          "output_sha256": "dbed8d4cb090bf0df996be1d51d8509e92e7cb571b50b04de8dd7f3d4057d8d4",
+          "output": "Added slide at /slide[1]"
+        },
+        {
+          "argv": [
+            "add",
+            "TEST_ONLY.pptx",
+            "/slide[1]",
+            "--type",
+            "shape",
+            "--prop",
+            "text=TEST_ONLY_ORIGINAL"
+          ],
+          "isError": false,
+          "output_sha256": "dc2bce9f6317599b9058ab99a648d9c9c568cf50fee523c159b5554680def5ce",
+          "output": "Added shape at /slide[1]/shape[@id=100000]\n  x: 0cm  y: 0cm  width: 10cm  height: 5cm"
+        },
+        {
+          "argv": [
+            "set",
+            "TEST_ONLY.pptx",
+            "/slide[1]/shape[1]",
+            "--prop",
+            "text=TEST_ONLY_UPDATED"
+          ],
+          "isError": false,
+          "output_sha256": "518841d1769ecae9d44de7760e24ae729381ca1aabf6d8148b23140de2bae8be",
+          "output": "Updated /slide[1]/shape[1]: text=TEST_ONLY_UPDATED"
+        },
+        {
+          "argv": [
+            "add",
+            "TEST_ONLY.pptx",
+            "/slide[1]",
+            "--type",
+            "shape",
+            "--prop",
+            "text=TEST_ONLY_REMOVE"
+          ],
+          "isError": false,
+          "output_sha256": "5e5f93ab0362ef566f9a02c4de3a0b31ee9f3a68418c0203c7b70752b39628b4",
+          "output": "Added shape at /slide[1]/shape[@id=100001]\n  x: 0cm  y: 0cm  width: 10cm  height: 5cm"
+        },
+        {
+          "argv": [
+            "remove",
+            "TEST_ONLY.pptx",
+            "/slide[1]/shape[2]"
+          ],
+          "isError": false,
+          "output_sha256": "ae112261ce13dad8f41db03ba764fbdfd92a34c6720ba5106ce1f3b868b75dac",
+          "output": "Removed /slide[1]/shape[2]"
+        },
+        {
+          "argv": [
+            "save",
+            "TEST_ONLY.docx"
+          ],
+          "isError": false,
+          "output_sha256": "428f679a52782ccd3edda7732ff1d58784cfb30dd06badd15818ff8ab1192333",
+          "output": "TEST_ONLY.docx is already saved to disk."
+        },
+        {
+          "argv": [
+            "view",
+            "TEST_ONLY.docx",
+            "text"
+          ],
+          "isError": false,
+          "output_sha256": "f00c448c7f09682bf7850cc734203493a972fea53dc47c52ed160685607c98f5",
+          "output": "[/body/p[@paraId=00100000]] TEST_ONLY_UPDATED\n[/body/p[@paraId=00100003]] TEST_ONLY_PRESERVED"
+        },
+        {
+          "argv": [
+            "validate",
+            "TEST_ONLY.docx",
+            "--json"
+          ],
+          "isError": false,
+          "output_sha256": "1ae479b4b208bc6c4bdb7da4f2001f3695d7dbd094c9b247627513ac8a5933c9",
+          "output": "{\n  \"success\": true,\n  \"data\": {\n    \"count\": 0,\n    \"errors\": []\n  }\n}"
+        },
+        {
+          "argv": [
+            "save",
+            "TEST_ONLY.xlsx"
+          ],
+          "isError": false,
+          "output_sha256": "57da57c8801d3b81e8fe1e190767de65ff68ee886c5d543f8de63eaec0cdf869",
+          "output": "TEST_ONLY.xlsx is already saved to disk."
+        },
+        {
+          "argv": [
+            "view",
+            "TEST_ONLY.xlsx",
+            "text"
+          ],
+          "isError": false,
+          "output_sha256": "50c7d2adddd91e77954e5231c70610b5ce04f0e6fc8d28e27a991600f57f8469",
+          "output": "=== Sheet: Sheet1 ===\n[/Sheet1/row[1]] A1=TEST_ONLY_UPDATED\tB1=42"
+        },
+        {
+          "argv": [
+            "validate",
+            "TEST_ONLY.xlsx",
+            "--json"
+          ],
+          "isError": false,
+          "output_sha256": "1ae479b4b208bc6c4bdb7da4f2001f3695d7dbd094c9b247627513ac8a5933c9",
+          "output": "{\n  \"success\": true,\n  \"data\": {\n    \"count\": 0,\n    \"errors\": []\n  }\n}"
+        },
+        {
+          "argv": [
+            "save",
+            "TEST_ONLY.pptx"
+          ],
+          "isError": false,
+          "output_sha256": "5b3390959a5c1097f5c473ecac5f216ac5fe40ff0f28198e5cacf6d3d8512870",
+          "output": "TEST_ONLY.pptx is already saved to disk."
+        },
+        {
+          "argv": [
+            "view",
+            "TEST_ONLY.pptx",
+            "text"
+          ],
+          "isError": false,
+          "output_sha256": "7c734a18088cf7af826fb3b710577a66abcab2534aadb42b2d7108cd8eaf9c9a",
+          "output": "=== /slide[1] ===\nTEST_ONLY_UPDATED"
+        },
+        {
+          "argv": [
+            "validate",
+            "TEST_ONLY.pptx",
+            "--json"
+          ],
+          "isError": false,
+          "output_sha256": "1ae479b4b208bc6c4bdb7da4f2001f3695d7dbd094c9b247627513ac8a5933c9",
+          "output": "{\n  \"success\": true,\n  \"data\": {\n    \"count\": 0,\n    \"errors\": []\n  }\n}"
+        }
+      ]
+    },
+    "official_v143": {
+      "sha256": "2f158d46f9b6c5eb0dfe4eb02038114001e17acc47b67347417c56dcf9659096",
+      "serverInfo": {
+        "name": "officecli",
+        "version": "1.0.143"
+      },
+      "status": "PASS",
+      "sandbox": {
+        "sibling_read_denied": true,
+        "sibling_write_denied": true,
+        "network_probe_exit": 1,
+        "network_probe_stderr": "PermissionError: [Errno 1] Operation not permitted"
+      },
+      "records": [
+        {
+          "argv": [
+            "load_skill",
+            "word"
+          ],
+          "isError": false,
+          "output_sha256": "9c4f157bf5880196ead220ee976d1b4f1243ac8441df7ed03f7c49993b9d4ae0",
+          "output": "---\nname: officecli-docx\ndescription: \"Use this skill any time a .docx file is involved -- as input, output, or both. This includes: creating Word documents, reports, letters, memos, or proposals; reading, parsing, or extracting text from any .docx file; e"
+        },
+        {
+          "argv": [
+            "load_skill",
+            "excel"
+          ],
+          "isError": false,
+          "output_sha256": "e8019d177c06c14e414a2a119b28886d8f5ca2f8fa843a7f15a614376d975dfe",
+          "output": "---\nname: officecli-xlsx\ndescription: \"Use this skill any time a .xlsx file is involved -- as input, output, or both. This includes: creating spreadsheets, financial models, dashboards, or trackers; reading, parsing, or extracting data from any .xlsx file;"
+        },
+        {
+          "argv": [
+            "load_skill",
+            "pptx"
+          ],
+          "isError": false,
+          "output_sha256": "340d511ad571c2b9f5a0720c9311c20522bd9c560e303e115f8a4acafe447b4e",
+          "output": "---\nname: officecli-pptx\ndescription: \"Use this skill any time a .pptx file is involved -- as input, output, or both. This includes: creating slide decks, pitch decks, or presentations; reading, parsing, or extracting text from any .pptx file; editing, mod"
+        },
+        {
+          "argv": [
+            "help",
+            "docx",
+            "paragraph",
+            "--json"
+          ],
+          "isError": false,
+          "output_sha256": "b4c2c902651e5b1b0b1054e2e849856a1236eab52cc1edd92712cf4a5c7cf18d",
+          "output": "{\n  \"$schema\": \"../_schema.json\",\n  \"element\": \"paragraph\",\n  \"properties\": {\n    \"lineRule\": {\n      \"type\": \"enum\",\n      \"description\": \"line spacing rule paired with lineSpacing (Word-only: w:spacing@w:lineRule). \\u0027auto\\u0027 = multiplier (default "
+        },
+        {
+          "argv": [
+            "help",
+            "xlsx",
+            "cell",
+            "--json"
+          ],
+          "isError": false,
+          "output_sha256": "eba499063dcc466822f90f6dcd9ceae59d7069c333b7df88e3c0a8f6e55eefd6",
+          "output": "{\n  \"$schema\": \"../_schema.json\",\n  \"format\": \"xlsx\",\n  \"element\": \"cell\",\n  \"parent\": \"sheet\",\n  \"operations\": {\n    \"add\": true,\n    \"set\": true,\n    \"get\": true,\n    \"query\": true,\n    \"remove\": true\n  },\n  \"paths\": {\n    \"stable\": [\n      \"/\\u003Csheet"
+        },
+        {
+          "argv": [
+            "help",
+            "pptx",
+            "shape",
+            "--json"
+          ],
+          "isError": false,
+          "output_sha256": "bd1eb8ed1a9c1d92c6b4e97064db04ace07829073f9d52e952fc900e7f434990",
+          "output": "{\n  \"$schema\": \"../_schema.json\",\n  \"element\": \"shape\",\n  \"properties\": {\n    \"size\": {\n      \"type\": \"font-size\",\n      \"description\": \"font size \\u2014 Add/Set forwards to the first run; Get returns the bare size when every run shares the same explicit F"
+        },
+        {
+          "argv": [
+            "create",
+            "TEST_ONLY.docx"
+          ],
+          "isError": false,
+          "output_sha256": "49f17d13859cc2bb86e99d41adb34c542f7fcccd83f17876ec8cf1947b280738",
+          "output": "Created: TEST_ONLY.docx"
+        },
+        {
+          "argv": [
+            "add",
+            "TEST_ONLY.docx",
+            "/body",
+            "--type",
+            "paragraph",
+            "--prop",
+            "text=TEST_ONLY_ORIGINAL"
+          ],
+          "isError": false,
+          "output_sha256": "debde4d34dc1ea320f8729f77e0cffa8e015b1da1ffd1bbeb0bfa1e5317a94f4",
+          "output": "Added paragraph at /body/p[@paraId=00100000]"
+        },
+        {
+          "argv": [
+            "set",
+            "TEST_ONLY.docx",
+            "/body/p[1]",
+            "--prop",
+            "text=TEST_ONLY_UPDATED"
+          ],
+          "isError": false,
+          "output_sha256": "e22fffb2d8e8e8297567cf3866be7a0f9a6fabf817dc360fa3b62c8dcd615117",
+          "output": "Updated /body/p[1]: text=TEST_ONLY_UPDATED"
+        },
+        {
+          "argv": [
+            "add",
+            "TEST_ONLY.docx",
+            "/body",
+            "--type",
+            "paragraph",
+            "--prop",
+            "text=TEST_ONLY_PRESERVED"
+          ],
+          "isError": false,
+          "output_sha256": "aa5fa02ee6c55ea81171c903a00fd9bab83a5b78ff584ea6c8ff9320ecc4a979",
+          "output": "Added paragraph at /body/p[@paraId=00100003]"
+        },
+        {
+          "argv": [
+            "query",
+            "TEST_ONLY.docx",
+            "p",
+            "--json"
+          ],
+          "isError": false,
+          "output_sha256": "f0498c49c438896c4bea14a80e29544ca7aa3847d27d5e9d3599fce43b942eaf",
+          "output": "{\n  \"success\": true,\n  \"data\": {\n    \"matches\": 2,\n    \"results\": [\n      {\n        \"path\": \"/body/p[@paraId=00100000]\",\n        \"type\": \"paragraph\",\n        \"text\": \"TEST_ONLY_UPDATED\",\n        \"preview\": \"TEST_ONLY_UPDATED\",\n        \"style\": \"Normal\",\n        \"childCount\": 1,\n        \"format\": {\n          \"paraId\": \"00100000\",\n          \"effective.size\": \"11pt\",\n          \"effective.size.src\": \"/docDefaults\",\n          \"effective.font.ascii\": \"Calibri\",\n          \"effective.font.ascii.src\": \"/docDefaults\",\n          \"effective.font.hAnsi\": \"Calibri\",\n          \"effective.font.hAnsi.src\": \"/docDefaults\"\n        },\n        \"children\": [\n          {\n            \"path\": \"/body/p[@paraId=00100000]/r[1]\",\n            \"type\": \"run\",\n            \"text\": \"TEST_ONLY_UPDATED\",\n            \"childCount\": 0,\n            \"format\": {\n              \"effective.size\": \"11pt\",\n              \"effective.size.src\": \"/docDefaults\",\n              \"effective.font.ascii\": \"Calibri\",\n              \"effective.font.ascii.src\": \"/docDefaults\",\n              \"effective.font.hAnsi\": \"Calibri\",\n              \"effective.font.hAnsi.src\": \"/docDefaults\"\n            },\n            \"children\": []\n          }\n        ]\n      },\n      {\n        \"path\": \"/body/p[@paraId=00100003]\",\n        \"type\": \"paragraph\",\n        \"text\": \"TEST_ONLY_PRESERVED\",\n        \"preview\": \"TEST_ONLY_PRESERVED\",\n        \"style\": \"Normal\",\n        \"childCount\": 1,\n        \"format\": {\n          \"paraId\": \"00100003\",\n          \"effective.size\": \"11pt\",\n          \"effective.size.src\": \"/docDefaults\",\n          \"effective.font.ascii\": \"Calibri\",\n          \"effective.font.ascii.src\": \"/docDefaults\",\n          \"effective.font.hAnsi\": \"Calibri\",\n          \"effective.font.hAnsi.src\": \"/docDefaults\"\n        },\n        \"children\": [\n          {\n            \"path\": \"/body/p[@paraId=00100003]/r[1]\",\n            \"type\": \"run\",\n            \"text\": \"TEST_ONLY_PRESERVED\",\n            \"childCount\": 0,\n            \"format\": {\n              \"effective.size\": \"11pt\",\n              \"effective.size.src\": \"/docDefaults\",\n              \"effective.font.ascii\": \"Calibri\",\n              \"effective.font.ascii.src\": \"/docDefaults\",\n              \"effective.font.hAnsi\": \"Calibri\",\n              \"effective.font.hAnsi.src\": \"/docDefaults\"\n            },\n            \"children\": []\n          }\n        ]\n      }\n    ]\n  }\n}"
+        },
+        {
+          "argv": [
+            "create",
+            "TEST_ONLY.xlsx"
+          ],
+          "isError": false,
+          "output_sha256": "b12e18640138813c406309f198d218920cdd1cda677c155e1a77aafeb8f45719",
+          "output": "Created: TEST_ONLY.xlsx"
+        },
+        {
+          "argv": [
+            "set",
+            "TEST_ONLY.xlsx",
+            "/Sheet1/A1",
+            "--prop",
+            "value=TEST_ONLY_UPDATED"
+          ],
+          "isError": false,
+          "output_sha256": "46bb52688394a1a172255f40ff09c2dbccd9569c17c48d5d9c2000cb54658918",
+          "output": "Updated /Sheet1/A1: value=TEST_ONLY_UPDATED"
+        },
+        {
+          "argv": [
+            "set",
+            "TEST_ONLY.xlsx",
+            "/Sheet1/B1",
+            "--prop",
+            "value=42"
+          ],
+          "isError": false,
+          "output_sha256": "d2e2dd3eeda2c8a5d7debc3c6f040b74aecfa270fd83e31c33b0c8ee31055a90",
+          "output": "Updated /Sheet1/B1: value=42"
+        },
+        {
+          "argv": [
+            "get",
+            "TEST_ONLY.xlsx",
+            "/Sheet1/B1",
+            "--json"
+          ],
+          "isError": false,
+          "output_sha256": "6b6ff0ca4c436ac6b24b939e39c9c94006ea0d437ad3555e4e1d339b7b4d0878",
+          "output": "{\n  \"success\": true,\n  \"data\": {\n    \"matches\": 1,\n    \"results\": [\n      {\n        \"path\": \"/Sheet1/B1\",\n        \"type\": \"cell\",\n        \"text\": \"42\",\n        \"preview\": \"B1\",\n        \"childCount\": 0,\n        \"format\": {\n          \"type\": \"Number\"\n        },\n        \"children\": []\n      }\n    ]\n  }\n}"
+        },
+        {
+          "argv": [
+            "create",
+            "TEST_ONLY.pptx"
+          ],
+          "isError": false,
+          "output_sha256": "cc86cc499eb6c788e17c4220a17c87d48f93bb185d421b36ecaf47d5ba11246d",
+          "output": "Created: TEST_ONLY.pptx\n  totalSlides: 0\n  slideWidth: 960pt\n  slideHeight: 540pt"
+        },
+        {
+          "argv": [
+            "add",
+            "TEST_ONLY.pptx",
+            "/",
+            "--type",
+            "slide",
+            "--prop",
+            "layout=blank"
+          ],
+          "isError": false,
+          "output_sha256": "dbed8d4cb090bf0df996be1d51d8509e92e7cb571b50b04de8dd7f3d4057d8d4",
+          "output": "Added slide at /slide[1]"
+        },
+        {
+          "argv": [
+            "add",
+            "TEST_ONLY.pptx",
+            "/slide[1]",
+            "--type",
+            "shape",
+            "--prop",
+            "text=TEST_ONLY_ORIGINAL"
+          ],
+          "isError": false,
+          "output_sha256": "dc2bce9f6317599b9058ab99a648d9c9c568cf50fee523c159b5554680def5ce",
+          "output": "Added shape at /slide[1]/shape[@id=100000]\n  x: 0cm  y: 0cm  width: 10cm  height: 5cm"
+        },
+        {
+          "argv": [
+            "set",
+            "TEST_ONLY.pptx",
+            "/slide[1]/shape[1]",
+            "--prop",
+            "text=TEST_ONLY_UPDATED"
+          ],
+          "isError": false,
+          "output_sha256": "518841d1769ecae9d44de7760e24ae729381ca1aabf6d8148b23140de2bae8be",
+          "output": "Updated /slide[1]/shape[1]: text=TEST_ONLY_UPDATED"
+        },
+        {
+          "argv": [
+            "add",
+            "TEST_ONLY.pptx",
+            "/slide[1]",
+            "--type",
+            "shape",
+            "--prop",
+            "text=TEST_ONLY_REMOVE"
+          ],
+          "isError": false,
+          "output_sha256": "5e5f93ab0362ef566f9a02c4de3a0b31ee9f3a68418c0203c7b70752b39628b4",
+          "output": "Added shape at /slide[1]/shape[@id=100001]\n  x: 0cm  y: 0cm  width: 10cm  height: 5cm"
+        },
+        {
+          "argv": [
+            "remove",
+            "TEST_ONLY.pptx",
+            "/slide[1]/shape[2]"
+          ],
+          "isError": false,
+          "output_sha256": "ae112261ce13dad8f41db03ba764fbdfd92a34c6720ba5106ce1f3b868b75dac",
+          "output": "Removed /slide[1]/shape[2]"
+        },
+        {
+          "argv": [
+            "save",
+            "TEST_ONLY.docx"
+          ],
+          "isError": false,
+          "output_sha256": "428f679a52782ccd3edda7732ff1d58784cfb30dd06badd15818ff8ab1192333",
+          "output": "TEST_ONLY.docx is already saved to disk."
+        },
+        {
+          "argv": [
+            "view",
+            "TEST_ONLY.docx",
+            "text"
+          ],
+          "isError": false,
+          "output_sha256": "f00c448c7f09682bf7850cc734203493a972fea53dc47c52ed160685607c98f5",
+          "output": "[/body/p[@paraId=00100000]] TEST_ONLY_UPDATED\n[/body/p[@paraId=00100003]] TEST_ONLY_PRESERVED"
+        },
+        {
+          "argv": [
+            "validate",
+            "TEST_ONLY.docx",
+            "--json"
+          ],
+          "isError": false,
+          "output_sha256": "1ae479b4b208bc6c4bdb7da4f2001f3695d7dbd094c9b247627513ac8a5933c9",
+          "output": "{\n  \"success\": true,\n  \"data\": {\n    \"count\": 0,\n    \"errors\": []\n  }\n}"
+        },
+        {
+          "argv": [
+            "save",
+            "TEST_ONLY.xlsx"
+          ],
+          "isError": false,
+          "output_sha256": "57da57c8801d3b81e8fe1e190767de65ff68ee886c5d543f8de63eaec0cdf869",
+          "output": "TEST_ONLY.xlsx is already saved to disk."
+        },
+        {
+          "argv": [
+            "view",
+            "TEST_ONLY.xlsx",
+            "text"
+          ],
+          "isError": false,
+          "output_sha256": "50c7d2adddd91e77954e5231c70610b5ce04f0e6fc8d28e27a991600f57f8469",
+          "output": "=== Sheet: Sheet1 ===\n[/Sheet1/row[1]] A1=TEST_ONLY_UPDATED\tB1=42"
+        },
+        {
+          "argv": [
+            "validate",
+            "TEST_ONLY.xlsx",
+            "--json"
+          ],
+          "isError": false,
+          "output_sha256": "1ae479b4b208bc6c4bdb7da4f2001f3695d7dbd094c9b247627513ac8a5933c9",
+          "output": "{\n  \"success\": true,\n  \"data\": {\n    \"count\": 0,\n    \"errors\": []\n  }\n}"
+        },
+        {
+          "argv": [
+            "save",
+            "TEST_ONLY.pptx"
+          ],
+          "isError": false,
+          "output_sha256": "5b3390959a5c1097f5c473ecac5f216ac5fe40ff0f28198e5cacf6d3d8512870",
+          "output": "TEST_ONLY.pptx is already saved to disk."
+        },
+        {
+          "argv": [
+            "view",
+            "TEST_ONLY.pptx",
+            "text"
+          ],
+          "isError": false,
+          "output_sha256": "7c734a18088cf7af826fb3b710577a66abcab2534aadb42b2d7108cd8eaf9c9a",
+          "output": "=== /slide[1] ===\nTEST_ONLY_UPDATED"
+        },
+        {
+          "argv": [
+            "validate",
+            "TEST_ONLY.pptx",
+            "--json"
+          ],
+          "isError": false,
+          "output_sha256": "1ae479b4b208bc6c4bdb7da4f2001f3695d7dbd094c9b247627513ac8a5933c9",
+          "output": "{\n  \"success\": true,\n  \"data\": {\n    \"count\": 0,\n    \"errors\": []\n  }\n}"
+        }
+      ]
+    },
+    "scope": "30 MCP calls per binary; synthetic DOCX/XLSX/PPTX, not exhaustive feature or installed-product equivalence"
+  }
+}

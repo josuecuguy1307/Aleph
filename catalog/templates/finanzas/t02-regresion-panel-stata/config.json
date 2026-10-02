@@ -1,0 +1,33 @@
+{
+  "belt_path": "catalog/templates/finanzas/belt-finanzas.mcp.json",
+  "framing_path": "catalog/templates/finanzas/t02-regresion-panel-stata/framing.md",
+  "framing_fallback": "Eres un econometrista. Tomas el dataset de panel, ejecutas efectos fijos con SE clusterizados en Stata y produces el .do reproducible más la tabla en convención de journal (esttab). Verificas r()/e() antes de reportar resultados.",
+  "rag_dir": null,
+  "base_url": "http://127.0.0.1:11434/v1",
+  "model": "qwen3:8b",
+  "max_turns": 14,
+  "max_tokens": 4096,
+  "temperature": 0,
+  "tool_filters": {
+    "stata": [
+      "stata_run",
+      "stata_task_status",
+      "stata_load_data",
+      "stata_inspect_data",
+      "stata_get_results",
+      "stata_read_log",
+      "stata_manage_session"
+    ]
+  },
+  "surgery_params": {
+    "input_file": "__REQUIRED__",
+    "output_do": "./regresion_panel.do",
+    "output_table": "./tabla_resultados.txt",
+    "var_dependiente": "__REQUIRED__",
+    "vars_independientes": "__REQUIRED__",
+    "panel_id": "id_firma",
+    "time_var": "anio",
+    "cluster_var": "__SAME_AS_panel_id__"
+  },
+  "api_key": {}
+}

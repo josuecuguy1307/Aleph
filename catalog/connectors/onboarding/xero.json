@@ -1,0 +1,45 @@
+{
+  "connector": "xero",
+  "auth_method": "oauth",
+  "tier": "good",
+  "provider": "xero",
+  "scopes": [
+    "openid",
+    "profile",
+    "email",
+    "offline_access"
+  ],
+  "validate": {
+    "method": "GET",
+    "path": "/connections",
+    "identity_field": "tenantName"
+  },
+  "permissions": [
+    "leer registros de tu organización Xero (contactos/transacciones)",
+    "renovar el acceso sin re-consent (offline_access)"
+  ],
+  "capability_line": "Listo — conecté tu Xero. Puedo leer registros societarios/financieros para la investigación; nada se paga ni se manda sin tu OK.",
+  "trust_line": "Conectas con tu cuenta de Xero · el acceso se renueva solo (offline_access) · lo desconectas cuando quieras.",
+  "escape_hatch": true,
+  "api_base": "https://api.xero.com",
+  "en": {
+    "capability_line": "Ready — I connected your Xero. I can read corporate/financial records for the investigation; nothing is paid or sent without your OK.",
+    "trust_line": "You connect with your Xero account · access renews itself (offline_access) · you disconnect anytime."
+  },
+  "verification": {
+    "deep_link_ok": true,
+    "anchor_ok": false,
+    "validated_with_test_key": false,
+    "notes": "[Step 4.5 · Caso 2 · 2B · H1] Vehículo OAuth authorization_code REAL (fallback aceptado por persona usuaria vs Companies House). refresh_token vía scope offline_access; Xero ROTA el refresh en cada uso → ejercita la rama re-store del fix T-8. token_endpoint_auth_methods: client_secret_post (creds en body, lo que usa oauth_flow → sin cambio de código). NO-prod-sin-review."
+  },
+  "oauth": {
+    "authorize_url": "https://login.xero.com/identity/connect/authorize",
+    "token_url": "https://identity.xero.com/connect/token",
+    "scope": "openid profile email offline_access accounting.contacts.read accounting.settings.read",
+    "client_id_env": "XERO_CLIENT_ID",
+    "client_secret_env": "XERO_CLIENT_SECRET",
+    "identity_field": "email",
+    "unconfigured_message": "Conectar Xero requiere la app OAuth (XERO_CLIENT_ID/SECRET en env).",
+    "_test_fix": "step-4.5-e2e: onboarding creado para 2B/H1. Scope mínimo-seguro (openid+offline_access) → refresh_token sin depender de qué scopes de datos tenga habilitada la app. NO mergear a prod sin review (rotación del refresh_token de Xero, verificación de la app)."
+  }
+}

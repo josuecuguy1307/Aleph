@@ -1,0 +1,36 @@
+{
+  "schema_version": "v1",
+  "meta": {
+    "name": "Agente Demo-Test",
+    "nicho": "demo-test",
+    "descripcion": "Agente trivial con una sola herramienta echo — segundo nicho para probar parametrización sin tocar código."
+  },
+  "model": {
+    "primary": "qwen3:8b",
+    "fallback": null,
+    "base_url": "http://127.0.0.1:11434/v1",
+    "temperature": 0,
+    "max_tokens": 1024,
+    "max_turns": 6
+  },
+  "belt": {
+    "belt_ref": "platform/assembler/fixtures/belt-echo.mcp.json",
+    "tool_filters": {
+      "echo": ["echo"]
+    }
+  },
+  "framing": {
+    "ref": null,
+    "inline": "Eres un agente de prueba. Cuando el usuario pida repetir/eco de un texto, usa la herramienta echo con ese texto y devuelve el resultado."
+  },
+  "rag": {
+    "enabled": false,
+    "mode": "manual",
+    "dir": null
+  },
+  "keys": {},
+  "gates": {
+    "money_touch": "off",
+    "send": "off"
+  }
+}

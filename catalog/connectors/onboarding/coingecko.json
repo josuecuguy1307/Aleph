@@ -1,0 +1,80 @@
+{
+  "connector": "coingecko",
+  "auth_method": "personal_token",
+  "tier": "average",
+  "needs_base_url": false,
+  "deep_link": "https://www.coingecko.com/en/developers/dashboard",
+  "api_base": "https://api.coingecko.com/api/v3",
+  "credential_fields": [
+    {
+      "id": "key",
+      "label": "Tu Demo API key de CoinGecko",
+      "shape": "CG-xxxxxxxxxxxxxxxxxxxxxxxx",
+      "secret": true
+    }
+  ],
+  "auth": {
+    "scheme": "header",
+    "name": "x-cg-demo-api-key",
+    "value": "{key}"
+  },
+  "steps": [
+    {
+      "txt": "Te llevo al Developer's Dashboard de CoinGecko. Crea una cuenta gratis si no tienes y genera una Demo API key (el plan Demo es gratuito, ~30 llamadas/min).",
+      "emphasis": [
+        "Demo API key"
+      ]
+    },
+    {
+      "txt": "Pega tu llave aquí."
+    }
+  ],
+  "validate": {
+    "soft": true,
+    "path": "/key",
+    "method": "GET"
+  },
+  "permissions": [
+    "lectura de precios, market cap e histórico de criptomonedas"
+  ],
+  "requires_sharing": false,
+  "errors": {
+    "invalid": "Esa key no funcionó — genera una nueva Demo key en el dashboard de CoinGecko y pégala.",
+    "network": "No pude verificar ahora — prueba de nuevo en un momento."
+  },
+  "escape_hatch": true,
+  "capability_line": "Listo — ya puedo consultar precios cripto en CoinGecko (10k+ monedas).",
+  "trust_line": "Tu key se guarda cifrada · la quitas cuando quieras.",
+  "verification": {
+    "deep_link_ok": false,
+    "anchor_ok": false,
+    "validated_with_test_key": false,
+    "notes": "[FIX-P11 · 2026-07-27] validate era {soft:true} SIN path -> connect_engine pegaba contra GET https://api.coingecko.com/api/v3 (la raiz) que devuelve 404 {'error':'Incorrect path'} -> el motor lo leia como llave invalida. MEDIDO hoy: GET /api/v3/key con llave mala -> 401 error_code 10002. Endpoint gratis (no consume el cupo de precios)."
+  },
+  "en": {
+    "steps": [
+      {
+        "txt": "I'll take you to CoinGecko's Developer's Dashboard. Create a free account if you don't have one and generate a Demo API key (the Demo plan is free, ~30 calls/min).",
+        "emphasis": [
+          "Demo API key"
+        ]
+      },
+      {
+        "txt": "Paste it here."
+      }
+    ],
+    "trust_line": "Your key is stored encrypted · remove it anytime.",
+    "capability_line": "Done — I can now look up crypto prices on CoinGecko (10k+ coins).",
+    "errors": {
+      "invalid": "That key didn't work — generate a new Demo key in the CoinGecko dashboard and paste it.",
+      "network": "I couldn't verify right now — try again in a moment."
+    },
+    "credential_fields": [
+      {
+        "id": "key",
+        "label": "Your CoinGecko Demo API key",
+        "shape": "CG-xxxxxxxxxxxxxxxxxxxxxxxx"
+      }
+    ]
+  }
+}

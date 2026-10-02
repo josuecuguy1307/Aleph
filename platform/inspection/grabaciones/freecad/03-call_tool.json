@@ -1,0 +1,56 @@
+{
+  "arquetipo": "freecad",
+  "paso": "call_tool",
+  "transporte": "stdio",
+  "servidor": "verificador",
+  "grabado_en": "2026-08-04T09:46:13",
+  "huella_receta": "99283624a653",
+  "env_declarado": false,
+  "receta": {
+    "command": "uvx",
+    "args": [
+      "freecad-mcp",
+      "--only-text-feedback"
+    ],
+    "cwd": ""
+  },
+  "peticion": {
+    "metodo": "tools/call",
+    "args": {
+      "name": "get_parts_list",
+      "arguments": {}
+    }
+  },
+  "respuesta": "Failed to get parts list: [Errno 61] Connection refused",
+  "diagnostico": {
+    "stderr": "Downloading cryptography (3.8MiB)\nDownloading pydantic-core (1.9MiB)\nDownloading pygments (1.2MiB)\n Downloaded pygments\n Downloaded pydantic-core\n Downloaded cryptography\nInstalled 38 packages in 20ms\n2026-08-04 09:46:13,893 - FreeCADMCPserver - INFO - Only text feedback: True\n2026-08-04 09:46:13,893 - FreeCADMCPserver - INFO - Connecting to FreeCAD RPC server at: localhost\n2026-08-04 09:46:13,905 - FreeCADMCPserver - INFO - FreeCADMCP server starting up\n2026-08-04 09:46:13,907 - FreeCADMCPserver - WARNING - Could not connect to FreeCAD on startup: [Errno 61] Connection refused\n2026-08-04 09:46:13,907 - FreeCADMCPserver - WARNING - Make sure the FreeCAD addon is running before using FreeCAD resources or tools\n2026-08-04 09:46:13,923 - FreeCADMCPserver - ERROR - Failed to get parts list: [Errno 61] Connection refused",
+    "exit_code": null,
+    "exit_code_fuente": "no expuesto: stdio_client (mcp 2.0.0) hace `yield read_stream, write_stream` y se queda el Process",
+    "murio": false,
+    "t_eof": null,
+    "timeouts": [],
+    "rpc_timeout_s": 45.0,
+    "stderr_lineas": 13,
+    "stderr_bytes": 828,
+    "stderr_cap_bytes": 32768,
+    "stderr_cap_lineas": 80,
+    "command": "uvx",
+    "transporte": "sdk-stdio",
+    "entorno": {
+      "omitido": "ambiente de la máquina, no del veredicto"
+    },
+    "server_info": {
+      "name": "FreeCADMCP",
+      "version": ""
+    },
+    "protocolo": {
+      "cliente": "2025-11-25",
+      "servidor": "2025-11-25",
+      "negociacion": "aceptada"
+    },
+    "detail": "el proceso arrancó pero no respondió al saludo initialize de MCP (Downloading cryptography (3.8MiB)\nDownloading pydantic-core (1.9MiB)\nDownloading pygments (1.2MiB)\n Downloaded pygments\n Downloaded pydantic-core\n Downloaded cryptography\nInstalled 38 packages in 20ms\n2026-08-04 09:46:13,893 - FreeCADMCPserver - INFO - Only text feedback: True\n2026-08-04 09:46:13,893 - FreeCADMCPserver - INFO - Connecting to FreeCAD RPC server at: localhost\n2026-08-04 09:46:13,905 - FreeCADMCPserver - INFO - FreeCADMCP server starting up\n2026-08-04 09:46:13,907 - FreeCADMCPserver - WARNING - Could not connect to FreeCAD on startup: [Errno 61] Connection refused\n2026-08-04 09:46:13,907 - FreeCADMCPserver - WARNING - Make sure the FreeCAD addon is running before using FreeCAD resources or tools\n2026-08-04 09:46:13,923 - FreeCADMCPserver - ERROR - Failed to get parts list: [Errno 61] Connection refused)"
+  },
+  "scrubber": {
+    "hallazgos_neutralizados": 0
+  }
+}

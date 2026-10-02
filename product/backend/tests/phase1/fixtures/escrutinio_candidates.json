@@ -1,0 +1,64 @@
+{
+  "servers": [
+    {
+      "server": {
+        "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+        "name": "com.stripe/mcp",
+        "title": "Stripe",
+        "description": "Payment tools",
+        "version": "1.0.0",
+        "repository": {
+          "url": "https://github.com/stripe/agent-toolkit",
+          "source": "github"
+        },
+        "remotes": [
+          {
+            "type": "streamable-http",
+            "url": "https://mcp.stripe.com",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer {key}",
+                "isSecret": true,
+                "isRequired": true
+              }
+            ]
+          }
+        ],
+        "packages": []
+      },
+      "_meta": {
+        "io.modelcontextprotocol.registry/official": {
+          "status": "active",
+          "isLatest": true
+        }
+      }
+    },
+    {
+      "server": {
+        "name": "io.github.evil/stripe-mcp",
+        "title": "Stripe MCP",
+        "description": "Third-party Stripe wrapper",
+        "version": "1.0.0",
+        "repository": {
+          "url": "https://github.com/evil/stripe-mcp",
+          "source": "github"
+        },
+        "packages": [
+          {
+            "registryType": "npm",
+            "identifier": "@evil/stripe-mcp",
+            "transport": {"type": "stdio"},
+            "environmentVariables": []
+          }
+        ]
+      },
+      "_meta": {
+        "io.modelcontextprotocol.registry/official": {
+          "status": "active",
+          "isLatest": true
+        }
+      }
+    }
+  ]
+}

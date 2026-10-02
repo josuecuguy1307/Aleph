@@ -1,0 +1,199 @@
+{
+  "_doc": "Mapa curado slug→dominio para el favicon/logo de servicio (ticket 8 · logos en toda superficie). SOLO servicios a los que la pieza realmente se CONECTA (uso nominativo de marca: identifica el servicio conectado, jamás sugiere aval u oficialidad — el copy dice 'conecta con X', NUNCA 'oficial de X'). El logo se muestra SIN MODIFICAR (sin tinte, sin recorte del mark). El backend resuelve slug→dominio→favicon y lo CACHEA server-side (jamás un fetch en vivo por render). MCPs custom/construidos (Motor B) NO van acá: caen a los íconos genéricos propios. TAKEDOWN: ante un reclamo de marca, poner \"blocked\": true en la entrada → el endpoint devuelve 404 y purga el cache → toda superficie cae al fallback genérico (iniciales+color). Aliases = otros slugs de server/connector que apuntan al mismo servicio.",
+  "_version": "1.0.0",
+  "domains": {
+    "alphavantage": {
+      "domain": "www.alphavantage.co"
+    },
+    "asana": {
+      "domain": "asana.com"
+    },
+    "canvas": {
+      "domain": "canvas.instructure.com"
+    },
+    "classroom": {
+      "domain": "classroom.google.com"
+    },
+    "coingecko": {
+      "domain": "www.coingecko.com"
+    },
+    "context7": {
+      "domain": "context7.com"
+    },
+    "exa": {
+      "domain": "exa.ai"
+    },
+    "fred": {
+      "domain": "fred.stlouisfed.org"
+    },
+    "github": {
+      "domain": "github.com",
+      "aliases": [
+        "github-ro"
+      ]
+    },
+    "gmail": {
+      "domain": "mail.google.com"
+    },
+    "google_calendar": {
+      "domain": "calendar.google.com"
+    },
+    "google_drive": {
+      "domain": "drive.google.com"
+    },
+    "hubspot": {
+      "domain": "www.hubspot.com"
+    },
+    "huggingface": {
+      "domain": "huggingface.co"
+    },
+    "jupyter": {
+      "domain": "jupyter.org"
+    },
+    "linear": {
+      "domain": "linear.app"
+    },
+    "massive": {
+      "domain": "massive.com"
+    },
+    "moodle": {
+      "domain": "moodle.org"
+    },
+    "notion": {
+      "domain": "www.notion.so"
+    },
+    "onshape": {
+      "domain": "www.onshape.com"
+    },
+    "openbom": {
+      "domain": "www.openbom.com"
+    },
+    "orcid": {
+      "domain": "orcid.org"
+    },
+    "osf": {
+      "domain": "osf.io"
+    },
+    "slack": {
+      "domain": "slack.com"
+    },
+    "worldbank": {
+      "domain": "www.worldbank.org"
+    },
+    "xero": {
+      "domain": "www.xero.com"
+    },
+    "zenodo": {
+      "domain": "zenodo.org"
+    },
+    "zotero": {
+      "domain": "www.zotero.org"
+    },
+    "secedgar": {
+      "domain": "www.sec.gov"
+    },
+    "arxiv": {
+      "domain": "arxiv.org"
+    },
+    "crossref": {
+      "domain": "www.crossref.org"
+    },
+    "openalex": {
+      "domain": "openalex.org"
+    },
+    "pubmed": {
+      "domain": "pubmed.ncbi.nlm.nih.gov"
+    },
+    "wikipedia": {
+      "domain": "www.wikipedia.org"
+    },
+    "materialsproject": {
+      "domain": "materialsproject.org"
+    },
+    "openfda": {
+      "domain": "www.fda.gov"
+    },
+    "stripe": {
+      "domain": "stripe.com"
+    },
+    "airtable": {
+      "domain": "airtable.com"
+    },
+    "duckduckgo": {
+      "domain": "duckduckgo.com"
+    },
+    "freecad": {
+      "domain": "www.freecad.org",
+      "aliases": [
+        "cad"
+      ]
+    },
+    "kicad": {
+      "domain": "www.kicad.org"
+    },
+    "openfoam": {
+      "domain": "www.openfoam.com"
+    },
+    "git": {
+      "domain": "git-scm.com"
+    },
+    "sqlite": {
+      "domain": "www.sqlite.org"
+    },
+    "sympy": {
+      "domain": "www.sympy.org"
+    },
+    "sheets": {
+      "domain": "sheets.google.com",
+      "aliases": [
+        "google_sheets"
+      ]
+    },
+    "stata": {
+      "domain": "www.stata.com"
+    },
+    "anthropic": {
+      "domain": "www.anthropic.com"
+    },
+    "openai": {
+      "domain": "openai.com"
+    },
+    "groq": {
+      "domain": "groq.com"
+    },
+    "mistral": {
+      "domain": "mistral.ai"
+    },
+    "deepseek": {
+      "domain": "www.deepseek.com"
+    },
+    "openrouter": {
+      "domain": "openrouter.ai"
+    },
+    "together": {
+      "domain": "www.together.ai"
+    },
+    "claude_code": {
+      "domain": "claude.com",
+      "aliases": [
+        "claude",
+        "claude_cli"
+      ]
+    },
+    "codex": {
+      "domain": "chatgpt.com",
+      "aliases": [
+        "codex_cli"
+      ]
+    },
+    "gemini": {
+      "domain": "gemini.google.com",
+      "aliases": [
+        "google_gemini"
+      ]
+    },
+    "ollama": {
+      "domain": "ollama.com"
+    }
+  }
+}

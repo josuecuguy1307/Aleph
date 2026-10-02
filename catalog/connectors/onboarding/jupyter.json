@@ -1,0 +1,113 @@
+{
+  "connector": "jupyter",
+  "auth_method": "personal_token",
+  "tier": "average",
+  "needs_base_url": true,
+  "deep_link": "https://jupyter-server.readthedocs.io/en/latest/operators/security.html#security-in-the-jupyter-server",
+  "api_base": "",
+  "credential_fields": [
+    {
+      "id": "url",
+      "label": "La URL de tu servidor Jupyter",
+      "shape": "http(s)://host:puerto (ej. http://localhost:8888)",
+      "secret": false
+    },
+    {
+      "id": "token",
+      "label": "El token de tu servidor Jupyter",
+      "shape": "cadena hexadecimal larga (sale de `jupyter server list` o del arranque)",
+      "secret": true
+    },
+    {
+      "id": "notebook",
+      "label": "El notebook a abrir (path relativo)",
+      "shape": "ej. notebook.ipynb o carpeta/analisis.ipynb",
+      "secret": false
+    }
+  ],
+  "auth": {
+    "scheme": "query",
+    "param": "token",
+    "value": "{token}"
+  },
+  "steps": [
+    {
+      "txt": "Arranca tu Jupyter con soporte colaborativo: pip install jupyterlab jupyter-collaboration, luego jupyter lab --IdentityProvider.token TU_TOKEN.",
+      "emphasis": [
+        "jupyter-collaboration"
+      ]
+    },
+    {
+      "txt": "Copia la URL (con puerto) y el token de tu servidor."
+    },
+    {
+      "txt": "Pega aquí la URL, el token y el notebook con el que quieres trabajar."
+    }
+  ],
+  "validate": {
+    "method": "GET",
+    "path": "/api/status",
+    "invalid_when": [
+      "403 Forbidden",
+      "Invalid credentials"
+    ],
+    "soft": true,
+    "identity_field": ""
+  },
+  "unverified_line": "Guardé la conexión a tu Jupyter. La confirmo en el primer uso: si tu servidor no responde o el token no vale, te aviso para que lo revises.",
+  "permissions": [
+    "listar y abrir notebooks de tu servidor Jupyter",
+    "ejecutar código y celdas en tus kernels (en TU infraestructura, no la nuestra)"
+  ],
+  "requires_sharing": false,
+  "errors": {
+    "invalid": "Tu Jupyter rechazó el token — revisa `jupyter server list` y pega el token vigente.",
+    "network": "No llegué a tu servidor Jupyter — verifica que esté corriendo y que la URL sea alcanzable desde aquí."
+  },
+  "capability_line": "Listo — ya puedo ejecutar código y celdas en tu Jupyter (notebooks reproducibles).",
+  "trust_line": "Tu token se guarda cifrado · lo quitas cuando quieras · el código corre en TU servidor.",
+  "verification": {
+    "deep_link_ok": true,
+    "validated_with_test_key": false,
+    "notes": "[a05-huerfanos 2026-07-04] Creado para la card jupyter de belt-finanzas (server jupyter-mcp-server, BYO infra: JUPYTER_RUNTIME_URL/JUPYTER_TOKEN/JUPYTER_NOTEBOOK_ID). El server bootea HEADLESS sin runtime (init OK + 17 tools verificado por assembler.MCPServer con runtime dummy), pero ejecutar exige el Jupyter PROPIO del usuario con jupyter-collaboration. NO validado contra un Jupyter vivo aqui (no hay runtime en este entorno; instalarlo = pesado, disco): validate.soft:true → connected_unverified (ambar), se confirma en el primer uso. deep_link a docs oficiales de token de jupyter-server (no hay dashboard de keys: la credencial la genera el propio servidor del usuario)."
+  },
+  "en": {
+    "steps": [
+      {
+        "txt": "Start your Jupyter with collaborative support: pip install jupyterlab jupyter-collaboration, then jupyter lab --IdentityProvider.token YOUR_TOKEN.",
+        "emphasis": [
+          "jupyter-collaboration"
+        ]
+      },
+      {
+        "txt": "Copy the URL (with port) and the token from your server."
+      },
+      {
+        "txt": "Paste the URL, the token, and the notebook you want to work with here."
+      }
+    ],
+    "trust_line": "Your token is stored encrypted · remove it anytime · the code runs on YOUR server.",
+    "capability_line": "Done — I can now run code and cells in your Jupyter (reproducible notebooks).",
+    "errors": {
+      "invalid": "Your Jupyter rejected the token — check `jupyter server list` and paste the current token.",
+      "network": "I couldn't reach your Jupyter server — make sure it's running and that the URL is reachable from here."
+    },
+    "credential_fields": [
+      {
+        "id": "url",
+        "label": "Your Jupyter server URL",
+        "shape": "http(s)://host:port (e.g. http://localhost:8888)"
+      },
+      {
+        "id": "token",
+        "label": "Your Jupyter server token",
+        "shape": "long hex string (from `jupyter server list` or startup)"
+      },
+      {
+        "id": "notebook",
+        "label": "The notebook to open (relative path)",
+        "shape": "e.g. notebook.ipynb or folder/analysis.ipynb"
+      }
+    ]
+  }
+}

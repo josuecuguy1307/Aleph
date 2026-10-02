@@ -1,0 +1,36 @@
+{
+  "_meta": {
+    "que_es": "base_matrix del belt ELECTRONICA. Declara las tools de esquematico KiCad (crear/leer componentes, local) y las de PRECIO+STOCK (quote_component / quote_bom, lectura keyless del catalogo JLCPCB/LCSC) como auto-ejecuta, para que el agente no quede paralizado pidiendo OK por cada consulta. El enforcer (recipe_enforcer) planta SIEMPRE y PRIMERO la regla mandatoria send/money: esta base NO puede aflojarla.",
+    "consumido_por": "assemble_and_run(recipe, base_matrix=<este json>) o auto-carga via _meta.base_matrix del belt-electronica.mcp.json.",
+    "principio": "seguro pero no paralizado — disenar esquematicos y cotizar componentes fluye (local / lectura publica, baja consecuencia); mandar correo o tocar plata pregunta cada vez.",
+    "fuente": "platform/gates/recipe_enforcer.py + base-matrix-ingenieria.json (patron ing-fem-headless: una tool de computo/lectura keyless de baja consecuencia auto-ejecuta)."
+  },
+  "tier": "average",
+  "default_level": "auto-ejecuta",
+  "rules": [
+    {
+      "id": "elec-precio-stock-lectura",
+      "match": { "server": "precio", "tools": ["quote_component", "quote_bom"] },
+      "level": "auto-ejecuta",
+      "what": "consultar precio y stock real de un componente / cotizar un BOM (lectura del catalogo JLCPCB/LCSC)",
+      "where": "catalogo publico JLCPCB/LCSC (solo lectura; no toca plata ni manda nada; sin API key)",
+      "preview_kind": "accion"
+    },
+    {
+      "id": "elec-kicad-sch-local",
+      "match": { "server": "kicad", "tools": ["create_schematic", "load_schematic", "add_component", "list_components", "get_schematic_info", "add_wire", "add_label", "save_schematic"] },
+      "level": "auto-ejecuta",
+      "what": "crear o leer componentes/wires/labels en un esquematico KiCad (local)",
+      "where": "tu archivo .kicad_sch (local; nada sale de tu maquina)",
+      "preview_kind": "accion"
+    },
+    {
+      "id": "elec-spice-simulacion-drc",
+      "match": { "server": "spice", "tools": ["ac_sweep", "build_filter_schematic", "run_erc"] },
+      "level": "auto-ejecuta",
+      "what": "simular la respuesta en frecuencia (ngspice) o correr el DRC/ERC (kicad-cli) de un circuito",
+      "where": "tu maquina (ngspice + kicad-cli headless; nada sale ni toca plata)",
+      "preview_kind": "accion"
+    }
+  ]
+}

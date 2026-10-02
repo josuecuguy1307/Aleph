@@ -1,0 +1,154 @@
+[
+  {
+    "file": "product/app/design/render/render.js",
+    "line": 259,
+    "literal_actual": "Renderizando…",
+    "clave": "render.renderizando"
+  },
+  {
+    "file": "product/app/design/render/render.js",
+    "line": 312,
+    "literal_actual": "Informe vacío.",
+    "clave": "render.informe.empty"
+  },
+  {
+    "file": "product/app/design/render/render.js",
+    "line": 337,
+    "literal_actual": "Planilla vacía.",
+    "clave": "render.planilla.empty"
+  },
+  {
+    "file": "product/app/design/render/render.js",
+    "line": 345,
+    "literal_actual": "Sin contenido web.",
+    "clave": "render.web.empty"
+  },
+  {
+    "file": "product/app/design/render/render.js",
+    "line": 349,
+    "literal_actual": "preview web",
+    "clave": "render.preview_web"
+  },
+  {
+    "file": "product/app/design/render/render.js",
+    "line": 359,
+    "literal_actual": "Documento vacío.",
+    "clave": "render.doc.empty"
+  },
+  {
+    "file": "product/app/design/render/render.js",
+    "line": 371,
+    "literal_actual": "Sin geometría 3D.",
+    "clave": "render.cad.empty"
+  },
+  {
+    "file": "product/app/design/render/render.js",
+    "line": 384,
+    "literal_actual": "modelo 3D",
+    "clave": "render.modelo_3d"
+  },
+  {
+    "file": "product/app/design/render/render.js",
+    "line": 394,
+    "literal_actual": "Sin malla de volumen 3D.",
+    "clave": "render.volume3d.empty"
+  },
+  {
+    "file": "product/app/design/render/render.js",
+    "line": 398,
+    "literal_actual": "volumen 3D",
+    "clave": "render.volumen_3d"
+  },
+  {
+    "file": "product/app/design/render/render.js",
+    "line": 406,
+    "literal_actual": "Sin esquemático.",
+    "clave": "render.schematic.empty"
+  },
+  {
+    "file": "product/app/design/render/render.js",
+    "line": 423,
+    "literal_actual": "Esquemático SVG ilegible.",
+    "clave": "render.schematic.unreadable"
+  },
+  {
+    "file": "product/app/design/render/render.js",
+    "line": 443,
+    "literal_actual": "Sin datos de campo.",
+    "clave": "render.fieldplot.empty"
+  },
+  {
+    "file": "product/app/design/render/render.js",
+    "line": 452,
+    "literal_actual": "Sin imagen DICOM.",
+    "clave": "render.dicom.empty"
+  },
+  {
+    "file": "product/app/design/render/render.js",
+    "line": 470,
+    "literal_actual": "Sin iteraciones de convergencia.",
+    "clave": "render.convergence.sin_iteraciones"
+  },
+  {
+    "file": "product/app/design/render/render.js",
+    "line": 494,
+    "literal_actual": "límite: ",
+    "clave": "render.convergence.limit"
+  },
+  {
+    "file": "product/app/design/render/render.js",
+    "line": 518,
+    "literal_actual": "PASA",
+    "clave": "render.convergence.verdict_pass"
+  },
+  {
+    "file": "product/app/design/render/render.js",
+    "line": 518,
+    "literal_actual": "FALLA",
+    "clave": "render.convergence.verdict_fail"
+  },
+  {
+    "file": "product/app/design/render/render.js",
+    "line": 613,
+    "literal_actual": "Sin curva.",
+    "clave": "render.sin_curva"
+  },
+  {
+    "file": "product/app/design/render/render.js",
+    "line": 650,
+    "literal_actual": "curva de equity (capital ×",
+    "clave": "render.equity",
+    "nota": "literal partido por interpolación; usar template render.equity con {x}"
+  },
+  {
+    "file": "product/app/design/render/render.js",
+    "line": 650,
+    "literal_actual": " en el período)",
+    "clave": "render.equity",
+    "nota": "fragmento 2 del mismo template"
+  },
+  {
+    "file": "product/app/design/render/render.js",
+    "line": 736,
+    "literal_actual": "arrastra: rotar · rueda: zoom",
+    "clave": "render.orbit_hint"
+  },
+  {
+    "file": "product/app/design/render/render.js",
+    "line": 796,
+    "literal_actual": "arrastra: rotar · rueda: zoom",
+    "clave": "render.orbit_hint"
+  },
+  {
+    "file": "product/app/design/render/render.js",
+    "line": 836,
+    "literal_actual": "No se pudo renderizar.",
+    "clave": "render.no_render"
+  },
+  {
+    "file": "product/app/design/render/render.js",
+    "line": 838,
+    "literal_actual": "contenido crudo",
+    "clave": "render.contenido_crudo"
+  }
+]

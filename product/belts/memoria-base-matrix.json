@@ -1,0 +1,17 @@
+{
+  "rules": [
+    {
+      "id": "memoria-compartida-local-state",
+      "match": {
+        "server": "memory",
+        "tool_name_contains": [
+          "create_entities", "create_relations", "add_observations",
+          "delete_entities", "delete_observations", "delete_relations",
+          "read_graph", "search_nodes", "open_nodes"
+        ]
+      },
+      "level": "auto-ejecuta",
+      "what": "leer/escribir la memoria compartida del agente (estado LOCAL: un archivo de knowledge-graph dentro del workdir del run; no manda nada afuera ni toca plata)"
+    }
+  ]
+}

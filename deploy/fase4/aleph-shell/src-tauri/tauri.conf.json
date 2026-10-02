@@ -1,0 +1,49 @@
+{
+  "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
+  "productName": "Aleph",
+  "version": "0.1.2",
+  "identifier": "app.aleph.desktop",
+  "build": {
+    "frontendDist": "../frontend"
+  },
+  "app": {
+    "withGlobalTauri": true,
+    "windows": [
+      {
+        "label": "main",
+      "create": false,
+        "title": "Aleph",
+        "titleBarStyle": "Transparent",
+        "hiddenTitle": false,
+        "backgroundColor": "#2b2b29",
+        "width": 1280,
+        "height": 840,
+        "resizable": true,
+        "fullscreen": false
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "externalBin": [
+      "binaries/aleph_sidecar"
+    ],
+    "resources": [
+      "resources/PDFIUM-NOTICES"
+    ],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "android": {
+      "debugApplicationIdSuffix": ".debug"
+    }
+  }
+}

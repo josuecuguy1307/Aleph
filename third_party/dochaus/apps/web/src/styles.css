@@ -1,0 +1,4296 @@
+/* [Aleph · 2026-08-11] LA PIEL DE LA CASA, TEMA CLARO.
+ *
+ * ESTO REVIERTE UNA DECISIÓN ANTERIOR, y conviene decirlo acá y no sólo en un acta: la nota
+ * del bloque oscuro (más abajo) sostenía que el lienzo debía resolver el esquema «CON SU
+ * PROPIA paleta» y que igualar los hex de Aleph sería «teñir el oficio por dentro». El
+ * criterio cambió por decisión de producto (2026-08-11): los workspaces se ven como Aleph, no
+ * como el producto del que vinieron. El oficio no vive en el color de marca de un tercero
+ * —vive en el vocabulario (matters, jurisdicciones, documentos), que no se toca—.
+ *
+ * Los valores salen de `product/app/design/aleph-tokens.css`, la fuente única del sistema.
+ * El lienzo corre en OTRO ORIGEN y no puede linkear esa hoja: los hex se copian, igual que
+ * ya se copió la letra a `aleph-fonts.css`. Si la casa cambia un token, este bloque se
+ * re-copia.
+ *
+ * EL ACENTO NO ES EL BOTÓN. En este sistema el color es 90/8/2 y la acción primaria INVIERTE
+ * el campo (tinta de fondo, papel de letra); el violeta queda para el 8%: el chip activo, el
+ * punto de estado, el foco. Por eso `--accent` pasa a violeta —lo consumen 34 reglas de
+ * `color`, checkboxes, dots y switches, que son marcas legítimas— y los dos botones que lo
+ * usaban de FONDO (`button.primary`, `.btn-accept`) se re-apuntan al final del archivo.
+ */
+:root {
+  /* Surfaces — campo → plano → pozo */
+  --bg: #f4f4f5;
+  --bg-sunken: #f4f4f5;
+  --panel: #ffffff;
+  --panel-hover: #ffffff;
+  --overlay-scrim: rgba(10, 10, 10, 0.42);
+
+  /* Ink. El sistema usa UN solo gris de apoyo: `--muted` y `--faint` son el mismo valor,
+     y es el que este proyecto midió en 4.5:1 (el #6B6B70 del modelo daba 4.46 y no pasaba). */
+  --text: #0a0a0a;
+  --text-secondary: #565377;
+  --muted: #65656a;
+  --faint: #65656a;
+  --placeholder: #65656a;
+  --text-on-accent: #ffffff;
+
+  /* Borders — CERO BORDES es regla del sistema: la jerarquía es sombra + radio, nunca línea.
+     No se borran los tokens (los referencian cientos de reglas): se vuelven transparentes. */
+  --border: transparent;
+  --border-soft: transparent;
+  --border-strong: transparent;
+
+  /* Accent: el violeta de la mascota, el 8% del color */
+  --accent: #5a4fd6;
+  --accent-hover: #4f45c4;
+  --accent-active: #4339ad;
+  --accent-soft: #f2f1fe;
+  --accent-soft-hover: #e9e7fd;
+  --accent-tint: #f8f7ff;
+  --accent-border: transparent;
+  --accent-muted: #7d74e0;
+
+  /* Status — el 2%. Los valores AA que este proyecto ya midió contra sus propios fondos. */
+  --warn: #8a5d0c;
+  --warn-soft: rgba(138, 93, 12, 0.1);
+  --warn-border: transparent;
+  --danger: #b23a2e;
+  --danger-soft: rgba(178, 58, 46, 0.1);
+  --danger-border: transparent;
+  --info: #366d84;
+  --info-soft: rgba(54, 109, 132, 0.1);
+
+  /* Type — LA LETRA ES LA DE LA CASA (ley 3 · inmersión 3.8). Outfit está vendorizada en
+     `aleph-fonts.css`, con los mismos woff2 que sirven las ~24 pantallas de Aleph. La que
+     estaba era Space Grotesk, del proyecto de origen: la marca y el estilo mueren, la jerga
+     del oficio no (ley 11). Mono y serif quedan como stacks de sistema, igual que en la
+     casa: sólo aparecen en código y en el cuerpo de documentos. */
+  --font-sans: "Outfit", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Outfit", system-ui, -apple-system, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
+  --font-serif: "Charter", "Iowan Old Style", Georgia, "Times New Roman", serif;
+  --tracking-caps: 0.06em;
+  --tracking-display: -0.02em;
+
+  /* Radii — la geometría de CÁPSULA del sistema (`--r-sm/md/lg` de aleph-tokens.css).
+     Eran 6/8/12, la escala de otro sistema: acá el control es 13, la fila 18 y el panel 22. */
+  --radius-sm: 13px;
+  --radius-md: 18px;
+  --radius-lg: 22px;
+  --radius-pill: 999px;
+
+  /* Elevation — las tres sombras de la casa. En este sistema son la ÚNICA herramienta de
+     jerarquía, porque no hay bordes: --shadow-sm es un elemento sobre el pozo, --shadow-md
+     el plano de contenido y --shadow-lg el elemento en foco. Las cinco del stack se mapean
+     a esas tres (xs cae a la más leve, xl a la más honda) para no inventar escalones. */
+  --shadow-xs: 0 3px 12px rgba(10, 10, 10, 0.05);
+  --shadow-sm: 0 3px 12px rgba(10, 10, 10, 0.05);
+  --shadow-md: 0 10px 34px rgba(10, 10, 10, 0.06);
+  --shadow-lg: 0 18px 48px rgba(10, 10, 10, 0.14);
+  --shadow-xl: 0 18px 48px rgba(10, 10, 10, 0.14);
+
+  /* Focus — el anillo es del acento de la casa, no del verde del stack. */
+  --focus-ring: 0 0 0 3px rgba(90, 79, 214, 0.22);
+  --focus-ring-danger: 0 0 0 3px rgba(178, 58, 46, 0.22);
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-fast: 120ms;
+  --duration-base: 180ms;
+  --duration-slow: 280ms;
+
+  /* Z-index */
+  --z-sticky: 10;
+  --z-overlay: 50;
+  --z-popover: 60;
+  --z-toast: 100;
+
+  /* Controls share one height so mixed rows align */
+  --ctl-h: 34px;
+}
+
+/* ── EL LADO OSCURO — [Gate 4 · F6 · Legal · inmersión 3.8 · revisado 2026-08-11] ─────────
+ *
+ * La casa manda `?aleph_scheme=dark|light` y `public/aleph-theme-preload.js` lo deja en
+ * `data-aleph-scheme` antes del primer pintado. Ese mecanismo no cambia: es el que evita el
+ * parpadeo claro dentro de una casa oscura, y sigue siendo el único dato que cruza.
+ *
+ * LO QUE SÍ CAMBIÓ es qué hace el lienzo con esa palabra. Este bloque decía antes que la
+ * resolvía «CON SU PROPIA paleta» —el verde del oficio levantado para fondo oscuro— y que el
+ * criterio era caer del mismo LADO de la línea, no igualar hex, porque igualarlos sería
+ * «teñir el oficio por dentro». El equipo decidió lo contrario el 2026-08-11: los workspaces son
+ * Aleph y se ven como Aleph. Un verde de marca ajeno no es el oficio legal; el oficio está
+ * en los matters, las jurisdicciones y los documentos, y eso no se toca.
+ *
+ * Los hex son los de `aleph-tokens.css`, tema oscuro.
+ */
+:root[data-aleph-scheme="dark"] {
+  color-scheme: dark;
+
+  /* Surfaces — campo → plano → pozo */
+  --bg: #0b0b0c;
+  --bg-sunken: #1c1c1f;
+  --panel: #141416;
+  --panel-hover: #1c1c1f;
+  --overlay-scrim: rgba(0, 0, 0, 0.6);
+
+  /* Ink — un solo gris de apoyo, como en claro */
+  --text: #f5f5f6;
+  --text-secondary: #b7b5f5;
+  --muted: #a0a0a6;
+  --faint: #a0a0a6;
+  --placeholder: #a0a0a6;
+  --text-on-accent: #0a0a0a;
+
+  /* Borders — transparentes: el sistema prohíbe la línea en los dos temas */
+  --border: transparent;
+  --border-soft: transparent;
+  --border-strong: transparent;
+
+  /* Accent: el violeta de la mascota, subido de brillo para fondo oscuro (igual que hacen
+     el verde y el ámbar de estado en la casa) */
+  --accent: #8d8bee;
+  --accent-hover: #a09ef1;
+  --accent-active: #b7b5f5;
+  --accent-soft: #262636;
+  --accent-soft-hover: #2e2e42;
+  --accent-tint: #1c1c26;
+  --accent-border: transparent;
+  --accent-muted: #b7b5f5;
+
+  /* Status — los de la casa en oscuro: suben de brillo, no repiten los del tema claro */
+  --warn: #d9a445;
+  --warn-soft: rgba(200, 147, 41, 0.14);
+  --warn-border: transparent;
+  --danger: #e08a7c;
+  --danger-soft: rgba(194, 65, 45, 0.18);
+  --danger-border: transparent;
+  --info: #86b6cc;
+  --info-soft: rgba(134, 182, 204, 0.14);
+
+  /* Elevation — las tres de la casa en oscuro, mapeadas a los cinco escalones del stack */
+  --shadow-xs: 0 4px 14px rgba(0, 0, 0, 0.4);
+  --shadow-sm: 0 4px 14px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 12px 38px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 26px 70px rgba(0, 0, 0, 0.62);
+  --shadow-xl: 0 26px 70px rgba(0, 0, 0, 0.62);
+
+  /* Focus */
+  --focus-ring: 0 0 0 3px rgba(141, 139, 238, 0.28);
+  --focus-ring-danger: 0 0 0 3px rgba(224, 138, 124, 0.28);
+}
+
+/* Text size (Settings → Appearance). Component sizes are in px, so scale the
+   whole UI rather than just the body font. */
+:root[data-text="compact"] body {
+  zoom: 0.92;
+}
+
+:root[data-text="large"] body {
+  zoom: 1.08;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+::selection {
+  background: var(--accent-soft-hover);
+  color: var(--text);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* ---------- Buttons ---------- */
+
+button {
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--text);
+  padding: 6px 13px;
+  border-radius: var(--radius-md);
+  transition:
+    background var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out),
+    transform 60ms var(--ease-out);
+}
+
+button:hover:not(:disabled) {
+  background: var(--panel-hover);
+  border-color: var(--border-strong);
+}
+
+button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+button:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: var(--focus-ring);
+}
+
+button.primary {
+  background: var(--accent);
+  color: var(--text-on-accent);
+  border-color: var(--accent);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(10, 10, 10, 0.12);
+}
+
+button.primary:hover:not(:disabled) {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+
+button.primary:active:not(:disabled) {
+  background: var(--accent-active);
+}
+
+button.danger {
+  background: var(--danger);
+  color: var(--text-on-accent);
+  border-color: var(--danger);
+}
+
+button.danger:hover:not(:disabled) {
+  background: #76211f;
+  border-color: #76211f;
+}
+
+button.ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--muted);
+}
+
+button.ghost:hover:not(:disabled) {
+  background: var(--bg);
+  border-color: transparent;
+  color: var(--text);
+}
+
+button.btn-sm {
+  padding: 3px 10px;
+  font-size: 12.5px;
+  border-radius: var(--radius-sm);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* Loading: keep the label's width (transparent, not removed) and spin a ring
+   over it so the button never jumps. */
+button.btn-loading {
+  position: relative;
+  color: transparent !important;
+  pointer-events: none;
+}
+
+button.btn-loading::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  animation: btn-spin 0.6s linear infinite;
+}
+
+@keyframes btn-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------- Form controls ---------- */
+
+input,
+select,
+textarea {
+  font: inherit;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--panel);
+  color: var(--text);
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out),
+    background var(--duration-fast) var(--ease-out);
+}
+
+input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+select {
+  height: var(--ctl-h);
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+textarea {
+  padding: 8px 10px;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--placeholder);
+}
+
+input:hover:not(:disabled):not(:focus),
+select:hover:not(:disabled):not(:focus),
+textarea:hover:not(:disabled):not(:focus) {
+  border-color: var(--border-strong);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: var(--focus-ring);
+}
+
+input:disabled,
+select:disabled {
+  background: var(--bg);
+  color: var(--muted);
+  cursor: not-allowed;
+}
+
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 32px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b6b66' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+}
+
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border: 1.5px solid var(--border-strong);
+  border-radius: 4px;
+  background: var(--panel);
+  display: inline-grid;
+  place-content: center;
+  cursor: pointer;
+  transition:
+    background var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out);
+}
+
+input[type="checkbox"]:hover {
+  border-color: var(--accent);
+}
+
+input[type="checkbox"]:checked {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+input[type="checkbox"]:checked::before {
+  content: "";
+  width: 9px;
+  height: 9px;
+  background: #fff;
+  clip-path: polygon(14% 44%, 0 62%, 42% 100%, 100% 18%, 84% 4%, 40% 70%);
+}
+
+/* App shell: a collapsible left rail beside the scrolling content column. */
+.shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+.content {
+  flex: 1;
+  min-width: 0;
+}
+
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 264px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px 10px;
+  background: var(--panel);
+  border-right: 1px solid var(--border);
+}
+
+.sidebar.collapsed {
+  width: 56px;
+}
+
+.sidebar-brand {
+  padding-bottom: 8px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.sidebar-brand a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 6px 8px;
+}
+
+.sidebar-label {
+  padding: 10px 10px 4px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  color: var(--faint);
+}
+
+.sidebar.collapsed .sidebar-label {
+  display: none;
+}
+
+/* Primary nav + Settings/collapse share one row style; active gets the soft
+   fill plus a left indicator bar so it reads distinct from hover. */
+.nav-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 10px;
+  border: none;
+  background: none;
+  border-radius: var(--radius-md);
+  color: var(--text);
+  font-size: 14px;
+  text-align: left;
+  transition:
+    background var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+
+.nav-item:hover {
+  background: var(--bg);
+}
+
+.nav-item.active {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.nav-item.active::before {
+  content: "";
+  position: absolute;
+  left: -10px;
+  top: 6px;
+  bottom: 6px;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: var(--accent);
+}
+
+.sidebar.collapsed .nav-item {
+  justify-content: center;
+}
+
+.sidebar.collapsed .nav-item.active::before {
+  left: -6px;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* The open matter's conversation history; scrolls if it runs long. */
+.sidebar-convos {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  margin-top: 6px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-soft);
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+
+.sidebar-section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 6px 6px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  color: var(--faint);
+  font-weight: 600;
+}
+
+.sidebar-empty {
+  font-size: 12px;
+  padding: 4px 6px;
+}
+
+/* New-chat ghost chip in the conversations head. */
+.sidebar-new {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+  border: 1px solid var(--accent-border);
+  background: none;
+  border-radius: var(--radius-sm);
+  padding: 2px 8px;
+}
+
+.sidebar-new:hover:not(:disabled) {
+  background: var(--accent-soft);
+  border-color: var(--accent-border);
+}
+
+.convo-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.convo-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.convo-item {
+  flex: 1;
+  min-width: 0;
+  display: block;
+  padding: 7px 10px;
+  border-radius: var(--radius-md);
+  color: var(--text);
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: background var(--duration-fast) var(--ease-out);
+}
+
+.convo-row:hover .convo-item {
+  background: var(--accent-tint);
+}
+
+.convo-item.active {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* Delete control: hidden until the row is hovered or focused, pinned right over
+   the title with a soft fade so long titles slide under it. */
+.convo-del {
+  position: absolute;
+  right: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--panel);
+  color: var(--muted);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+.convo-row:hover .convo-del,
+.convo-row:focus-within .convo-del {
+  opacity: 1;
+}
+
+.convo-del:hover {
+  background: var(--bg);
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+/* Armed delete: a confirm pill that slides in from the right where the trash
+   icon sat. One click confirms; a click anywhere else disarms it. */
+.convo-confirm {
+  position: absolute;
+  right: 4px;
+  padding: 4px 10px;
+  border: 1px solid var(--danger);
+  border-radius: var(--radius-sm);
+  background: var(--danger);
+  color: var(--text-on-accent);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  animation: convo-confirm-in 160ms var(--ease-out);
+}
+
+/* Override the global button:hover (which washes the bg light) so the danger
+   pill keeps its red fill — white text on white was unreadable. */
+.convo-confirm:hover:not(:disabled) {
+  background: var(--danger);
+  border-color: var(--danger);
+  filter: brightness(1.1);
+}
+
+.convo-confirm:focus-visible {
+  outline-color: var(--danger);
+  box-shadow: var(--focus-ring-danger);
+}
+
+@keyframes convo-confirm-in {
+  from {
+    opacity: 0;
+    transform: translateX(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.sidebar-foot {
+  margin-top: auto;
+  padding-top: 8px;
+  border-top: 1px solid var(--border-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.app-logo {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+}
+
+.wordmark {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: var(--tracking-display);
+  color: var(--text);
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+/* ---------- Page header: title, subtitle, primary action ---------- */
+
+.page-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 4px 0 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.page-head h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+
+.page-sub {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.page-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px 24px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-xs);
+}
+
+.card h2 {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  color: var(--muted);
+  margin: 0 0 12px;
+}
+
+.row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.matter-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.matter-list li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.matter-list li:last-child {
+  border-bottom: none;
+}
+
+/* ---------- List rows: full-row click target, hover wash, actions on demand */
+
+/* li.list-row outranks the base .matter-list li rule, which would otherwise
+   zero out the horizontal padding that keeps the hover wash off the text. */
+li.list-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 -14px;
+  padding: 13px 14px;
+  border-radius: var(--radius-md);
+  border-bottom: 1px solid var(--border-soft);
+  transition: background var(--duration-fast) var(--ease-out);
+}
+
+.list-row:last-child {
+  border-bottom: none;
+}
+
+/* Whole row opens the template viewer; inner buttons stop propagation. */
+.list-row-clickable {
+  cursor: pointer;
+}
+
+.list-row:hover {
+  background: var(--accent-tint);
+}
+
+.list-row-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  color: var(--text);
+}
+
+.list-row-title {
+  font-weight: 600;
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.list-row:hover .list-row-title {
+  color: var(--accent);
+}
+
+.list-row-title .badge {
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.list-row-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* One-line description inside the meta row — truncates instead of wrapping. */
+.list-row-desc {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* A count or step summary following the description reads as a separate fact. */
+.list-row-desc + .list-row-date::before {
+  content: "·";
+  margin-right: 8px;
+}
+
+.list-row-meta .template-desc-input {
+  flex: 1;
+}
+
+.list-row-date {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.list-row-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Firm client-matter number — monospace chip so it reads as a reference code. */
+.matter-ref {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+  background: var(--accent-soft);
+  /* [Aleph] Era 4px, el último resto de la escala vieja (2·4·6·8·12). El chip del sistema
+     es una CÁPSULA: es la forma del chip activo de la nav y de los filtros del catálogo. */
+  border-radius: var(--radius-pill);
+  padding: 1px 6px;
+  margin-right: 8px;
+}
+
+/* Jurisdiction — plain text fact, darker than the muted date beside it. */
+.matter-jurisdiction {
+  color: var(--text);
+}
+
+/* Template row: file name stacked above a clickable description (turns into an
+   input on click), with a quiet placeholder count beside the View/Delete controls. */
+.template-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.template-desc {
+  min-width: 0;
+  cursor: text;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.template-desc-input {
+  width: 100%;
+  min-width: 0;
+}
+
+.template-count {
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+/* Template viewer's placeholder list in the side panel. */
+.template-placeholders {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.template-placeholders li {
+  font-size: 13px;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: 4px;
+  padding: 4px 6px;
+  word-break: break-word;
+}
+
+.icon-btn {
+  font: inherit;
+  font-size: 12px;
+  color: var(--muted);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 3px 8px;
+  cursor: pointer;
+  transition:
+    color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    background var(--duration-fast) var(--ease-out);
+}
+
+.icon-btn:hover:not(:disabled) {
+  color: var(--text);
+  border-color: var(--border-strong);
+  background: var(--panel-hover);
+}
+
+/* Armed delete: same confirm pill as conversation deletion. */
+.icon-btn.danger {
+  color: var(--text-on-accent);
+  background: var(--danger);
+  border-color: var(--danger);
+  font-weight: 600;
+  animation: convo-confirm-in 160ms var(--ease-out);
+}
+
+.icon-btn.danger:hover:not(:disabled) {
+  color: var(--text-on-accent);
+  background: var(--danger);
+  border-color: var(--danger);
+}
+
+.muted {
+  color: var(--muted);
+}
+
+/* ---------- Empty states ---------- */
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 4px;
+  padding: 44px 24px;
+}
+
+.empty-glyph {
+  width: 36px;
+  height: 36px;
+  color: var(--accent);
+  opacity: 0.45;
+  margin-bottom: 8px;
+}
+
+.empty-state h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.empty-state p {
+  margin: 0;
+  max-width: 380px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.empty-state .primary {
+  margin-top: 14px;
+}
+
+/* Quiet inline empty for dense surfaces (grid cells, rails). */
+.empty-inline {
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-md);
+  background: var(--accent-tint);
+  padding: 24px 20px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+/* ---------- Skeleton loading ---------- */
+
+.skeleton-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 6px 0;
+}
+
+.skeleton-row,
+.skeleton-line {
+  height: 14px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(90deg, var(--border) 25%, var(--bg) 50%, var(--border) 75%);
+  background-size: 200% 100%;
+  animation: sk-shimmer 1.4s ease-in-out infinite;
+}
+
+.skeleton-row {
+  height: 38px;
+}
+
+.skeleton-line.w-40 {
+  width: 40%;
+}
+
+/* ---------- Badges ---------- */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  padding: 1px 8px;
+  border-radius: var(--radius-pill);
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-border);
+  color: var(--accent);
+}
+
+.badge-quiet {
+  color: var(--muted);
+  background: var(--bg);
+  border-color: var(--border);
+}
+
+/* Assistant picker: a quiet pill in the chat header opens a modal listing each
+   assistant with its description, so the choice reads in plain terms. */
+.assistant-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  white-space: nowrap;
+  padding: 5px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--panel);
+  color: var(--text);
+  cursor: pointer;
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    background var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.assistant-trigger:hover:not(:disabled) {
+  border-color: var(--accent-border);
+  background: var(--panel-hover);
+  box-shadow: var(--shadow-sm);
+}
+
+.assistant-icon {
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.assistant-trigger-label {
+  font-weight: 500;
+}
+
+.assistant-caret {
+  color: var(--muted);
+  flex-shrink: 0;
+  transition: transform 0.15s var(--ease-out);
+}
+
+.assistant-caret.open {
+  transform: rotate(180deg);
+}
+
+.picker-group {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  color: var(--muted);
+  padding: 10px 4px 4px;
+}
+
+.picker-group:first-child {
+  padding-top: 2px;
+}
+
+.picker-panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 460px;
+  max-height: calc(100vh - 64px);
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-xl);
+  animation: panel-in 220ms var(--ease-out);
+}
+
+.picker-body {
+  overflow: auto;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+
+/* Wider picker variant: options read as a two-column table — name on the
+   left, description on the right. */
+.picker-panel.picker-wide {
+  max-width: 720px;
+}
+
+.picker-wide .assistant-option {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  column-gap: 20px;
+  align-items: baseline;
+}
+
+.assistant-option {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: left;
+  padding: 12px 38px 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--panel);
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    background var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.assistant-option:hover:not(:disabled) {
+  border-color: var(--accent-border);
+  background: var(--panel-hover);
+  box-shadow: var(--shadow-sm);
+}
+
+.assistant-option.selected {
+  border-color: var(--accent);
+  background: var(--accent-tint);
+}
+
+.assistant-option.selected::after {
+  content: "";
+  position: absolute;
+  top: 15px;
+  right: 14px;
+  width: 13px;
+  height: 13px;
+  background: var(--accent);
+  clip-path: polygon(14% 44%, 0 62%, 42% 100%, 100% 18%, 84% 4%, 40% 70%);
+}
+
+.assistant-name {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.assistant-desc {
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+
+/* Icon-only close button shared by modal headers. */
+.modal-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--muted);
+}
+
+.modal-close:hover:not(:disabled) {
+  background: var(--bg);
+  border-color: transparent;
+  color: var(--text);
+}
+
+/* Jurisdiction multi-select: a trigger (reusing the assistant-trigger pill) that
+   opens a searchable checklist popover, since a matter can be governed by several
+   packs and a native multi-select is unusable at ~30 options. */
+.jx-select {
+  position: relative;
+}
+
+.jx-trigger {
+  min-width: 180px;
+  justify-content: space-between;
+}
+
+/* Rendered in a body portal with a fixed-position anchor (set inline by the
+   component) so modal scroll containers can't clip it; z-index sits above the
+   viewer-overlay that hosts those modals. */
+.jx-popover {
+  position: fixed;
+  z-index: var(--z-popover);
+  width: 280px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: panel-in 160ms var(--ease-out);
+}
+
+/* Full-bleed search with a hairline divider instead of a floating boxed input. */
+.jx-search {
+  margin: 0;
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+  height: 38px;
+  padding: 0 12px;
+}
+
+.jx-search:focus {
+  box-shadow: none;
+  border-color: var(--border);
+  border-bottom-color: var(--accent);
+}
+
+.jx-list {
+  overflow: auto;
+  max-height: 320px;
+  padding: 6px 8px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+
+.jx-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--duration-fast) var(--ease-out);
+}
+
+.jx-option:hover {
+  background: var(--accent-tint);
+}
+
+.jx-option.selected {
+  background: var(--accent-soft);
+}
+
+.jx-option input {
+  flex-shrink: 0;
+  width: auto;
+}
+
+.jx-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+}
+
+.jx-empty {
+  padding: 6px 8px;
+  font-size: 13px;
+}
+
+/* Edit-matter modal: rename, matter ID, and jurisdictions for one matter. Body
+   keeps overflow visible so the jurisdiction popover overlays rather than being
+   clipped by a scroll container. */
+.matter-edit {
+  max-width: 420px;
+}
+
+.matter-edit-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.matter-edit-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.matter-edit-field > span {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  color: var(--muted);
+}
+
+.matter-edit-foot {
+  justify-content: flex-end;
+  gap: 8px;
+  border-bottom: none;
+  border-top: 1px solid var(--border);
+}
+
+/* Matter workspace: chat is the single primary surface and runs full-width. When
+   a workflow is launched, an artifact panel opens beside it on the right; the
+   chat yields the narrower-but-still-primary column rather than splitting evenly. */
+.workspace {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  align-items: start;
+}
+
+.workspace.with-artifact {
+  grid-template-columns: 1.5fr 1fr;
+}
+
+/* Matter body: the chat workspace beside a collapsible documents rail. The rail
+   keeps the matter's files out of the chat's way; collapsed it shrinks to a thin
+   tab so the conversation reclaims the full width. */
+.matter-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 16px;
+  align-items: start;
+}
+
+.matter-body.docs-collapsed {
+  grid-template-columns: minmax(0, 1fr) 40px;
+}
+
+/* Rail tracks the chat scroll so the document list stays in reach. */
+.docs-rail {
+  position: sticky;
+  top: 24px;
+  max-height: calc(100vh - 48px);
+  overflow: auto;
+  margin-bottom: 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+
+.docs-rail-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.docs-rail-head h2 {
+  margin: 0;
+}
+
+/* Collapsed rail: a slim vertical tab that reopens the documents panel. */
+.docs-tab {
+  position: sticky;
+  top: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 40px;
+  padding: 12px 0;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--muted);
+  cursor: pointer;
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+
+.docs-tab:hover {
+  color: var(--accent);
+  border-color: var(--accent-border);
+  box-shadow: var(--shadow-sm);
+}
+
+.docs-tab-count {
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: 10px;
+  padding: 1px 7px;
+}
+
+.docs-tab-label {
+  writing-mode: vertical-rl;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 11px;
+}
+
+/* Artifact panel sticks in view while the chat scrolls, so a long review report
+   stays readable next to the conversation. */
+.artifact {
+  position: sticky;
+  top: 24px;
+  max-height: calc(100vh - 48px);
+  overflow: auto;
+  border-left: 3px solid var(--accent);
+}
+
+/* Matter surface nav in the left rail: the open matter's title above its four
+   surfaces (Chat / Review / Documents / Workflows). One navigation plane. */
+.sidebar-surfaces {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border-soft);
+}
+
+.sidebar-matter {
+  padding: 4px 10px 6px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  color: var(--faint);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Instant hover tooltip (components/Tooltip.tsx). Fixed + body-portaled so it
+   escapes the sidebar scroll clip; pinned to the right of the hovered item. */
+.tip-bubble {
+  position: fixed;
+  transform: translateY(-50%);
+  z-index: var(--z-toast);
+  max-width: 280px;
+  padding: 6px 9px;
+  border-radius: var(--radius-sm);
+  background: var(--text);
+  color: var(--text-on-accent);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.35;
+  letter-spacing: normal;
+  text-transform: none;
+  white-space: normal;
+  word-break: break-word;
+  box-shadow: var(--shadow-lg);
+  pointer-events: none;
+}
+
+/* Click-to-rename matter title: the heading reads as plain text but invites a
+   click; the input it swaps to inherits the heading's size so nothing shifts. */
+/* Title-area meta: a reference chip, the title, then the jurisdiction picker,
+   stacked tight so the whole block reads as one editable matter identity. */
+.matter-head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  min-width: 0;
+}
+
+.matter-head h1 {
+  margin: 0;
+}
+
+.matter-head-jx {
+  flex-shrink: 0;
+}
+
+/* Jurisdictions read as badges in the header; the bare trigger resets button
+   chrome so the chips sit flush, then opens the same picker popover on click. */
+.jx-trigger-bare {
+  border: none;
+  background: none;
+  padding: 4px;
+  margin: -4px;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+}
+
+.jx-trigger-bare:hover {
+  background: var(--accent-soft);
+}
+
+.matter-jx-badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.matter-badge {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: 4px;
+  padding: 2px 8px;
+}
+
+.matter-jx-add {
+  font-size: 13px;
+  color: var(--muted);
+  border-radius: 4px;
+  padding: 2px 8px;
+  box-shadow: inset 0 0 0 1px var(--border);
+}
+
+.matter-title {
+  cursor: text;
+  display: inline-block;
+  border-radius: var(--radius-sm);
+}
+
+.matter-title:hover {
+  background: var(--accent-soft);
+  box-shadow: 0 0 0 4px var(--accent-soft);
+}
+
+.matter-title-input {
+  margin: 0;
+  width: min(560px, 60vw);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 2px 6px;
+}
+
+/* Reference chip as a click-to-edit button: reuses .matter-ref's look but resets
+   button chrome and keeps a hover affordance like the title. */
+.matter-ref.matter-field {
+  margin: 0;
+  border: none;
+  cursor: pointer;
+  line-height: 1.6;
+}
+
+.matter-ref.matter-field:hover {
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.matter-ref.matter-field.empty {
+  color: var(--muted);
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--border);
+}
+
+.matter-ref-input {
+  width: 220px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px 8px;
+}
+
+/* ---------- Tabular review: documents (rows) x questions (columns) ---------- */
+
+.review-toolbar {
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.review-toolbar h2 {
+  margin: 0;
+}
+
+.review-summary {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+  font-variant-numeric: tabular-nums;
+}
+
+.review-running {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.review-running::before {
+  content: "";
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 2px solid var(--accent-soft);
+  border-top-color: var(--accent);
+  animation: step-spin 0.7s linear infinite;
+}
+
+.review-scroll {
+  overflow: auto;
+  max-height: calc(100vh - 160px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--panel);
+}
+
+/* separate + spacing 0: collapsed borders detach from the sticky header/column
+   while scrolling. Each cell owns its bottom/right border instead. */
+.review-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  font-size: 13px;
+}
+
+.review-table th,
+.review-table td {
+  border-bottom: 1px solid var(--border);
+  border-right: 1px solid var(--border-soft);
+  padding: 10px 12px;
+  text-align: left;
+  vertical-align: top;
+  min-width: 180px;
+}
+
+.review-table th:last-child,
+.review-table td:last-child {
+  border-right: none;
+}
+
+.review-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.review-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--accent-tint);
+  border-bottom: none;
+  box-shadow: inset 0 -1px 0 var(--border), 0 4px 8px -4px rgba(10, 10, 10, 0.1);
+}
+
+.review-doc-col {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--accent-tint);
+  font-weight: 600;
+  min-width: 200px;
+  border-right: none;
+  box-shadow: inset -1px 0 0 var(--border), 6px 0 12px -6px rgba(10, 10, 10, 0.07);
+}
+
+.review-table thead .review-doc-col {
+  z-index: 3;
+}
+
+.review-table tbody tr:hover td {
+  background: var(--accent-tint);
+}
+
+.review-col-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.review-col-q {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--text);
+  font: inherit;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+.review-col-q:hover {
+  color: var(--accent);
+}
+
+/* Reviewed (locked) cell: tinted with an accent spine, distinct from hover. */
+.review-cell.reviewed {
+  background: var(--accent-soft);
+  box-shadow: inset 2px 0 0 var(--accent);
+}
+
+.review-table tbody tr:hover td.review-cell.reviewed {
+  background: var(--accent-soft-hover);
+}
+
+.review-cell-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.review-answer {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.review-answer:hover {
+  color: var(--accent);
+}
+
+.review-cite {
+  color: var(--accent);
+  font-size: 12px;
+}
+
+/* Idle cells stay calm: Lock/Refresh appear on hover or focus. Comment counts,
+   the locked state, and stale flags always show. */
+.review-cell-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  min-height: 22px;
+}
+
+.review-cell-actions .icon-btn {
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+.review-cell:hover .review-cell-actions .icon-btn,
+.review-cell:focus-within .review-cell-actions .icon-btn,
+.review-cell-actions .review-note.has-comments,
+.review-cell-actions .review-lock.locked {
+  opacity: 1;
+}
+
+.review-stale {
+  color: var(--warn);
+  background: var(--warn-soft);
+  border: 1px solid var(--warn-border);
+  border-radius: var(--radius-pill);
+  padding: 1px 7px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+}
+
+.review-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 11px;
+}
+
+.review-note.has-comments {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.review-comments {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.review-comment {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 8px 10px;
+}
+
+.review-comment-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.review-comment-text {
+  font-size: 13px;
+  white-space: pre-wrap;
+}
+
+.review-comment-compose {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+}
+
+.review-comment-compose textarea {
+  flex: 1;
+  min-height: 44px;
+  resize: vertical;
+}
+
+.review-cell-fill {
+  width: 100%;
+  font-size: 12px;
+  color: var(--muted);
+  background: none;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+  padding: 6px 0;
+  transition:
+    color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out);
+}
+
+.review-cell-fill:hover:not(:disabled) {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: none;
+}
+
+.review-detail-answer {
+  font-size: 15px;
+  margin: 0 0 12px;
+}
+
+/* Tool strip above the composer holding the Workflows launcher. */
+.composer-tools {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.workflow-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  padding: 5px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--panel);
+  color: var(--text);
+  cursor: pointer;
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    background var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.workflow-icon {
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.workflow-btn:hover:not(:disabled) {
+  border-color: var(--accent-border);
+  background: var(--panel-hover);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ---------- Chat ---------- */
+
+/* The chat owns its column: the card flexes and the log, not the page, is the
+   scroll surface. Height tracks the viewport but leaves room for host-page
+   chrome (header, composer, tools) above and below. */
+.chat-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-log {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 320px;
+  max-height: calc(100vh - 330px);
+  overflow-y: auto;
+  padding-right: 10px;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+
+.chat-log::-webkit-scrollbar {
+  width: 8px;
+}
+
+.chat-log::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-log::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 99px;
+}
+
+.chat-log::-webkit-scrollbar-thumb:hover {
+  background: var(--border-strong);
+}
+
+.msg {
+  white-space: pre-wrap;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+/* User: a true bubble, asymmetric radius pointing at the composer. */
+.msg.user {
+  background: var(--accent-soft);
+  border-radius: var(--radius-lg) var(--radius-lg) 4px var(--radius-lg);
+  padding: 10px 14px;
+}
+
+/* Assistant: unboxed prose on the panel surface — the page is the bubble. */
+.msg.assistant {
+  background: transparent;
+  border: none;
+  padding: 2px 0;
+}
+
+/* Byline naming the agent that produced an answer, so a thread that mixes
+   agents (Q&A, then Redline) reads clearly rather than as one anonymous voice. */
+.msg-agent {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--accent-muted);
+  margin: 4px 0 8px;
+}
+
+/* A failed turn's provider error, shown in the assistant bubble so a bad project,
+   quota, or auth failure reads as a clear message instead of the turn vanishing. */
+.msg-error {
+  border: 1px solid var(--danger-border);
+  background: var(--danger-soft);
+  color: var(--danger);
+  border-radius: var(--radius-md);
+  padding: 8px 10px;
+  font-size: 13px;
+  white-space: pre-wrap;
+}
+
+/* User message bubble plus its edit/retry actions, stacked so the actions sit
+   below the bubble (outside the colored fill) and the whole group right-aligns.
+   Larger gap before a new exchange than within one. */
+.msg-user-wrap {
+  align-self: flex-end;
+  max-width: 76%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-top: 16px;
+}
+
+.msg-user-wrap:first-child {
+  margin-top: 0;
+}
+
+/* Edit/retry actions on a user message: hidden until the group is hovered so
+   the conversation stays clean, revealed as a small row below the bubble. */
+.msg-actions {
+  display: flex;
+  gap: 4px;
+  justify-content: flex-end;
+  margin-top: 4px;
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+.msg-user-wrap:hover .msg-actions,
+.msg-user-wrap:focus-within .msg-actions {
+  opacity: 1;
+}
+
+.msg-actions .icon-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 6px;
+}
+
+/* While editing, stretch the wrap and bubble to the full 76% so the textarea
+   matches the bubble width instead of collapsing to its content. */
+.msg-user-wrap:has(.msg-edit) {
+  width: 76%;
+}
+
+.msg-user-wrap:has(.msg-edit) .msg.user {
+  width: 100%;
+}
+
+.msg-edit {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.msg-edit textarea {
+  width: 100%;
+  min-height: 60px;
+  resize: vertical;
+  font: inherit;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px;
+}
+
+.msg-edit-actions {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+/* Streaming caret pinned to the tail of the answer while tokens arrive. */
+.msg.assistant.streaming .markdown > :last-child::after {
+  content: "";
+  display: inline-block;
+  width: 7px;
+  height: 1em;
+  margin-left: 3px;
+  vertical-align: text-bottom;
+  border-radius: 2px;
+  background: var(--accent);
+  animation: caret-blink 1s steps(2, jump-none) infinite;
+}
+
+@keyframes caret-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* Pre-token state: three rising dots instead of literal "Thinking..." text. */
+.working {
+  display: inline-flex;
+  gap: 4px;
+  padding: 6px 0;
+}
+
+.working-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0.35;
+  animation: working-pulse 1.2s ease-in-out infinite;
+}
+
+.working-dot:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.working-dot:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes working-pulse {
+  0%,
+  60%,
+  100% {
+    opacity: 0.35;
+    transform: none;
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+}
+
+/* Reasoning timeline: a quiet chip-summary that opens dot-to-dot connectors —
+   no box, so it nests cleanly in the unboxed assistant turn. */
+.steps {
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin-bottom: 10px;
+}
+
+.steps > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 12.5px;
+  font-weight: 500;
+  list-style: none;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--panel);
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+  user-select: none;
+}
+
+.steps > summary:hover {
+  border-color: var(--accent-border);
+  color: var(--accent);
+}
+
+.steps > summary::-webkit-details-marker {
+  display: none;
+}
+
+.steps > summary::before {
+  content: "";
+  width: 0;
+  height: 0;
+  border-left: 4px solid currentColor;
+  border-top: 3px solid transparent;
+  border-bottom: 3px solid transparent;
+  opacity: 0.5;
+  transition: transform 0.15s var(--ease-out);
+}
+
+.steps[open] > summary::before {
+  transform: rotate(90deg);
+}
+
+.step-list {
+  list-style: none;
+  margin: 12px 0 4px 5px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.step {
+  position: relative;
+  padding: 0 0 14px 22px;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.step:last-child {
+  padding-bottom: 2px;
+}
+
+/* Connector runs from below this step's dot to the next dot — never overruns. */
+.step::before {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 17px;
+  bottom: -3px;
+  width: 1px;
+  background: var(--border);
+}
+
+.step:last-child::before {
+  display: none;
+}
+
+/* A subagent's own steps, nested beneath the task step that consulted it. */
+.step .step-list {
+  margin: 10px 0 0 1px;
+}
+
+.step .step {
+  font-size: 12.5px;
+  padding-bottom: 12px;
+}
+
+.step .step .step-label,
+.step .thinking {
+  color: var(--muted);
+}
+
+.dot {
+  position: absolute;
+  left: 0;
+  top: 5px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--panel);
+  border: 1.5px solid var(--muted);
+  transition:
+    background var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out);
+}
+
+.dot.done {
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.dot.error {
+  background: var(--danger);
+  border-color: var(--danger);
+  box-shadow: 0 0 0 3px var(--danger-soft);
+}
+
+/* In-flight: accent ring spinner — on-palette, unmistakably alive. */
+.dot.running {
+  background: transparent;
+  border: 1.5px solid var(--accent-soft);
+  border-top-color: var(--accent);
+  animation: step-spin 0.7s linear infinite;
+}
+
+@keyframes step-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Pending row at the bottom of a running timeline: the previous step settled
+   but the next hasn't arrived, so a spinner + shimmer line keep the panel
+   visibly alive instead of looking stalled. */
+.step-pending .sk-line {
+  display: block;
+  width: 96px;
+  height: 8px;
+  margin-top: 6px;
+}
+
+.thinking {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.thinking > summary {
+  cursor: pointer;
+  list-style: none;
+}
+
+.thinking > summary::-webkit-details-marker {
+  display: none;
+}
+
+.thinking[open] > summary {
+  margin-bottom: 4px;
+}
+
+/* Expandable step: a chevron marks a tool step or thought block you can open to
+   read its underlying work (a search's passages, a read's content, the model's
+   reasoning). Subtle until hovered so the timeline stays calm; rotates on open. */
+.step-detail > summary,
+.thinking > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.step-detail > summary::before,
+.thinking > summary::before {
+  content: "";
+  flex-shrink: 0;
+  width: 0;
+  height: 0;
+  border-left: 4px solid currentColor;
+  border-top: 3px solid transparent;
+  border-bottom: 3px solid transparent;
+  opacity: 0.35;
+  transition:
+    transform 0.15s var(--ease-out),
+    opacity 0.15s var(--ease-out);
+}
+
+.step-detail[open] > summary::before,
+.thinking[open] > summary::before {
+  transform: rotate(90deg);
+}
+
+.step-detail > summary:hover::before,
+.thinking > summary:hover::before {
+  opacity: 0.7;
+}
+
+.step-detail > summary {
+  cursor: pointer;
+  list-style: none;
+}
+
+.step-detail > summary::-webkit-details-marker {
+  display: none;
+}
+
+.step-report {
+  margin: 8px 0;
+  padding: 10px;
+  overflow-wrap: anywhere;
+  background: var(--accent-soft);
+  border-radius: var(--radius-sm);
+}
+
+.markdown table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+  margin: 12px 0;
+}
+
+.markdown th, .markdown td {
+  min-width: 120px;
+  max-width: 280px;
+  padding: 8px;
+  border: 1px solid var(--border-strong);
+  text-align: left;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+}
+
+.markdown th { background: var(--accent-soft); }
+
+.step-output {
+  margin: 6px 0 0;
+  padding: 8px 10px;
+  max-height: 220px;
+  overflow: auto;
+  background: var(--accent-soft);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: var(--muted);
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+
+/* Sources: deduplicated citations behind a collapsed disclosure, so the answer
+   stays the focus and the evidence is one click away. */
+.sources {
+  margin-top: 10px;
+}
+
+.sources > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 12.5px;
+  font-weight: 500;
+  list-style: none;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--panel);
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+
+.sources > summary:hover {
+  border-color: var(--accent-border);
+  color: var(--accent);
+}
+
+.sources > summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Card grammar for chat attachments: white card, colored left rail naming the
+   species (green = source/draft/approval, red = redline). */
+.citation {
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  background: var(--panel);
+  padding: 10px 12px;
+  margin-top: 8px;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-xs);
+}
+
+.citation .ref {
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.citation .excerpt {
+  color: var(--muted);
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+/* In-chat redline preview: a compact card per proposed change, the prior wording
+   struck red above the new wording in green — the same red/green the document
+   viewer paints — with a link into the full tracked-changes review. */
+.redlines {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.redline-card {
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--danger);
+  border-radius: var(--radius-md);
+  background: var(--panel);
+  padding: 12px 14px;
+  box-shadow: var(--shadow-xs);
+}
+
+.redline-doc {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.redline-old,
+.redline-new {
+  font-size: 13px;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  border-radius: 4px;
+  padding: 4px 6px;
+}
+
+.redline-old {
+  color: var(--danger);
+  text-decoration: line-through;
+  margin-bottom: 4px;
+}
+
+.redline-new {
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.redline-view {
+  margin-top: 8px;
+  font-size: 13px;
+}
+
+/* In-chat drafted-document card: the new file's name with a link into the
+   document viewer, so a draft the assistant just created is one click away. */
+.drafts {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.draft-card {
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius-md);
+  background: var(--panel);
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: var(--shadow-xs);
+}
+
+.draft-icon {
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.draft-doc {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Empty chat: a centered intro plus clickable starter questions. */
+.chat-empty {
+  margin: auto 0;
+  padding: 24px 8px;
+  max-width: 560px;
+  align-self: center;
+  width: 100%;
+  text-align: center;
+}
+
+/* Loading placeholder for a reopened conversation: shimmer bubbles that echo the
+   chat rhythm (right-aligned user turn, left-aligned assistant block) so the gap
+   before messages arrive reads as a thread loading, not an empty matter. */
+.chat-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sk-turn {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sk-bubble {
+  border-radius: var(--radius-lg);
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sk-bubble.sk-user {
+  align-self: flex-end;
+  max-width: 76%;
+  min-width: 140px;
+  background: var(--accent-soft);
+  border-radius: var(--radius-lg) var(--radius-lg) 4px var(--radius-lg);
+}
+
+.sk-bubble.sk-assistant {
+  align-self: flex-start;
+  width: 100%;
+  background: transparent;
+  border: none;
+  padding: 10px 0;
+}
+
+.sk-line {
+  height: 10px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--border) 25%, var(--accent-soft) 50%, var(--border) 75%);
+  background-size: 200% 100%;
+  animation: sk-shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes sk-shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* First-run onboarding loader: a tiny document drafting itself — shimmer lines
+   of uneven width, staggered so they don't pulse in lockstep — with a rotating
+   legalese quip underneath while the provider/model catalog loads. */
+.onboard-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  padding: 48px 0 36px;
+}
+
+.onboard-doc {
+  position: relative;
+  width: 84px;
+  padding: 14px 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+}
+
+/* Dog-eared corner so the loader reads as a sheet of paper. */
+.onboard-doc::after {
+  content: "";
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  width: 16px;
+  height: 16px;
+  background: linear-gradient(225deg, var(--bg) 0%, var(--bg) 50%, var(--border) 50%, var(--accent-soft) 100%);
+  border-bottom-left-radius: 6px;
+  border-top-right-radius: var(--radius-md);
+}
+
+.onboard-doc .sk-line {
+  height: 6px;
+}
+
+.onboard-doc .sk-line:nth-child(2) {
+  width: 85%;
+  animation-delay: 150ms;
+}
+
+.onboard-doc .sk-line:nth-child(3) {
+  width: 92%;
+  animation-delay: 300ms;
+}
+
+.onboard-doc .sk-line:nth-child(4) {
+  width: 60%;
+  animation-delay: 450ms;
+}
+
+.onboard-phrase {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  animation: onboard-phrase-in 240ms var(--ease-out);
+}
+
+@keyframes onboard-phrase-in {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---------- Boot screen ---------- */
+/* Full-viewport hold while the engine and document service come up, so the list
+   pages never mount against a dead backend and show a false empty state. */
+.boot-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 100vh;
+}
+
+.boot-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.boot-step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--muted);
+  transition: color 0.2s var(--ease-out);
+}
+
+.boot-step.done {
+  color: var(--text);
+}
+
+/* Accent ring spinner while pending; fills solid the moment the service answers. */
+.boot-dot {
+  flex-shrink: 0;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  border: 1.5px solid var(--accent-soft);
+  border-top-color: var(--accent);
+  animation: step-spin 0.7s linear infinite;
+}
+
+.boot-step.done .boot-dot {
+  border: none;
+  background: var(--accent);
+  animation: none;
+}
+
+/* Onboarding modal chrome: serif hero title, step dots, ghost skip. */
+.onboard-bar {
+  border-bottom: none;
+  padding: 18px 20px 6px;
+}
+
+.onboard-bar .viewer-title {
+  font-family: var(--font-display);
+  font-size: 19px;
+  letter-spacing: var(--tracking-display);
+  flex: 1;
+}
+
+.onboard-steps {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-right: 12px;
+}
+
+.onboard-steps i {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--border);
+  transition:
+    background var(--duration-base) var(--ease-out),
+    width var(--duration-base) var(--ease-out);
+}
+
+.onboard-steps i.on {
+  width: 18px;
+  background: var(--accent);
+}
+
+.chat-empty .starters {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.starter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  text-align: left;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  font-size: 13.5px;
+  transition:
+    transform 0.15s var(--ease-out),
+    box-shadow 0.15s var(--ease-out),
+    border-color 0.15s var(--ease-out);
+}
+
+.starter .starter-arrow {
+  flex-shrink: 0;
+  color: var(--accent);
+  opacity: 0;
+  transform: translateX(-4px);
+  transition:
+    opacity 0.15s var(--ease-out),
+    transform 0.15s var(--ease-out);
+}
+
+.starter:hover {
+  border-color: var(--accent-border);
+  background: var(--panel);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.starter:hover .starter-arrow {
+  opacity: 1;
+  transform: none;
+}
+
+/* Composer: one container with the textarea above a footer row holding the
+   keyboard hint and a round send button — the field is the form. */
+.composer {
+  position: relative;
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xs);
+  transition:
+    border-color 0.15s var(--ease-out),
+    box-shadow 0.15s var(--ease-out);
+}
+
+.composer:focus-within {
+  border-color: var(--accent);
+  box-shadow: var(--focus-ring), var(--shadow-xs);
+}
+
+.composer textarea {
+  border: none;
+  outline: none;
+  background: transparent;
+  resize: none;
+  padding: 12px 14px 2px;
+  min-height: 24px;
+  max-height: 200px;
+  line-height: 1.5;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.composer textarea:focus {
+  box-shadow: none;
+  border-color: transparent;
+}
+
+.composer-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 4px 8px 8px 14px;
+}
+
+.composer-hint {
+  font-size: 11.5px;
+  color: var(--faint);
+  user-select: none;
+}
+
+.composer-hint-sep {
+  margin: 0 6px;
+  opacity: 0.5;
+}
+
+.send-btn {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--text-on-accent);
+  transition:
+    background var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+}
+
+.send-btn:hover:not(:disabled) {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+}
+
+.send-btn:active:not(:disabled) {
+  transform: none;
+}
+
+.send-btn:disabled {
+  /* [Aleph] `var(--border)` de fondo dejaba este botón INVISIBLE desde que los tokens de
+     borde son transparentes (el sistema prohíbe la línea). Se hunde al pozo, que es la
+     superficie que el sistema usa para lo inactivo, y conserva el gris de apoyo. */
+  background: var(--bg-sunken);
+  color: var(--muted);
+  cursor: default;
+  opacity: 1;
+}
+
+.agent-step {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  margin-bottom: 8px;
+}
+
+.agent-step .name {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.agent-step .status {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.dropzone {
+  border: 1.5px dashed var(--border-strong);
+  border-radius: var(--radius-md);
+  padding: 22px 16px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+  cursor: pointer;
+  transition:
+    border-color 0.15s var(--ease-out),
+    background 0.15s var(--ease-out),
+    color 0.15s var(--ease-out),
+    box-shadow 0.15s var(--ease-out);
+}
+
+.dropzone:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.dropzone.dragover {
+  border-color: var(--accent);
+  border-style: solid;
+  background: var(--accent-soft);
+  color: var(--accent);
+  box-shadow: var(--focus-ring);
+}
+
+button.linklike {
+  border: none;
+  background: none;
+  padding: 0;
+  color: var(--accent);
+  text-align: left;
+}
+
+button.linklike:hover:not(:disabled) {
+  background: none;
+  border: none;
+  text-decoration: underline;
+}
+
+/* Document row: name (wrapping) on the first line, date and remove control on
+   a second line, so long filenames never squeeze the metadata. */
+.matter-list li.doc-row {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+  padding: 10px 12px;
+  margin: 0 -12px;
+  border-radius: var(--radius-sm);
+  transition: background var(--duration-fast) var(--ease-out);
+}
+
+.matter-list li.doc-row:hover {
+  background: var(--accent-tint);
+}
+
+.doc-row-main {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+/* Name reads as content, not a link; green arrives on hover. */
+.doc-row-main .linklike {
+  flex: 1;
+  min-width: 0;
+  word-break: break-word;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.doc-row-main .linklike:hover {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.doc-row-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 23px;
+}
+
+.doc-row-meta .muted {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Destructive control earns its place on hover only. */
+.doc-remove {
+  margin-left: auto;
+  display: inline-flex;
+  border: none;
+  background: none;
+  padding: 4px;
+  color: var(--muted);
+  cursor: pointer;
+  opacity: 0;
+  transition:
+    opacity var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+
+.doc-row:hover .doc-remove,
+.doc-remove:focus-visible {
+  opacity: 1;
+}
+
+.doc-remove:hover:not(:disabled) {
+  color: var(--danger);
+  background: none;
+  border: none;
+}
+
+.doc-remove:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* ---------- Document viewer ---------- */
+
+/* The composer is covered by the document viewer. Cover its externally
+   anchored model chip as well so it cannot obscure document text. */
+body:has(.viewer-overlay) [data-aleph-chip] {
+  display: none !important;
+}
+
+.viewer-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  border: 0;
+  color: inherit;
+  background: var(--overlay-scrim);
+  backdrop-filter: blur(4px) saturate(1.05);
+  -webkit-backdrop-filter: blur(4px) saturate(1.05);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 32px;
+  z-index: var(--z-overlay);
+  /* Avoid an opacity-zero entry frame: reopening the document viewer must
+     be visible immediately in the installed WebKit surface. */
+}
+
+@keyframes overlay-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.985);
+  }
+}
+
+.viewer-panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 1240px;
+  max-height: calc(100vh - 64px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: var(--shadow-xl);
+  /* Keep document rendering independent of an entry animation frame. */
+}
+
+.viewer-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.viewer-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.viewer-title-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* File-type chip beside the document name. */
+.viewer-doctype {
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-border);
+  border-radius: 4px;
+  padding: 2px 6px;
+}
+
+.viewer-bar-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.viewer-bar-actions button {
+  font-size: 13px;
+  padding: 5px 12px;
+}
+
+.viewer-body {
+  display: flex;
+  overflow: hidden;
+  min-height: 0;
+  flex: 1;
+}
+
+/* Desk surface: slightly darker than the panel so the page reads as a sheet. */
+.viewer-doc {
+  flex: 1;
+  overflow: auto;
+  padding: 40px 48px 72px;
+  min-width: 0;
+  background: linear-gradient(180deg, rgba(10, 10, 10, 0.04), transparent 16px), var(--bg-sunken);
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+
+.viewer-panel-pdf { height: calc(100vh - 64px); }
+.viewer-conversion-note { margin: 0; padding: 10px 20px; background: var(--accent-soft); font-size: 13px; }
+
+.pdf-render {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.changes-panel {
+  width: 340px;
+  flex-shrink: 0;
+  overflow: auto;
+  border-left: 1px solid var(--border);
+  background: var(--bg);
+  padding: 0 16px 16px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+
+/* Summary + bulk actions stay pinned above a long change list. */
+.changes-head {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0 -16px 14px;
+  padding: 14px 16px 12px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.changes-count strong {
+  font-size: 18px;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  margin-right: 2px;
+}
+
+.changes-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.changes-actions button {
+  flex: 1;
+}
+
+/* One proposed change: the prior wording struck red above the new wording in
+   green, mirroring the in-document redline, with per-change accept/reject. */
+.change-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--panel);
+  padding: 12px;
+  margin-bottom: 10px;
+  box-shadow: var(--shadow-xs);
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.change-card:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-sm);
+}
+
+/* The change a chat link pointed at: ring plus a green wash that settles once
+   the viewer scrolls it into view. */
+.change-card.focused {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(90, 79, 214, 0.18), var(--shadow-md);
+  animation: change-arrive 1.2s ease-out;
+}
+
+@keyframes change-arrive {
+  0%,
+  35% {
+    background: var(--accent-soft);
+  }
+  100% {
+    background: var(--panel);
+  }
+}
+
+.change-author {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+/* Old/new share the citation grammar: a left rule keying the color. */
+.change-old,
+.change-new {
+  font-size: 13px;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  padding: 6px 8px;
+  border-radius: 0 4px 4px 0;
+}
+
+.change-old {
+  color: var(--danger);
+  text-decoration: line-through;
+  border-left: 2px solid var(--danger-border);
+  background: var(--danger-soft);
+  margin-bottom: 4px;
+}
+
+.change-new {
+  color: var(--accent);
+  border-left: 2px solid var(--accent);
+  background: var(--accent-soft);
+}
+
+.change-buttons {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.change-buttons button {
+  flex: 1;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 5px 0;
+  border-radius: var(--radius-sm);
+}
+
+.btn-accept {
+  background: var(--accent);
+  color: var(--text-on-accent);
+  border: 1px solid var(--accent);
+}
+
+.btn-accept:hover:not(:disabled) {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+
+.btn-accept:disabled,
+.btn-reject:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.btn-reject {
+  background: var(--panel);
+  color: var(--danger);
+  border: 1px solid var(--border);
+}
+
+.btn-reject:hover:not(:disabled) {
+  border-color: var(--danger-border);
+  background: var(--danger-soft);
+}
+
+/* Pending-change count beside a document in the rail / on the collapsed tab. */
+.redline-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: var(--accent);
+  color: var(--text-on-accent);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+/* The page: warm paper, book measure, layered drop shadow, refined serif. */
+.docx-render {
+  font-family: var(--font-serif);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.7;
+  max-width: 760px;
+  margin: 0 auto;
+  background: #fffdf9;
+  border: 1px solid rgba(10, 10, 10, 0.07);
+  border-radius: 2px;
+  padding: clamp(44px, 7vw, 88px) clamp(40px, 8vw, 96px);
+  box-shadow:
+    0 1px 2px rgba(10, 10, 10, 0.06),
+    0 8px 24px -8px rgba(10, 10, 10, 0.18),
+    0 28px 56px -28px rgba(90, 79, 214, 0.14);
+  text-rendering: optimizeLegibility;
+  font-kerning: normal;
+}
+
+/* Margin comments need gutter width — relax the measure when they exist. */
+.docx-render:has(.comment-margin-column:not(:empty)) {
+  max-width: 980px;
+}
+
+/* Tracked changes: insertion as a green highlighter pass, deletion struck quiet.
+   Docxodus emits <ins>/<del> for revisions; the class forms cover prefixed output. */
+.docx-render ins,
+.docx-render .docx-insertion {
+  color: #5a4fd6;
+  background: linear-gradient(transparent 62%, rgba(90, 79, 214, 0.16) 62%);
+  text-decoration: underline;
+  text-decoration-color: rgba(90, 79, 214, 0.45);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+.docx-render del,
+.docx-render .docx-deletion {
+  color: var(--danger);
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+  opacity: 0.85;
+}
+
+/* Only the margin comment column is amber. Docxodus wraps the whole document in
+   a .comment-margin-container layout div, so a greedy [class*="comment"] selector
+   would tint all body text — scope strictly to the comment column. */
+.docx-render .comment-margin-column {
+  color: var(--warn);
+}
+
+/* With no comments Docxodus still emits an empty margin column that reserves its
+   fixed width, leaving a wide blank gutter right of the text. Collapse it when
+   empty so the document content flexes to full width. */
+.docx-render .comment-margin-column:empty {
+  display: none;
+}
+
+/* Loading: the sheet develops in place — same .docx-render chrome, so there is
+   no layout jump when the rendered HTML lands. */
+.docx-skeleton .sk-line {
+  height: 12px;
+  border-radius: 3px;
+  margin-bottom: 16px;
+  background: linear-gradient(90deg, #ecead4 25%, #f5f3ea 45%, #ecead4 65%);
+  background-size: 200% 100%;
+  animation: sk-shimmer 1.4s ease-in-out infinite;
+}
+
+.docx-skeleton .sk-line:nth-child(1) {
+  width: 55%;
+  height: 18px;
+  margin: 0 auto 32px;
+}
+
+.docx-skeleton .sk-line:nth-child(3n) {
+  width: 94%;
+}
+
+.docx-skeleton .sk-line:nth-child(5n) {
+  width: 72%;
+  margin-bottom: 28px;
+}
+
+.docx-skeleton .sk-line:nth-child(7n) {
+  width: 84%;
+}
+
+/* Markdown rendering for assistant answers and subagent reports. The .msg
+   wrapper sets white-space: pre-wrap for raw text; reset it here so markdown
+   blocks control their own spacing. */
+.markdown {
+  white-space: normal;
+}
+
+.markdown > :first-child {
+  margin-top: 0;
+}
+
+.markdown > :last-child {
+  margin-bottom: 0;
+}
+
+.markdown h1,
+.markdown h2,
+.markdown h3,
+.markdown h4 {
+  margin: 16px 0 6px;
+  line-height: 1.3;
+  color: var(--text);
+}
+
+.markdown h1 {
+  font-size: 19px;
+  font-family: var(--font-display);
+  letter-spacing: var(--tracking-display);
+}
+
+.markdown h2 {
+  font-size: 16px;
+}
+
+.markdown h3 {
+  font-size: 14px;
+}
+
+.markdown h4 {
+  font-size: 13px;
+}
+
+.markdown p {
+  margin: 6px 0;
+}
+
+.markdown ul,
+.markdown ol {
+  margin: 6px 0;
+  padding-left: 20px;
+}
+
+.markdown li {
+  margin: 2px 0;
+}
+
+.markdown blockquote {
+  border-left: 3px solid var(--accent);
+  background: var(--accent-soft);
+  margin: 8px 0;
+  padding: 6px 12px;
+  border-radius: 0 4px 4px 0;
+  color: var(--muted);
+}
+
+.markdown blockquote p {
+  margin: 0;
+}
+
+.markdown code {
+  background: var(--accent-soft);
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.markdown hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 16px 0;
+}
+
+.markdown strong {
+  color: var(--text);
+}
+
+/* Settings: opened from the sidebar. A left rail of tabs (models, providers,
+   drafting, defaults, approvals, appearance) beside one scrolling content pane,
+   inside the picker modal shell. Fixed height so switching tabs never resizes
+   the modal. */
+.settings-panel {
+  max-width: 960px;
+  height: min(680px, calc(100vh - 64px));
+}
+
+.settings-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.settings-nav {
+  width: 184px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--border);
+  background: var(--bg);
+  border-bottom-left-radius: var(--radius-lg);
+  padding: 14px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.settings-nav button {
+  position: relative;
+  text-align: left;
+  padding: 8px 12px;
+  border: none;
+  background: none;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.settings-nav button:hover:not(:disabled) {
+  background: rgba(10, 10, 10, 0.045);
+  border: none;
+  color: var(--text);
+}
+
+.settings-nav button.active {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.settings-nav button.active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 7px;
+  bottom: 7px;
+  width: 3px;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+}
+
+.settings-content {
+  flex: 1;
+  min-width: 0;
+  overflow: auto;
+  padding: 18px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+
+/* Segmented control: the pick-one primitive of the preference tabs. Track +
+   raised active chip. */
+.settings-seg-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.settings-seg {
+  display: inline-flex;
+  align-self: flex-start;
+  gap: 2px;
+  padding: 3px;
+  background: var(--bg-sunken);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+}
+
+.settings-seg button {
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  padding: 4px 13px;
+  font-size: 12.5px;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.settings-seg button:hover:not(:disabled) {
+  background: transparent;
+  border: none;
+  color: var(--text);
+}
+
+.settings-seg button.active {
+  background: var(--panel);
+  color: var(--accent);
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+}
+
+.settings-textarea {
+  width: 100%;
+  resize: vertical;
+  font: inherit;
+  font-size: 13px;
+}
+
+.settings-toggle-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 12.5px;
+}
+
+.settings-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+/* Hover-help badge beside a label (components Settings InfoTip), so dense guidance
+   lives in a tooltip instead of a paragraph under every field. */
+.info-tip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  margin-left: 5px;
+  border-radius: 50%;
+  border: 1px solid var(--border-strong);
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 700;
+  font-style: normal;
+  line-height: 1;
+  cursor: help;
+  vertical-align: middle;
+}
+
+.info-tip:hover {
+  color: var(--text);
+  border-color: var(--text);
+}
+
+.settings-connected {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+/* Provider / toggle cards: paper card + status dot instead of a green slab. */
+.settings-conn {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--panel);
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.settings-conn:hover {
+  border-color: var(--border-strong);
+}
+
+.settings-connected .settings-conn-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.settings-connected .settings-conn-name::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent-muted);
+  box-shadow: 0 0 0 3px rgba(93, 122, 109, 0.18);
+}
+
+.settings-conn.off {
+  background: var(--bg);
+  opacity: 1;
+}
+
+.settings-conn.off .settings-conn-name {
+  color: var(--muted);
+}
+
+.settings-conn.off .settings-conn-name::before {
+  background: var(--border-strong);
+  box-shadow: none;
+}
+
+.settings-needs {
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--panel);
+  margin-bottom: 12px;
+}
+
+/* Field rows inside a needs-setup card: fixed-width labels so the inputs line
+   up, modest top gap so the rows read as one form under the provider name. */
+.settings-field {
+  margin-top: 8px;
+}
+
+.settings-field-label {
+  flex: 0 0 120px;
+}
+
+.settings-error {
+  display: block;
+  margin-top: 8px;
+  padding: 7px 10px;
+  font-size: 12px;
+  color: var(--danger);
+  background: var(--danger-soft);
+  border: 1px solid var(--danger-border);
+  border-radius: var(--radius-sm);
+}
+
+.settings-conn-name {
+  font-weight: 600;
+}
+
+.settings-conn-meta {
+  font-size: 12px;
+  margin-left: auto;
+}
+
+/* Legacy pill switch — superseded by .switch; kept until all call sites move. */
+.settings-switch {
+  font-size: 12px;
+  padding: 2px 12px;
+  border-radius: var(--radius-pill);
+  min-width: 48px;
+}
+
+.settings-switch.on {
+  background: var(--accent);
+  color: var(--text-on-accent);
+  border-color: var(--accent);
+}
+
+.settings-switch.on:hover:not(:disabled) {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+
+/* Real toggle switch: track + sliding knob, state carried by .on. */
+.switch {
+  position: relative;
+  flex-shrink: 0;
+  width: 38px;
+  height: 22px;
+  padding: 0;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-strong);
+  background: #e7e7e2;
+  transition:
+    background var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out);
+}
+
+.switch::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(10, 10, 10, 0.3);
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+.switch.on {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.switch.on::after {
+  transform: translateX(16px);
+}
+
+.switch:hover:not(:disabled) {
+  background: #dededa;
+  border-color: var(--border-strong);
+}
+
+.switch.on:hover:not(:disabled) {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+
+.switch-state {
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+/* Settings fields: a stacked label/field grid so the form reads as a unit; the
+   add button sits flush right on its own row. */
+.settings-add {
+  align-self: flex-start;
+  margin-top: 4px;
+}
+
+.settings-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px 0;
+  border-top: 1px solid var(--border);
+}
+
+.settings-section:first-of-type {
+  border-top: none;
+  padding-top: 4px;
+}
+
+.settings-section h3 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 650;
+  letter-spacing: 0.01em;
+}
+
+.settings-hint {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.45;
+  max-width: 60ch;
+}
+
+/* Callout variant for a hint the firm should act on (e.g. missing search key). */
+.settings-warning {
+  padding: 8px 10px;
+  border: 1px solid var(--danger-border);
+  border-radius: 6px;
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+/* Masked API-key input + its show/hide toggle, sat on one row. */
+.settings-password {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.settings-password > input {
+  flex: 1;
+  min-width: 0;
+}
+
+.settings-reveal {
+  flex: 0 0 auto;
+}
+
+.settings-row {
+  gap: 8px;
+  align-items: center;
+}
+
+/* Direct children only: the jurisdiction popover nests its own checkboxes
+   inside a settings-row and they must not inherit flex: 1. */
+.settings-row > input,
+.settings-row > select {
+  flex: 1;
+  min-width: 0;
+}
+
+.settings-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.settings-notice {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-border);
+  border-left: 3px solid var(--accent);
+  color: var(--accent-active);
+  font-size: 12.5px;
+}
+
+/* Toasts: transient notifications stacked bottom-right, above the doc viewer
+   overlay. White card, soft shadow, a colored left border + icon keyed to type. */
+.toast-stack {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: var(--z-toast);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 360px;
+}
+
+.toast {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--muted);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  box-shadow: var(--shadow-lg);
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--text);
+  animation: toast-in 220ms var(--ease-out);
+}
+
+.toast-icon {
+  flex-shrink: 0;
+  display: inline-flex;
+  margin-top: 1px;
+}
+
+.toast-success {
+  border-left-color: var(--accent);
+}
+
+.toast-success .toast-icon {
+  color: var(--accent);
+}
+
+.toast-warning {
+  border-left-color: var(--warn);
+}
+
+.toast-warning .toast-icon {
+  color: var(--warn);
+}
+
+.toast-error {
+  border-left-color: var(--danger);
+}
+
+.toast-error .toast-icon {
+  color: var(--danger);
+}
+
+.toast-info {
+  border-left-color: var(--info);
+}
+
+.toast-info .toast-icon {
+  color: var(--info);
+}
+
+.toast-leaving {
+  animation: toast-out 180ms ease-in forwards;
+}
+
+.toast-msg {
+  flex: 1;
+}
+
+.toast-close {
+  flex-shrink: 0;
+  display: inline-flex;
+  border: none;
+  background: none;
+  padding: 0;
+  margin-top: 1px;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.toast-close:hover:not(:disabled) {
+  color: var(--text);
+  background: none;
+  border: none;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes toast-out {
+  to {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+}
+
+/* Approval card for a parked edit-tool call (see ChatPanel PermissionCard).
+   Accent rail + elevation: it blocks the turn, so it earns the weight. */
+.permission-card {
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius-md);
+  background: var(--panel);
+  padding: 12px 14px;
+  margin-bottom: 10px;
+  box-shadow: var(--shadow-md);
+}
+
+.permission-title {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.permission-preview {
+  margin-bottom: 8px;
+}
+
+.permission-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.permission-actions button {
+  font-size: 13px;
+}
+
+.permission-reject {
+  border-color: var(--danger-border);
+  color: var(--danger);
+}
+
+.permission-reject:hover:not(:disabled) {
+  background: var(--danger-soft);
+  border-color: var(--danger-border);
+}
+
+/* Skill / agent source view: a roomier reading modal than the default picker,
+   with the markdown tightened up for dense reference text. */
+.doc-panel {
+  max-width: 780px;
+  height: min(84vh, 920px);
+}
+
+.doc-panel .picker-body {
+  gap: 4px;
+  padding: 16px 20px 20px;
+}
+
+.doc-panel .markdown p,
+.doc-panel .markdown ul,
+.doc-panel .markdown ol {
+  margin: 6px 0;
+}
+
+.doc-panel .markdown li {
+  margin: 3px 0;
+}
+
+/* ---------- Responsive: below ~960px the rail collapses to icons and the
+   side-by-side grids stack. ---------- */
+
+@media (max-width: 960px) {
+  .sidebar {
+    width: 56px;
+  }
+
+  .sidebar .wordmark,
+  .sidebar .nav-item span,
+  .sidebar .sidebar-label,
+  .sidebar .sidebar-convos,
+  .sidebar .sidebar-matter {
+    display: none;
+  }
+
+  .sidebar .nav-item {
+    justify-content: center;
+  }
+
+  .sidebar .nav-item.active::before {
+    left: -6px;
+  }
+
+  .container {
+    padding: 16px;
+  }
+
+  .matter-body,
+  .matter-body.docs-collapsed {
+    grid-template-columns: 1fr;
+  }
+
+  .docs-rail {
+    position: static;
+    max-height: none;
+  }
+
+  .workspace.with-artifact {
+    grid-template-columns: 1fr;
+  }
+
+  .row {
+    flex-wrap: wrap;
+  }
+
+  .picker-wide .assistant-option {
+    grid-template-columns: 1fr;
+    row-gap: 4px;
+  }
+
+  .page-head {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .viewer-overlay {
+    padding: 12px;
+  }
+
+  .changes-panel {
+    width: 280px;
+  }
+}
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .sk-line,
+  .skeleton-row,
+  .skeleton-line,
+  .docx-skeleton .sk-line {
+    animation: none;
+  }
+
+  .onboard-phrase,
+  .viewer-overlay,
+  .viewer-panel,
+  .picker-panel,
+  .jx-popover,
+  .toast,
+  .toast-leaving,
+  .change-card.focused {
+    animation: none;
+  }
+
+  .working-dot,
+  .msg.assistant.streaming .markdown > :last-child::after {
+    animation: none;
+  }
+
+  button,
+  .switch,
+  .switch::after,
+  .assistant-caret,
+  .starter,
+  .starter .starter-arrow,
+  .send-btn {
+    transition: none;
+  }
+}
+
+/* ── [Aleph · 2026-08-11] LA ACCIÓN PRIMARIA INVIERTE EL CAMPO ──────────────────────────
+ *
+ * Última regla del archivo, a propósito: gana por orden sin tocar las reglas del stack, así
+ * que un merge con upstream sigue siendo limpio y este bloque queda como la diferencia.
+ *
+ * `button.primary` y `.btn-accept` pintaban su fondo con `var(--accent)`. Con el acento en
+ * violeta quedarían violetas, y en este sistema eso está mal por otra razón que el color:
+ * el 90/8/2 reserva el acento para el 8% —el chip activo, el punto de estado, el foco— y la
+ * acción primaria se resuelve INVIRTIENDO el campo: tinta de fondo, papel de letra. Es lo
+ * que hace `.ds-btn` en `aleph-ds.css`, y por eso el botón "Traer" del catálogo es negro en
+ * claro y blanco en oscuro. Los otros trece usos de `var(--accent)` como fondo (checkbox
+ * marcado, dots de estado, switches encendidos) SÍ son el 8% y se quedan como están.
+ *
+ * El `box-shadow` con el `inset` blanco también se va: era un relieve, y el sistema no tiene
+ * relieves — la jerarquía es sombra ambiental + radio. */
+button.primary,
+.btn-accept {
+  background: var(--text);
+  color: var(--panel);
+  border-color: transparent;
+  box-shadow: none;
+}
+
+button.primary:hover:not(:disabled),
+.btn-accept:hover:not(:disabled) {
+  background: var(--text);
+  border-color: transparent;
+  opacity: 0.88;
+}
+
+button.primary:active:not(:disabled),
+.btn-accept:active:not(:disabled) {
+  background: var(--text);
+  opacity: 0.78;
+}
+
+/* ── [Aleph] LA ACCIÓN PRIMARIA DESHABILITADA ───────────────────────────────────────────
+ *
+ * `button:disabled { opacity: .5 }` atenúa el botón ENTERO, letra incluida: el negro al 50%
+ * sobre blanco da un gris medio y el blanco de la letra queda lavado encima — dos grises
+ * peleando, que es justo lo que se veía mal.
+ *
+ * Un botón inactivo no es un botón despintado: es un botón que no invita. Se resuelve como
+ * lo resuelve el sistema —bajando de plano, no bajando de opacidad—: el fondo pasa al gris
+ * de apoyo (`--muted`, el mismo que rotula lo secundario) y la letra se queda BLANCA y
+ * entera, así el texto sigue leyéndose y el botón igual se lee apagado contra el negro pleno
+ * del habilitado. `opacity: 1` cancela la regla global sólo para estos dos. */
+button.primary:disabled,
+.btn-accept:disabled {
+  /* NEGRO PLENO, sin gris y sin atenuar. El botón inactivo es el MISMO botón: misma tinta
+     de fondo, misma letra blanca. Lo que cambia es que no responde (cursor y `:hover`
+     anulados), no su color. Antes se veía gris por dos capas que ya no están: la regla
+     global `opacity: .5` —que lavaba fondo y letra juntos— y un `color-mix` que probé y
+     seguía dando gris. */
+  background: var(--text);
+  color: var(--panel);
+  border-color: transparent;
+  opacity: 1;
+  cursor: default;
+}

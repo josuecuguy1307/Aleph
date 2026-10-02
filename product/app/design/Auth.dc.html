@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+<script src="./auth.js"></script>
+<script src="./aleph-config.js"></script>
+<script src="./vendor/supabase.min.js"></script>
+<script src="./supabase-auth.js"></script>
+<script src="./paywall.js"></script>
+<script src="./i18n.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="vendor/fonts.css"><!-- [Casa 2 · F1.b] fuentes locales: antes 2 preconnect + css2 de Google -->
+<link rel="stylesheet" href="aleph-tokens.css"><!-- [identidad visual] la piel: tokens, forma y tipografía en un solo lugar -->
+<style>
+  /* [sistema 2026-07-31] El gradiente radial de las dos columnas MURIÓ: el sistema pide
+     CAMPO PLANO (--page-bg) y la jerarquía la ponen el plano (r30 + sombra ambiental) y
+     el pozo (r22, sin sombra). Con eso se van también los 6 hexes hardcodeados de
+     --hero-left/--hero-right, que eran los últimos colores fuera del sistema de tokens.
+     El ::placeholder local (#6E6557) también se fue: aleph-tokens.css ya lo declara con
+     var(--faint), y esta pantalla no tiene ni un solo <input> (CONTRACT-AUTH-v2). */
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:var(--page-bg);font-family:var(--font-ui);color:var(--ink);-webkit-font-smoothing:antialiased}
+  a{text-decoration:none;color:inherit}
+  input{font-family:inherit}
+  /* fadeUp es la ÚNICA animación que esta pantalla usa (el banner de error). livePulse,
+     spin, sweep, floaty y barRise eran herencia del demo falso que ya se había borrado. */
+  @keyframes fadeUp{0%{transform:translateY(7px)}100%{transform:translateY(0)}}
+
+  /* PIZARRA DE CAFETERÍA — el mismo gesto que el saludo de La Sala, para que la app hable
+     con una sola voz: frases que rotan de idioma con un fade calmo. CSS puro: cada span
+     corre la misma animación de 35s con su `animation-delay` escalonado, así que no hace
+     falta JS — importante acá, porque Auth es PRE-LOGIN y no carga nav.js ni aleph-ds.js. */
+  .au-pizarra{ position:relative; margin-top:34px; width:100%; max-width:470px; height:58px }
+  .au-f{ position:absolute; inset:0; display:flex; align-items:center; opacity:0;
+    font:200 var(--fs-3xl)/1.1 var(--font-ui); letter-spacing:var(--tracking-title);
+    color:var(--ink); white-space:nowrap; animation:greetcycle 60s infinite }
+  /* 12 turnos de 5s = 60s de ciclo. Los porcentajes se recalcularon para ese total:
+     entra en 0.8s, se sostiene hasta 4.2s, sale a los 5s — sin pisarse con la siguiente. */
+  @keyframes greetcycle{ 0%{opacity:0;transform:translateY(5px)} 1.3%{opacity:1;transform:translateY(0)}
+    7%{opacity:1;transform:translateY(0)} 8.3%{opacity:0;transform:translateY(-5px)} 100%{opacity:0} }
+  /* quien pide menos movimiento se queda con la primera frase, fija */
+  @media (prefers-reduced-motion: reduce){ .au-f{ animation:none } .au-f:first-child{ opacity:1 } }
+</style>
+
+<style id="aleph-theme-style">
+/* El tema entra entero por los tokens (aleph-tokens.css). Esta pantalla ya no necesita
+   override propio de tema: no le queda ningún color hardcodeado que dar vuelta. */
+</style>
+<script src="./theme.js"></script>
+</helmet>
+
+<div style="min-height:100vh;display:grid;grid-template-columns:1.05fr .95fr">
+
+  <!-- ============ LEFT: EL ARGUMENTO ============ -->
+  <!-- [pedido de persona usuaria] El bloque de marca baja al CENTRO vertical, para quedar a la altura
+       del formulario de la derecha en vez de pegado al techo. `justify-content:center`
+       sobre la columna: la marca, la pizarra y la línea viajan juntas. -->
+  <div style="position:relative;overflow:hidden;background:var(--page-bg);padding:44px 48px;display:flex;flex-direction:column;justify-content:center">
+    <!-- el halo de identidad: el 8% de acento, ahora con el token en vez de un rgba suelto -->
+    <div style="position:absolute;top:-110px;left:-80px;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,var(--accent-soft) 0%,transparent 70%);pointer-events:none"></div>
+
+    <!-- [minimalista · pedido de persona usuaria] El panel era un folleto: tesis + tres tarjetas de
+         argumentos + línea de confianza. Todo eso se fue. Queda lo único que hace falta en
+         una puerta de entrada: quién sos y una razón para pasar.
+
+         La MARCA manda: la mascota nueva grande sobre su halo, y el wordmark al lado.
+         Debajo, la pizarra de cafetería — la MISMA que ya usa el saludo de La Sala, para que
+         el gesto sea uno solo en todo el producto: frases que rotan de idioma con un fade
+         calmo. Es CSS puro (los `animation-delay` escalonan los turnos), así que funciona
+         acá aunque Auth sea pre-login y no cargue nav.js ni aleph-ds.js. -->
+    <div style="position:relative;display:flex;align-items:center;gap:16px">
+      <span style="width:76px;height:76px;border-radius:26px;flex:none;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle,var(--accent-soft) 0%,transparent 74%)">
+        <img src="assets/aleph-mascot-v2.png" alt="" width="56" height="56" style="display:block">
+      </span>
+      <span class="ds-brand" style="font-size:40px;line-height:1">Aleph</span>
+    </div>
+
+    <div class="au-pizarra" aria-live="polite">
+      <span class="au-f" style="animation-delay:0s">Hora de trabajar</span>   <!-- trabajo · es -->
+      <span class="au-f" style="animation-delay:5s">Time to work</span>   <!-- trabajo · en -->
+      <span class="au-f" style="animation-delay:10s">Prends un café</span>   <!-- café · fr -->
+      <span class="au-f" style="animation-delay:15s">Buenos días</span>   <!-- saludo · es -->
+      <span class="au-f" style="animation-delay:20s">Tempo di creare</span>   <!-- creatividad · it -->
+      <span class="au-f" style="animation-delay:25s">まずはコーヒー</span>   <!-- café · ja -->
+      <span class="au-f" style="animation-delay:30s">Let's make something</span>   <!-- creatividad · en -->
+      <span class="au-f" style="animation-delay:35s">Guten Tag</span>   <!-- saludo · de -->
+      <span class="au-f" style="animation-delay:40s">Bora criar</span>   <!-- creatividad · pt -->
+      <span class="au-f" style="animation-delay:45s">¿Otro café?</span>   <!-- café · es -->
+      <span class="au-f" style="animation-delay:50s">Time for good ideas</span>   <!-- creatividad · en -->
+      <span class="au-f" style="animation-delay:55s">커피 한 잔</span>   <!-- café · ko -->
+    </div>
+
+    <div class="ds-sub" style="position:relative;margin-top:6px">Arma tu agente.</div>
+
+  </div>
+
+  <!-- ============ RIGHT: FORM ============ -->
+  <div style="display:flex;align-items:center;justify-content:center;padding:40px 38px;background:var(--page-bg)">
+    <!-- el PLANO DE CONTENIDO: r30 + la única sombra ambiental de la pantalla. Es lo que
+         separa el formulario del campo, sin una sola línea de por medio. -->
+    <div class="ds-plane" style="width:100%;max-width:424px">
+
+      <!-- idioma ES|EN -->
+      <div style="display:flex;justify-content:flex-end;gap:2px;margin-bottom:12px">
+        <button onClick="{{ langEs }}" style="{{ langEsStyle }}">ES</button>
+        <button onClick="{{ langEn }}" style="{{ langEnStyle }}">EN</button>
+      </div>
+      <!-- toggle · el pozo del selector: --paper2, sin borde (antes 1px solid var(--line)) -->
+      <div style="display:flex;background:var(--paper2);border-radius:var(--r-md);padding:4px;margin-bottom:26px">
+        <button onClick="{{ pickRegister }}" style="{{ regTabStyle }}">{{ tabCrear }}</button>
+        <button onClick="{{ pickLogin }}" style="{{ loginTabStyle }}">{{ tabIngresar }}</button>
+      </div>
+
+      <!-- [minimalista] "Configura en 30 segundos" y su bajada se fueron: el formulario
+           ya dice lo que es con sus propios botones, y la marca del panel izquierdo ya
+           dio el contexto. Los bindings {{ headline }} y {{ subhead }} siguen calculándose
+           en la lógica —no se toca— y quedan disponibles si alguna vez vuelven. -->
+
+      <!-- login suave: POR QUÉ estás acá (copy honesto por motivo) + garantía de fusión -->
+      <sc-if value="{{ motivoShow }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:flex-start;gap:10px;background:var(--accent-soft);border-radius:var(--r-md);padding:12px 14px;margin:0 0 20px">
+          <span class="ds-dot ds-dot-accent" style="margin-top:7px"></span>
+          <div><div class="ds-name" style="font-size:12.5px;line-height:1.4">{{ motivoTitle }}</div><div class="ds-meta" style="margin-top:3px;line-height:1.45">{{ motivoSub }}</div></div>
+        </div>
+      </sc-if>
+
+      <!-- OAuth · Google + GitHub (CONTRACT-AUTH-v2, se CONSERVA). Magic-link NO tiene botón:
+           el correo no es fiable sin dominio propio, y un botón que falla es peor que
+           uno que no está (ver CONTRACT-AUTH-v2 §3). El login por email+contraseña sigue
+           RETIRADO de la pantalla (anti pre-hijacking); el login suave no lo reabre. -->
+      <!-- Los dos botones de proveedor pasan a la superficie del sistema (--paper2, r18, sin
+           borde). Los LOGOS SE CONSERVAN tal cual: el de Google mantiene sus cuatro paths de
+           marca intactos; al de GitHub sólo se le cambió el `fill` del <svg> de "#fff" fijo a
+           `currentColor` — misma marca, mismo path, pero visible también en tema claro (sobre
+           --paper2 #F4F4F5 un logo blanco desaparecía). -->
+      <button onClick="{{ entrarGoogle }}" style="width:100%;display:flex;align-items:center;justify-content:center;gap:11px;background:var(--paper2);color:var(--ink);border:none;border-radius:var(--r-md);padding:14px;font:400 13.5px var(--font-ui);cursor:pointer" style-hover="background:var(--accent-soft)">
+        <svg width="19" height="19" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path></svg>
+        {{ googleLabel }}
+      </button>
+
+      <button onClick="{{ entrarGithub }}" style="width:100%;display:flex;align-items:center;justify-content:center;gap:11px;background:var(--paper2);color:var(--ink);border:none;border-radius:var(--r-md);padding:14px;font:400 13.5px var(--font-ui);cursor:pointer;margin-top:10px" style-hover="background:var(--accent-soft)">
+        <svg width="19" height="19" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path></svg>
+        {{ githubLabel }}
+      </button>
+
+      <!-- error banner · el rojo es el 2%: vive en el punto de estado y en el fondo, no en el
+           texto. Los hexes sueltos (#E8B0A6 · #C99) se fueron: título en --ink, pista en --muted. -->
+      <sc-if value="{{ err.show }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:flex-start;gap:10px;background:var(--red-bg);border-radius:var(--r-md);padding:12px 14px;margin:14px 0 0;animation:fadeUp .25s ease both">
+          <span class="ds-dot ds-dot-err" style="margin-top:7px"></span>
+          <div><div class="ds-name" style="font-size:12.5px;line-height:1.35">{{ err.title }}</div><div class="ds-meta" style="margin-top:3px;line-height:1.45">{{ err.hint }}</div></div>
+        </div>
+      </sc-if>
+
+      <p class="ds-meta" style="line-height:1.5;text-align:center;margin:22px 0 0">Al continuar aceptas los <span style="color:var(--ink);text-decoration:underline;cursor:pointer">Términos</span> y la <span style="color:var(--ink);text-decoration:underline;cursor:pointer">Privacidad</span>.</p>
+
+      <!-- login suave: si hay sesión local viva, el login NUNCA es obligatorio -->
+      <sc-if value="{{ canSkip }}" hint-placeholder-val="{{ false }}">
+        <p style="text-align:center;margin:14px 0 0"><a href="Home.dc.html" style="font:400 12px var(--font-ui);color:var(--muted)" style-hover="color:var(--ink)">{{ skipLabel }}</a></p>
+      </sc-if>
+
+    </div>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#8B6CF0&quot;}}">
+class Component extends DCLogic {
+  // step5 · sin campos magic/password (el form de contraseña se RETIRÓ, CONTRACT-AUTH-v2);
+  // login-suave suma `motivo` para el banner de POR QUÉ se ofrece el login.
+  state = { mode:'register', email:'', pass:'', loading:false, error:null, motivo:'' };
+
+  pick(mode){ this.setState({mode, error:null, pass:''}); }
+  setField(k,v){ this.setState({[k]:v, error:null}); }
+
+  // [CONTRACT-AUTH-v2] El login por email+contraseña se RETIRÓ de esta pantalla.
+  // No fue por comodidad: /v1/auth/register no verifica el email, y esa es justo la
+  // puerta del pre-hijacking que cerramos en supabase_jwt.resolver_cuenta (un atacante
+  // pre-registra la dirección de la víctima y se queda con su cuenta cuando ella entra
+  // por Google). Con sólo proveedores OAuth —que verifican el email de su lado— la
+  // clase entera de ataque desaparece, en vez de quedar mitigada.
+  // El backend /v1/auth/* SIGUE VIVO para el CLI local y los harnesses; lo que se quitó
+  // es ofrecérselo a un usuario final. login-suave NO reabre el form de contraseña: la
+  // FUSIÓN del trabajo local se dispara en el login OAuth (_entrar stashea el token device
+  // antes de irse, y al volver Home la funde vía /v1/auth/merge-local).
+  forgot(){ this.setState({error:'forgot'}); }
+  // ── CONTRACT-AUTH-v2 · los dos proveedores que NO dependen del correo ──────
+  // El SDK redirige a Supabase, vuelve con la sesión, y supabase-auth.js escribe el
+  // access_token en sessionStorage.puppet_user.session_token — el MISMO slot que
+  // auth.js ya inyecta como Bearer. Por eso ninguna otra pantalla se entera del cambio.
+  async _entrar(proveedor){
+    if(!window.alephAuth || !window.alephAuth.disponible()){
+      this.setState({error:'authfail'}); return;   // sin SDK/config: honesto, no falso
+    }
+    // login suave · FUSIÓN: si venís trabajando local (device user), stasheá el token local
+    // ANTES de irte al OAuth. Al volver, la sesión de la cuenta PISA la local, así que
+    // capturarlo después sería tarde; Home lo funde vía /v1/auth/merge-local (retryMerge).
+    try{ const A=window.AlephSession, p=A&&A.get&&A.get();
+      if(p&&p.session_token&&A.isAnon&&A.isAnon(p)) localStorage.setItem('aleph_merge_pending', p.session_token);
+    }catch(e){}
+    this.setState({loading:true, error:null});
+    try{ await window.alephAuth.entrarCon(proveedor); }   // navega afuera; no vuelve acá
+    catch(e){
+      // NUNCA tragar el error en silencio: el genérico 'authfail' tapaba la causa real.
+      try{ console.error('[auth] entrarCon('+proveedor+') falló:', e); }catch(_){}
+      this.setState({loading:false, error:'authfail'});
+    }
+  }
+  entrarGoogle(){ this._entrar('google'); }
+  entrarGithub(){ this._entrar('github'); }
+
+  componentDidMount(){
+    const a=this.props.accent; if(a) document.documentElement.style.setProperty('--accent',a);
+    // login suave: ?motivo= dice POR QUÉ se ofrece el login (sync · traer · premium)
+    try{
+      const m=new URLSearchParams(location.search).get('motivo')||'';
+      if(m==='sync'||m==='traer'||m==='premium') this.setState({motivo:m});
+    }catch(e){}
+  }
+  componentDidUpdate(p){ const a=this.props.accent; if(p&&p.accent!==a&&a) document.documentElement.style.setProperty('--accent',a); }
+
+  renderVals(){
+    const s=this.state, isLogin=s.mode==='login', isReg=s.mode==='register';
+
+    const T=window.t||function(k){return k;};   // i18n (ES/EN); fallback a la clave si no cargó
+    const _lang=(window.AlephI18n&&window.AlephI18n.lang&&window.AlephI18n.lang())||'es';
+    const ERR={
+      bademail:{title:T('auth.err.bademail.t'),hint:T('auth.err.bademail.h')},
+      taken:{title:T('auth.err.taken.t'),hint:T('auth.err.taken.h')},
+      badcreds:{title:T('auth.err.badcreds.t'),hint:T('auth.err.badcreds.h')},
+      badpass:{title:T('auth.err.badpass.t'),hint:T('auth.err.badpass.h')},
+      forgot:{title:T('auth.err.forgot.t'),hint:T('auth.err.forgot.h')},
+      authfail:{title:T('auth.err.authfail.t'),hint:T('auth.err.authfail.h')},
+      googlesoon:{title:T('auth.err.googlesoon.t'),hint:T('auth.err.googlesoon.h')},
+    };
+    const err = s.error ? {show:true, title:ERR[s.error].title, hint:ERR[s.error].hint} : {show:false};
+
+    const tabBase='flex:1;border:none;border-radius:var(--r-sm);padding:9px 0;font:inherit;font-size:13.5px;font-weight:500;cursor:pointer;transition:all .15s;';
+    const on='background:var(--accent);color:var(--on-accent)', off='background:none;color:var(--muted)';
+
+    // (panel izquierdo: demo falso eliminado — cero datos inventados; ahora son las 3 diferencias reales, estáticas)
+
+    return {
+      // tabs
+      pickRegister:()=>this.pick('register'), pickLogin:()=>this.pick('login'),
+      regTabStyle: tabBase+(isReg?on:off), loginTabStyle: tabBase+(isLogin?on:off),
+      isLogin,
+      headline: T(isLogin?'auth.head_login':'auth.head_register'),
+      subhead: T(isLogin?'auth.sub_login':'auth.sub_register'),
+      // fields
+      // submit
+      // magic
+      magicLabel: s.magic?T('common.volver'):('✨ '+T('auth.magic_alt')),
+      langEs:()=>window.AlephI18n&&window.AlephI18n.setLang('es'),
+      langEn:()=>window.AlephI18n&&window.AlephI18n.setLang('en'),
+      langEsStyle:'border:none;background:none;cursor:pointer;font:inherit;font-size:11.5px;font-weight:500;padding:3px 8px;border-radius:var(--r-xs);'+(_lang==='es'?'background:var(--accent);color:var(--on-accent)':'color:var(--faint)'),
+      langEnStyle:'border:none;background:none;cursor:pointer;font:inherit;font-size:11.5px;font-weight:500;padding:3px 8px;border-radius:var(--r-xs);'+(_lang==='en'?'background:var(--accent);color:var(--on-accent)':'color:var(--faint)'),
+      tabCrear:T('auth.tab_crear'), tabIngresar:T('auth.tab_ingresar'), googleLabel:T('auth.google'),
+      githubLabel:(this.state.mode==='register'?'Registrarme':'Entrar')+' con GitHub',
+      // login suave: banner de motivo + salida honesta si hay sesión local viva
+      motivoShow:!!s.motivo,
+      motivoTitle:s.motivo?T('auth.motivo.'+s.motivo):'',
+      motivoSub:T('auth.motivo.sub'),
+      /* [persona usuaria · "no hay manera de volver"] Antes esto exigía que YA existiera una sesión
+         local anónima viva. Si llegabas al login sin una —instalación nueva, o después de
+         cerrar sesión— la pantalla era un callejón sin salida: ni volver ni seguir sin
+         cuenta. Y contradecía el principio que este mismo archivo declara arriba, "el login
+         se OFRECE, no se exige".
+         La salida es SIEMPRE visible. Home funciona en modo local anónimo (es su estado por
+         defecto: "Trabajas local en este equipo"), así que volver siempre lleva a algún lado
+         útil. No se toca nada del flujo de autenticación: es un link a Home. */
+      canSkip:true,
+      skipLabel:T('auth.skip_local'),
+      // misc
+      err,
+      entrarGoogle:()=>this.entrarGoogle(), entrarGithub:()=>this.entrarGithub(),
+    };
+  }
+}
+</script>
+</body>
+</html>

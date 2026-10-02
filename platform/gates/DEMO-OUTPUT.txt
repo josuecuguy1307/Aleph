@@ -1,0 +1,251 @@
+########################################################################
+# DEMO-OUTPUT.txt — corrida CRUDA completa del gate e2e
+# Comando : python3 platform/gates/demo_e2e.py --both
+# Fecha   : 2026-06-11 22:39:32 -05
+# Host    : Darwin 24.6.0 arm64  |  python 3.13.11
+# Carril  : LiteLLM gateway :4000 (modelo 'specialist' = qwen3:8b) — vivo
+# Nota    : stdout = el ciclo legible; el TRACE de runtime (MCP init,
+#           Registry, Turns, [Tool->]/[Tool<-]) va al final, crudo de stderr,
+#           como evidencia de la escritura REAL en disco.
+########################################################################
+
+
+════════════════════════════════════════════════════════════════════════
+  PUPPET AI — DEMO E2E DEL GATE DE APROBACIÓN (piezas reales)
+════════════════════════════════════════════════════════════════════════
+  El agente propone, el humano aprueba. Acá lo vemos correr de punta
+  a punta sobre las piezas reales del repo, con escritura real en disco.
+
+── Carril de modelo — declaración ──────────────────────────────────────
+  CARRIL ELEGIDO: LiteLLM gateway :4000 (modelo 'specialist' = qwen3:8b)
+  base_url      : http://localhost:4000/v1
+  model         : specialist
+
+════════════════════════════════════════════════════════════════════════
+  CICLO DEL GATE — modo RECHAZAR (--reject)
+════════════════════════════════════════════════════════════════════════
+
+── (0) MONTAJE — piezas reales cableadas ───────────────────────────────
+  Carril de modelo : LiteLLM gateway :4000 (modelo 'specialist' = qwen3:8b)
+  Belt (real)      : echo_server.py  +  write_file_server.py (NUEVO)
+  Gate matrix      : write_file -> 'confirma-siempre' (pregunta cada vez)
+  Vault            : CredentialVault instanciado (keys=ninguna — este belt no las pide)
+  Carpeta de trabajo (PUPPET_WRITE_ROOT): /tmp/TEST_ONLY-demo
+  Archivo objetivo : /tmp/TEST_ONLY-demo/informe_demo.txt
+  Pedido al agente : Guardá un archivo llamado «informe_demo.txt» con exactamente este contenido: El gate de Puppet AI aprobo esta escritura.
+
+── (1) PAUSA — el gate interceptó la acción y NO la ejecutó todavía ────
+  El agente intentó una acción sensible. El gate frenó y produjo
+  el CONTRATO DE UX de 4 partes (qué / dónde / vista previa / OK):
+
+  ── PAYLOAD CRUDO DEL GATE ─────────────────────────────────────
+  {
+    "que_va_a_hacer": "guardar un archivo nuevo en tu carpeta de trabajo",
+    "donde_afecta": "un archivo nuevo en tu carpeta de trabajo (lo escribe en tu disco)",
+    "vista_previa": "Va a guardar el resultado en: informe_demo.txt",
+    "requiere_ok": true,
+    "boton_ok": "OK, hacelo",
+    "boton_cancelar": "No, cancelá",
+    "nivel": "confirma-siempre",
+    "leyenda": "Tu agente te pregunta cada vez, antes de hacerlo."
+  }
+  ───────────────────────────────────────────────────────────────
+
+  Lectura humana del contrato:
+    (a) QUÉ va a hacer  : guardar un archivo nuevo en tu carpeta de trabajo
+    (b) DÓNDE afecta    : un archivo nuevo en tu carpeta de trabajo (lo escribe en tu disco)
+    (c) VISTA PREVIA    : Va a guardar el resultado en: informe_demo.txt
+    (d) requiere OK     : True  [OK, hacelo / No, cancelá]
+        nivel/leyenda   : confirma-siempre — Tu agente te pregunta cada vez, antes de hacerlo.
+
+── (2) DECISIÓN del usuario ────────────────────────────────────────────
+  Modo --reject : el usuario toca «No, cancelá». -> NO se da el OK.
+
+── (1) PAUSA — el gate interceptó la acción y NO la ejecutó todavía ────
+  El agente intentó una acción sensible. El gate frenó y produjo
+  el CONTRATO DE UX de 4 partes (qué / dónde / vista previa / OK):
+
+  ── PAYLOAD CRUDO DEL GATE ─────────────────────────────────────
+  {
+    "que_va_a_hacer": "guardar un archivo nuevo en tu carpeta de trabajo",
+    "donde_afecta": "un archivo nuevo en tu carpeta de trabajo (lo escribe en tu disco)",
+    "vista_previa": "Va a guardar el resultado en: informe_demo.txt",
+    "requiere_ok": true,
+    "boton_ok": "OK, hacelo",
+    "boton_cancelar": "No, cancelá",
+    "nivel": "confirma-siempre",
+    "leyenda": "Tu agente te pregunta cada vez, antes de hacerlo."
+  }
+  ───────────────────────────────────────────────────────────────
+
+  Lectura humana del contrato:
+    (a) QUÉ va a hacer  : guardar un archivo nuevo en tu carpeta de trabajo
+    (b) DÓNDE afecta    : un archivo nuevo en tu carpeta de trabajo (lo escribe en tu disco)
+    (c) VISTA PREVIA    : Va a guardar el resultado en: informe_demo.txt
+    (d) requiere OK     : True  [OK, hacelo / No, cancelá]
+        nivel/leyenda   : confirma-siempre — Tu agente te pregunta cada vez, antes de hacerlo.
+
+── (2) DECISIÓN del usuario ────────────────────────────────────────────
+  Modo --reject : el usuario toca «No, cancelá». -> NO se da el OK.
+
+── (1) PAUSA — el gate interceptó la acción y NO la ejecutó todavía ────
+  El agente intentó una acción sensible. El gate frenó y produjo
+  el CONTRATO DE UX de 4 partes (qué / dónde / vista previa / OK):
+
+  ── PAYLOAD CRUDO DEL GATE ─────────────────────────────────────
+  {
+    "que_va_a_hacer": "guardar un archivo nuevo en tu carpeta de trabajo",
+    "donde_afecta": "un archivo nuevo en tu carpeta de trabajo (lo escribe en tu disco)",
+    "vista_previa": "Va a guardar el resultado en: informe_demo.txt",
+    "requiere_ok": true,
+    "boton_ok": "OK, hacelo",
+    "boton_cancelar": "No, cancelá",
+    "nivel": "confirma-siempre",
+    "leyenda": "Tu agente te pregunta cada vez, antes de hacerlo."
+  }
+  ───────────────────────────────────────────────────────────────
+
+  Lectura humana del contrato:
+    (a) QUÉ va a hacer  : guardar un archivo nuevo en tu carpeta de trabajo
+    (b) DÓNDE afecta    : un archivo nuevo en tu carpeta de trabajo (lo escribe en tu disco)
+    (c) VISTA PREVIA    : Va a guardar el resultado en: informe_demo.txt
+    (d) requiere OK     : True  [OK, hacelo / No, cancelá]
+        nivel/leyenda   : confirma-siempre — Tu agente te pregunta cada vez, antes de hacerlo.
+
+── (2) DECISIÓN del usuario ────────────────────────────────────────────
+  Modo --reject : el usuario toca «No, cancelá». -> NO se da el OK.
+
+── (1) PAUSA — el gate interceptó la acción y NO la ejecutó todavía ────
+  El agente intentó una acción sensible. El gate frenó y produjo
+  el CONTRATO DE UX de 4 partes (qué / dónde / vista previa / OK):
+
+  ── PAYLOAD CRUDO DEL GATE ─────────────────────────────────────
+  {
+    "que_va_a_hacer": "guardar un archivo nuevo en tu carpeta de trabajo",
+    "donde_afecta": "un archivo nuevo en tu carpeta de trabajo (lo escribe en tu disco)",
+    "vista_previa": "Va a guardar el resultado en: informe_demo.txt",
+    "requiere_ok": true,
+    "boton_ok": "OK, hacelo",
+    "boton_cancelar": "No, cancelá",
+    "nivel": "confirma-siempre",
+    "leyenda": "Tu agente te pregunta cada vez, antes de hacerlo."
+  }
+  ───────────────────────────────────────────────────────────────
+
+  Lectura humana del contrato:
+    (a) QUÉ va a hacer  : guardar un archivo nuevo en tu carpeta de trabajo
+    (b) DÓNDE afecta    : un archivo nuevo en tu carpeta de trabajo (lo escribe en tu disco)
+    (c) VISTA PREVIA    : Va a guardar el resultado en: informe_demo.txt
+    (d) requiere OK     : True  [OK, hacelo / No, cancelá]
+        nivel/leyenda   : confirma-siempre — Tu agente te pregunta cada vez, antes de hacerlo.
+
+── (2) DECISIÓN del usuario ────────────────────────────────────────────
+  Modo --reject : el usuario toca «No, cancelá». -> NO se da el OK.
+
+── (3) EFECTO EN DISCO — verificación leyendo el filesystem REAL ───────
+  Pausas del gate en esta corrida : 4
+  ANTES  -> existe=False  listing=['belt-demo.mcp.json', 'vault.salt']
+  DESPUÉS-> existe=False  listing=['belt-demo.mcp.json', 'vault.salt']
+
+── Respuesta final del agente (post-gate) ──────────────────────────────
+  [max turns reached without final answer]
+
+── VEREDICTO ───────────────────────────────────────────────────────────
+  [se esperaba] el gate PAUSA y, SIN OK, el archivo NO se escribe.
+  [pausa>=1]            : OK (4)
+  [archivo NO existe]   : OK
+
+  ==> CICLO CORRECTO [OK] (modo RECHAZAR (--reject))
+
+════════════════════════════════════════════════════════════════════════
+  CICLO DEL GATE — modo APROBAR (--approve)
+════════════════════════════════════════════════════════════════════════
+
+── (0) MONTAJE — piezas reales cableadas ───────────────────────────────
+  Carril de modelo : LiteLLM gateway :4000 (modelo 'specialist' = qwen3:8b)
+  Belt (real)      : echo_server.py  +  write_file_server.py (NUEVO)
+  Gate matrix      : write_file -> 'confirma-siempre' (pregunta cada vez)
+  Vault            : CredentialVault instanciado (keys=ninguna — este belt no las pide)
+  Carpeta de trabajo (PUPPET_WRITE_ROOT): /tmp/TEST_ONLY-demo
+  Archivo objetivo : /tmp/TEST_ONLY-demo/informe_demo.txt
+  Pedido al agente : Guardá un archivo llamado «informe_demo.txt» con exactamente este contenido: El gate de Puppet AI aprobo esta escritura.
+
+── (1) PAUSA — el gate interceptó la acción y NO la ejecutó todavía ────
+  El agente intentó una acción sensible. El gate frenó y produjo
+  el CONTRATO DE UX de 4 partes (qué / dónde / vista previa / OK):
+
+  ── PAYLOAD CRUDO DEL GATE ─────────────────────────────────────
+  {
+    "que_va_a_hacer": "guardar un archivo nuevo en tu carpeta de trabajo",
+    "donde_afecta": "un archivo nuevo en tu carpeta de trabajo (lo escribe en tu disco)",
+    "vista_previa": "Va a guardar el resultado en: informe_demo.txt",
+    "requiere_ok": true,
+    "boton_ok": "OK, hacelo",
+    "boton_cancelar": "No, cancelá",
+    "nivel": "confirma-siempre",
+    "leyenda": "Tu agente te pregunta cada vez, antes de hacerlo."
+  }
+  ───────────────────────────────────────────────────────────────
+
+  Lectura humana del contrato:
+    (a) QUÉ va a hacer  : guardar un archivo nuevo en tu carpeta de trabajo
+    (b) DÓNDE afecta    : un archivo nuevo en tu carpeta de trabajo (lo escribe en tu disco)
+    (c) VISTA PREVIA    : Va a guardar el resultado en: informe_demo.txt
+    (d) requiere OK     : True  [OK, hacelo / No, cancelá]
+        nivel/leyenda   : confirma-siempre — Tu agente te pregunta cada vez, antes de hacerlo.
+
+── (2) DECISIÓN del usuario ────────────────────────────────────────────
+  Modo --approve: el usuario toca «OK, hacelo».  -> se DA el OK.
+
+── (3) EFECTO EN DISCO — verificación leyendo el filesystem REAL ───────
+  Pausas del gate en esta corrida : 1
+  ANTES  -> existe=False  listing=['belt-demo.mcp.json', 'vault.salt']
+  DESPUÉS-> existe=True  listing=['belt-demo.mcp.json', 'informe_demo.txt', 'vault.salt']
+  Contenido en disco: 'El gate de Puppet AI aprobo esta escritura.'
+
+── Respuesta final del agente (post-gate) ──────────────────────────────
+  El archivo «informe_demo.txt» se guardó correctamente en la ruta temporal indicada. ¿Necesitas realizar alguna otra acción con este archivo o guardar algo más?
+
+── VEREDICTO ───────────────────────────────────────────────────────────
+  [se esperaba] el gate PAUSA y, con OK, el archivo SE ESCRIBE con el contenido pedido.
+  [pausa>=1]            : OK (1)
+  [archivo existe]      : OK
+  [contenido coincide]  : OK
+
+  ==> CICLO CORRECTO [OK] (modo APROBAR (--approve))
+
+════════════════════════════════════════════════════════════════════════
+  RESUMEN DE LA DEMO
+════════════════════════════════════════════════════════════════════════
+  --reject     -> ✔ CORRECTO
+  --approve    -> ✔ CORRECTO
+
+  RESULTADO GLOBAL: ✔ DEMO OK — el gate funciona end-to-end
+
+########################################################################
+# EXIT CODE: 0   (0 = DEMO OK end-to-end)
+########################################################################
+
+========================================================================
+= TRACE CRUDO DEL RUNTIME (stderr) — evidencia del tool-call real =
+========================================================================
+[MCP] echo: INIT OK — echo-server 0.1.0
+[MCP] writer: INIT OK — write-file-server 0.1.0
+[Registry] 2 tools registered: ['echo', 'write_file']
+
+[Turn 1/4]
+
+[Turn 2/4]
+
+[Turn 3/4]
+
+[Turn 4/4]
+[MCP] echo: INIT OK — echo-server 0.1.0
+[MCP] writer: INIT OK — write-file-server 0.1.0
+[Registry] 2 tools registered: ['echo', 'write_file']
+
+[Turn 1/4]
+[Tool→] write_file({"filename": "informe_demo.txt", "content": "El gate de Puppet AI aprobo esta escritura."})
+[Tool←] write_file: Archivo escrito: /tmp/TEST_ONLY-demo/informe_demo.txt (43 bytes).
+
+[Turn 2/4]

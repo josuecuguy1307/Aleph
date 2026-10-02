@@ -1,0 +1,133 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Finanzas — Aleph</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preload" href="/fonts/outfit-ebadd8b7.woff2" as="font" type="font/woff2" crossorigin />
+    <style>
+      /* [Aleph] EL CAMPO, ANTES DEL PRIMER PINTADO. Este par se declara acá —y no sólo en
+         los tokens— para que no haya un destello del color equivocado mientras carga el
+         CSS. Por eso mismo tiene que seguir a los tokens cuando cambian: eran el blanco
+         azulado y el casi-negro azulado del stack (220 20% 98% / 220 20% 5%), y quedaban
+         como el ÚNICO rastro de la paleta vieja, en el elemento más grande de la página.
+         Ahora son los de `aleph-tokens.css`: #F4F4F5 y #0B0B0C. */
+      html { background-color: hsl(240 5% 96%); }
+      html.dark { background-color: hsl(240 4% 5%); }
+
+      /* ── LA LETRA DE LA CASA — [Gate 4 · F6 · Finanzas · inmersión 3.8 · ley 3] ──────────
+       * La mesa vive en OTRO ORIGEN y no puede linkear el `vendor/fonts.css` de la casa, así
+       * que Outfit se vendoriza acá: los MISMOS woff2 que sirven las ~24 pantallas de Aleph,
+       * con los `unicode-range` intactos y sin una sola llamada a la red. Reemplaza a Inter,
+       * que era la letra del proyecto de origen. La jerga del oficio (ticker, spread, P/E)
+       * se conserva — ley 11; lo que muere es el ESTILO ajeno.
+       */
+      /* latin-ext */
+      @font-face {
+        font-family: 'Outfit';
+        font-style: normal;
+        font-weight: 200;
+        font-display: swap;
+        src: url("/fonts/outfit-74499760.woff2") format('woff2');
+        unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+      }
+      /* latin */
+      @font-face {
+        font-family: 'Outfit';
+        font-style: normal;
+        font-weight: 200;
+        font-display: swap;
+        src: url("/fonts/outfit-ebadd8b7.woff2") format('woff2');
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+      }
+      /* latin-ext */
+      @font-face {
+        font-family: 'Outfit';
+        font-style: normal;
+        font-weight: 300;
+        font-display: swap;
+        src: url("/fonts/outfit-74499760.woff2") format('woff2');
+        unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+      }
+      /* latin */
+      @font-face {
+        font-family: 'Outfit';
+        font-style: normal;
+        font-weight: 300;
+        font-display: swap;
+        src: url("/fonts/outfit-ebadd8b7.woff2") format('woff2');
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+      }
+      /* latin-ext */
+      @font-face {
+        font-family: 'Outfit';
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: url("/fonts/outfit-74499760.woff2") format('woff2');
+        unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+      }
+      /* latin */
+      @font-face {
+        font-family: 'Outfit';
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: url("/fonts/outfit-ebadd8b7.woff2") format('woff2');
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+      }
+      /* latin-ext */
+      @font-face {
+        font-family: 'Outfit';
+        font-style: normal;
+        font-weight: 500;
+        font-display: swap;
+        src: url("/fonts/outfit-74499760.woff2") format('woff2');
+        unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+      }
+      /* latin */
+      @font-face {
+        font-family: 'Outfit';
+        font-style: normal;
+        font-weight: 500;
+        font-display: swap;
+        src: url("/fonts/outfit-ebadd8b7.woff2") format('woff2');
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+      }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </style>
+    <script src="/theme-boot.js"></script>
+
+    <!-- [un solo picker en las siete · 2026-08-22] El chip de modelo de Aleph, en el
+         composer. Este stack MUESTRA el modelo en su barra de runtime pero no deja
+         elegirlo (un <span> sin click): el script lo esconde y pone el chip real en su
+         lugar. Fuera de Aleph el archivo es un no-op (LEY 0).
+         Ver public/aleph-picker-unico.js. -->
+    <script src="/aleph-picker-unico.js"></script>
+    <!-- [Aleph · rediseño fase 1 · cable (b)] EL INTERRUPTOR DE LA PIEL. La hoja viaja
+         siempre; sólo se aplica con `?aleph_piel=v2` en la URL del iframe. Apagar el
+         rediseño no cuesta un build. Fuera de Aleph es un no-op (LEY 0).
+         Ver public/aleph-piel.js. -->
+    <script src="/aleph-piel.js"></script>
+    <meta name="description" content="Finanzas — el workspace de investigación de mercados de Aleph." />
+  </head>
+  <body class="min-h-screen bg-background text-foreground antialiased">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

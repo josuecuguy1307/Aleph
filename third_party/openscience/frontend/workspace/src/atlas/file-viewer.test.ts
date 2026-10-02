@@ -1,0 +1,124 @@
+import { describe, expect, test } from "bun:test"
+import { artifactControl, describeFile, readFile, sourceViews, toolbarControls } from "./file-viewer"
+
+describe("file viewer capabilities", () => {
+  test("describes rendered documents and data with plain file types", () => {
+    expect(describeFile({ kind: "markdown", format: "md" })).toEqual({
+      label: "Markdown",
+      source: true,
+      copy: true,
+      download: true,
+    })
+    expect(describeFile({ kind: "pdf", format: "pdf", binary: true })).toEqual({
+      label: "PDF document",
+      source: false,
+      copy: false,
+      download: true,
+    })
+    expect(describeFile({ kind: "image", format: "png", binary: true })).toEqual({
+      label: "PNG image",
+      source: false,
+      copy: false,
+      download: true,
+    })
+    expect(describeFile({ kind: "notebook", format: "ipynb" }).label).toBe("Jupyter notebook")
+    expect(describeFile({ kind: "table", format: "csv" }).label).toBe("CSV data")
+    expect(describeFile({ kind: "scientific-data", format: "fastq" }).label).toBe("FASTQ data")
+  })
+
+  test("keeps unsupported and partial files honest about available actions", () => {
+    expect(describeFile({ kind: "binary", format: "bin", binary: true })).toEqual({
+      label: "Binary file",
+      source: false,
+      copy: false,
+      download: true,
+    })
+    expect(describeFile({ kind: "markdown", format: "md", truncated: true })).toEqual({
+      label: "Markdown",
+      source: false,
+      copy: false,
+      download: true,
+    })
+  })
+
+  test("exposes Preview and Source as an explicit two-state control", () => {
+    expect(sourceViews(false)).toEqual([
+      { id: "preview", label: "Preview", active: true },
+      { id: "source", label: "Source", active: false },
+    ])
+    expect(sourceViews(true)).toEqual([
+      { id: "preview", label: "Preview", active: false },
+      { id: "source", label: "Source", active: true },
+    ])
+  })
+
+  test("builds explicit toolbar controls from backed capabilities", () => {
+    const description = describeFile({ kind: "markdown", format: "md" })
+
+    expect(toolbarControls({ description, source: false, dirty: false, saving: false })).toEqual([
+      { id: "preview", label: "Preview", active: true, disabled: false },
+      { id: "source", label: "Source", active: false, disabled: false },
+      { id: "copy", label: "Copy", disabled: false },
+      { id: "download", label: "Download", disabled: false },
+    ])
+    expect(toolbarControls({ description, source: true, dirty: true, saving: true })).toEqual([
+      { id: "preview", label: "Preview", active: false, disabled: false },
+      { id: "source", label: "Source", active: true, disabled: false },
+      { id: "discard", label: "Discard", disabled: true },
+      { id: "save", label: "Saving…", disabled: true },
+      { id: "copy", label: "Copy", disabled: false },
+      { id: "download", label: "Download", disabled: false },
+    ])
+  })
+
+  test("labels the plain write 'Save file' so it cannot be read as the artifact save", () => {
+    const description = describeFile({ kind: "markdown", format: "md" })
+    const controls = toolbarControls({ description, source: true, dirty: true, saving: false })
+
+    expect(controls.find((control) => control.id === "save")).toEqual({
+      id: "save",
+      label: "Save file",
+      disabled: false,
+    })
+  })
+
+  test("offers Save as artifact only when a session is in scope", () => {
+    expect(artifactControl({ session: false, busy: false })).toBeUndefined()
+    expect(artifactControl({ session: true, busy: false })).toEqual({
+      id: "artifact",
+      label: "Save as artifact",
+      disabled: false,
+    })
+    expect(artifactControl({ session: true, busy: true })).toEqual({
+      id: "artifact",
+      label: "Saving artifact…",
+      disabled: true,
+    })
+  })
+
+  test("does not build source or copy controls for unsupported binaries", () => {
+    const description = describeFile({ kind: "binary", format: "bin", binary: true })
+
+    expect(toolbarControls({ description, source: false, dirty: false, saving: false })).toEqual([
+      { id: "download", label: "Download", disabled: false },
+    ])
+  })
+})
+
+describe("file viewer reads", () => {
+  test("normalizes successful reads without changing their data", async () => {
+    const data = { content: "# Result", encoding: "utf8", mimeType: "text/markdown", size: 8 }
+
+    expect(await readFile(async () => data)).toEqual({ data })
+  })
+
+  test("turns a rejected read into local error state instead of throwing", async () => {
+    const result = await readFile(async () => {
+      throw "file access denied"
+    })
+
+    expect(result.data).toBeUndefined()
+    expect(result.error).toBeInstanceOf(Error)
+    expect(result.error?.message).toBe("file access denied")
+  })
+})

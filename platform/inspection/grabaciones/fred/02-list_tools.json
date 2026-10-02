@@ -1,0 +1,383 @@
+{
+  "arquetipo": "fred",
+  "paso": "list_tools",
+  "transporte": "stdio",
+  "servidor": "fred",
+  "grabado_en": "2026-08-04T01:18:08",
+  "huella_receta": "56bce2408a9e",
+  "env_declarado": false,
+  "receta": {
+    "command": "npx",
+    "args": [
+      "-y",
+      "mcp-remote",
+      "https://feedoracle.io/mcp/macro/sse",
+      "--header",
+      "X-API-Key:[valor-del-env-redactado]"
+    ],
+    "cwd": ""
+  },
+  "peticion": {
+    "metodo": "tools/list",
+    "args": {}
+  },
+  "respuesta": [
+    {
+      "name": "fed_rates",
+      "description": "Federal Reserve interest rates, FOMC meeting calendar, policy outlook.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "fed_rates_v2",
+      "description": "[AGENT-NATIVE v2] Fed Funds Rate WITH interpretation layer: signal (hawkish/dovish), regime, percentile_2y/10y, momentum, volatility, confidence, actionable_prompt. Built for autonomous agents that need pre-reasoned data.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "inflation_v2",
+      "description": "[AGENT-NATIVE v2] CPI YoY WITH interpretation layer: regime (low/target_zone/elevated/high/crisis), trend (disinflation/sticky/accelerating), percentile, ranked actions array. Built for autonomous agents.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "yield_curve_v2",
+      "description": "[AGENT-NATIVE v2] Treasury 10Y-2Y spread WITH interpretation layer: curve_state (deep_inverted/inverted/flat/normal/steep), days_inverted_last_365, recession_imminent detection (un-inversion pattern), ranked actions array.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "fed_rates_v3",
+      "description": "[EVIDENCE v1.0] Fed Funds Rate as evidence only. Returns signal_strength, risk_band, reason_codes, allowed/blocked action categories. NO personalised recommendations, NO sizing, NO venue picks. Product positioning: evidence_infrastructure.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "inflation_v3",
+      "description": "[EVIDENCE v1.0] CPI YoY as evidence only. Returns signal_strength, risk_band, reason_codes, allowed/blocked action categories. NO personalised recommendations, NO sizing, NO venue picks. Product positioning: evidence_infrastructure.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "yield_curve_v3",
+      "description": "[EVIDENCE v1.0] Treasury 10Y-2Y spread as evidence only. Returns signal_strength, risk_band, reason_codes (incl. inversion context), allowed/blocked action categories. NO personalised recommendations, NO sizing, NO venue picks. Product positioning: evidence_infrastructure.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "macro_coherence_v1",
+      "description": "[v1.1 AGGREGATOR] Neutral aggregation of fed_rates_v3 + inflation_v3 + yield_curve_v3 in one call. Returns reason-code index, distributions of signal_strength/risk_band/staleness_tier, cross-tool concentration. No directional labels, no alignment score, no venue hints. One call replaces three for macro-aware agents.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "recession_risk_v1",
+      "description": "[EVIDENCE v1.1] US recession indicators as evidence only. Returns reason_codes (yield curve state, GDP trend, unemployment trend), signal_strength, risk_band. Rebuilt from retired macroracle in v1.1 evidence-only form — NO recession probability as label, NO LOW_RISK/HIGH_RISK classification.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "economic_health_v1",
+      "description": "[EVIDENCE v1.1] US economic health composite (GDP, unemployment, inflation, consumer confidence) as evidence only. Returns reason_codes + signal_strength + risk_band. Rebuilt from retired macroracle — NO regime labels (expansion/contraction/stagflation/goldilocks).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "consumer_sentiment_v1",
+      "description": "[EVIDENCE v1.1] Michigan Consumer Sentiment Index as evidence only. Returns reason_codes (relative to baseline 100 and long-run avg ~85), signal_strength, risk_band. Rebuilt from retired macroracle — NO PESSIMISTIC/OPTIMISTIC labels.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "market_stress_v1",
+      "description": "[EVIDENCE v1.1] US financial stress composite (VIX, HY spread, TED spread, STLFSI) as evidence only. Returns reason_codes + signal_strength + risk_band. Rebuilt from retired macroracle — NO stress_level categorical (LOW/MODERATE/HIGH/EXTREME).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "inflation",
+      "description": "US inflation data: CPI, PCE, core inflation, year-over-year and month-over-month.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "yield_curve",
+      "description": "US Treasury yield curve: all maturities (1M-30Y), 10Y-2Y spread, inversion signals, recession probability.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "labor_market",
+      "description": "US labor market: unemployment rate, nonfarm payrolls, wages, jobless claims, labor participation.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "gdp_growth",
+      "description": "US GDP growth: quarterly and yearly, real GDP, consumer spending, recession risk.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "housing",
+      "description": "US housing market: housing starts, permits, median prices, 30Y mortgage rates, home sales.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "macro_dashboard",
+      "description": "Full US economic dashboard — all key indicators at once: Fed, inflation, yields, labor, GDP, housing.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "health_check",
+      "description": "Server status, API connectivity.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "ecb_rates",
+      "description": "ECB interest rates: Main Refinancing, Deposit Facility, Marginal Lending, EURIBOR 3M/6M/12M, Euro Short-Term Rate.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "ecb_fx",
+      "description": "EUR exchange rates vs USD, GBP, JPY, CHF, CNY. Daily from ECB.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "ecb_inflation",
+      "description": "Euro Area HICP inflation: headline, core (excl energy+food), Germany.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "ecb_economy",
+      "description": "Euro Area economy: GDP growth YoY, unemployment rate, M3 money supply.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "ecb_yields",
+      "description": "Euro Area 10Y AAA government bond yield benchmark.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "ecb_dashboard",
+      "description": "Full ECB dashboard — rates + FX + inflation + economy + yields in one call.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "ecb_mica_reserve",
+      "description": "ECB data relevant for MiCA stablecoin reserve compliance (Art. 24/25/53). Eligible asset rates and yields.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "ecb_series",
+      "description": "Fetch any specific ECB data series by ID. 20 series available: rates, FX, inflation, economy, yields.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "series_id": {
+            "type": "string",
+            "description": "Series ID: REFI_RATE, DEPOSIT_RATE, EUR_USD, EA_HICP, EA_GDP, EA_10Y_AAA, etc.",
+            "enum": [
+              "REFI_RATE",
+              "DEPOSIT_RATE",
+              "EUR_USD",
+              "EA_HICP",
+              "EA_GDP",
+              "EA_10Y_AAA"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "wb_gdp",
+      "description": "World Bank: Top global economies by GDP with growth rates.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "wb_country",
+      "description": "World Bank country economic profile: GDP, inflation, trade balance, population.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "country_code": {
+            "type": "string",
+            "description": "ISO-3 country code (DEU, USA, GBR, FRA, JPN, CHN, etc.)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "wb_rwa_context",
+      "description": "World Bank RWA risk context: economic risk score and key indicators for country risk assessment.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "country_code": {
+            "type": "string",
+            "description": "ISO-3 country code"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "bls_employment",
+      "description": "US employment data direct from Bureau of Labor Statistics: unemployment rate, nonfarm payrolls, labor participation, hourly earnings, labor force.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "bls_inflation",
+      "description": "US CPI inflation direct from BLS: headline CPI-U index and core CPI (less food & energy).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "bls_series",
+      "description": "Fetch any BLS data series. Available: unemployment_rate, cpi_all, cpi_core, nonfarm_payrolls, labor_participation, avg_hourly_earnings, labor_force.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "series": {
+            "type": "string",
+            "description": "Series name or BLS series ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "diagnostico": {
+    "stderr": "[58690] Using automatically selected callback port: 14701\n[58690] Using custom headers: {\"X-API-Key\":\"[valor-del-env-redactado]\"}\n[58690] Discovering OAuth server configuration...\n[58690] [58690] Connecting to remote server: https://feedoracle.io/mcp/macro/sse\n[58690] Using transport strategy: http-first\n[58690] Connected to remote server using [secreto removido]\n[58690] Local STDIO server running\n[58690] Proxy established successfully between local STDIO and remote [secreto removido]\n[58690] Press Ctrl+C to exit\n[58690] [Local→Remote] initialize\n[58690] {\n  \"jsonrpc\": \"2.0\",\n  \"id\": 1,\n  \"method\": \"initialize\",\n  \"params\": {\n    \"_meta\": {},\n    \"protocolVersion\": \"2025-11-25\",\n    \"capabilities\": {},\n    \"clientInfo\": {\n      \"name\": \"mcp (via mcp-remote 0.1.37)\",\n      \"version\": \"0.1.0\"\n    }\n  }\n}\n[58690] [Remote→Local] \u001b[33m1\u001b[39m\n[58690] [Local→Remote] notifications/initialized\n[58690] [Local→Remote] tools/list\n[58690] [Remote→Local] \u001b[33m2\u001b[39m",
+    "exit_code": null,
+    "exit_code_fuente": "no expuesto: stdio_client (mcp 2.0.0) hace `yield read_stream, write_stream` y se queda el Process",
+    "murio": false,
+    "t_eof": null,
+    "timeouts": [],
+    "rpc_timeout_s": 60.0,
+    "stderr_lineas": 28,
+    "stderr_bytes": 1000,
+    "stderr_cap_bytes": 32768,
+    "stderr_cap_lineas": 80,
+    "command": "npx",
+    "transporte": "sdk-stdio",
+    "entorno": {
+      "omitido": "ambiente de la máquina, no del veredicto"
+    },
+    "server_info": {
+      "name": "MacroOracle",
+      "version": "1.0.0"
+    },
+    "protocolo": {
+      "cliente": "2025-03-26",
+      "servidor": "2025-03-26",
+      "negociacion": "aceptada",
+      "solicitada": "2025-11-25"
+    },
+    "detail": "el proceso arrancó pero no respondió al saludo initialize de MCP ([58690] Using automatically selected callback port: 14701\n[58690] Using custom headers: {\"X-API-Key\":\"[valor-del-env-redactado]\"}\n[58690] Discovering OAuth server configuration...\n[58690] [58690] Connecting to remote server: https://feedoracle.io/mcp/macro/sse\n[58690] Using transport strategy: http-first\n[58690] Connected to remote server using [secreto removido]\n[58690] Local STDIO server running\n[58690] Proxy established successfully between local STDIO and remote [secreto removido]\n[58690] Press Ctrl+C to exit\n[58690] [Local→Remote] initialize\n[58690] {\n  \"jsonrpc\": \"2.0\",\n  \"id\": 1,\n  \"method\": \"initialize\",\n  \"params\": {\n    \"_meta\": {},\n    \"protocolVersion\": \"2025-11-25\",\n    \"capabilities\": {},\n    \"clientInfo\": {\n      \"name\": \"mcp (via mcp-remote 0.1.37)\",\n      \"version\": \"0.1.0\"\n    }\n  }\n}\n[58690] [Remote→Local] \u001b[33m1\u001b[39m\n[58690] [Local→Remote] notifications/initialized\n[58690] [Local→Remote] tools/list\n[58690] [Remote→Local] \u001b[33m2\u001b[39m)"
+  },
+  "scrubber": {
+    "hallazgos_neutralizados": 6
+  }
+}

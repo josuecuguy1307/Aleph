@@ -1,0 +1,211 @@
+/* LA PIEL DE UN WORKSPACE. [Gate 4 · Fase 3 · 3.7 · ley 3]
+ *
+ * «Se ve como CoDesign, con estilo Aleph.» Acá eso significa: el MARCO es de la casa (la
+ * barra, la marca, la tipografía, los neutros, el violeta del acento, el volver) y el
+ * LIENZO es del oficio (el terminal financiero entero, sin teñir por dentro).
+ *
+ * Ni un color se declara acá: todo sale de `aleph-tokens.css`, que es la única hoja que da
+ * vuelta claro/oscuro en las 9 pantallas. Un workspace que trajera su propia paleta sería
+ * el décimo lugar donde arreglar el tema.
+ */
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  /* [rediseño · fase 2 · 2.4] EN FILA, NO EN COLUMNA. El marco de la casa era una barra de
+   * 48 px ARRIBA del lienzo; el estándar lo pone a la IZQUIERDA, 260 px, y el lienzo ocupa
+   * el resto. Es el mismo cambio de eje que el riel hizo en las otras 18 pantallas. */
+  display: flex;
+  flex-direction: row;
+  background: var(--page-bg);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+}
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+
+/* ── EL SIDEBAR DE LA CASA ────────────────────────────────────────────────────────────
+ * [rediseño · fase 2 · 2.4] Acá vivía `.ws-bar`: 48 px de alto con `◂ Inicio`, el rombo ◈,
+ * el nombre del espacio y el estado del pack. El estándar pide 260 px a la izquierda, con la
+ * mascota y «Aleph» en serif arriba, `‹ Inicio` como primer ítem separado por una línea, y
+ * el pie con Ajustes y la cuenta.
+ *
+ * ⚠️ LO QUE ESTE SIDEBAR **NO** TIENE, Y ES A PROPÓSITO: el bloque estándar
+ * (New chat · Search · Library) y RECENT SESSIONS. Esos son del STACK —viven adentro del
+ * `<iframe>`, en otro origen— y entran por la opción A en la fase 3. Dibujarlos acá sería
+ * inventar una lista que no podemos llenar: `runs.space_id` no lleva workspace (2.025 de
+ * 2.484 vacíos) y `outputs` no tiene columna que pueda llevarlo. El hueco queda declarado,
+ * no fingido. */
+.ws-riel {
+  flex: none;
+  width: 260px;
+  display: flex; flex-direction: column;
+  background: var(--paper2);
+  border-right: 1px solid var(--hairline, transparent);
+  padding: 14px 0 12px;
+  min-height: 0;
+}
+.ws-marca-fila {
+  display: flex; align-items: baseline; gap: 8px;
+  padding: 4px 18px 16px;
+  min-width: 0;
+}
+.ws-marca-fila img { width: 20px; height: 20px; display: block; align-self: center; flex: none; }
+.ws-wordmark { font-family: var(--font-brand); font-size: 16px; color: var(--ink); flex: none; }
+.ws-nombre {
+  font-size: 13px; color: var(--muted); min-width: 0;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+/* `‹ Inicio` es el PRIMER ítem del raíz y va separado por una línea, dice el estándar. */
+.ws-volver {
+  display: block; margin: 0 12px 10px; padding: 9px 12px;
+  border-radius: var(--r-sm); text-decoration: none;
+  font-size: 13.5px; color: var(--muted);
+}
+.ws-volver:hover { background: var(--paper); color: var(--ink); }
+.ws-sep { height: 1px; margin: 0 12px 12px; background: var(--hairline, transparent); }
+/* El hueco de la fase 3. Vacío y sin adorno: un placeholder con contenido inventado sería
+ * peor que el vacío honesto. */
+.ws-seccion { flex: 1 1 auto; min-height: 0; }
+
+/* ⚠️ EL PIE SE LLAMA TAMBIÉN `.ws-bar`, Y NO ES PEREZA: ES EL CABLE.
+ * Medido antes de renombrar nada, TRES módulos se montan solos adentro de la barra vieja
+ * con `document.querySelector(".ws-bar")` y `barra.querySelector("#ws-estado")`:
+ *     ajustes.js:239                 el ⚙
+ *     destinos-del-espacio.js:43     el menú de destinos del espacio
+ *     conectores-del-espacio.js:30   la entrada a Conectores (y el host del picker de modelo)
+ * Renombrar el contenedor los habría dejado a los tres buscando un elemento que ya no
+ * existe: tres botones que desaparecen sin un error. El pie conserva el nombre viejo, y los
+ * tres siguen encontrando su casa —y su ancla `#ws-estado`— sin tocar una línea suya. */
+.ws-pie {
+  flex: none; display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
+  padding: 10px 12px 2px;
+}
+.ws-pie > * { flex: none; }
+
+/* ── EL ESTADO DEL PACK, EN SU CASA NUEVA ─────────────────────────────────────────────
+ * Es el único aviso de que un workspace instalado NO está respondiendo, y lleva
+ * `aria-live="polite"`. Si desapareciera con la barra, el usuario se quedaría mirando un
+ * lienzo en blanco sin que nada se lo diga. Baja al pie del sidebar, al lado del ⚙. */
+/* El estado ocupa su propia línea del pie: en 260 px, compartir renglón con tres botones lo
+ * dejaba en dos caracteres y puntos suspensivos. */
+.ws-pie > .ws-estado { flex: 1 0 100%; }
+.ws-estado { font-size: 12px; color: var(--faint); line-height: 1.5; }
+.ws-estado.ws-vivo::before   { content: "● "; color: var(--green); }
+.ws-estado.ws-apagado::before { content: "● "; color: var(--amber); }
+/* En vivo, el estado no dice nada: lo normal no se anuncia. Sólo habla cuando algo pasa. */
+.ws-estado.ws-vivo { display: none; }
+
+.ws-lienzo { flex: 1 1 auto; min-height: 0; position: relative; }
+.ws-frame { width: 100%; height: 100%; border: 0; display: block; background: var(--page-bg); }
+
+/* ── el fallo, VISIBLE ───────────────────────────────────────────────────────────────── */
+/* `[hidden]` NO gana contra un `display` declarado: la regla del user-agent es
+   `[hidden]{display:none}` y cualquier `display` de autor la pisa por especificidad. El
+   cartel de «no está corriendo» quedaba PINTADO ENCIMA del terminal que sí corría, con el
+   estado diciendo «en vivo» al lado — la pantalla afirmando lo contrario de lo que pasaba.
+   Lo destapó una CAPTURA, con la vara en 34/34 verde: leía `el.hidden` (la propiedad, que
+   era `true`) en vez de mirar los píxeles.
+   Estas dos líneas son el arreglo, y valen para las dos cajas que se alternan. */
+.ws-caido[hidden], .ws-frame[hidden] { display: none !important; }
+.ws-caido {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 12px; padding: 40px 28px; text-align: center;
+  background: var(--page-bg);
+}
+.ws-caido-tit { margin: 0; font-size: 17px; font-weight: 500; }
+.ws-caido-txt { margin: 0; color: var(--muted); font-size: 13.5px; }
+.ws-caido-nota { margin: 0; max-width: 52ch; color: var(--faint); font-size: 12.5px; line-height: 1.6; }
+.ws-btn {
+  font: inherit; font-size: 13px; margin-top: 6px; padding: 7px 14px; border-radius: 9px;
+  cursor: pointer; border: 1px solid var(--line); background: var(--paper2); color: var(--ink);
+}
+.ws-btn:hover { background: var(--paper3, var(--paper2)); }
+
+/* ══ [F3] LOS CONECTORES DE ESTE ESPACIO ═══════════════════════════════════════════════
+   La entrada vive en la barra —lo único de la casa en esta pantalla— y el panel se abre
+   encima del lienzo. No se le quita espacio al stack: el lienzo sigue siendo suyo. */
+.ws-conect-entrada{border:0;background:var(--paper2,#1b1b20);color:var(--muted,#9a9aa6);
+  border-radius:999px;padding:6px 14px;cursor:pointer;font:400 12.5px var(--font-ui,system-ui);
+  margin-left:auto}
+.ws-conect-entrada:hover{color:var(--ink,#e8e8ee)}
+.ws-conect-panel{position:fixed;top:56px;right:16px;z-index:40;width:min(430px,calc(100vw - 32px));
+  max-height:calc(100vh - 80px);overflow:auto;background:var(--paper,#141418);
+  color:var(--ink,#e8e8ee);border-radius:14px;box-shadow:0 18px 48px rgba(0,0,0,.5);padding:18px 20px}
+.ws-conect-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.ws-conect-ambito{margin-left:auto;font-size:10.5px;letter-spacing:.08em;color:var(--muted,#9a9aa6);
+  border:1px solid var(--line,#2a2a32);border-radius:999px;padding:2px 9px;white-space:nowrap}
+.ws-conect-copy{margin:8px 0;color:var(--faint,#8a8a94);font:300 12.5px/1.5 var(--font-ui,system-ui)}
+/* [fase 5] EL AVISO DE LA REDIRECCIÓN. Va con tinta normal, no de apoyo: es la respuesta a
+   algo que el usuario acaba de hacer, no una nota al pie. Y sin borde —el sistema lo
+   prohíbe—: lo separa el pozo. */
+.ws-conect-motivo{color:var(--ink,#f5f5f6);background:var(--paper2,rgba(255,255,255,.05));
+  border-radius:var(--r-sm,10px);padding:11px 13px;margin:10px 0 14px}
+.ws-conect-lista{list-style:none;margin:6px 0 14px;padding:0;display:flex;flex-direction:column;gap:9px}
+.ws-conect-fila{background:var(--paper2,#1b1b20);border-radius:10px;padding:10px 13px}
+.ws-conect-et{font-size:11.5px;color:var(--muted,#9a9aa6)}
+.ws-conect-et[data-listo="si"]{color:var(--green,#5bbd8a)}
+.ws-conect-nota{font-size:10.5px;color:var(--muted,#9a9aa6);margin-top:3px}
+.ws-conect-lista-a{margin:0 0 12px;color:var(--muted,#9a9aa6);font:300 12px/1.65 var(--font-ui,system-ui)}
+
+/* [convergencia · superficie 8] LA FILA DE UN DESTINO, en el panel «Ir a…». Reusa
+   `.ws-conect-fila` como pozo —el mismo de Conectores— y agrega sólo lo que un destino
+   necesita y un conector no: que la fila ENTERA sea el link, y el glifo alineado. */
+.ws-destino{display:flex;align-items:center;gap:11px;text-decoration:none;color:var(--ink)}
+.ws-destino:hover{color:var(--accent-deep)}
+.ws-destino-gl{width:20px;flex:none;text-align:center;color:var(--muted);display:inline-flex;
+  align-items:center;justify-content:center}
+.ws-destino:hover .ws-destino-gl{color:var(--accent-deep)}
+
+/* ── [un solo picker en las siete · 2026-08-22] EL PICKER DE LA CASA EN LA BARRA ──────────
+   Casi no hay CSS propio A PROPÓSITO: el widget se pinta con `AlephModelSelector`, que trae
+   su hoja (`installSelectorCss`) y ya la usan Modelos y el Cuarto. Copiar acá sus estilos
+   sería la cuarta copia del mismo picker, ahora en la piel. Lo único de este host es DÓNDE
+   entra: el botón de la barra, que hereda de `ws-conect-entrada`, y el pozo del panel. */
+.ws-modelo-entrada{margin-left:0}
+/* [rediseño · fase 2 · 2.4] En la barra horizontal, el primer botón se empujaba a la derecha
+ * con `margin-left:auto` para separarse del estado. En el pie del sidebar el estado ya tiene
+ * su propio renglón, así que ese empuje sobra y sólo desalinearía la fila de botones. */
+.ws-bar > .ws-conect-entrada:first-of-type{margin-left:0}
+.ws-modelo-host{margin-top:4px}
+/* El selector compartido pinta sus filas a ancho completo; el panel ya acota a 430px. */
+.ws-modelo-host .ams{display:flex;flex-direction:column;gap:6px}
+
+/* ══ EL FRAME · UNA SOLA BARRA ═════════════════════════════════════════════════════════
+ * [rediseño · fase 6]
+ *
+ * Con el flag prendido, el riel de la casa desaparece y la barra del diseño es la del stack,
+ * con nuestra cabecera y nuestro pie inyectados adentro por `aleph-piel.js`.
+ *
+ * ⚠️ ACÁ YA NO HAY UN `display:none`. Lo hubo, y era montar encima: el riel seguía existiendo
+ * con sus 260 px y su cabecera. Desde «el frame», `oficina.html` **borra el nodo** — después
+ * de mudar su pie al ancla de abajo. Esta regla queda como respaldo para el instante entre
+ * que la raíz se marca y el script corre, y para cualquier espacio que marque la raíz sin
+ * haber hecho todavía la mudanza de su pie. */
+html[data-aleph-frame="v2"] .ws-riel {
+  display: none;
+}
+
+/* ── EL ANCLA HEADLESS DE LOS MÓDULOS DEL PIE ─────────────────────────────────────────
+ * Acá aterriza el `.ws-pie.ws-bar` cuando el riel se borra. NO es una barra: no pinta, no
+ * ocupa layout y no se lee — es el punto donde `ajustes.js`, `destinos-del-espacio.js` y
+ * `conectores-del-espacio.js` siguen colgando su botón, que es lo único suyo que vivía en el
+ * riel. Sus PANELES nunca vivieron acá: se dibujan en `document.body` con `position:fixed`
+ * (`.ws-conect-panel`, arriba), así que abren en el mismo píxel de siempre aunque su
+ * disparador esté fuera de pantalla.
+ *
+ * ⚠️ FUERA DE PANTALLA, NO `display:none`. Con `display:none` un módulo que mida su botón
+ * —`getBoundingClientRect`, `offsetWidth`— leería ceros, y hay uno que inserta «antes del
+ * estado» justamente para que el botón no se corra. Fuera de pantalla todo mide igual que
+ * antes. `pointer-events:none` es el candado: lo único que puede apretar esos botones es el
+ * `.click()` del relay, que es programático y no pasa por el puntero. */
+.ws-anclas {
+  position: fixed;
+  left: -10000px;
+  top: 0;
+  width: 260px;
+  pointer-events: none;
+}

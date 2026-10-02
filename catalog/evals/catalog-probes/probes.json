@@ -1,0 +1,647 @@
+{
+  "_meta": {
+    "que_es": "Spec declarativa del PASS-gate por-server del catalogo (ola de expansion). Cada entrada = un server de un belt real que debe (a) pasar chequeo estatico de manifest/card/onboarding/dedup, (b) pasar el env-gate BYOK, (c) bootear por el cliente de PROD (assembler.MCPServer), (d) responder un tools/call REAL con output esperado, (e) surfacear como atomo en collect_atoms(). Runner: platform/assembler/verify_catalog_batch.py.",
+    "schema": {
+      "server": "nombre del server dentro de mcpServers del belt",
+      "belt_ref": "belt_ref resoluble por belt_resolver.resolve_belt_ref (path a .mcp.json, spec md o slug)",
+      "batch": "opcional — agrupador para --batch <name>",
+      "env_required": "lista de env vars que el server necesita ADEMAS de las ${VAR} detectadas en su config; faltantes => SKIP(BYOK), nunca PASS",
+      "expect_tools": "tools/list debe ser SUPERSET de esta lista (y de card.tools si hay card)",
+      "card_required": "default true — exigir card en _meta.cards con backed_by==server; false SOLO para probar el runner contra servers aun sin card",
+      "probe": "{tool, args, expect:{contains|regex|json_key}} — tools/call real, asercion sobre el output REAL",
+      "notes": "contexto humano (donde vive el server, gotchas)"
+    }
+  },
+  "probes": [
+    {
+      "server": "fetch",
+      "belt_ref": "catalog/templates/research/belt-research.mcp.json",
+      "batch": "seed",
+      "env_required": [],
+      "expect_tools": [
+        "fetch"
+      ],
+      "card_required": true,
+      "probe": {
+        "tool": "fetch",
+        "args": {
+          "url": "https://example.com"
+        },
+        "expect": {
+          "contains": "documentation examples"
+        }
+      },
+      "notes": "Backbone keyless del belt research (uvx mcp-server-fetch). Las cards acad-openalex/acad-crossref/acad-arxiv/web son todas backed_by fetch con tools=[fetch] => una sola surfacea en el catalogo (dedup key fetch::fetch, gana acad-openalex). OJO 2026-07: IANA cambio el contenido de example.com — ya NO dice 'Example Domain'; el texto real es 'This domain is for use in documentation examples without needing permission.' (el gate lo pesco en vivo)."
+    },
+    {
+      "server": "crossref",
+      "belt_ref": "catalog/templates/research/belt-research.mcp.json",
+      "batch": "seed",
+      "env_required": [],
+      "expect_tools": [
+        "search_works",
+        "get_work"
+      ],
+      "card_required": true,
+      "probe": {
+        "tool": "search_works",
+        "args": {
+          "query": "attention is all you need",
+          "rows": 3
+        },
+        "expect": {
+          "contains": "Attention"
+        }
+      },
+      "notes": "PROMOVIDO 2026-07-04 (ledger): el server crossref (stdio stdlib sobre api.crossref.org) ahora vive en el template research; su card real (backed_by crossref) coexiste con la card 'acad-crossref' (backed_by fetch, otro dedup key). El fixture belt-research-live queda test-only y fuera del walk del catalogo."
+    },
+    {
+      "server": "openalex",
+      "belt_ref": "catalog/templates/research/belt-research.mcp.json",
+      "batch": "promocion",
+      "env_required": [],
+      "expect_tools": [
+        "openalex_search"
+      ],
+      "card_required": true,
+      "probe": {
+        "tool": "openalex_search",
+        "args": {
+          "query": "attention is all you need",
+          "rows": 3
+        },
+        "expect": {
+          "contains": "Attention"
+        }
+      },
+      "notes": "Promovido de belt-research-live (2026-07-04). Keyless sobre api.openalex.org; el paper de Vaswani et al. aparece en el top de relevancia con titulo 'Attention...'."
+    },
+    {
+      "server": "arxiv",
+      "belt_ref": "catalog/templates/research/belt-research.mcp.json",
+      "batch": "promocion",
+      "env_required": [],
+      "expect_tools": [
+        "arxiv_search"
+      ],
+      "card_required": true,
+      "probe": {
+        "tool": "arxiv_search",
+        "args": {
+          "query": "attention is all you need",
+          "rows": 3
+        },
+        "expect": {
+          "contains": "Attention"
+        }
+      },
+      "notes": "Promovido de belt-research-live (2026-07-04). Keyless sobre export.arxiv.org (ATOM); 1706.03762 'Attention Is All You Need' matchea por relevancia."
+    },
+    {
+      "server": "pubmed",
+      "belt_ref": "catalog/templates/research/belt-research.mcp.json",
+      "batch": "promocion",
+      "env_required": [],
+      "expect_tools": [
+        "pubmed_search"
+      ],
+      "card_required": true,
+      "probe": {
+        "tool": "pubmed_search",
+        "args": {
+          "query": "CRISPR-Cas9 genome editing",
+          "rows": 3
+        },
+        "expect": {
+          "contains": "CRISPR"
+        }
+      },
+      "notes": "Promovido de belt-research-live (2026-07-04). Keyless via E-utilities NCBI (esearch→esummary); los titulos del top contienen 'CRISPR'."
+    },
+    {
+      "server": "orcid",
+      "belt_ref": "catalog/templates/research/belt-research.mcp.json",
+      "batch": "promocion",
+      "env_required": [],
+      "expect_tools": [
+        "orcid_search",
+        "orcid_works"
+      ],
+      "card_required": true,
+      "probe": {
+        "tool": "orcid_search",
+        "args": {
+          "query": "Josiah Carberry",
+          "rows": 3
+        },
+        "expect": {
+          "contains": "Carberry"
+        }
+      },
+      "notes": "Promovido de belt-research-live (2026-07-04). KEYLESS confirmado: pub.orcid.org/v3.0 Public API de LECTURA sin token (el write al registro es OAuth, follow-up). Josiah Carberry = investigador ficticio canonico de ORCID (0000-0002-1825-0097), estable para asercion."
+    },
+    {
+      "server": "zotero",
+      "belt_ref": "catalog/templates/research/belt-research.mcp.json",
+      "batch": "seed-byok",
+      "env_required": [],
+      "expect_tools": [
+        "whoami"
+      ],
+      "card_required": true,
+      "probe": {
+        "tool": "whoami",
+        "args": {},
+        "expect": {
+          "contains": "userID"
+        }
+      },
+      "notes": "Entrada BYOK deliberada: documenta el camino SKIP(BYOK) del gate. Sin ZOTERO_API_KEY en el entorno el runner la marca SKIP ruidoso (nunca PASS, exit neutral); con la llave inyectada, whoami debe devolver el userID real de Zotero. Tambien ejercita el check estatico de onboarding (auth=personal_token -> catalog/connectors/onboarding/zotero.json existe). REPOINTED 2026-07-04: la card promovida en el template research es ahora la dueña del dedup key (la del fixture quedo tragada) — apuntar al fixture haria FAIL el static, no SKIP. github/exa BYOK: sin probe (mismo camino que zotero, no suman señal)."
+    },
+    {
+      "server": "calc",
+      "belt_ref": "catalog/templates/generalistas/belt-generalistas.mcp.json",
+      "batch": "promocion",
+      "env_required": [],
+      "expect_tools": [
+        "add",
+        "sub",
+        "mul",
+        "div",
+        "pow",
+        "mod"
+      ],
+      "card_required": true,
+      "probe": {
+        "tool": "add",
+        "args": {
+          "a": 2,
+          "b": 2
+        },
+        "expect": {
+          "contains": "4.0"
+        }
+      },
+      "notes": "Promovido de belt-inline-rich/belt-calc (2026-07-04). El server castea a float → add(2,2) devuelve '4.0' literal. La card del template lleva las 6 tools (la card subset add/sub/mul de belt-calc era fixture de filtro; el superset la cubre)."
+    },
+    {
+      "server": "pysandbox",
+      "belt_ref": "catalog/templates/generalistas/belt-generalistas.mcp.json",
+      "batch": "promocion",
+      "env_required": [],
+      "expect_tools": [
+        "run_python"
+      ],
+      "card_required": true,
+      "probe": {
+        "tool": "run_python",
+        "args": {
+          "code": "print(6*7)"
+        },
+        "expect": {
+          "contains": "42"
+        }
+      },
+      "notes": "Promovido de belt-inline-rich (2026-07-04). Ejecucion REAL en subproceso aislado (python3 -I, env minimo); el 42 sale del stdout del proceso, no del modelo. El server tambien queda declarado (sin card) en el template research."
+    },
+    {
+      "server": "datatools",
+      "belt_ref": "catalog/templates/generalistas/belt-generalistas.mcp.json",
+      "batch": "promocion",
+      "env_required": [],
+      "expect_tools": [
+        "write_xlsx",
+        "write_csv"
+      ],
+      "card_required": true,
+      "probe": {
+        "tool": "write_csv",
+        "args": {
+          "filename": "probe.csv",
+          "header": [
+            "a",
+            "b"
+          ],
+          "rows": [
+            [
+              1,
+              2
+            ],
+            [
+              3,
+              4
+            ]
+          ]
+        },
+        "expect": {
+          "contains": "probe.csv"
+        }
+      },
+      "notes": "Promovido de belt-inline-rich (2026-07-04). write_csv escribe un .csv REAL en ${PUPPET_WORKDIR} (tmpdir del runner) y devuelve {ok, filename, path, rows} — la asercion pesca el filename del archivo realmente escrito."
+    },
+    {
+      "server": "wikipedia",
+      "belt_ref": "catalog/templates/generalistas/belt-generalistas.mcp.json",
+      "batch": "promocion",
+      "env_required": [],
+      "expect_tools": [
+        "search_pages",
+        "get_summary"
+      ],
+      "card_required": true,
+      "probe": {
+        "tool": "get_summary",
+        "args": {
+          "title": "Albert Einstein",
+          "lang": "en"
+        },
+        "expect": {
+          "contains": "Einstein"
+        }
+      },
+      "notes": "NET-NEW en el catalogo (2026-07-04): el fixture belt-wikipedia no tenia _meta.cards, o sea el server existia pero nunca surfaceo como atomo. Card nueva en belt-generalistas. Keyless sobre REST publica de Wikimedia; get_summary de un articulo canonico → title/extract contienen 'Einstein'."
+    },
+    {
+      "server": "excel",
+      "belt_ref": "catalog/templates/finanzas/belt-finanzas.mcp.json",
+      "batch": "a05-huerfanos",
+      "env_required": [],
+      "expect_tools": [
+        "create_workbook",
+        "write_data_to_excel",
+        "read_data_from_excel"
+      ],
+      "card_required": true,
+      "probe": {
+        "tool": "create_workbook",
+        "args": {
+          "filepath": "/tmp/aleph-catalog-probes/excel-probe.xlsx"
+        },
+        "expect": {
+          "contains": "Created workbook"
+        }
+      },
+      "notes": "Huerfano cardado (a0.5, 2026-07-04): declarado en belt-finanzas sin card. uvx excel-mcp-server (openpyxl local, keyless, 25 tools). GOTCHA stdio: exige paths ABSOLUTOS ('must be an absolute path when not in SSE mode') — el probe escribe un .xlsx REAL en /tmp/aleph-catalog-probes/ (crea el dir solo); EXCEL_FILES_PATH=${PUPPET_WORKDIR} solo aplica en modo SSE."
+    },
+    {
+      "server": "alphavantage",
+      "belt_ref": "catalog/templates/finanzas/belt-finanzas.mcp.json",
+      "batch": "a05-huerfanos",
+      "env_required": [],
+      "expect_tools": [
+        "TOOL_LIST",
+        "TOOL_GET",
+        "TOOL_CALL"
+      ],
+      "card_required": true,
+      "probe": {
+        "tool": "TOOL_CALL",
+        "args": {
+          "tool_name": "GLOBAL_QUOTE",
+          "arguments": {
+            "symbol": "IBM"
+          }
+        },
+        "expect": {
+          "contains": "Global Quote"
+        }
+      },
+      "notes": "Huerfano cardado (a0.5, 2026-07-04): declarado en belt-finanzas sin card. Server OFICIAL marketdata-mcp-server (alphavantage-mcp 1.0.0): 3 meta-tools TOOL_LIST/TOOL_GET/TOOL_CALL (workflow del vendor). BYOK ${ALPHA_VANTAGE_API_KEY} → sin key el gate marca SKIP(BYOK); card real igual (tools/list verificado con key placeholder: el listado es estatico, no toca AV). Onboarding alphavantage.json ya existia (soft-validate, hallazgo AV sirve data con key falsa). Con key 'demo' AV devuelve el aviso 'Information: The **demo** API key...' (rate-limit), con key real GLOBAL_QUOTE IBM → JSON con 'Global Quote'."
+    },
+    {
+      "server": "jupyter",
+      "belt_ref": "catalog/templates/finanzas/belt-finanzas.mcp.json",
+      "batch": "a05-huerfanos",
+      "env_required": [],
+      "expect_tools": [
+        "list_notebooks",
+        "execute_cell",
+        "execute_code"
+      ],
+      "card_required": true,
+      "probe": {
+        "tool": "execute_code",
+        "args": {
+          "code": "print(6*7)"
+        },
+        "expect": {
+          "contains": "42"
+        }
+      },
+      "notes": "Huerfano cardado (a0.5, 2026-07-04): declarado en belt-finanzas sin card. uvx jupyter-mcp-server: bootea HEADLESS verificado (init OK + 17 tools con runtime dummy via assembler.MCPServer) — la condicion 'launches headless' se cumple. Ejecutar REAL exige el Jupyter PROPIO del usuario (jupyter-collaboration): BYO infra via ${JUPYTER_RUNTIME_URL}/${JUPYTER_TOKEN}/${JUPYTER_NOTEBOOK_ID} → sin esas vars el gate marca SKIP(BYOK). Onboarding jupyter.json creado (soft-validate, connected_unverified). No se monto un Jupyter local para el PASS: install pesado, disco."
+    },
+    {
+      "server": "sympy",
+      "belt_ref": "catalog/templates/stem/belt-stem.mcp.json",
+      "batch": "a05-huerfanos",
+      "env_required": [],
+      "expect_tools": [
+        "sympy_diff",
+        "sympy_integrate",
+        "sympy_solve",
+        "sympy_latex"
+      ],
+      "card_required": true,
+      "probe": {
+        "tool": "sympy_diff",
+        "args": {
+          "expr": "x**2",
+          "variable": "x"
+        },
+        "expect": {
+          "contains": "2*x"
+        }
+      },
+      "notes": "Huerfano cardado (a0.5, 2026-07-04): belt-stem no tenia cards — sus 3 servers jamas surfacearon. uvx mcp-sympy 3.4.2, 171 tools keyless locales; la card lleva el subset curado de 8 (el mismo recorte que la receta aplica via tool_filters). sympy_diff(x**2, x) → '2*x' simbolico exacto."
+    },
+    {
+      "server": "chart",
+      "belt_ref": "catalog/templates/stem/belt-stem.mcp.json",
+      "batch": "a05-huerfanos",
+      "env_required": [],
+      "expect_tools": [
+        "generate_line_chart",
+        "generate_bar_chart",
+        "generate_pie_chart"
+      ],
+      "card_required": true,
+      "probe": {
+        "tool": "generate_line_chart",
+        "args": {
+          "data": [
+            {
+              "time": "0",
+              "value": 0
+            },
+            {
+              "time": "1",
+              "value": 1
+            },
+            {
+              "time": "2",
+              "value": 4
+            }
+          ],
+          "title": "y=x^2"
+        },
+        "expect": {
+          "contains": "https://"
+        }
+      },
+      "notes": "Huerfano cardado (a0.5, 2026-07-04). npx @antv/mcp-server-chart 0.8.x, 27 tools keyless. REQUIERE RED: renderiza via el servicio remoto gratuito de AntV y devuelve la URL de la imagen renderizada (mdn.alipayobjects.com) — la asercion pesca esa URL real. Deployment privado: env VIS_REQUEST_SERVER (ver belt)."
+    },
+    {
+      "server": "units",
+      "belt_ref": "catalog/templates/stem/belt-stem.mcp.json",
+      "batch": "a05-huerfanos",
+      "env_required": [],
+      "expect_tools": [
+        "units_check",
+        "units_convert"
+      ],
+      "card_required": true,
+      "probe": {
+        "tool": "units_convert",
+        "args": {
+          "value": 60,
+          "from_unit": "km/hour",
+          "to_unit": "m/s"
+        },
+        "expect": {
+          "contains": "16.666667 meter / second"
+        }
+      },
+      "notes": "Huerfano cardado (a0.5, 2026-07-04). Wrapper Pint local (M002, units-pint 1.27.2) via product/tutor-stem/.venv (path RELATIVO en el belt → correr el runner desde la raiz del repo; en worktrees el venv es untracked → symlink al del arbol principal). El probe usa units_convert (determinista); el check adversarial units_check('5 m/s + 3 kg') responde con isError=true (DimensionalityError) — honesto pero el runner trata [tool error] como hard error, por eso NO es el probe."
+    },
+    {
+      "server": "cad",
+      "belt_ref": "catalog/templates/ingenieria/belt-ingenieria.mcp.json",
+      "batch": "a05-huerfanos",
+      "env_required": [],
+      "expect_tools": [
+        "build_cad_model"
+      ],
+      "card_required": true,
+      "probe": {
+        "tool": "build_cad_model",
+        "args": {},
+        "expect": {
+          "json_key": "volume_mm3"
+        }
+      },
+      "notes": "Huerfano cardado (a0.5, 2026-07-04): el cad_server headless (freecadcmd→STL, mergeado 10a0487) no tenia card — no surfaceaba. Corre freecadcmd de /Applications/FreeCAD.app (override env FREECADCMD), SIN GUI ni RPC :9875. build_cad_model default → bracket L: bbox 120x80x70, volume_mm3=140183.0, 3072 triangulos de la geometria REAL; escribe model.cad.json en ${PUPPET_WORKDIR}. Lento (~30-60s: freecadcmd bootea FreeCAD headless)."
+    },
+    {
+      "server": "script_runner",
+      "belt_ref": "catalog/templates/programacion/belt-programacion.mcp.json",
+      "batch": "a05-huerfanos",
+      "env_required": [],
+      "expect_tools": [
+        "run_python",
+        "run_shell"
+      ],
+      "card_required": true,
+      "probe": {
+        "tool": "run_python",
+        "args": {
+          "code": "print(21*2)"
+        },
+        "expect": {
+          "contains": "\"stdout\": \"42\\n\""
+        }
+      },
+      "notes": "Huerfano cardado (a0.5, 2026-07-04): belt-programacion no tenia cards. Gap B3 local (product/belts/gaps/script_runner_mcp.py), keyless, tools reales [run_python, run_shell]. El probe asierta el stdout EXACTO del JSON de respuesta (evita falso-positivo de un '42' suelto en paths). ZONA mesa deliberada, igual que pysandbox: sandbox local aislado (allow-list de binarios, timeout), no manda afuera ni toca plata; recipe_enforcer no matchea SEND/MONEY en run_python/run_shell."
+    },
+    {
+      "server": "duckduckgo",
+      "belt_ref": "catalog/templates/generalistas/belt-generalistas.mcp.json",
+      "batch": "a1",
+      "env_required": [],
+      "expect_tools": [
+        "search"
+      ],
+      "probe": {
+        "tool": "search",
+        "args": {
+          "query": "Model Context Protocol"
+        },
+        "expect": {
+          "contains": "rotocol"
+        }
+      }
+    },
+    {
+      "server": "time",
+      "belt_ref": "catalog/templates/generalistas/belt-generalistas.mcp.json",
+      "batch": "a1",
+      "env_required": [],
+      "expect_tools": [
+        "get_current_time"
+      ],
+      "probe": {
+        "tool": "get_current_time",
+        "args": {
+          "timezone": "America/Guayaquil"
+        },
+        "expect": {
+          "contains": "-05:00"
+        }
+      }
+    },
+    {
+      "server": "sqlite",
+      "belt_ref": "catalog/templates/generalistas/belt-generalistas.mcp.json",
+      "batch": "a1",
+      "env_required": [],
+      "expect_tools": [
+        "read_query",
+        "write_query"
+      ],
+      "probe": {
+        "tool": "read_query",
+        "args": {
+          "query": "SELECT 21*2 AS r"
+        },
+        "expect": {
+          "contains": "42"
+        }
+      }
+    },
+    {
+      "server": "git",
+      "belt_ref": "catalog/templates/generalistas/belt-generalistas.mcp.json",
+      "batch": "a1",
+      "env_required": [],
+      "expect_tools": [
+        "git_status"
+      ],
+      "probe": {
+        "tool": "git_status",
+        "args": {
+          "repo_path": "${PUPPET_REPO}"
+        },
+        "expect": {
+          "contains": "main"
+        }
+      },
+      "notes": "Prueba local del repo saneado: main sin historial; PUPPET_REPO se expande al root inspeccionado."
+    },
+    {
+      "server": "ccxt",
+      "belt_ref": "catalog/templates/finanzas/belt-finanzas-markets.mcp.json",
+      "batch": "a2",
+      "env_required": [],
+      "expect_tools": [
+        "fetchTicker",
+        "fetchOHLCV",
+        "fetchOrderBook"
+      ],
+      "card_required": true,
+      "probe": {
+        "tool": "fetchTicker",
+        "args": {
+          "exchangeId": "binance",
+          "symbol": "BTC/USDT"
+        },
+        "expect": {
+          "regex": "\"last\":\\s*[0-9]+(\\.[0-9]+)?"
+        }
+      },
+      "notes": "Batch a2 (2026-07-04). npm @lazydino/ccxt-mcp (CCXT MCP 4.0.0): keyless para data publica; handshake stdio LIMPIO con assembler.MCPServer (no hizo falta el fallback @mcpfun/mcp-server-ccxt). fetchTicker binance BTC/USDT devuelve JSON con last/bid/ask/vwap reales — la asercion pesca un precio numerico en 'last'. Si binance geo-bloquea desde otra red, cambiar exchangeId a 'kraken' (misma tool, mismo simbolo). La card lleva SOLO el subset read/public de 5 tools; fetchTrades quedo fuera de la card (el hint 'trade' del enforcer la clasificaria money → zone entrega, falso positivo sobre el tape publico) y createOrder/cancelOrder existen pero exigen keys del exchange y caen bajo el gate money del enforcer."
+    },
+    {
+      "server": "coingecko",
+      "belt_ref": "catalog/templates/finanzas/belt-finanzas-markets.mcp.json",
+      "batch": "a2",
+      "env_required": [
+        "COINGECKO_DEMO_API_KEY"
+      ],
+      "card_required": true,
+      "expect_tools": [
+        "execute",
+        "search_docs"
+      ],
+      "probe": {
+        "tool": "execute",
+        "args": {
+          "code": "async function run(client) { return await client.simple.price.get({ ids: 'bitcoin', vs_currencies: 'usd' }); }",
+          "intent": "PASS-gate probe: precio spot de bitcoin en usd"
+        },
+        "expect": {
+          "regex": "\"usd\":\\s*[0-9]+(\\.[0-9]+)?"
+        }
+      },
+      "notes": "Batch a2 (2026-07-04). BYOK deliberado: server oficial @coingecko/coingecko-mcp 6.0.0 (Stainless Code Mode, 2 tools). Sin COINGECKO_DEMO_API_KEY el gate marca SKIP(BYOK). VERIFICADO con placeholder: boot + tools/list OK (el listado es estatico) y execute exige un top-level `async function run(client) {...}` (sin el, [tool error] didactico). search_docs EXIGE el campo 'language' (400 si falta) y llega al servicio remoto aun con key dummy. La asercion del probe (precio usd numerico) queda SIN correr hasta inyectar una Demo key real — honesto, nunca PASS sin dato real. Onboarding coingecko.json creado (soft-validate, connected_unverified)."
+    },
+    {
+      "server": "massive",
+      "belt_ref": "catalog/templates/finanzas/belt-finanzas-markets.mcp.json",
+      "batch": "a2",
+      "env_required": [
+        "MASSIVE_API_KEY"
+      ],
+      "card_required": true,
+      "expect_tools": [
+        "search_endpoints",
+        "call_api",
+        "query_data"
+      ],
+      "probe": {
+        "tool": "call_api",
+        "args": {
+          "path": "/v2/aggs/ticker/AAPL/prev"
+        },
+        "expect": {
+          "contains": "AAPL"
+        }
+      },
+      "notes": "Batch a2 (2026-07-04). BYOK: mcp-massive 0.10.0 (uv tool install git+https://github.com/massive-com/mcp_massive → ~/.local/bin/mcp_massive; Massive.com = ex Polygon.io, api.massive.com). Sin MASSIVE_API_KEY el gate marca SKIP(BYOK). VERIFICADO con placeholder: boot + tools/list OK; search_endpoints es indice LOCAL (responde sin key y confirma Option Contract Snapshot con greeks delta/gamma/theta/vega + IV — el hueco del eval CASO F); call_api con placeholder devuelve HTTP 401 'Unknown API Key' honesto. El probe (Previous Day Bar de AAPL, path del indice real) queda SIN correr hasta key real. OJO: el probe usa call_api (toca la API), NO search_endpoints — un probe sobre el indice local pasaria trivialmente sin validar la key. Onboarding massive.json creado (deep_link 307→signup verificado)."
+    },
+    {
+      "server": "biomcp",
+      "belt_ref": "catalog/templates/medicina/belt-medicina.mcp.json",
+      "batch": "a4",
+      "env_required": [],
+      "expect_tools": [
+        "article_searcher",
+        "trial_searcher",
+        "variant_searcher",
+        "gene_getter"
+      ],
+      "card_required": true,
+      "probe": {
+        "tool": "gene_getter",
+        "args": {
+          "gene_id_or_symbol": "BRAF"
+        },
+        "expect": {
+          "contains": "melanoma"
+        }
+      },
+      "notes": "Batch a4 (2026-07-04). uvx --from biomcp-python biomcp run (genomoncology/BioMCP 1.28.1): 36 tools keyless, handshake stdio LIMPIO con assembler.MCPServer (el banner de FastMCP no rompio el framing — no hizo falta silenciar env). La card lleva el subset biomedico READ-ONLY de 9 (article_*/trial_*/variant_*/gene_getter/disease_getter/drug_getter); las genericas search/fetch/think del framework, alphagenome_predictor, enrichr_analyzer y las nci_* (requieren key) quedan fuera de la card. Probe DETERMINISTA: gene_getter('BRAF') trae la anotacion real de MyGene.info (Entrez 673, 'B-Raf proto-oncogene', mutacion V600E) cuyo summary menciona 'melanoma' — dato real de la fuente, nunca de memoria. Keyless (una key NCI opcional solo habilita las nci_*, no cardadas)."
+    },
+    {
+      "server": "openfda",
+      "belt_ref": "catalog/templates/medicina/belt-medicina.mcp.json",
+      "batch": "a4",
+      "env_required": [],
+      "expect_tools": [
+        "openfda_get_drug_label",
+        "openfda_search_adverse_events",
+        "openfda_lookup_ndc"
+      ],
+      "card_required": true,
+      "probe": {
+        "tool": "openfda_get_drug_label",
+        "args": {
+          "search": "openfda.generic_name:\"ibuprofen\"",
+          "limit": 1
+        },
+        "expect": {
+          "contains": "IBUPROFEN"
+        }
+      },
+      "notes": "Batch a4 (2026-07-04). npx -y @cyanheads/openfda-mcp-server (@cyanheads/mcp-ts-core 0.7.6): 7 tools keyless. OPENFDA_API_KEY es OPCIONAL (solo rate-limit) -> keyless, sin SKIP(BYOK). GOTCHA boot: la 1ra ejecucion npx DESCARGA el paquete y puede exceder el timeout de initialize del cliente (INIT FAILED en frio); con el paquete en cache npx arranca en <2s y el handshake es limpio — correr el runner con npx tibio. Probe REAL: openfda_get_drug_label buscando openfda.generic_name:'ibuprofen' devuelve un prospecto real de la API openFDA (substance name IBUPROFEN, clase NSAID / Cyclooxygenase Inhibitors, ~1166 labels) — la asercion pesca 'IBUPROFEN' del substance name que la API devuelve en mayusculas. READ-ONLY, no diagnostica."
+    }
+  ]
+}

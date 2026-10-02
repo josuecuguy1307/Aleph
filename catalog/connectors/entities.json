@@ -1,0 +1,21 @@
+{
+  "_doc": "Overrides mínimos de la entidad Conector. La agrupación general se deriva por SERVICIO en app.phase1.connector_entities; este archivo sólo declara aliases y precedencias humanas que no pueden inferirse de un nombre de servidor MCP. Un alias une servicios, nunca servidores pelados.",
+  "schema_version": "2",
+  "aliases": {
+    "feedoracle": "fred"
+  },
+  "services": {
+    "fred": {
+      "name": "FRED",
+      "description": "Listo — ya puedo obtener series macro de FRED (inflación, desempleo, tasas, PIB) con cambios mes a mes y año a año.",
+      "logo": "fred",
+      "credential": {
+        "provider": "fred",
+        "connector": "fred",
+        "aliases": [
+          "feedoracle"
+        ]
+      }
+    }
+  }
+}

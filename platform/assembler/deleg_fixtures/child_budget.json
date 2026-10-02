@@ -1,0 +1,8 @@
+{
+  "schema_version": "v1",
+  "meta": { "name": "budget_sub", "nicho": "general", "descripcion": "sub-agente que haría MUCHOS pasos: se corta por su presupuesto ACOTADO (no cuelga al padre)" },
+  "model": { "primary": "stub", "base_url": "stub://local", "temperature": 0, "max_tokens": 256, "max_turns": 8 },
+  "belt": { "belt_ref": "platform/assembler/deleg_fixtures/belt-deleg.mcp.json", "tool_filters": { "deleg": ["read_data"] } },
+  "rag": { "enabled": false },
+  "gates": { "money_touch": "needs_ok", "send": "needs_ok" }
+}

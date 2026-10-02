@@ -1,0 +1,94 @@
+{
+  "_meta": {
+    "belt": "atomicas",
+    "que_es": "Backbone de tools ATOMICAS — compartidas, sirven a >=4 nichos. Se exponen UNA sola vez (FASE0 tabla seccion 2). No duplicar por nicho.",
+    "fuente": "org/artifacts/FASE0-tabla-tool-caso-bucket.md (seccion 2) + roll-up seccion 8 (B1 atomicas)",
+    "verificado": "JSON-RPC init + tools/list reales el 2026-06-15 (ver product/belts/tests/EVIDENCE.md)"
+  },
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "${PUPPET_WORKDIR}"
+      ],
+      "caso": 1,
+      "bucket": "B1",
+      "nichos": [
+        "cowork",
+        "research",
+        "programacion",
+        "educacion",
+        "finanzas"
+      ],
+      "description": "Leer/escribir archivos del espacio del agente (allow-list de dirs). Cero credenciales."
+    },
+    "fetch": {
+      "command": "uvx",
+      "args": [
+        "--with",
+        "mcp==1.29.0",
+        "mcp-server-fetch"
+      ],
+      "caso": 1,
+      "bucket": "B1",
+      "nichos": [
+        "research",
+        "programacion",
+        "cowork",
+        "finanzas"
+      ],
+      "description": "Traer una URL -> texto/markdown. Cero credenciales.",
+      "pin_sdk": {
+        "mcp": "1.29.0",
+        "por_que": "Mismo pin que la copia hermana: el SDK `mcp` publicó 2.0.0 (major) y este server está escrito contra la 1.x, con `mcp>=` abierto en su metadata. Este archivo tenía una copia SIN pinear del mismo server — el verificador sólo mide la PRIMERA aparición de cada nombre, así que la copia quedó rota e invisible hasta que el calentamiento del agente la levantó."
+      },
+      "tool_sonda": "fetch",
+      "args_sonda": {
+        "url": "https://example.com"
+      },
+      "sonda_por_que": {
+        "clase": "constante neutra",
+        "lectura_pura": true,
+        "motivo": "Misma sonda que la copia hermana. `example.com` está reservado por la IANA (RFC 2606): público, estable y de nadie."
+      }
+    },
+    "memory": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-memory"
+      ],
+      "env": {
+        "MEMORY_FILE_PATH": "${PUPPET_WORKDIR}/memory.json"
+      },
+      "caso": 1,
+      "bucket": "B2",
+      "nichos": [
+        "cowork",
+        "research",
+        "programacion",
+        "educacion",
+        "finanzas"
+      ],
+      "ajuste_B2": "Politica de que persistir: solo hechos verificados/decisiones, no scratchpad. El runtime fija MEMORY_FILE_PATH en el workdir del run.",
+      "description": "Estado/knowledge-graph entre turnos. Persiste en el workdir del run."
+    },
+    "pandoc": {
+      "command": "uvx",
+      "args": [
+        "mcp-pandoc"
+      ],
+      "caso": 2,
+      "bucket": "B1",
+      "nichos": [
+        "research",
+        "cowork",
+        "educacion"
+      ],
+      "requiere_binario": "pandoc (system). Verificado en writer-es-v0.",
+      "description": "Convertir md<->docx/pdf/latex. Caso 2 (binario pandoc). Cablear via system pandoc."
+    }
+  }
+}

@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en" style="background-color: var(--background-base)">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Ciencia</title>
+    <link rel="icon" type="image/png" href="/favicon-96x96-v4.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/atlas-favicon.svg" />
+    <link rel="shortcut icon" href="/favicon-v4.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-v4.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#f2f2f0" />
+    <meta name="theme-color" content="#171717" media="(prefers-color-scheme: dark)" />
+    <meta property="og:image" content="/social-share.png" />
+    <meta property="twitter:image" content="/social-share.png" />
+    <!-- All fonts are self-hosted: Computer Modern (UI, see thesis.css) and the
+         mono families for code (@synsci/ui <Font />, driven by the Settings
+         mono-font picker). No external font fetches. -->
+    <script id="openscience-theme-preload-script" src="/openscience-theme-preload.js"></script>
+
+    <!-- [un solo picker en las siete · 2026-08-22] El chip de modelo de Aleph, en el
+         composer. El picker de este stack —«QUICK MODELS», con su propio catálogo— se
+         apaga y el chip ocupa su lugar. Fuera de Aleph el archivo es un no-op (LEY 0):
+         no toca nada hasta que la casa contesta con su catálogo. El núcleo viaja al lado
+         por la misma razón que en los otros. Ver public/aleph-picker-unico.js. -->
+    <script src="/aleph-picker-unico.js"></script>
+    <!-- [Aleph · rediseño fase 1 · cable (b)] EL INTERRUPTOR DE LA PIEL. La hoja viaja
+         siempre; sólo se aplica con `?aleph_piel=v2` en la URL del iframe. Apagar el
+         rediseño no cuesta un build. Fuera de Aleph es un no-op (LEY 0).
+         Ver public/aleph-piel.js. -->
+    <script src="/aleph-piel.js"></script>
+  </head>
+  <body class="antialiased overscroll-none text-12-regular overflow-hidden">
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root" class="flex flex-col h-dvh p-px"></div>
+    <script src="/src/entry.tsx" type="module"></script>
+  </body>
+</html>

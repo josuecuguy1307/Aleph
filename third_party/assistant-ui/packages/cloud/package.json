@@ -1,0 +1,55 @@
+{
+  "name": "assistant-cloud",
+  "version": "0.1.39",
+  "description": "Cloud integration for assistant-ui",
+  "keywords": [
+    "assistant",
+    "cloud",
+    "ai",
+    "chat",
+    "assistant-ui"
+  ],
+  "author": "AgentbaseAI Inc.",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "aui-build",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "assistant-stream": "^0.3.36"
+  },
+  "devDependencies": {
+    "@assistant-ui/x-buildutils": "workspace:*",
+    "@types/node": "^26.1.2",
+    "vitest": "^4.1.10"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "homepage": "https://www.assistant-ui.com/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/assistant-ui/assistant-ui.git",
+    "directory": "packages/cloud"
+  },
+  "bugs": {
+    "url": "https://github.com/assistant-ui/assistant-ui/issues"
+  }
+}

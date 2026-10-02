@@ -1,0 +1,105 @@
+{
+  "_doc": "ESTO ES UNA SEMILLA PARA VER, NO LA VERDAD. GANA SIEMPRE EL PROVEEDOR. Existe por un solo motivo: que las tarjetas de proveedor no estén MUDAS antes de que el usuario ponga su llave. Sin llave, siete de nuestras ocho vías devuelven cero modelos —medido el 2026-08-07: el único que contesta sin credencial es OpenRouter, porque su /models es público— y una tarjeta vacía se lee como 'este proveedor no tiene modelos', que es una afirmación que nadie midió. En cuanto llega la llave, el catálogo VIVO del proveedor reemplaza a esta tabla, fila por fila: acá se entra por el rango más bajo de la precedencia ya sellada en centro_modelos._modelo_de_api (eleccion_del_usuario > catalogo_vivo > declarado > ninguno). La UI consume esto verbatim y NUNCA adivina; lo que no está verificado viaja marcado y la pantalla tiene que DECIRLO, jamás pintarlo como un hecho.",
+
+  "_version": "1.0.0",
+
+  "_alcance": "LOS PRINCIPALES DE CADA PROVEEDOR, NO TODOS, y la tarjeta tiene que decirlo con esas palabras. Curar el catálogo completo son 113 filas vigentes (13 anthropic / 32 openai / 32 google / 18 mistral / 8 groq / 4 deepseek / 6 xai, contadas el 2026-08-13) y envejecería siete veces más rápido que estas ~31. Una tabla que se pudre es peor que no tenerla: esta casa ya lo pagó una vez —F6-bis midió los dos ids que estaban escritos a mano en el código, `qwen/qwen3.6-plus:free` y `openai/gpt-oss-120b:free`, y NINGUNO DE LOS DOS EXISTÍA YA (ver centro_modelos._modelo_de_api)—. Por eso el alcance es corto a propósito y por eso esto no decide nada: sólo deja ver.",
+
+  "_generado_en": "2026-08-13",
+
+  "_fuente_de_los_datos": {
+    "_": "De dónde salió CADA campo, porque de eso depende si se puede mostrar como hecho. NADA de acá viene de models.dev ni de ningún agregador de terceros: no sabemos bajo qué licencia publica y es la clase de dependencia que esta casa extirpa.",
+    "verificado": "El proveedor lo publicó en SU catálogo y lo tenemos en disco, bajado con la llave del usuario. Hoy sólo groq está en esta situación (15 modelos, descubiertos el 2026-08-13, cacheados en modelos/catalogo_api/groq.json). Es dato medido y se puede mostrar como hecho.",
+    "no_verificado": "`context` y `capacidades` salen del catálogo que OPENROUTER publica sobre esos mismos modelos (410 filas, bajadas del proveedor el 2026-08-13). Es dato publicado por un proveedor con el que SÍ estamos conectados, no una agregación de un tercero — pero es la lectura que OpenRouter hace de un modelo de Anthropic, NO lo que Anthropic dice de sí mismo. Por eso viaja marcado y la fila no puede presentarlo como verdad del proveedor directo.",
+    "convencion": "El `model_id` DIRECTO se derivó quitándole el prefijo de vendor al id de OpenRouter (`anthropic/claude-opus-5` → `claude-opus-5`). Es una CONVENCIÓN, no una medición: sin llave no se puede confirmar que la API directa lo nombre así. Si un id está mal, la primera request con llave lo dice y el catálogo vivo lo corrige — que es exactamente para lo que existe la precedencia."
+  },
+
+  "_forma_de_la_fila": {
+    "model_id": "el id que se le manda a la API DIRECTA del proveedor",
+    "label": "el nombre humano; si falta, la UI cae al normalizador",
+    "context": "ventana en tokens; null = no lo sabemos y la fila NO lo dice",
+    "capacidades": "vocabulario de la casa: texto · tools · razonamiento · vision. Lista vacía = no sabemos, y la UI no debe inferir nada de eso",
+    "salidas": "qué devuelve; `servible` se deriva de acá y de `capacidades`, con la MISMA función que hoy (modelos_discovery.servible)",
+    "verificado": "true SÓLO si el propio proveedor lo publicó y lo medimos. false = mostrar marcado"
+  },
+
+  "proveedores": {
+    "api.groq": {
+      "_nota": "LA ÚNICA VERIFICADA. Sale del catálogo que groq publicó y que tenemos en disco (modelos/catalogo_api/groq.json, 2026-08-13). Los `whisper-*` y los `orpheus-*` de ese catálogo NO están acá a propósito: transcriben o hablan, no sirven de cerebro, y `servible` ya los rechaza. Los `llama-prompt-guard-2-*` tampoco: 512 tokens de ventana son un guard, no un cerebro.",
+      "modelos": [
+        {"model_id": "openai/gpt-oss-120b", "label": "GPT-OSS 120B", "context": 131072, "capacidades": ["texto", "tools", "razonamiento"], "salidas": ["text"], "verificado": true},
+        {"model_id": "openai/gpt-oss-20b", "label": "GPT-OSS 20B", "context": 131072, "capacidades": ["texto", "tools", "razonamiento"], "salidas": ["text"], "verificado": true},
+        {"model_id": "openai/gpt-oss-safeguard-20b", "label": "GPT-OSS Safeguard 20B", "context": 131072, "capacidades": ["texto", "tools", "razonamiento"], "salidas": ["text"], "verificado": true},
+        {"model_id": "qwen/qwen3.6-27b", "label": "Qwen3.6 27B", "context": 131072, "capacidades": ["texto", "vision", "tools", "razonamiento"], "salidas": ["text"], "verificado": true},
+        {"model_id": "llama-3.3-70b-versatile", "label": "Llama 3.3 70B Versatile", "context": 131072, "capacidades": ["texto", "tools"], "salidas": ["text"], "verificado": true},
+        {"model_id": "llama-3.1-8b-instant", "label": "Llama 3.1 8B Instant", "context": 131072, "capacidades": ["texto", "tools"], "salidas": ["text"], "verificado": true},
+        {"model_id": "groq/compound", "label": "Compound", "context": 131072, "capacidades": ["texto"], "salidas": ["text"], "verificado": true},
+        {"model_id": "groq/compound-mini", "label": "Compound Mini", "context": 131072, "capacidades": ["texto"], "salidas": ["text"], "verificado": true}
+      ]
+    },
+
+    "api.anthropic": {
+      "_nota": "Sin llave en esta máquina: `context` y `capacidades` son la lectura de OpenRouter sobre estos modelos, y el `model_id` directo es convención. Todo marcado.",
+      "modelos": [
+        {"model_id": "claude-opus-5", "label": "Claude Opus 5", "context": 1000000, "capacidades": ["texto", "vision", "tools", "razonamiento"], "salidas": ["text"], "verificado": false},
+        {"model_id": "claude-sonnet-5", "label": "Claude Sonnet 5", "context": 1000000, "capacidades": ["texto", "vision", "tools", "razonamiento"], "salidas": ["text"], "verificado": false},
+        {"model_id": "claude-fable-5", "label": "Claude Fable 5", "context": 1000000, "capacidades": ["texto", "vision", "tools", "razonamiento"], "salidas": ["text"], "verificado": false},
+        {"model_id": "claude-haiku-4.5", "label": "Claude Haiku 4.5", "context": 200000, "capacidades": ["texto", "vision", "tools", "razonamiento"], "salidas": ["text"], "verificado": false},
+        {"model_id": "claude-opus-4.8", "label": "Claude Opus 4.8", "context": 1000000, "capacidades": ["texto", "vision", "tools", "razonamiento"], "salidas": ["text"], "verificado": false}
+      ]
+    },
+
+    "api.openai": {
+      "_nota": "Sin llave en esta máquina. Mismo criterio que anthropic: datos marcados, id por convención.",
+      "modelos": [
+        {"model_id": "gpt-5.6-sol", "label": "GPT-5.6 Sol", "context": 1050000, "capacidades": ["texto", "vision", "tools", "razonamiento"], "salidas": ["text"], "verificado": false},
+        {"model_id": "gpt-5.6-luna", "label": "GPT-5.6 Luna", "context": 1050000, "capacidades": ["texto", "vision", "tools", "razonamiento"], "salidas": ["text"], "verificado": false},
+        {"model_id": "gpt-5.6-terra", "label": "GPT-5.6 Terra", "context": 1050000, "capacidades": ["texto", "vision", "tools", "razonamiento"], "salidas": ["text"], "verificado": false},
+        {"model_id": "gpt-5.6-sol-pro", "label": "GPT-5.6 Sol Pro", "context": 1050000, "capacidades": ["texto", "vision", "tools", "razonamiento"], "salidas": ["text"], "verificado": false},
+        {"model_id": "gpt-5.5", "label": "GPT-5.5", "context": 1050000, "capacidades": ["texto", "vision", "tools", "razonamiento"], "salidas": ["text"], "verificado": false}
+      ]
+    },
+
+    "api.gemini": {
+      "_nota": "La vía se llama `api.gemini` y su endpoint es el compat-OpenAI de Google. Sin llave en esta máquina.",
+      "modelos": [
+        {"model_id": "gemini-3.1-pro-preview", "label": "Gemini 3.1 Pro Preview", "context": 1048576, "capacidades": ["texto", "vision", "tools", "razonamiento"], "salidas": ["text"], "verificado": false},
+        {"model_id": "gemini-3.1-flash-lite", "label": "Gemini 3.1 Flash Lite", "context": 1048576, "capacidades": ["texto", "vision", "tools", "razonamiento"], "salidas": ["text"], "verificado": false},
+        {"model_id": "gemini-2.5-pro", "label": "Gemini 2.5 Pro", "context": 1048576, "capacidades": ["texto", "vision", "tools", "razonamiento"], "salidas": ["text"], "verificado": false},
+        {"model_id": "gemini-2.5-flash", "label": "Gemini 2.5 Flash", "context": 1048576, "capacidades": ["texto", "vision", "tools", "razonamiento"], "salidas": ["text"], "verificado": false}
+      ]
+    },
+
+    "api.mistral": {
+      "_nota": "Sin llave en esta máquina.",
+      "modelos": [
+        {"model_id": "mistral-large-2512", "label": "Mistral Large 3", "context": 262144, "capacidades": ["texto", "vision", "tools"], "salidas": ["text"], "verificado": false},
+        {"model_id": "mistral-medium-3-5", "label": "Mistral Medium 3.5", "context": 262144, "capacidades": ["texto", "vision", "tools", "razonamiento"], "salidas": ["text"], "verificado": false},
+        {"model_id": "mistral-small-2603", "label": "Mistral Small 4", "context": 262144, "capacidades": ["texto", "vision", "tools", "razonamiento"], "salidas": ["text"], "verificado": false},
+        {"model_id": "ministral-8b-2512", "label": "Ministral 3 8B", "context": 262144, "capacidades": ["texto", "vision", "tools"], "salidas": ["text"], "verificado": false}
+      ]
+    },
+
+    "api.deepseek": {
+      "_nota": "Sin llave en esta máquina.",
+      "modelos": [
+        {"model_id": "deepseek-v4-pro", "label": "DeepSeek V4 Pro", "context": 1048576, "capacidades": ["texto", "tools", "razonamiento"], "salidas": ["text"], "verificado": false},
+        {"model_id": "deepseek-v4-flash", "label": "DeepSeek V4 Flash", "context": 1048576, "capacidades": ["texto", "tools", "razonamiento"], "salidas": ["text"], "verificado": false},
+        {"model_id": "deepseek-chat", "label": "DeepSeek V3", "context": 163840, "capacidades": ["texto", "tools"], "salidas": ["text"], "verificado": false},
+        {"model_id": "deepseek-reasoner", "label": "DeepSeek R1", "context": 163840, "capacidades": ["texto", "tools", "razonamiento"], "salidas": ["text"], "verificado": false}
+      ]
+    },
+
+    "api.together": {
+      "_nota": "HUECO HONESTO, Y ES EL ÚNICO. Together no aparece en ningún catálogo que tengamos en disco, ni suyo ni de OpenRouter, así que no hay de dónde sacar `context` ni `capacidades` sin inventarlos. La única fila es el modelo semilla que ya estaba escrito en `_PICKER_HOSTEADO`, con sus campos VACÍOS: la tarjeta va a mostrar el nombre y nada más, que es exactamente lo que sabemos. Prefiero un hueco visible a un número copiado.",
+      "modelos": [
+        {"model_id": "meta-llama/Llama-3.3-70B-Instruct-Turbo", "label": "Llama 3.3 70B Instruct Turbo", "context": null, "capacidades": [], "salidas": [], "verificado": false}
+      ]
+    },
+
+    "api.openrouter": {
+      "_nota": "SIN SEMILLA A PROPÓSITO, y no es un olvido. OpenRouter publica su /models SIN credencial, así que su tarjeta ya muestra su catálogo vivo entero (410 modelos, medido el 2026-08-13) desde el primer arranque. Sembrarla sería poner una copia peor al lado del original — y arriesgar que la copia envejezca mientras el vivo está ahí mismo. Su tarjeta es también la ÚNICA donde una fila puede llevar el nombre de otro vendor (`Anthropic: Claude Opus 5`) sin mentir, porque la tarjeta dice OpenRouter: se lee «de Anthropic, VÍA OpenRouter».",
+      "modelos": []
+    }
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "connector": "alphavantage",
+  "auth_method": "personal_token",
+  "tier": "average",
+  "needs_base_url": false,
+  "deep_link": "https://www.alphavantage.co/support/#api-key",
+  "api_base": "https://www.alphavantage.co",
+  "credential_fields": [
+    {
+      "id": "key",
+      "label": "Tu API key de Alpha Vantage",
+      "shape": "clave alfanumérica (ej. A1B2C3D4E5…)",
+      "secret": true
+    }
+  ],
+  "auth": {
+    "scheme": "query",
+    "param": "apikey",
+    "value": "{key}"
+  },
+  "steps": [
+    {
+      "txt": "Te llevo a Alpha Vantage. Pon tu correo y te dan una API key gratis al instante.",
+      "emphasis": [
+        "gratis"
+      ]
+    },
+    {
+      "txt": "Copia la clave que te muestran."
+    },
+    {
+      "txt": "Pega tu llave aquí."
+    }
+  ],
+  "validate": {
+    "method": "GET",
+    "path": "/query?function=GLOBAL_QUOTE&symbol=IBM",
+    "invalid_when": [
+      "Error Message"
+    ],
+    "soft": true,
+    "identity_field": ""
+  },
+  "unverified_line": "Guardé tu llave de Alpha Vantage. Su API sirve datos hasta con una llave inexistente, así que no puedo confirmarla aquí — la pruebo en el primer uso y, si no funciona, te aviso para que la cambies.",
+  "permissions": [
+    "leer precios y series de mercado (acciones, FX, indicadores técnicos)"
+  ],
+  "requires_sharing": false,
+  "errors": {
+    "invalid": "Esa clave no funcionó — consigue una gratis en alphavantage.co/support/#api-key y pégala.",
+    "network": "No pude verificar con Alpha Vantage ahora — prueba de nuevo en un momento."
+  },
+  "capability_line": "Listo — ya puedo consultar precios de mercado y series técnicas de Alpha Vantage.",
+  "trust_line": "Tu llave se guarda cifrada · la quitas cuando quieras.",
+  "verification": {
+    "deep_link_ok": true,
+    "validated_with_test_key": false,
+    "notes": "[v3] auth scheme=query (apikey). HALLAZGO HONESTO (probado en vivo 2026-06-16): Alpha Vantage NO se puede validar al conectar. Sondeadas 4 funciones con apikey=BOGUS — GLOBAL_QUOTE/TIME_SERIES_DAILY/LISTING_STATUS sirven data REAL igual; OVERVIEW/CURRENCY devuelven un 'Information' de rate-limit que TAMBIÉN sale con key válida. AV solo chequea que el param exista, no que sirva. Por eso `validate.soft:true` → el motor devuelve estado `connected_unverified` (ámbar, NO verde): la key se guarda y se confirma en el PRIMER USO real (la tool alphavantage_quote reporta si AV la rechaza). invalid_when=['Error Message'] queda como guarda para el caso raro de error-en-body. Para validación DURA de key, FRED es el conector keyed canónico del nicho (bogus→400→invalid)."
+  },
+  "en": {
+    "steps": [
+      {
+        "txt": "I'll take you to Alpha Vantage. Enter your email and they'll give you a free API key instantly.",
+        "emphasis": [
+          "free"
+        ]
+      },
+      {
+        "txt": "Copy the key they show you."
+      },
+      {
+        "txt": "Paste it here."
+      }
+    ],
+    "trust_line": "Your key is stored encrypted · remove it anytime.",
+    "capability_line": "Done — I can now pull market prices and technical series from Alpha Vantage.",
+    "errors": {
+      "invalid": "That key didn't work — get a free one at alphavantage.co/support/#api-key and paste it.",
+      "network": "I couldn't verify with Alpha Vantage right now — try again in a moment."
+    },
+    "credential_fields": [
+      {
+        "id": "key",
+        "label": "Your Alpha Vantage API key",
+        "shape": "alphanumeric key (e.g. A1B2C3D4E5…)"
+      }
+    ]
+  }
+}

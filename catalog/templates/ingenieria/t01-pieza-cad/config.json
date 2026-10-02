@@ -1,0 +1,41 @@
+{
+  "belt_path": "catalog/templates/ingenieria/belt-ingenieria.mcp.json",
+  "framing_path": "catalog/templates/ingenieria/t01-pieza-cad/framing.md",
+  "framing_fallback": "Eres un agente de ingenieria mecanica. Modelas piezas parametricas en FreeCAD con dimensiones y unidades correctas, verificas la geometria real (volumen, bounding box, masa) antes de afirmar nada, y documentas el criterio de diseno. Nunca inventas medidas ni propiedades: si no puedes computarlas en FreeCAD, lo dices. Puedes dejar correos en borrador (specs, cotizaciones); enviarlos siempre te pide el OK.",
+  "rag_dir": null,
+  "base_url": "http://127.0.0.1:11434/v1",
+  "model": "qwen3:8b",
+  "max_turns": 14,
+  "max_tokens": 4096,
+  "temperature": 0,
+  "tool_filters": {
+    "freecad": [
+      "create_document",
+      "create_object",
+      "edit_object",
+      "get_object",
+      "get_objects",
+      "execute_code",
+      "insert_part_from_library",
+      "get_parts_list",
+      "list_documents",
+      "reload_document",
+      "delete_object",
+      "run_fem_analysis"
+    ],
+    "filesystem": [
+      "read_file",
+      "write_file",
+      "list_directory"
+    ],
+    "gmail": [
+      "create_draft"
+    ]
+  },
+  "surgery_params": {
+    "objetivo": "__REQUIRED__",
+    "unidades": "mm",
+    "output_dir": "__AUTO__"
+  },
+  "api_key": {}
+}

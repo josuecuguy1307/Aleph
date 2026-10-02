@@ -1,0 +1,76 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+dist-electron/
+build/
+!apps/desktop/build/
+out/
+release/
+*.tsbuildinfo
+
+# Caches
+.turbo/
+.vite/
+.cache/
+.eslintcache
+.next/
+
+# Test outputs
+coverage/
+playwright-report/
+test-results/
+*.lcov
+
+# Environment
+.env
+.env.*
+!.env.example
+scripts/.smoke-keys.env
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+pnpm-debug.log*
+
+# Local data
+.claude/workspace/
+.claude/worktrees/
+*.local
+
+# VitePress
+website/.vitepress/dist/
+website/.vitepress/cache/
+website/.vitepress/.temp/
+
+# Playwright MCP screenshots
+.playwright-mcp/
+
+# Internal docs (research, handoffs, internal roadmap) — not for public repo
+docs/
+
+# Internal marketing drafts — not for public repo
+promo-copy/
+
+# Demo speedup source files — not used in README
+website/public/demos/_speedup/
+
+# Agent worktrees / transcripts
+.claude/projects/
+.codex-temp/

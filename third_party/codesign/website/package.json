@@ -1,0 +1,16 @@
+{
+  "name": "open-codesign-website",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "prebuild": "node ./scripts/clean-vitepress-vue-link.mjs",
+    "dev": "vitepress dev",
+    "build": "vitepress build",
+    "preview": "vitepress preview"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.3.0",
+    "tailwindcss": "^4.3.0",
+    "vitepress": "^1.6.4"
+  }
+}

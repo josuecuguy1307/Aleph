@@ -1,0 +1,240 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* [Aleph · 2026-08-11] SUPERFICIES DE LA CASA. Eran un blanco AZULADO (220 20% 98%) y
+       una tinta azulada: cerca del sistema pero no el sistema. Estos son los hex de
+       `product/app/design/aleph-tokens.css` pasados a HSL, que es el formato que este stack
+       usa (Tailwind los envuelve con `hsl(var(--token))`).
+         --background 240 5% 96% = #F4F4F5 (el campo)
+         --foreground 0 0% 4%    = #0A0A0A (la tinta)
+         --card       0 0% 100%  = #FFFFFF (el plano de contenido) */
+    --background: 240 5% 96%;
+    --foreground: 0 0% 4%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 4%;
+
+    /* Popover: a slightly elevated surface used for floating menus,
+       tooltips, and the language switcher dropdown. Falls back to a
+       solid white (light) or surface-1 (dark) so dropdowns never
+       appear transparent and let underlying content bleed through. */
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 4%;
+
+    /* [Gate 4 · F6 · Finanzas · ley 3] EL ACENTO ES EL DE LA CASA. Era un naranja de marca
+       del proyecto de origen (27 90% 52%), y pintaba el menú activo, el botón de enviar y
+       el «Guardar»: lo primero que delataba que adentro vivía otra app. Es el violeta de
+       `product/app/design/aleph-tokens.css` — #5A4FD6 en claro, #8D8BEE en oscuro. */
+    --primary: 245 62% 57%;
+    --primary-foreground: 0 0% 100%;
+
+    /* El pozo y el ÚNICO gris de apoyo del sistema (#F4F4F5 / #65656A). */
+    --muted: 240 5% 96%;
+    --muted-foreground: 240 2% 41%;
+    --destructive: 5 59% 44%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* EL TOKEN NO PUEDE LLEVAR ALFA. Este stack genera utilidades con opacidad
+       (`border-border/60` → `hsl(var(--border) / .6)`), así que un valor con alfa adentro
+       produce `hsl(0 0% 0% / 0 / .6)`: sintaxis inválida, y el navegador la resuelve como
+       NEGRO SÓLIDO. Se ve como un contorno grueso alrededor del compositor y los chips.
+       El borde se apaga donde corresponde —en la regla global, más abajo— y el token queda
+       con un color válido: el del campo, para que cualquier línea que sobreviva se funda
+       con el fondo en vez de dibujarse. */
+    --border: 240 5% 96%;
+
+    /* El radio del CONTROL en la escala de Aleph: 18px. Era 8px (0.5rem), la escala de otro
+       sistema. Tailwind deriva de acá `rounded-lg/md/sm`, así que un solo valor mueve toda
+       la geometría de la app. */
+    --radius: 1.125rem;
+
+    /* Semantic colors — los valores AA que la casa ya midió contra sus propios fondos */
+    --success: 151 50% 30%;
+    --danger: 5 59% 44%;
+    --warning: 39 84% 29%;
+    --info: 198 42% 36%;
+
+    /* Chart tokens: la rejilla y los ejes se apagan a los grises del sistema. Las SERIES
+       (--chart-compare-*) NO se tocan: son datos, y su color es del oficio, no de la piel. */
+    --chart-grid: 240 5% 90%;
+    --chart-text: 240 2% 41%;
+    --chart-axis: 240 4% 80%;
+    --chart-compare-a: #3b82f6;
+    --chart-compare-b: #f59e0b;
+  }
+
+  .dark {
+    /* Dark mode: 4-level surface system. Keep >=5 lightness points between
+       adjacent surfaces — smaller deltas are indistinguishable on most
+       panels (sidebar vs main blended at 5%/8%). */
+    /* [Aleph] Los tres planos de la casa en oscuro: campo #0B0B0C → plano #141416 → pozo
+       #1C1C1F. El sistema de 4 niveles del stack se mapea a esos tres; el popover usa el
+       pozo, que es el nivel que el sistema reserva para lo que flota sobre el plano. */
+    --background: 240 4% 5%;
+    --foreground: 240 5% 96%;
+    --card: 240 5% 8%;
+    --card-foreground: 240 5% 96%;
+
+    --popover: 240 5% 12%;
+    --popover-foreground: 240 5% 96%;
+
+    /* En oscuro el acento de Aleph es CLARO (#8D8BEE), así que la tinta que va encima se da
+       vuelta a casi negro — si quedara blanca, el botón sería ilegible. */
+    --primary: 241 74% 74%;
+    --primary-foreground: 0 0% 4%;
+
+    --muted: 240 5% 12%;
+    --muted-foreground: 240 3% 64%;
+    --destructive: 8 62% 68%;
+    --destructive-foreground: 0 0% 4%;
+    --border: 240 5% 12%;
+
+    /* Semantic colors — en oscuro suben de brillo, como en la casa */
+    --success: 151 34% 46%;
+    --danger: 8 62% 68%;
+    --warning: 39 66% 56%;
+    --info: 199 41% 66%;
+
+    /* Chart tokens */
+    --chart-grid: 240 5% 12%;
+    --chart-text: 240 3% 64%;
+    --chart-axis: 240 4% 22%;
+    --chart-compare-a: #60a5fa;
+    --chart-compare-b: #fbbf24;
+  }
+
+  /* [Aleph] Era `@apply border-border`, que le daba color de borde a TODOS los elementos.
+     El sistema prohíbe la línea —la jerarquía es sombra + radio—, así que el color por
+     defecto es transparente. */
+  * { border-color: transparent; }
+  body { @apply bg-background text-foreground; }
+
+  /* Prose table enhancements */
+  .prose table { border-collapse: collapse; width: 100%; }
+  .prose th, .prose td { border: 1px solid hsl(var(--border)); }
+  .prose tbody tr:nth-child(even) { background: hsl(var(--muted) / 0.3); }
+
+  /* Smooth scrollbar for webkit */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: hsl(var(--border)); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: hsl(var(--muted-foreground)); }
+}
+
+/* Streaming pulse-slide animation for the "running" bar */
+@keyframes pulse-slide {
+  0%   { transform: translateX(-100%); }
+  50%  { transform: translateX(200%); }
+  100% { transform: translateX(-100%); }
+}
+
+.chat-scroll-container[data-streaming="true"] {
+  overflow-anchor: none;
+}
+
+.katex-display {
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+/* Message/hero entrance — one subtle rise per mount; removed under reduced motion */
+@keyframes msg-enter {
+  from { opacity: 0; transform: translateY(10px); }
+}
+.msg-enter { animation: msg-enter 300ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+@media (prefers-reduced-motion: reduce) {
+  .msg-enter { animation: none; }
+}
+
+/* RTL: mirror directional icons (chevrons, arrows) automatically */
+[dir="rtl"] .rtl\:flip-x { transform: scaleX(-1); }
+
+/* ── [Aleph · 2026-08-11] LA LÍNEA, APAGADA DEL TODO ────────────────────────────────────
+ *
+ * `* { border-color: transparent }` no alcanzaba: es un selector de especificidad 0, y las
+ * clases que piden el borde POR SU NOMBRE le ganan. Medido sobre la pantalla de inicio:
+ * quedaban 44 elementos con línea propia, todos vía `border-border` y sus variantes con
+ * opacidad (`/30`, `/40`, `/50`, `/60`, `/70`).
+ *
+ * Acá se apagan esas clases, y sólo ésas. Es la regla del sistema: la jerarquía es SOMBRA +
+ * RADIO, nunca contorno. Lo que sigue dibujándose es lo que pide un color CON SENTIDO:
+ * `border-primary` (el elemento en foco), `border-danger/30`, `border-warning/40` — o sea
+ * el 8% y el 2% del color, que son información, no decoración.
+ *
+ * Va al final del archivo a propósito: gana por orden con igual especificidad, y queda como
+ * una diferencia legible frente al upstream en vez de repartida por el CSS. */
+.border-border,
+.border-muted-foreground\/30,
+.border-muted-foreground\/20,
+.border-border\/30,
+.border-border\/40,
+.border-border\/50,
+.border-border\/60,
+.border-border\/70,
+.hover\:border-border\/60:hover {
+  border-color: transparent;
+}
+
+/* [Aleph] La sugerencia que rota entra con un desvanecido corto, para que el cambio se lea
+   como una respiración y no como un salto. Misma curva y misma idea que el saludo que cicla
+   idiomas en La Sala (`.aleph-g` en `sala/sala.html`). La `key` de React cambia con cada
+   sugerencia, así que el elemento se re-monta y la animación vuelve a correr sola. */
+.aleph-sugerencia {
+  animation: aleph-sugerencia-entra 0.34s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+@keyframes aleph-sugerencia-entra {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .aleph-sugerencia { animation: none; }
+}
+
+/* ── [Aleph] EL SALUDO Y LA MASCOTA DE LA CASA ──────────────────────────────────────────
+ * Portado de `product/app/design/sala/sala.html` (HERO_CSS): el saludo cicla siete idiomas
+ * —cada uno visible 12 s dentro de una vuelta de 35 s, con el `animation-delay` escalonado
+ * que le pone el componente—. Los spans se apilan en la misma caja (`position:absolute`)
+ * para que el alto no salte al cambiar de idioma. Misma curva y mismos números que la casa.
+ * La mascota va SIN MARCO sobre un halo radial del acento: regla de `.ds-mark`. */
+.aleph-greet {
+  position: relative;
+  height: 52px;
+  min-width: 320px;
+}
+.aleph-g {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  opacity: 0;
+  font-size: 40px;
+  font-weight: 200;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  white-space: nowrap;
+  animation: aleph-greet-ciclo 35s infinite;
+}
+@keyframes aleph-greet-ciclo {
+  0%    { opacity: 0; transform: translateY(5px); }
+  2.3%  { opacity: 1; transform: translateY(0); }
+  11.4% { opacity: 1; transform: translateY(0); }
+  14.3% { opacity: 0; transform: translateY(-5px); }
+  100%  { opacity: 0; }
+}
+.aleph-mark {
+  width: 104px;
+  height: 104px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle, hsl(var(--primary) / 0.15) 0%, transparent 76%);
+}
+.aleph-mark img { width: 68px; height: 68px; display: block; }
+@media (prefers-reduced-motion: reduce) {
+  .aleph-g { animation: none; opacity: 0; }
+  .aleph-g:first-child { opacity: 1; }
+}

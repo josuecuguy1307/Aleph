@@ -1,0 +1,28 @@
+{
+  "_nota": "framing_path y rag_dir se retiraron el 2026-07-31: apuntaban a org/artifacts/M003-agente-stem/{framing.md,rag}, que salio del repo con la extraccion de Puppet. Sin ellos el assembler cae al framing_fallback (assembler.py:238-243), asi que este config YA NO reproduce el smoke original — ver platform/assembler/TEST.md.",
+  "belt_path": "../../product/tutor-stem/.mcp.json",
+  "base_url": "http://127.0.0.1:11434/v1",
+  "model": "qwen3:8b",
+  "max_turns": 8,
+  "max_tokens": 2048,
+  "temperature": 0,
+  "tool_filters": {
+    "sympy": [
+      "sympy_diff",
+      "sympy_integrate",
+      "sympy_solve",
+      "sympy_simplify",
+      "sympy_factor",
+      "sympy_limit",
+      "sympy_latex",
+      "sympy_sympify"
+    ],
+    "chart": [
+      "generate_line_chart",
+      "generate_bar_chart",
+      "generate_scatter_chart",
+      "generate_pie_chart"
+    ]
+  },
+  "api_key": {}
+}

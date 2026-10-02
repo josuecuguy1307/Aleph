@@ -1,0 +1,29 @@
+{
+  "schema_version": "v1",
+  "meta": {
+    "name": "Agente Routing-Escalation-Test",
+    "nicho": "cowork",
+    "descripcion": "Receta que fuerza fallo del primary (base_url muerto vía model directo) para probar escalada OSS-first->fallback. NO usa belt con creds."
+  },
+  "model": {
+    "primary": "modelo-que-no-existe-en-este-gateway",
+    "fallback": "qwen3:8b",
+    "base_url": "http://127.0.0.1:11434/v1",
+    "temperature": 0,
+    "max_tokens": 512,
+    "max_turns": 4
+  },
+  "belt": {
+    "belt_ref": "platform/assembler/fixtures/belt-calc.mcp.json",
+    "tool_filters": {
+      "calc": ["add"]
+    }
+  },
+  "framing": {
+    "ref": null,
+    "inline": "Eres un agente de cálculo. Usa la herramienta add para sumar. Responde el número."
+  },
+  "rag": { "enabled": false, "mode": "manual", "dir": null },
+  "keys": {},
+  "gates": { "money_touch": "off", "send": "off" }
+}

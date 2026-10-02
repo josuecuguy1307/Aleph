@@ -1,0 +1,39 @@
+{
+  "belt_path": "catalog/templates/finanzas/belt-finanzas.mcp.json",
+  "framing_path": "catalog/templates/finanzas/t04-brief-macro-fred/framing.md",
+  "framing_fallback": "Eres un economista macro. Bajas series de FRED, calculas variaciones MoM/YoY con la convención correcta (SAAR donde aplica) y produces un notebook reproducible con gráficos. Nunca confundes MoM con YoY ni anualizado con acumulado.",
+  "rag_dir": null,
+  "base_url": "http://127.0.0.1:11434/v1",
+  "model": "qwen3:8b",
+  "max_turns": 14,
+  "max_tokens": 4096,
+  "temperature": 0,
+  "tool_filters": {
+    "fred_official": [
+      "fred_get_series",
+      "fred_search",
+      "fred_browse"
+    ],
+    "jupyter": [
+      "insert_execute_code_cell",
+      "execute_code",
+      "read_cell",
+      "read_notebook",
+      "use_notebook"
+    ]
+  },
+  "surgery_params": {
+    "series_ids": [
+      "CPIAUCSL",
+      "UNRATE",
+      "FEDFUNDS"
+    ],
+    "fecha_inicio": "2020-01-01",
+    "fecha_fin": "",
+    "notebook_path": "__AUTO__",
+    "incluir_sazonalizacion": true
+  },
+  "api_key": {
+    "env_var": "FRED_API_KEY"
+  }
+}

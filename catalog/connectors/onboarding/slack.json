@@ -1,0 +1,38 @@
+{
+  "connector": "slack",
+  "auth_method": "oauth",
+  "tier": "good",
+  "provider": "slack",
+  "scopes": [
+    "channels:read",
+    "chat:write",
+    "users:read"
+  ],
+  "validate": {
+    "method": "GET",
+    "path": "/api/auth.test",
+    "identity_field": "user"
+  },
+  "permissions": [
+    "leer canales",
+    "preparar mensajes"
+  ],
+  "capability_line": "Listo — ya puedo leer tus canales y preparar mensajes. Enviar te pide el OK.",
+  "trust_line": "Conectas con tu workspace de Slack · enviar pasa por tu aprobación · lo desconectas cuando quieras.",
+  "escape_hatch": true,
+  "restricted_fallback": "Tu Slack lo administra el dueño del workspace. Si no puedes instalar apps, pedilo a quien lo administra.",
+  "verification": {
+    "deep_link_ok": true,
+    "anchor_ok": false,
+    "validated_with_test_key": false,
+    "notes": "Slack = OAuth (Familia 3). REQUIERE app de Slack registrada + scopes aprobados. ENVIAR mensajes pasa por el send-gate (HELD sin OK). Diferido hasta app registrada; sin app el connect devuelve oauth_pending. Sin app, no validé."
+  },
+  "api_base": "https://slack.com",
+  "en": {
+    "capability_line": "Ready — I can already read your channels and draft messages. Sending asks for your OK first.",
+    "trust_line": "You connect to your Slack workspace · sending goes through your approval · disconnect it anytime."
+  },
+  "oauth": {
+    "revoke_url": "https://slack.com/api/auth.revoke"
+  }
+}

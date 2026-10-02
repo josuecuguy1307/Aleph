@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "crossref": {
+      "command": "python3",
+      "args": ["${PUPPET_BELTS}/research/crossref_server.py"],
+      "description": "Crossref MCP (stdio, keyless, read-only). 2 tools: search_works (busca papers por texto) y get_work (metadatos por DOI). Tier B Caso 1: API pública api.crossref.org sin key ni OAuth. Cinturón del nicho research/investigación."
+    }
+  }
+}

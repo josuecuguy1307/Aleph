@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+<script src="./i18n.js"></script>
+<script src="./nav.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="vendor/fonts.css"><!-- [Casa 2 · F1.b] fuentes locales: antes 2 preconnect + css2 de Google -->
+<link rel="stylesheet" href="aleph-tokens.css"><!-- [identidad visual] la piel: tokens, forma y tipografía en un solo lugar -->
+<style>
+  /* [sistema 2026-07-31] Onboarding entra al sistema "Híbrido Spatial + Soft futurism".
+     Los cuatro pasos pasan a PLANO DE CONTENIDO (.ds-plane, r30 + la única sombra
+     ambiental); las tarjetas de oficio y la bitácora viven en POZOS (.ds-well, plano,
+     sin sombra propia). Se fueron los 24 `border:1px solid` de la pantalla: la jerarquía
+     es sombra + radio, nunca línea. Las animaciones que no usaba nadie (floaty, barRise)
+     también se fueron. */
+  *{box-sizing:border-box}
+  html,body{margin:0}
+
+  body{background:var(--page-bg);min-height:100vh;font-family:var(--font-ui);color:var(--ink);-webkit-font-smoothing:antialiased}
+  a{text-decoration:none;color:inherit}
+  input{font-family:inherit}
+  @keyframes livePulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes sweep{0%{transform:translateX(-110%)}100%{transform:translateX(440%)}}
+  @keyframes fadeUp{0%{transform:translateY(10px)}100%{transform:translateY(0)}}
+  @keyframes popIn{0%{transform:scale(.92)}60%{transform:scale(1.02)}100%{transform:scale(1)}}
+  @keyframes shimmer{0%{background-position:-180% 0}100%{background-position:180% 0}}
+</style>
+
+<style id="aleph-theme-style">
+/* El tema entra entero por los tokens (aleph-tokens.css). Esta pantalla ya no tiene un
+   solo color hardcodeado que haya que dar vuelta a mano. */
+</style>
+<script src="./theme.js"></script>
+</helmet>
+
+<div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:0 24px">
+
+  <!-- TOP BAR: progress + skip -->
+  <div style="width:100%;max-width:1080px;display:flex;align-items:center;gap:16px;padding:22px 2px 0">
+    <div style="flex:1;display:flex;align-items:center;gap:7px;max-width:340px">
+      <sc-for list="{{ progress }}" as="p" hint-placeholder-count="4"><div style="{{ p.style }}"></div></sc-for>
+    </div>
+    <div style="flex:1"></div>
+    <a href="Home.dc.html" class="ds-btn-ghost" style="flex:none" style-hover="color:var(--ink)">Saltar →</a>
+  </div>
+
+  <!-- ============ STEP 1: ONE QUESTION ============ -->
+  <sc-if value="{{ isStep1 }}" hint-placeholder-val="{{ true }}">
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;width:100%;max-width:760px;padding:30px 0 70px;animation:fadeUp .4s ease both">
+      <!-- el PLANO DE CONTENIDO: r30 + la única sombra ambiental del paso -->
+      <div class="ds-plane" style="text-align:center;padding:38px 34px 30px">
+        <span class="ds-meta" style="letter-spacing:.14em;color:var(--accent-deep)">EMPECEMOS</span>
+        <h1 class="ds-title" style="margin:12px 0 0">¿En qué trabajas?</h1>
+        <p class="ds-sub" style="margin:12px auto 26px;font-size:14px;line-height:var(--lh-loose);max-width:46ch">Elige uno y te armo un Aleph para empezar. Un toque, sin formularios.</p>
+        <!-- el POZO con las seis tarjetas de oficio: plano, sin sombra propia -->
+        <div class="ds-well" style="padding:14px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+          <sc-for list="{{ choices }}" as="c" hint-placeholder-count="6">
+            <button onClick="{{ c.pick }}" class="ds-card" style="{{ c.style }}" style-hover="transform:translateY(-3px);box-shadow:var(--sh-3);color:{{ c.color }}">
+              <span style="{{ c.iconStyle }}">{{ c.icon }}</span>
+              <span style="font:400 14px var(--font-ui);color:inherit">{{ c.label }}</span>
+              <span class="ds-meta" style="line-height:1.45">{{ c.sub }}</span>
+            </button>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ============ STEP 2: MEET YOUR PUPPET ============ -->
+  <sc-if value="{{ isStep2 }}" hint-placeholder-val="{{ false }}">
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;width:100%;max-width:620px;padding:30px 0 70px">
+      <div class="ds-plane" style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:34px 34px 30px">
+        <span class="ds-meta" style="letter-spacing:.12em;animation:fadeUp .3s ease both">AQUÍ ESTÁ TU PRIMER ALEPH</span>
+        <!-- LA MASCOTA: el átomo SVG inline era la marca vieja. La mascota nueva va SIN
+             MARCO sobre un halo radial del acento — uno de los pocos lugares donde el
+             sistema deja aparecer el violeta. {{ glow }} sigue alimentando el halo. -->
+        <div style="position:relative;margin:22px 0 6px;animation:popIn .5s cubic-bezier(.2,.8,.2,1) both">
+          <div style="position:absolute;left:50%;top:50%;width:236px;height:236px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,{{ glow }} 0%,transparent 76%);pointer-events:none"></div>
+          <img src="assets/aleph-mascot-v2.png" alt="" width="132" height="132" style="position:relative;display:block;width:132px;height:132px">
+        </div>
+        <h1 class="ds-title" style="margin:10px 0 0;animation:fadeUp .4s ease both">Este es {{ archArticle }} <span style="color:{{ archColor }}">{{ archName }}</span></h1>
+        <p class="ds-sub" style="margin:12px 0 26px;font-size:14px;line-height:var(--lh-loose);max-width:44ch;animation:fadeUp .5s ease both">{{ archPitch }}</p>
+        <!-- la acción primaria INVIERTE el campo (--ink sobre --paper), no usa el acento -->
+        <button onClick="{{ toAha }}" class="ds-btn" style="font-size:13.5px;padding:13px 26px;animation:fadeUp .6s ease both" style-hover="opacity:.86">Mira lo que hace →</button>
+        <button onClick="{{ back1 }}" class="ds-btn-ghost" style="margin-top:8px;font-size:11.5px" style-hover="color:var(--ink)">← elegir otro</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ============ STEP 3: THE AHA (curated Sala) ============ -->
+  <sc-if value="{{ isStep3 }}" hint-placeholder-val="{{ false }}">
+    <div style="width:100%;max-width:1080px;padding:20px 0 50px;animation:fadeUp .4s ease both">
+      <!-- narration -->
+      <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:18px">
+        <span style="font-size:14px">{{ narrIcon }}</span>
+        <span style="font:300 16px var(--font-ui);color:var(--ink)">{{ narrText }}</span>
+      </div>
+
+      <!-- mini Sala · el plano de contenido (r30, sombra ambiental). Antes traía
+           `border:1px solid var(--line)` y una sombra sh-3 que no le tocaba. -->
+      <div class="ds-plane" style="padding:0;overflow:hidden">
+        <!-- header -->
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 20px;background:var(--paper2)">
+          <div style="{{ ahaMonoStyle }}">{{ archMono }}</div>
+          <div style="flex:1;min-width:0"><div class="ds-name">{{ archName }}</div><div class="ds-meta">{{ archRole }}</div></div>
+          <span class="ds-meta" style="display:inline-flex;align-items:center;gap:6px;color:var(--green);background:var(--green-bg);border-radius:var(--r-full);padding:4px 11px;letter-spacing:.05em"><span class="ds-dot ds-dot-ok" style="animation:livePulse 1.6s ease-in-out infinite"></span>EN VIVO</span>
+        </div>
+        <!-- progress -->
+        <div style="height:2px;background:var(--paper2);overflow:hidden;position:relative"><sc-if value="{{ ahaRunning }}" hint-placeholder-val="{{ true }}"><span style="position:absolute;top:0;left:0;width:24%;height:100%;background:var(--accent);animation:sweep 1.1s linear infinite"></span></sc-if></div>
+
+        <div style="display:grid;grid-template-columns:1fr 268px">
+          <!-- artifact -->
+          <div style="min-height:300px;position:relative;background:var(--paper)">
+            <!-- forming -->
+            <sc-if value="{{ ahaForming }}" hint-placeholder-val="{{ true }}">
+              <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:30px">
+                <!-- el anillo NO es un borde: es un cónico enmascarado. El sistema prohíbe la línea. -->
+                <div style="width:44px;height:44px;border-radius:50%;background:conic-gradient(from 0deg,transparent 0%,var(--accent) 100%);-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 0);mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 0);animation:spin .8s linear infinite"></div>
+                <div style="display:flex;flex-direction:column;gap:8px;width:230px">
+                  <div style="height:9px;border-radius:var(--r-xs);background:linear-gradient(90deg,var(--paper2) 8%,var(--accent-soft) 18%,var(--paper2) 33%);background-size:200% 100%;animation:shimmer 1.3s linear infinite"></div>
+                  <div style="height:9px;width:78%;border-radius:var(--r-xs);background:linear-gradient(90deg,var(--paper2) 8%,var(--accent-soft) 18%,var(--paper2) 33%);background-size:200% 100%;animation:shimmer 1.3s linear infinite"></div>
+                  <div style="height:9px;width:58%;border-radius:var(--r-xs);background:linear-gradient(90deg,var(--paper2) 8%,var(--accent-soft) 18%,var(--paper2) 33%);background-size:200% 100%;animation:shimmer 1.3s linear infinite"></div>
+                </div>
+              </div>
+            </sc-if>
+
+            <!-- TABLE -->
+            <sc-if value="{{ ahaTable }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:20px 22px">
+                <div class="ds-name" style="font-size:15px">Cierre semanal · S24</div>
+                <div class="ds-meta" style="margin-bottom:12px">3 planillas consolidadas</div>
+                <!-- el pozo de la tabla. Las filas se separan con un GAP de 1px que deja ver
+                     el pozo — no con `border-top`, que el sistema no admite. -->
+                <div class="ds-well" style="border-radius:var(--r-md)">
+                  <div class="ds-meta" style="display:grid;grid-template-columns:1.5fr 1fr 80px;padding:9px 14px;text-transform:uppercase;letter-spacing:.06em"><span>Categoría</span><span style="text-align:right">Semana</span><span style="text-align:right">vs ant.</span></div>
+                  <div style="display:flex;flex-direction:column;gap:1px">
+                    <sc-for list="{{ tableRows }}" as="r" hint-placeholder-count="4"><div style="{{ r.style }}"><span>{{ r.cat }}</span><span style="text-align:right;font-variant-numeric:tabular-nums">{{ r.val }}</span><span style="text-align:right;color:{{ r.dCol }};font-variant-numeric:tabular-nums">{{ r.delta }}</span></div></sc-for>
+                  </div>
+                </div>
+              </div>
+            </sc-if>
+
+            <!-- DOC -->
+            <sc-if value="{{ ahaDoc }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:24px 30px;max-width:560px">
+                <div class="ds-meta" style="letter-spacing:.14em;color:{{ archColor }}">INFORME</div>
+                <div style="font:200 var(--fs-2xl)/1.2 var(--font-ui);letter-spacing:var(--tracking-title);color:var(--ink);margin:8px 0 4px">Estado del mercado de X · 2026</div>
+                <div class="ds-meta" style="margin-bottom:14px">6 fuentes citadas · armado apenas</div>
+                <div style="font:300 13.5px/1.7 var(--font-ui);color:var(--ink)">El mercado cerró el semestre con un crecimiento cercano al <b style="font-weight:500;color:var(--ink)">14% interanual</b>, sostenido por la demanda regional y la entrada de dos jugadores nuevos.</div>
+                <!-- la cita: la barra es un ELEMENTO de 3px, no un `border-left` -->
+                <div style="display:flex;gap:14px;margin:16px 0 0">
+                  <span style="width:3px;border-radius:var(--r-2xs);background:{{ archColor }};flex:none"></span>
+                  <div style="font:300 italic 14px/1.55 var(--font-ui);color:var(--ink)">“El ajuste regulatorio va a redibujar quién compite.”<span class="ds-meta" style="display:block;font-style:normal;margin-top:6px">— Reuters · jun 2026</span></div>
+                </div>
+              </div>
+            </sc-if>
+
+            <!-- CODE -->
+            <sc-if value="{{ ahaCode }}" hint-placeholder-val="{{ false }}">
+              <div style="background:var(--page-solid);font-family:var(--font-mono);min-height:300px">
+                <div class="ds-meta" style="display:flex;align-items:center;gap:7px;padding:10px 16px;background:var(--paper2);font-family:var(--font-ui)"><span style="color:var(--accent-deep)">{ }</span>fetch_prices.py<span style="flex:1"></span><span style="color:var(--green)">✓ corrió · 0.4s</span></div>
+                <div style="padding:14px 0">
+                  <sc-for list="{{ codeLines }}" as="ln" hint-placeholder-count="7"><div style="display:flex;font-size:12px;line-height:1.7"><span style="display:inline-block;width:34px;text-align:right;padding-right:14px;color:var(--faint);user-select:none;flex:none">{{ ln.n }}</span><span style="white-space:pre"><sc-for list="{{ ln.toks }}" as="t" hint-placeholder-count="3"><span style="color:{{ t.c }}">{{ t.t }}</span></sc-for></span></div></sc-for>
+                </div>
+                <div class="ds-meta" style="padding:10px 16px;background:var(--paper2);font-family:var(--font-ui);color:var(--muted)"><span style="color:var(--green)">▸</span> BTC $67,420 · ETH $3,180 · SOL $172</div>
+              </div>
+            </sc-if>
+          </div>
+
+          <!-- bitácora · el pozo lateral -->
+          <div style="padding:16px 18px;background:var(--paper2)">
+            <div class="ds-meta" style="letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px">Bitácora</div>
+            <div style="position:relative">
+              <div style="position:absolute;left:9px;top:6px;bottom:8px;width:2px;background:color-mix(in srgb, var(--muted) 26%, transparent)"></div>
+              <sc-for list="{{ ahaSteps }}" as="st" hint-placeholder-count="4">
+                <div style="display:flex;gap:11px;margin-bottom:15px;position:relative;animation:fadeUp .35s ease both">
+                  <span style="{{ st.dot }}">{{ st.glyph }}</span>
+                  <div style="flex:1;min-width:0;padding-top:1px">
+                    <div style="font:400 12.5px/1.35 var(--font-ui);color:{{ st.txtCol }}">{{ st.title }}</div>
+                    <sc-if value="{{ st.hasSub }}" hint-placeholder-val="{{ false }}"><div class="ds-meta" style="margin-top:3px">{{ st.sub }}</div></sc-if>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- continue when done -->
+      <sc-if value="{{ ahaDone }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:24px;animation:fadeUp .4s ease both">
+          <div style="display:flex;align-items:center;gap:9px;font:400 13.5px var(--font-ui);color:var(--green)"><span class="ds-dot ds-dot-ok"></span>Listo — eso lo hizo solo, en vivo.</div>
+          <button onClick="{{ toHandoff }}" class="ds-btn" style="margin-top:12px;font-size:13.5px;padding:13px 26px" style-hover="opacity:.86">Pruébalo tú →</button>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <!-- ============ STEP 4: HANDOFF ============ -->
+  <sc-if value="{{ isStep4 }}" hint-placeholder-val="{{ false }}">
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;width:100%;max-width:660px;padding:26px 0 60px;animation:fadeUp .4s ease both">
+      <div class="ds-plane" style="padding:32px 34px">
+        <div style="text-align:center">
+          <span class="ds-meta" style="display:inline-flex;align-items:center;gap:7px;color:var(--green);background:var(--green-bg);border-radius:var(--r-full);padding:5px 13px;letter-spacing:.07em">✓ ASÍ TRABAJA {{ archName }}</span>
+          <h1 class="ds-title" style="margin:18px 0 0">Ahora es tuyo</h1>
+          <p class="ds-sub" style="margin:12px auto 24px;font-size:14px;line-height:var(--lh-loose);max-width:46ch">Lo viste trabajar. Pídele algo y responde en vivo —o arma uno nuevo a tu medida.</p>
+        </div>
+
+        <!-- try it · el pozo del ensayo -->
+        <div class="ds-well" style="padding:18px;text-align:left">
+          <div style="display:flex;align-items:center;gap:11px;margin-bottom:14px">
+            <div style="{{ ahaMonoStyle }}">{{ archMono }}</div>
+            <div><div class="ds-name">Pruébalo tú — pídele algo</div><div class="ds-meta">escribe una instrucción y mira cómo responde</div></div>
+          </div>
+          <sc-if value="{{ tryReplied }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:column;gap:9px;margin-bottom:14px">
+              <div style="align-self:flex-end;background:var(--accent-soft);border-radius:var(--r-md) var(--r-md) var(--r-xs) var(--r-md);padding:10px 14px;font:300 13px/1.5 var(--font-ui);color:var(--ink);max-width:85%">{{ tryUserMsg }}</div>
+              <div style="display:flex;gap:9px;align-items:flex-start">
+                <span style="{{ tryMonoStyle }}">{{ archMono }}</span>
+                <div class="ds-card" style="border-radius:var(--r-xs) var(--r-md) var(--r-md) var(--r-md);padding:10px 14px;font:300 13px/1.5 var(--font-ui);color:var(--ink);max-width:85%">{{ tryReply }}</div>
+              </div>
+            </div>
+          </sc-if>
+          <div style="display:flex;gap:9px">
+            <input value="{{ tryInput }}" onInput="{{ setTry }}" onKeyDown="{{ tryKey }}" placeholder="{{ tryPlaceholder }}" style="flex:1;border:0;background:var(--paper);border-radius:var(--r-md);padding:12px 15px;font:300 13.5px var(--font-ui);color:var(--ink);outline:none" style-focus="background:var(--accent-soft)">
+            <button onClick="{{ trySend }}" class="ds-btn" style="font-size:13px;padding:0 20px" style-hover="opacity:.86">Enviar</button>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:7px;margin-top:12px">
+            <sc-for list="{{ tryChips }}" as="c" hint-placeholder-count="2"><button onClick="{{ c.use }}" style="border:0;background:var(--paper);color:var(--muted);border-radius:var(--r-full);padding:7px 13px;font:400 11.5px var(--font-ui);cursor:pointer" style-hover="background:var(--accent-soft);color:var(--ink)">{{ c.text }}</button></sc-for>
+          </div>
+        </div>
+
+        <!-- two exits · la primaria invierte el campo, la secundaria es una tarjeta -->
+        <div style="display:flex;gap:12px;margin-top:20px">
+          <a onClick="{{ goSala }}" class="ds-btn" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:16px" style-hover="opacity:.86"><span style="font-size:14px">Entrar a tus Aleph →</span><span style="font-size:11px;opacity:.7">entra y sigue trabajando</span></a>
+          <a onClick="{{ goTaller }}" class="ds-card" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:16px;cursor:pointer" style-hover="background:var(--accent-soft)"><span style="font:400 14px var(--font-ui);color:var(--ink)">＋ Haz el tuyo</span><span class="ds-meta">arma un Aleph a tu medida</span></a>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#8E8BF5&quot;}}">
+class Component extends DCLogic {
+  state = { step:1, arch:null, ahaPhase:0, reveal:0, tryInput:'', tryReplied:false, tryUserMsg:'', tryReply:'' };
+
+  // [sistema 2026-07-31] Los tres arquetipos traían un hex propio (#5B4BC4 · #2B5F91 ·
+  // #1F6E58) fuera del sistema de tokens: tres identidades de color para el MISMO
+  // producto. El sistema es 90/8/2 y su 8% es UN violeta —el de la mascota—, así que
+  // `color` pasa a var(--accent) en los tres. Landing ya lo había unificado así.
+  archetypes = {
+    fin:{ name:'Reportero', mono:'Rp', color:'var(--accent)', article:'el',
+      pitch:'Lee tus hojas de cálculo, limpia los números y arma el cierre de la semana —con su gráfico.',
+      role:'cierra los números de la semana', type:'table',
+      narration:['leyendo tus hojas de cálculo…','consolidando los números…','armando la tabla del cierre…','listo'],
+      steps:[
+        {glyph:'▦',title:'Leyó 3 hojas de cálculo',sub:'ventas · gastos · caja',kind:'cool'},
+        {glyph:'‹›',title:'Limpió 1.240 filas',sub:'quitó 18 duplicados',kind:'run'},
+        {glyph:'▦',title:'Escribió el cierre',sub:'6 categorías',kind:'create'},
+        {glyph:'✓',title:'Cierre listo',sub:'+8,2% vs. semana anterior',kind:'done'},
+      ],
+      tryPlaceholder:'Ej: «suma el desglose por semana»',
+      tryChips:['¿Cuál fue el mayor gasto?','Conviértelo a USD'],
+      tryReply:'Listo — el mayor gasto fue Variables ($330k, +58%). Lo dejé marcado para que lo revises antes de aprobar.' },
+    res:{ name:'Investigador', mono:'Iv', color:'var(--accent)', article:'el',
+      pitch:'Busca, contrasta fuentes y te deja un informe corto con todas sus citas.',
+      role:'investiga y redacta informes citados', type:'doc',
+      narration:['buscando en la web…','contrastando fuentes…','redactando el informe…','listo'],
+      steps:[
+        {glyph:'◍',title:'Buscó en la web',sub:'24 resultados',kind:'cool'},
+        {glyph:'¶',title:'Leyó 9 páginas',sub:'descartó 3 flojas',kind:'run'},
+        {glyph:'¶',title:'Escribió el informe',sub:'6 fuentes citadas',kind:'create'},
+        {glyph:'✓',title:'Informe listo',sub:'con tabla de fuentes',kind:'done'},
+      ],
+      tryPlaceholder:'Ej: «agrega el ángulo regulatorio»',
+      tryChips:['¿Qué fuente es la más fuerte?','Resúmelo en 3 puntos'],
+      tryReply:'La fuente más fuerte es el informe sectorial de la Cámara X (oficial, mar 2026). Las otras dos de alta confiabilidad lo respaldan en el dato del 14%.' },
+    dev:{ name:'Programador', mono:'Pg', color:'var(--accent)', article:'el',
+      pitch:'Escribe el script, lo ejecuta de verdad y te muestra el resultado al instante.',
+      role:'escribe y prueba código', type:'code',
+      narration:['leyendo el contexto…','escribiendo el script…','ejecutándolo…','listo'],
+      steps:[
+        {glyph:'{ }',title:'Escribió el script',sub:'fetch_prices.py · +14 líneas',kind:'create'},
+        {glyph:'▷',title:'Lo ejecutó',sub:'0 errores · 0.4s',kind:'run'},
+        {glyph:'▣',title:'Trajo los precios',sub:'3 activos en vivo',kind:'create'},
+        {glyph:'✓',title:'Corrió bien',sub:'salida abajo',kind:'done'},
+      ],
+      tryPlaceholder:'Ej: «agrega DOGE a la lista»',
+      tryChips:['Guárdalo en un CSV','Hazlo cada hora'],
+      tryReply:'Hecho — agrego un writer a CSV al final del script y lo dejo listo para correr. ¿Lo programo cada hora con un cron?' },
+  };
+
+  choices = [
+    {id:'fin', icon:'▦', label:'Finanzas', sub:'cierres, reportes, números', color:'var(--accent-deep)'},
+    {id:'res', icon:'◍', label:'Research', sub:'investigar, informes citados', color:'var(--cool)'},
+    {id:'dev', icon:'{ }', label:'Programación', sub:'scripts, datos, automatizar', color:'var(--green)'},
+    {id:'edu', icon:'✎', label:'Educación', sub:'clases, ejercicios, guías', color:'var(--accent)'},
+    {id:'cow', icon:'✉', label:'Cowork', sub:'mails, docs, organizarte', color:'var(--amber)'},
+    {id:'otro', icon:'✦', label:'Otra cosa', sub:'lo armas tú a medida', color:'var(--accent-deep)'},
+  ];
+  // edu/cow/otro fall back to the finance demo path but keep their own name later; for the aha we map to one of 3 real demos
+  mapArch(id){ if(id==='fin')return 'fin'; if(id==='res')return 'res'; if(id==='dev')return 'dev'; if(id==='edu')return 'res'; return 'fin'; }
+
+  componentDidMount(){ const a=this.props.accent; if(a) document.documentElement.style.setProperty('--accent',a); }
+  componentDidUpdate(p){ const a=this.props.accent; if(p&&p.accent!==a&&a) document.documentElement.style.setProperty('--accent',a); }
+  componentWillUnmount(){ clearInterval(this._iv); }
+
+  // [identidad visual] con un TOKEN emite color-mix: el tinte gira con el tema.
+  rgba(c,a){ if(String(c).indexOf('var(')===0) return 'color-mix(in srgb, '+c+' '+Math.round(a*100)+'%, transparent)';
+    const h=String(c).replace('#',''); const n=parseInt(h,16); return 'rgba('+((n>>16)&255)+','+((n>>8)&255)+','+(n&255)+','+a+')'; }
+
+  pickChoice(id){ this.setState({arch:this.mapArch(id), step:2}); }
+  back1(){ clearInterval(this._iv); this.setState({step:1, arch:null}); }
+  toAha(){ this.setState({step:3, ahaPhase:0, reveal:0}, ()=>this.runAha()); }
+  runAha(){
+    clearInterval(this._iv);
+    this._iv=setInterval(()=>{
+      this.setState(s=>{
+        const A=this.archetypes[s.arch];
+        const reveal=Math.min(s.reveal+1, A.steps.length);
+        const phase=Math.min(s.ahaPhase+1, A.narration.length);
+        if(reveal>=A.steps.length) clearInterval(this._iv);
+        return {reveal, ahaPhase:phase};
+      });
+    }, 1250);
+    // first beat quickly
+    this.setState({ahaPhase:1, reveal:0});
+  }
+  toHandoff(){ clearInterval(this._iv); this.setState({step:4}); }
+
+  // login suave: la salida del onboarding va DIRECTO al producto — la puerta jamás
+  // exige login. Home decide sola: levanta la sesión local anónima, o (solo si el
+  // backend no ofrece auth local, p.ej. control plane web) manda a Auth.
+  loggedIn(){ try{ const u=JSON.parse(sessionStorage.getItem('puppet_user')||'null'); return !!(u&&u.id); }catch(e){ return false; } }
+  goExit(target){ window.location.href = target; }
+
+  setTry(e){ this.setState({tryInput:e.target.value}); }
+  trySend(){ const t=this.state.tryInput.trim(); if(!t)return; const A=this.archetypes[this.state.arch];
+    this.setState({tryUserMsg:t, tryInput:'', tryReplied:true, tryReply:'…'});
+    setTimeout(()=>this.setState({tryReply:A.tryReply}), 700);
+  }
+  tryKey(e){ if(e.key==='Enter'){ e.preventDefault(); this.trySend(); } }
+  useChip(text){ this.setState({tryInput:text}, ()=>this.trySend()); }
+
+  renderVals(){
+    const s=this.state;
+    const step=s.step;
+    const A = s.arch ? this.archetypes[s.arch] : null;
+
+    // progress dots — la pista apagada era var(--line), que en el sistema es TRANSPARENT:
+    // el progreso se veía como un solo trozo violeta flotando sin riel. Tampoco sirve
+    // --paper2: el riel va sobre el CAMPO, y en tema claro --paper2 y --page-bg son el
+    // MISMO #F4F4F5 (medido: el riel desaparecía y quedaba un tramo violeta solo). Un
+    // color-mix del gris de apoyo se ve en los dos temas y sigue siendo token.
+    const progress=[1,2,3,4].map(i=>({ style:'height:4px;border-radius:var(--r-full);flex:1;transition:background .3s;background:'+(i<=step?'var(--accent)':'color-mix(in srgb, var(--muted) 26%, transparent)') }));
+
+    // step 1 choices — la tarjeta la pone .ds-card (paper + r22 + sh-1); acá va sólo la
+    // caja. `border:0` porque un <button> trae el borde del user-agent.
+    const choices=this.choices.map(c=>({ icon:c.icon, label:c.label, sub:c.sub, color:c.color,
+      pick:()=>this.pickChoice(c.id),
+      iconStyle:'width:44px;height:44px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font:400 19px var(--font-ui);color:'+c.color+';background:'+this.rgba(c.color,0.14),
+      style:'display:flex;flex-direction:column;align-items:center;gap:10px;padding:20px 14px;border:0;cursor:pointer;text-align:center;transition:transform .18s ease,box-shadow .18s ease,color .18s ease' }));
+
+    let r={ isStep1:step===1, isStep2:step===2, isStep3:step===3, isStep4:step===4, progress, choices };
+
+    if(A){
+      const col=A.color;
+      Object.assign(r,{
+        archName:A.name, archMono:A.mono, archColor:col, archArticle:A.article, archPitch:A.pitch, archRole:A.role,
+        // el halo de la mascota: el acento suave del sistema, no un tinte al 42%
+        glow:'var(--accent-soft)',
+        // el avatar: --on-accent es exactamente el color de texto que va SOBRE --accent
+        // (blanco en claro, tinta oscura en oscuro). El '#fff' fijo se leía a 1.9:1 en oscuro.
+        ahaMonoStyle:'width:38px;height:38px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;color:var(--on-accent);font:400 14px var(--font-ui);flex:none;background:'+col,
+        tryMonoStyle:'width:26px;height:26px;border-radius:var(--r-xs);display:flex;align-items:center;justify-content:center;color:var(--on-accent);font:400 11px var(--font-ui);flex:none;background:'+col,
+        toAha:()=>this.toAha(), back1:()=>this.back1(), toHandoff:()=>this.toHandoff(),
+      });
+
+      // step 3
+      const reveal=s.reveal, total=A.steps.length;
+      const phase=Math.max(0,Math.min(s.ahaPhase, A.narration.length-1));
+      const running=reveal<total;
+      r.ahaRunning=running;
+      r.narrText=A.narration[phase]; r.narrIcon= running?'⏳':'✓';
+      r.ahaForming = reveal<2;
+      const showArtifact = reveal>=2;
+      r.ahaTable = showArtifact && A.type==='table';
+      r.ahaDoc   = showArtifact && A.type==='doc';
+      r.ahaCode  = showArtifact && A.type==='code';
+      r.ahaDone = reveal>=total;
+
+      const KIND={cool:['var(--cool)','var(--cool-bg)'],run:['var(--accent-deep)','var(--accent-soft)'],create:['var(--accent-deep)','var(--accent-soft)'],done:['var(--green)','var(--green-bg)']};
+      r.ahaSteps=A.steps.slice(0,reveal).map((st,i)=>{
+        const last=i===reveal-1, isRunningStep=last && running;
+        const k=KIND[st.kind];
+        let glyph=st.glyph, dotBg=k[1],dotCol=k[0],extra='';
+        if(isRunningStep){ glyph='◌'; dotBg='var(--accent-soft)';dotCol='var(--accent-deep)'; extra='animation:spin 1s linear infinite;'; }
+        // el punto llevaba DOS anillos de box-shadow (uno de color, uno de --paper): eso es
+        // un borde disfrazado. Queda sólo el halo del pozo, que tapa la línea del tiempo.
+        return { glyph, title:st.title, hasSub:!!st.sub, sub:st.sub, txtCol: st.kind==='done'?'var(--green)':'var(--ink)',
+          dot:'width:20px;height:20px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-size:9px;z-index:1;background:'+dotBg+';color:'+dotCol+';box-shadow:0 0 0 3px var(--paper2);'+extra };
+      });
+
+      // table data — las filas se separan por GAP sobre el pozo, no con border-top
+      r.tableRows=[
+        {cat:'Ventas',val:'$980k',delta:'+6%',up:true},
+        {cat:'Servicios',val:'$260k',delta:'+14%',up:true},
+        {cat:'Variables',val:'$330k',delta:'+58%',flag:true},
+        {cat:'Resultado',val:'+$370k',delta:'+8,2%',total:true},
+      ].map((x,i)=>({ cat:x.cat, val:x.val, delta:x.delta,
+        dCol: x.flag?'var(--amber)':(x.up||x.total?'var(--green)':'var(--muted)'),
+        style:'display:grid;grid-template-columns:1.5fr 1fr 80px;padding:10px 14px;font:300 12.5px var(--font-ui);color:var(--ink);background:var(--paper);'+(x.total?'background:var(--accent-soft);color:var(--accent-deep);font-weight:400;':'') }));
+
+      // code — `pl` y los números de línea apuntaban a var(--line2), que en el sistema es
+      // TRANSPARENT: el cuerpo del script se renderizaba INVISIBLE. Ahora el texto plano es
+      // --ink y los acentos del resaltado son tokens (accent-deep / amber / green / faint).
+      const C={kw:'var(--accent-deep)',str:'var(--green)',com:'var(--faint)',fn:'var(--amber)',pl:'var(--ink)',punc:'var(--muted)'};
+      r.codeLines=[
+        [['import',C.kw],[' requests',C.pl]],
+        [['',C.pl]],
+        [['def ',C.kw],['get_prices',C.fn],['(ids):',C.punc]],
+        [['  url = ',C.pl],['"api.coin/price"',C.str]],
+        [['  r = requests.',C.pl],['get',C.fn],['(url)',C.punc]],
+        [['  return',C.kw],[' r.',C.pl],['json',C.fn],['()',C.punc]],
+        [['',C.pl]],
+        [['print',C.fn],['(get_prices(ids))',C.punc]],
+      ].map((ln,i)=>({ n:i+1, toks:ln.map(t=>({t:t[0],c:t[1]})) }));
+
+      // step 4 try-it
+      r.tryInput=s.tryInput; r.setTry=e=>this.setTry(e); r.trySend=()=>this.trySend(); r.tryKey=e=>this.tryKey(e);
+      r.tryReplied=s.tryReplied; r.tryUserMsg=s.tryUserMsg; r.tryReply=s.tryReply;
+      r.tryPlaceholder=A.tryPlaceholder;
+      r.tryChips=A.tryChips.map(t=>({text:t, use:()=>this.useChip(t)}));
+      r.goSala=()=>this.goExit('Home.dc.html');
+      r.goTaller=()=>this.goExit('Cuarto.dc.html');
+    }
+
+    return r;
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+{
+  "_meta": {
+    "belt": "onshape-oauth",
+    "slug": "onshape-oauth",
+    "que_es": "Conector OAuth real de Onshape. La superficie MCP nace de los scopes concedidos guardados en el companion cifrado, no de los scopes pedidos.",
+    "por_que_sin_cards": "CRUCE DECLARADO: fix/una-tarjeta es dueño de la card de reparación. Este belt no declara _meta.cards; la integración consume el estado OAuth y une el paso después.",
+    "oauth_catalog": "catalog/connectors/onboarding/onshape.json",
+    "scope_rule": "Si un scope no está en ONShape token_response.scope, su tool no aparece en tools/list.",
+    "action_classes": {
+      "onshape": {
+        "onshape_whoami": "read",
+        "onshape_list_documents": "read",
+        "onshape_create_document": "write-world",
+        "onshape_delete_document": "write-world",
+        "onshape_share_document": "write-world",
+        "onshape_consume_purchase": "money_touch"
+      }
+    }
+  },
+  "mcpServers": {
+    "onshape": {
+      "command": "python3",
+      "args": [
+        "${PUPPET_BELTS}/ingenieria/onshape_server.py"
+      ],
+      "env": {
+        "ONSHAPE_ACCESS_TOKEN": "${ONSHAPE_ACCESS_TOKEN}",
+        "ONSHAPE_OAUTH_META": "${ONSHAPE_OAUTH_META}",
+        "ONSHAPE_API_BASE": "https://cad.onshape.com/api/v16"
+      },
+      "transport": "stdio",
+      "credenciales": "OAuth bearer + companion cifrado del vault global; ambos inyectados por referencia y sólo en memoria del subprocess.",
+      "description": "Onshape REST API v16. tools/list filtra por scope concedido; write/delete/share/purchase conservan el candado B4."
+    }
+  }
+}

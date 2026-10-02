@@ -1,0 +1,13 @@
+# Aleph shell (Tauri) — artefactos regenerables, nunca a git.
+# node_modules: el Tauri CLI (@tauri-apps/cli) se reinstala con `npm install`.
+node_modules/
+# target: la caché de compilación de Rust (~GBs) — la regenera `cargo build`.
+/src-tauri/target/
+# El bundle .app/.dmg de `tauri build` sale a src-tauri/target/release/bundle (cubierto por lo de arriba).
+
+# [4.4.2] el sidecar frozen (externalBin) — 270M+, se regenera del .spec, nunca a git.
+/src-tauri/binaries/
+
+# [4.4.2] iconos mobile que genera `tauri icon` — app de ESCRITORIO, no se usan.
+/src-tauri/icons/android/
+/src-tauri/icons/ios/

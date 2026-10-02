@@ -1,0 +1,419 @@
+{
+  "_meta": {
+    "belt": "research",
+    "slug": "research",
+    "que_es": "Cinturon MCP del agente research (nicho research). Fan-out de busqueda + fetch de fuentes + sintesis citada con conversion de formato. Backbone keyless (fetch/filesystem/pandoc) + buscadores BYOK.",
+    "fuente": "catalog/belts/research.md + org/artifacts/FASE0-tabla-tool-caso-bucket.md (seccion 5) + atomicas (seccion 2).",
+    "consumido_por": "product/recipes/research.config.json (belt_ref: catalog/belts/research.md -> slug research)",
+    "verificado": "JSON-RPC init+tools/list reales el 2026-06-15 sobre los 3 servers keyless (fetch/filesystem/pandoc). exa/huggingface/context7 declarados con su gate de credencial (BYOK), NO cableados con key (guardrail #6/byok). PROMOCION 2026-07-04 (org/system/PLATFORM-LEDGER.md 'frontera fixtures→prod'): servers+cards de platform/assembler/fixtures/belt-research-live.mcp.json fundidos aca (crossref/openalex/arxiv/pubmed/orcid keyless + zotero/github BYOK + pysandbox sin card, va en generalistas); verificados por verify_catalog_batch.py (tools/call REAL 2026-07-04: crossref.search_works, openalex_search, arxiv_search, pubmed_search, orcid_search — todos PASS; zotero SKIP(BYOK) sin llave). El server 'exa' del fixture NO se fundio (colision de nombre con el exa npx ya declarado; su card exa_search/exa_get_contents seria theater sobre este server) — la capacidad Exa ya la da la card 'exa' existente.",
+    "gates_credencial": "exa (EXA_API_KEY), huggingface (HF token, remoto), context7 (CONTEXT7_API_KEY) son BYOK. El runtime inyecta via byok_ref; sin key el server no arranca y el belt degrada al backbone keyless.",
+    "cards_doc": "Vista de USUARIO del belt: cada card = una capacidad branded, backed_by un server REAL de mcpServers (el endpoint dropea cualquier card cuyo backed_by no exista → cero theater). Varias cards keyless pueden compartir backbone (fetch): la capacidad se muestra, el mecanismo se declara. card.tools null = todas las tools del server (tool_filters: null = allow-all).",
+    "cards": [
+      {
+        "id": "acad-openalex",
+        "label": "Busqueda academica · OpenAlex",
+        "sub": "Papers, autores y citas · sin llave",
+        "auth": "keyless",
+        "armario": "mundo",
+        "backed_by": "fetch",
+        "tools": [
+          "fetch"
+        ]
+      },
+      {
+        "id": "acad-crossref",
+        "label": "Busqueda academica · Crossref",
+        "sub": "DOIs y metadatos de revistas · sin llave",
+        "auth": "keyless",
+        "armario": "mundo",
+        "backed_by": "fetch",
+        "tools": [
+          "fetch"
+        ]
+      },
+      {
+        "id": "acad-arxiv",
+        "label": "Busqueda academica · arXiv",
+        "sub": "Preprints de ciencia · sin llave",
+        "auth": "keyless",
+        "armario": "mundo",
+        "backed_by": "fetch",
+        "tools": [
+          "fetch"
+        ]
+      },
+      {
+        "id": "web",
+        "label": "Lectura web",
+        "sub": "Abre y lee cualquier pagina · sin llave",
+        "auth": "keyless",
+        "armario": "mundo",
+        "backed_by": "fetch",
+        "tools": [
+          "fetch"
+        ]
+      },
+      {
+        "id": "files",
+        "label": "Computo y archivos",
+        "sub": "Guarda y organiza su trabajo · sin llave",
+        "auth": "keyless",
+        "armario": "archivos",
+        "backed_by": "filesystem",
+        "tools": [
+          "read_file",
+          "write_file",
+          "list_directory"
+        ]
+      },
+      {
+        "id": "docs",
+        "label": "Generar documentos",
+        "sub": "Arma el informe citado en .md/.docx/.pdf · sin llave",
+        "auth": "keyless",
+        "armario": "saberes",
+        "backed_by": "pandoc",
+        "tools": [
+          "convert-contents"
+        ]
+      },
+      {
+        "id": "exa",
+        "label": "Busqueda web premium (Exa)",
+        "sub": "Busqueda neural · tu llave de Exa",
+        "auth": "token",
+        "armario": "apps",
+        "connector": "exa",
+        "backed_by": "exa",
+        "tools": [
+          "web_search_exa",
+          "web_fetch_exa"
+        ]
+      },
+      {
+        "id": "hf",
+        "label": "Modelos y datasets (Hugging Face)",
+        "sub": "Papers, modelos y datasets de Machine Learning / IA en el Hub de Hugging Face · tu token",
+        "auth": "token",
+        "armario": "apps",
+        "connector": "huggingface",
+        "backed_by": "huggingface",
+        "tools": [
+          "paper_search",
+          "hf_doc_search",
+          "hub_repo_search"
+        ]
+      },
+      {
+        "id": "context7",
+        "label": "Docs de librerias (Context7)",
+        "sub": "Documentacion al dia · tu llave",
+        "auth": "token",
+        "armario": "apps",
+        "connector": "context7",
+        "backed_by": "context7",
+        "tools": [
+          "resolve-library-id",
+          "query-docs"
+        ]
+      },
+      {
+        "id": "crossref",
+        "connector": "crossref",
+        "label": "Crossref",
+        "sub": "papers reales con DOI verificable",
+        "auth": "keyless",
+        "armario": "mundo",
+        "backed_by": "crossref",
+        "tools": [
+          "search_works",
+          "get_work"
+        ]
+      },
+      {
+        "id": "openalex",
+        "connector": "openalex",
+        "label": "OpenAlex",
+        "sub": "catálogo académico abierto · 250M+ trabajos con citas",
+        "auth": "keyless",
+        "armario": "mundo",
+        "backed_by": "openalex",
+        "tools": [
+          "openalex_search"
+        ]
+      },
+      {
+        "id": "arxiv",
+        "connector": "arxiv",
+        "label": "arXiv",
+        "sub": "preprints de física, CS, matemática y más",
+        "auth": "keyless",
+        "armario": "mundo",
+        "backed_by": "arxiv",
+        "tools": [
+          "arxiv_search"
+        ]
+      },
+      {
+        "id": "pubmed",
+        "connector": "pubmed",
+        "label": "PubMed",
+        "sub": "estudios y literatura médica publicada (PubMed/NCBI) · con PMID y DOI",
+        "auth": "keyless",
+        "armario": "mundo",
+        "backed_by": "pubmed",
+        "tools": [
+          "pubmed_search"
+        ]
+      },
+      {
+        "id": "orcid",
+        "connector": "orcid",
+        "label": "ORCID",
+        "sub": "buscar un investigador o autor y la lista de sus publicaciones (ORCID, lectura)",
+        "auth": "keyless",
+        "armario": "mundo",
+        "backed_by": "orcid",
+        "tools": [
+          "orcid_search",
+          "orcid_works"
+        ]
+      },
+      {
+        "id": "zotero",
+        "connector": "zotero",
+        "label": "Zotero",
+        "sub": "lee tu biblioteca y guarda citas en ella",
+        "auth": "personal_token",
+        "armario": "mundo",
+        "backed_by": "zotero",
+        "tools": [
+          "whoami",
+          "list_items",
+          "create_item"
+        ]
+      },
+      {
+        "id": "github",
+        "gate": null,
+        "connector": "github",
+        "label": "GitHub",
+        "sub": "lee tus repos, archivos y commits (read-only)",
+        "auth": "personal_token",
+        "armario": "mundo",
+        "backed_by": "github",
+        "tools": [
+          "github_whoami",
+          "github_list_repos",
+          "github_get_file",
+          "github_list_commits",
+          "github_search_repos"
+        ]
+      }
+    ]
+  },
+  "mcpServers": {
+    "exa": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "exa-mcp-server"
+      ],
+      "env": {
+        "EXA_API_KEY": "${EXA_API_KEY}"
+      },
+      "caso": 1,
+      "bucket": "B1",
+      "nichos": [
+        "research"
+      ],
+      "credenciales": "EXA_API_KEY (BYOK — gate de credencial, no gated al operador: lo trae el usuario).",
+      "description": "Busqueda web neural + fetch (web_search_exa, web_fetch_exa). Existe-optimo, conectado en este entorno como connector hosted.",
+      "prueba_credencial": {
+        "tool": "web_search_exa",
+        "args": {
+          "query": "aleph credential check",
+          "numResults": 1
+        },
+        "por_que": "de sus DOS tools es la única que valida la llave contra Exa; numResults=1 es la consulta más barata posible. `web_fetch_exa` además pegaría a un sitio de terceros."
+      }
+    },
+    "huggingface": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://huggingface.co/mcp",
+        "--header",
+        "Authorization: Bearer ${HF_TOKEN}"
+      ],
+      "env": {
+        "HF_TOKEN": "${HF_TOKEN}"
+      },
+      "caso": 1,
+      "bucket": "B1",
+      "nichos": [
+        "research"
+      ],
+      "credenciales": "HF_TOKEN (BYOK). MCP REMOTO de Hugging Face (no hay paquete npm stdio); se puentea con mcp-remote.",
+      "description": "Papers/modelos/datasets (paper_search, hf_doc_search, hub_repo_search). Existe-optimo, conectado en este entorno."
+    },
+    "context7": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@upstash/context7-mcp"
+      ],
+      "env": {
+        "CONTEXT7_API_KEY": "${CONTEXT7_API_KEY}"
+      },
+      "caso": 1,
+      "bucket": "B1",
+      "nichos": [
+        "research",
+        "programacion"
+      ],
+      "credenciales": "CONTEXT7_API_KEY (BYOK — free tier disponible).",
+      "description": "Docs de librerias al dia (resolve-library-id, query-docs). Compartido con programacion."
+    },
+    "fetch": {
+      "command": "uvx",
+      "args": [
+        "--with",
+        "mcp==1.29.0",
+        "mcp-server-fetch"
+      ],
+      "caso": 1,
+      "bucket": "B1",
+      "nichos": [
+        "research",
+        "programacion",
+        "cowork",
+        "finanzas"
+      ],
+      "credenciales": "ninguna",
+      "atomica": true,
+      "description": "Traer URL -> texto/markdown. Backbone atomico (atomicas.mcp.json). Siempre disponible: degradacion keyless del belt research.",
+      "pin_sdk": {
+        "mcp": "1.29.0",
+        "por_que": "Mismo pin que la copia hermana: el SDK `mcp` publicó 2.0.0 (major) y este server está escrito contra la 1.x, con `mcp>=` abierto en su metadata. Este archivo tenía una copia SIN pinear del mismo server — el verificador sólo mide la PRIMERA aparición de cada nombre, así que la copia quedó rota e invisible hasta que el calentamiento del agente la levantó."
+      },
+      "tool_sonda": "fetch",
+      "args_sonda": {
+        "url": "https://example.com"
+      },
+      "sonda_por_que": {
+        "clase": "constante neutra",
+        "lectura_pura": true,
+        "motivo": "Misma sonda que la copia hermana. `example.com` está reservado por la IANA (RFC 2606): público, estable y de nadie."
+      }
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "${PUPPET_WORKDIR}"
+      ],
+      "caso": 1,
+      "bucket": "B1",
+      "nichos": [
+        "research",
+        "programacion",
+        "cowork",
+        "educacion",
+        "finanzas"
+      ],
+      "credenciales": "ninguna (allow-list de dirs = ${PUPPET_WORKDIR})",
+      "atomica": true,
+      "description": "Leer/escribir el workspace del run (read_file, write_file). Backbone atomico: persiste el reporte citado."
+    },
+    "pandoc": {
+      "command": "uvx",
+      "args": [
+        "mcp-pandoc"
+      ],
+      "caso": 2,
+      "bucket": "B1",
+      "nichos": [
+        "research",
+        "cowork",
+        "educacion"
+      ],
+      "credenciales": "ninguna",
+      "requiere_binario": "pandoc (system, verificado: pandoc 3.8)",
+      "atomica": true,
+      "description": "Convertir md<->docx/pdf/latex (convert-contents). Backbone atomico: entrega el reporte en formato final."
+    },
+    "crossref": {
+      "command": "python3",
+      "args": [
+        "${PUPPET_BELTS}/research/crossref_server.py"
+      ],
+      "description": "Crossref MCP (stdio, keyless, read-only). search_works / get_work — papers reales con DOI verificable desde api.crossref.org. Promovido de belt-research-live (2026-07-04)."
+    },
+    "openalex": {
+      "command": "python3",
+      "args": [
+        "${PUPPET_BELTS}/research/openalex_server.py"
+      ],
+      "description": "OpenAlex MCP (stdio, keyless). openalex_search — catálogo académico abierto (api.openalex.org), título/DOI/autores/año/citas reales. Promovido de belt-research-live (2026-07-04)."
+    },
+    "arxiv": {
+      "command": "python3",
+      "args": [
+        "${PUPPET_BELTS}/research/arxiv_server.py"
+      ],
+      "description": "arXiv MCP (stdio, keyless). arxiv_search — preprints reales de export.arxiv.org (ATOM), título/id/autores/año/categoría/DOI. Promovido de belt-research-live (2026-07-04)."
+    },
+    "pubmed": {
+      "command": "python3",
+      "args": [
+        "${PUPPET_BELTS}/research/pubmed_server.py"
+      ],
+      "description": "PubMed MCP (stdio, keyless). pubmed_search — literatura biomédica vía E-utilities de NCBI (esearch→esummary), título/PMID/autores/año/DOI. Promovido de belt-research-live (2026-07-04)."
+    },
+    "orcid": {
+      "command": "python3",
+      "args": [
+        "${PUPPET_BELTS}/research/orcid_server.py"
+      ],
+      "description": "ORCID MCP (stdio, keyless, Public API read). orcid_search (investigadores) / orcid_works (obras públicas de un ORCID iD). El write a tu registro (OAuth) es follow-up. Promovido de belt-research-live (2026-07-04)."
+    },
+    "pysandbox": {
+      "command": "python3",
+      "args": [
+        "${PUPPET_BELTS}/generalistas/pysandbox_server.py"
+      ],
+      "env": {
+        "PUPPET_WORKDIR": "${PUPPET_WORKDIR}"
+      },
+      "description": "Python MCP (stdio, keyless). run_python ejecuta código real en un subproceso del host y requiere confirmación siempre; no existe un jail de filesystem, procesos o red. SIN card acá (vive en belt-generalistas)."
+    },
+    "zotero": {
+      "command": "python3",
+      "args": [
+        "${PUPPET_BELTS}/research/zotero_server.py"
+      ],
+      "env": {
+        "ZOTERO_API_KEY": "${ZOTERO_API_KEY}"
+      },
+      "description": "Zotero MCP (stdio, BYOK). whoami (lectura) / create_item (escribe una referencia en tu biblioteca, devuelve la KEY real). Llave inyectada por el broker; sin llave falla cerrado. Promovido de belt-research-live (2026-07-04).",
+      "prueba_credencial": {
+        "tool": "whoami",
+        "args": {},
+        "por_que": "literalmente «quién soy segun esta llave»: cero argumentos, cero costo, LECTURA. `create_item` ESCRIBE en la biblioteca del usuario y queda prohibida."
+      }
+    },
+    "github": {
+      "command": "python3",
+      "args": [
+        "${PUPPET_BELTS}/research/github_server.py"
+      ],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PERSONAL_ACCESS_TOKEN}"
+      },
+      "description": "GitHub MCP (stdio, BYOK, READ-ONLY). github_whoami / github_list_repos / github_get_file / github_list_commits / github_search_repos — lee tus repos, archivos y commits reales. Token inyectado por el broker; sin token falla cerrado. Escritura (commits) es follow-up con su gate. Promovido de belt-research-live (2026-07-04)."
+    }
+  }
+}

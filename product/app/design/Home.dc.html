@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./aleph-config.js"></script>
+<script src="./vendor/supabase.min.js"></script>
+<script src="./supabase-auth.js"></script>
+<script src="./support.js"></script>
+<script src="./auth.js"></script>
+<script src="./paywall.js"></script>
+<script src="./i18n.js"></script>
+<script>window.ALEPH_THEME_NOFLOAT=true;</script>
+<script src="./theme.js"></script>
+<script src="./nav.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="vendor/fonts.css"><!-- [Casa 2 · F1.b] fuentes locales: antes 2 preconnect + css2 de Google -->
+<link rel="stylesheet" href="aleph-tokens.css"><!-- [identidad visual] la piel: tokens, forma y tipografía en un solo lugar -->
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:var(--page-solid);min-height:100vh;font-family:var(--font-ui);color:var(--ink);-webkit-font-smoothing:antialiased}
+  a{text-decoration:none}
+  @keyframes livePulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
+  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* ══ INICIO · la pantalla 01 ═══════════════════════════════════════════════════════
+     Las medidas son las del artboard —barra de 34 px, mascota de 56, tarjeta de radio 22,
+     baldosa de La Sala de 20— y los colores son TOKENS, sin una sola excepción. El diorama y
+     La Sala son objetos oscuros en los DOS temas (el artboard, que es claro, los pinta
+     oscuros); su azul vive en la familia `--obj-azul-*`, que conserva el tono del claro y
+     sólo mueve la luz. */
+
+  /* La cabecera (.ds-cabecera / .ds-pill) vive en `aleph-ds.css`: la comparte Agentes. */
+
+  /* La curva y la duración del «Vertical Sliding Focus» de la casa, en un solo lugar. */
+  .home-page{--esp-t:.34s cubic-bezier(.22,.61,.36,1);--esp-e:.34s ease}
+
+  .home-dos{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:stretch}
+  .home-izq{display:flex;flex-direction:column;gap:18px;min-height:0}
+  .home-der{display:flex;flex-direction:column;justify-content:center;min-height:0}
+
+  .home-saludo{flex:none;display:flex;align-items:center;gap:18px;padding:96px 2px 2px}
+  .home-mascota{width:56px;height:56px;border-radius:var(--r-full);background:var(--paper);
+    border:1px solid var(--hairline);display:flex;align-items:center;justify-content:center;flex:none}
+  /* El único 200 de la casa. El tracking negativo es el del artboard: sin él la línea
+     larga («Buenas noches,») se estira y deja de alinear con el nombre de abajo. */
+  .home-saludo-txt{font:200 38px/1.06 var(--font-ui);color:var(--ink);letter-spacing:-.026em;
+    display:flex;flex-direction:column}
+
+  /* ── LA PIZARRA DE CAFETERÍA ────────────────────────────────────────────────────────
+     El MISMO gesto que Auth ya usa: frases superpuestas que rotan con un fade calmo, en CSS
+     puro —cada una corre la misma animación con su `animation-delay` escalonado, sin JS—.
+     Lo que rota acá es el SALUDO traducido, no frases sueltas: sigue diciendo lo mismo, en
+     otro idioma. Ocho turnos de 5s = 40s de ciclo; los porcentajes son los de Auth
+     recalculados para ese total (entra en 0,8s, se sostiene hasta 4,2s, sale a los 5s).
+     El NOMBRE no rota: va en su propia línea, fija, porque es un dato y no una voz. */
+  .home-pizarra{position:relative;height:1.06em;width:100%}
+  .home-f{position:absolute;left:0;top:0;white-space:nowrap;opacity:0;
+    animation:homegreet 40s infinite}
+  @keyframes homegreet{ 0%{opacity:0;transform:translateY(5px)} 2%{opacity:1;transform:translateY(0)}
+    10.5%{opacity:1;transform:translateY(0)} 12.5%{opacity:0;transform:translateY(-5px)} 100%{opacity:0} }
+  /* quien pide menos movimiento se queda con la primera, que es la del idioma activo */
+  @media (prefers-reduced-motion:reduce){ .home-f{animation:none} .home-f:first-child{opacity:1} }
+  /* el saludo que SÍ leen los lectores de pantalla: uno, en el idioma activo, sin rotar */
+  .home-solo-lector{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);
+    white-space:nowrap;border:0;padding:0;margin:-1px}
+
+  .home-tablero{flex:0 1 420px;height:420px;max-height:100%;width:92%;align-self:center;
+    margin-top:auto;margin-bottom:auto;position:relative;background:var(--obj-azul);
+    border:1px solid var(--obj-azul-line);border-radius:var(--r-lg);
+    padding:22px 24px;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden}
+  .home-diorama{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+  .home-grilla{width:340px;height:230px;transform:rotateX(58deg) rotateZ(45deg);transform-origin:center;
+    background-image:repeating-linear-gradient(0deg,var(--obj-azul-red) 0 1px,transparent 1px 38px),
+                     repeating-linear-gradient(90deg,var(--obj-azul-red) 0 1px,transparent 1px 38px)}
+  .home-bloque{position:absolute;display:flex;flex-direction:column;align-items:center;gap:8px}
+  .home-bloque-c{left:50%;top:44%;transform:translate(-50%,-50%)}
+  .home-losa{border-radius:4px;transform:rotateX(58deg) rotateZ(45deg)}
+  .home-losa-c{width:58px;height:30px;background:var(--obj-azul-losa-c)}
+  .home-losa-i{position:absolute;left:14%;top:64%;width:46px;height:25px;background:var(--obj-azul-losa-i)}
+  .home-losa-d{position:absolute;right:14%;top:32%;width:46px;height:25px;background:var(--obj-azul-losa-d)}
+  .home-tablero-cta{display:inline-flex;align-items:center;gap:9px;background:#fff;color:var(--obj-azul);
+    font:400 13.5px var(--font-ui);padding:11px 20px;border-radius:var(--r-full);text-decoration:none;
+    transition:transform .14s}
+  .home-tablero-cta:hover{transform:translateY(-1px)}
+
+  .home-espacios{flex:0 1 auto;height:82%;max-height:100%;width:93%;align-self:center;
+    background:var(--paper);border:1px solid var(--hairline);
+    border-radius:var(--r-lg);padding:24px 26px;display:flex;flex-direction:column;gap:16px;overflow:hidden}
+  .home-espacios-tit{flex:none;font:200 30px/1.1 var(--font-ui);color:var(--ink);letter-spacing:-.012em}
+  .home-espacios-lista{flex:1;min-height:0;display:flex;flex-direction:column;gap:7px;overflow-y:auto;
+    scrollbar-width:thin}
+
+  /* ══ LA TARJETA DE ESPACIOS · UN COMPONENTE, DOS ESTADOS ══════════════════════════
+     Acá había DOS componentes: `.home-sala`, fija y grande, y `.home-fila` ×6. Eran siete
+     filas más una fija, y el destacado no se podía mover porque no era el mismo elemento.
+     Ahora hay UNO —`.home-esp`— y el destacado es un ATRIBUTO (`data-sel`) que viaja con la
+     selección: el que la recibe crece y se recolorea, el que la pierde vuelve a ser fila.
+
+     EL TIMING NO ES INVENTADO, Y TAMPOCO ES DEL DISEÑO. Medido: el proyecto de Claude Design
+     NO trae la animación —cero `transition`, cero `@keyframes`, cero `scale(`, cero
+     manejadores, y sus tres `data-dc-script` están vacíos—; son artboards estáticos que
+     fijan los dos ESTADOS con todos sus valores, no la transición entre ellos. Así que la
+     curva se toma de donde la casa ya la tiene resuelta para exactamente esto: el «Vertical
+     Sliding Focus» de `aleph-ds.css` (`.ds-track .ds-item`), que mueve un foco por una lista
+     con `.34s cubic-bezier(.22,.61,.36,1)`. Misma familia de movimiento, un solo vocabulario.
+
+     EL TRUCO DE LAS DOS FORMAS. En fila, nombre y bajada van uno al lado del otro (el nombre
+     a 112px); destacado, la bajada baja a su propia línea. `flex-direction` no se puede
+     animar, pero `flex-basis` sí: el contenedor es `flex-wrap:wrap` y el nombre pasa de
+     `112px` a `100%`, lo que EMPUJA la bajada al renglón de abajo en el medio de la
+     animación. Una sola caja, las dos formas del artboard, sin saltos. */
+  .home-esp{position:relative;display:flex;align-items:center;gap:14px;overflow:hidden;
+    text-decoration:none;flex:1 1 auto;min-height:56px;
+    background:var(--paper2);border:1px solid var(--hairline);border-radius:15px;padding:0 18px;
+    transition:flex-grow var(--esp-t),padding var(--esp-t),border-radius var(--esp-e),
+               background var(--esp-e),border-color var(--esp-e),box-shadow var(--esp-e)}
+  .home-esp[data-sel="1"]{flex-grow:2.4;background:var(--obj-azul);border-color:var(--obj-azul-line);
+    border-radius:20px;padding:20px 22px;box-shadow:var(--sh-2)}
+  .home-esp:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+  .home-esp-glow{position:absolute;inset:0;opacity:0;pointer-events:none;
+    background:radial-gradient(120% 140% at 12% 0%,var(--obj-azul-halo) 0%,transparent 58%);
+    transition:opacity var(--esp-e)}
+  .home-esp[data-sel="1"] .home-esp-glow{opacity:1}
+
+  .home-esp-ico{width:44px;height:44px;border-radius:var(--r-full);flex:none;position:relative;
+    display:flex;align-items:center;justify-content:center;font-size:17px;
+    background:var(--accent-soft);color:var(--accent-deep);
+    transition:width var(--esp-t),height var(--esp-t),font-size var(--esp-t),
+               background var(--esp-e),color var(--esp-e),box-shadow var(--esp-e)}
+  /* el aro del avatar destacado va por `box-shadow:inset`, no por `border`: un borde nuevo
+     cambiaría la caja y haría saltar la fila justo cuando está creciendo. */
+  .home-esp[data-sel="1"] .home-esp-ico{width:62px;height:62px;font-size:24px;
+    background:var(--obj-azul-vidrio);color:var(--obj-azul-glifo);
+    box-shadow:inset 0 0 0 1px var(--obj-azul-borde)}
+
+  .home-esp-txt{flex:1;min-width:0;position:relative;display:flex;flex-wrap:wrap;
+    align-items:center;column-gap:14px;row-gap:3px}
+  .home-esp-nom{flex:0 0 112px;font:400 16.5px var(--font-ui);color:var(--ink);letter-spacing:-.008em;
+    transition:flex-basis var(--esp-t),font-size var(--esp-t),font-weight var(--esp-e),
+               color var(--esp-e),letter-spacing var(--esp-e)}
+  .home-esp[data-sel="1"] .home-esp-nom{flex-basis:100%;font-size:27px;font-weight:300;
+    color:var(--obj-azul-ink);letter-spacing:-.016em}
+  .home-esp-sub{flex:1 1 0;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    font:300 12.5px var(--font-ui);color:var(--muted);transition:color var(--esp-e)}
+  .home-esp[data-sel="1"] .home-esp-sub{color:var(--obj-azul-sub)}
+
+  .home-esp-arr{flex:none;position:relative;width:20px;height:20px;border-radius:var(--r-full);
+    display:flex;align-items:center;justify-content:center;font-size:14px;
+    background:transparent;color:var(--faint);
+    transition:width var(--esp-t),height var(--esp-t),background var(--esp-e),color var(--esp-e)}
+  .home-esp[data-sel="1"] .home-esp-arr{width:40px;height:40px;background:var(--paper);
+    color:var(--obj-azul)}
+
+  /* La pista de posición del artboard 23c: un guión por espacio, largo y con tinta el que
+     está seleccionado. Ahora dice la verdad, porque sigue al mismo estado. */
+  .home-esp-pista{width:22px;flex:none;display:flex;flex-direction:column;align-items:center;
+    justify-content:space-between;padding:4px 0}
+  .home-esp-pista i{width:6px;height:1px;border-radius:1px;background:var(--quiet);
+    transition:width var(--esp-t),background var(--esp-e)}
+  .home-esp-pista i.on{width:11px;background:var(--ink)}
+
+  .home-espacios-cuerpo{flex:1;min-height:0;display:flex;gap:10px}
+  .home-esp-flechas{display:flex;gap:7px;padding-top:4px;flex:none}
+  .home-esp-flechas button{width:32px;height:32px;border-radius:var(--r-full);cursor:pointer;
+    display:flex;align-items:center;justify-content:center;font:400 13px var(--font-ui);
+    background:var(--paper);border:1px solid var(--hairline);color:var(--muted);
+    transition:background .14s,color .14s,border-color .14s}
+  .home-esp-flechas button:hover:not(:disabled){border-color:var(--accent);color:var(--ink)}
+  .home-esp-flechas button:disabled{opacity:.4;cursor:default}
+
+  /* Quien pide menos movimiento recibe los mismos dos estados, sin el viaje entre ellos. */
+  @media (prefers-reduced-motion:reduce){
+    .home-esp,.home-esp *,.home-esp-pista i{transition:none!important}
+  }
+
+  /* Angosto: las dos columnas caen a una y la lista deja de competir por el alto. */
+  @media (max-width:1080px){
+    .home-page{padding:18px 18px 28px!important}
+    .home-dos{grid-template-columns:1fr;gap:16px}
+    .home-saludo{padding-top:6px}
+    .home-tablero{flex:none;height:260px;width:100%}
+    .home-espacios{flex:none;height:auto;width:100%}
+    .home-saludo-txt{font-size:32px}
+    .home-espacios-tit{font-size:26px}
+    .home-tablero{min-height:220px}
+    .home-espacios-lista{overflow:visible}
+    .home-fila{flex:none}
+  }
+  @media (max-width:620px){
+    .home-saludo-txt{font-size:27px}
+    .home-fila-nom{width:auto;flex:1;min-width:0}
+    .home-fila-sub{display:none}
+    .home-sala-nom{font-size:23px}
+  }
+</style>
+</helmet>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════════════
+     INICIO — la pantalla 01 del diseño sellado, escrita acá y no montada encima.
+
+     Tres piezas, y son exactamente las tres que el artboard pone:
+       · el saludo SUELTO, con la mascota a la izquierda y el nombre en su propia línea;
+       · el panel del TABLERO, con su botón «Abrir el tablero» adentro;
+       · la tarjeta «Entrá a un espacio», con La Sala destacada y los seis debajo.
+
+     LO QUE SE FUE Y POR QUÉ. Acá vivía un `<details>` titulado «Espacios de trabajo». No
+     sólo no es lo que el diseño pide: estaba ROTO. El runtime DC no le pasa el atributo
+     `open` al `<details>` que React monta, así que abría CERRADO —medido en la .app
+     instalada: `details.open === false`— y los siete espacios quedaban escondidos detrás de
+     un «Mostrar / ocultar» en la pantalla que existe para entrar a un espacio. La tarjeta
+     del diseño no se puede plegar, y por eso tampoco se puede romper así.
+
+     LOS DESTINOS NO CAMBIAN. Los siete `href` son los mismos siete de antes, uno por uno.
+     Esto es una mudanza de frente, no de comportamiento. -->
+<!-- SIN `data-theme` ACÁ, Y ES UN ARREGLO. Este div estampaba `data-theme="{{ theme }}"`
+     desde el estado del componente, y el selector de la paleta en `aleph-tokens.css` es
+     `[data-theme="light"]` A SECAS —no `html[data-theme=…]`—, así que el atributo del div
+     REDECLARA los tokens para todo su subárbol. Mientras el estado coincida con el tema real
+     no se nota; cuando se atrasa, no. Medido: `theme.js` dice que `localStorage` es sólo la
+     CACHÉ DE ARRANQUE y la fuente es la preferencia del backend, que aterriza DESPUÉS del
+     mount; en ese hueco el `html` decía `dark` y este div decía `light`, y la pantalla
+     entera pintaba con la paleta que no era. Quien manda el tema es `theme.js` sobre `html`,
+     y no hace falta que nadie más lo repita. -->
+<div class="home-page" style="min-height:100vh;background:var(--page-bg);padding:22px 26px 34px;transition:background .3s;display:flex;flex-direction:column;gap:18px">
+
+  <!-- ── LA CABECERA ────────────────────────────────────────────────────────────────
+       El wordmark en serif a la izquierda; a la derecha el tema y el idioma, que son los
+       DOS controles que ya existían (`toggleTheme` acá, `AlephI18n.setLang` en Auth) y que
+       el diseño trae a esta fila. No hay tercera cápsula: la lupa «Buscar en Aleph ⌘K»
+       queda pendiente y declarada, porque la única búsqueda que existe en el árbol es
+       `GET /v1/chats/search` —sólo chats— y no hay ni un solo manejador de ⌘K. Dibujarla
+       sería poner un botón que miente. -->
+  <div class="ds-cabecera">
+    <span class="ds-cabecera-marca">Aleph</span>
+    <span style="flex:1"></span>
+    <button class="ds-pill ds-pill-ico" onClick="{{ toggleTheme }}" title="{{ temaTitulo }}" aria-label="{{ temaTitulo }}">{{ themeIcon }}</button>
+    <button class="ds-pill ds-pill-lang" onClick="{{ toggleLang }}" title="{{ idiomaTitulo }}" aria-label="{{ idiomaTitulo }}">{{ langLabel }}</button>
+  </div>
+
+  <!-- ── LAS DOS COLUMNAS ───────────────────────────────────────────────────────────
+       1fr 1fr en el diseño. En angosto caen una debajo de la otra (ver la media query). -->
+  <div class="home-dos">
+
+    <!-- ── IZQUIERDA · saludo + tablero ── -->
+    <div class="home-izq">
+
+      <div class="home-saludo">
+        <span class="home-mascota"><img src="assets/aleph-mascot-v2.png" alt="" width="30" height="30"></span>
+        <!-- El saludo es el ÚNICO texto en peso 200 de toda la casa (hoja del estándar).
+             El nombre va en su PROPIA LÍNEA, como en el artboard, y sólo si hay nombre:
+             sin sesión la casa no inventa uno, y entonces tampoco escribe la coma que lo
+             anunciaba (antes se leía «Buenos días,» y ahí terminaba la frase). -->
+        <span class="home-saludo-txt">
+          <span class="home-solo-lector">{{ saludo }}</span>
+          <!-- La rotación es DECORATIVA: `aria-hidden` para no anunciarle el mismo saludo en
+               ocho idiomas cada cinco segundos a quien usa lector de pantalla. Arriba va el
+               saludo de verdad, uno solo, en el idioma activo. -->
+          <span class="home-pizarra" aria-hidden="true">
+            <sc-for list="{{ saludos }}" as="s" hint-placeholder-count="8"><span class="home-f" style="{{ s.retardo }}">{{ s.txt }}</span></sc-for>
+          </span>
+          <sc-if value="{{ nombre }}" hint-placeholder-val="{{ '' }}"><span>{{ nombre }}</span></sc-if>
+        </span>
+      </div>
+
+      <!-- EL PANEL DEL TABLERO. La retícula isométrica y sus tres bloques son la
+           ilustración del artboard: un objeto oscuro en los dos temas, como una foto. Sus
+           colores viven en `--obj-azul-*`, que guardan el MISMO azul del claro (hue 250, su
+           misma saturación) y sólo le suben la luz en oscuro. Escritos a mano funcionaban en
+           claro y DESAPARECÍAN en oscuro: 1,05 de contraste contra el lienzo. El único
+           control es el botón.
+
+           🔧 CORRECCIÓN (integración) · EL BOTÓN IBA AL LUGAR EQUIVOCADO. Llevaba a
+           `Agentes.dc.html` —la lista— «porque era el destino de antes», y eso es heredar un
+           destino, no elegirlo. El tablero es EL CUARTO: la retícula isométrica con sus tres
+           bloques que este mismo dibujo ilustra es el lienzo del Cuarto (sus zonas Lee ·
+           Procesa · Actúa · Núcleo), no una grilla de tarjetas de agente. El dibujo decía
+           una cosa y el enlace otra. Ahora abre `Cuarto.dc.html`, que es lo que el dibujo
+           promete. La lista de agentes sigue a un click, en el riel. -->
+      <div class="home-tablero">
+        <div class="home-diorama">
+          <span class="home-grilla"></span>
+          <span class="home-bloque home-bloque-c"><img src="assets/aleph-mascot-v2.png" alt="" width="26" height="26"><span class="home-losa home-losa-c"></span></span>
+          <span class="home-losa home-losa-i"></span>
+          <span class="home-losa home-losa-d"></span>
+        </div>
+        <div style="position:relative">
+          <a href="Cuarto.dc.html" class="home-tablero-cta">{{ abrirTablero }} <span aria-hidden="true">→</span></a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── DERECHA · entrá a un espacio ── -->
+    <div class="home-der">
+      <section class="home-espacios">
+        <div style="display:flex;align-items:flex-start;gap:16px;flex:none">
+          <span class="home-espacios-tit" style="flex:1;min-width:0">{{ entraTitulo }}</span>
+          <!-- Las dos flechas que el artboard dibuja. Se implementan en vez de dibujarse:
+               mueven la MISMA selección que el mouse y el teclado. -->
+          <div class="home-esp-flechas">
+            <button onClick="{{ subir }}" disabled="{{ noSube }}" title="{{ anteriorTit }}" aria-label="{{ anteriorTit }}">‹</button>
+            <button onClick="{{ bajar }}" disabled="{{ noBaja }}" title="{{ siguienteTit }}" aria-label="{{ siguienteTit }}">›</button>
+          </div>
+        </div>
+
+        <!-- LOS SIETE, Y UNO SOLO DESTACADO A LA VEZ. El destacado NO está clavado en La
+             Sala: `data-sel` viaja con la selección —mouse, teclado o las flechas de arriba—
+             y el que la pierde vuelve a ser fila. Es el mismo `<a>` en los dos estados, así
+             que los siete destinos son los mismos siete de siempre. -->
+        <div class="home-espacios-cuerpo">
+          <div class="home-espacios-lista" onKeyDown="{{ teclas }}">
+            <sc-for list="{{ espacios }}" as="e" hint-placeholder-count="7">
+              <a class="home-esp" data-sel="{{ e.sel }}" href="{{ e.href }}" ref="{{ e.ref }}"
+                 onMouseEnter="{{ e.entra }}" onFocus="{{ e.entra }}" aria-current="{{ e.actual }}">
+                <span class="home-esp-glow"></span>
+                <span class="home-esp-ico" ref="{{ e.refIco }}" aria-hidden="true"></span>
+                <span class="home-esp-txt">
+                  <span class="home-esp-nom">{{ e.nombre }}</span>
+                  <span class="home-esp-sub">{{ e.sub }}</span>
+                </span>
+                <span class="home-esp-arr" aria-hidden="true">→</span>
+              </a>
+            </sc-for>
+          </div>
+          <!-- La pista de posición del artboard 23c. -->
+          <div class="home-esp-pista" aria-hidden="true">
+            <sc-for list="{{ pista }}" as="d" hint-placeholder-count="7"><i class="{{ d.clase }}"></i></sc-for>
+          </div>
+        </div>
+      </section>
+    </div>
+
+  </div>
+
+  <!-- login suave · momento TRAER: tus agentes de la web llegan con tu cuenta -->
+  <sc-if value="{{ anonLocal }}" hint-placeholder-val="{{ false }}">
+    <div style="font-size:12.5px;color:var(--faint)">{{ anonTraer1 }} <a href="Auth.dc.html?motivo=traer" style="color:var(--accent-deep);font-weight:500" style-hover="text-decoration:underline">{{ anonTraer2 }}</a></div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#8E8BF5&quot;}}">
+class Component extends DCLogic {
+  /* `sel` es el espacio DESTACADO. Arranca en 0 —La Sala— porque es lo que el artboard
+     dibuja en las doce instancias que tiene el proyecto. (La variante 22c rotula esa baldosa
+     «A01 · DONDE ESTABAS», o sea el último espacio usado; el día que la casa guarde ese dato
+     el arranque sale de ahí y no de una constante. Hoy no lo guarda, así que no se inventa.) */
+  state = { idx:0, paused:false, theme:'dark', anon:false, sel:0 };
+  _refs = [];
+  _idx = 0;
+
+  // MUESTRA (sólo mientras no tengas Aleph propios; loadAleph la reemplaza por los REALES). Los
+  // botones antes no tenían href → "no hacen nada". Como una muestra no es un agente GUARDADO (no
+  // hay puppet id que cargar), Usar abre La Sala y Editar El Cuarto (destinos reales, sin ?puppet).
+  // Los Aleph REALES sí llevan ?puppet=<id> y cargan ese agente (ver loadAleph).
+  /* [identidad visual] tonos de identidad con tinta BLANCA AA (5.7:1 el peor) en los dos temas.
+     Es la MISMA lista que usa loadAleph para los Aleph reales; vive acá arriba para que la
+     muestra y lo real no puedan divergir. La muestra traía '#8E8BF5' —el acento del tema
+     oscuro— y en claro el avatar y el botón Usar caían a 2.93:1 con la tinta blanca. */
+  static PAL = ['#5B4BC4','#2B5F91','#1F6E58','#8A5D0C','#9B3F63'];
+
+  agents = [
+    {name:'Cierre semanal', mono:'Cs', color:Component.PAL[0], status:'live', statusLine:'en vivo · enviando el cierre',
+      usarHref:'sala-v2/sala-v2.html', editHref:'Cuarto.dc.html',
+      chips:[{t:'lee planillas'},{t:'limpia datos'},{t:'arma informe'},{t:'manda mail',gate:true}]},
+    {name:'Radar de mercado', mono:'Rm', color:Component.PAL[1], status:'idle', statusLine:'en reposo · usado ayer',
+      usarHref:'sala-v2/sala-v2.html', editHref:'Cuarto.dc.html',
+      chips:[{t:'busca en la web'},{t:'contrasta fuentes'},{t:'redacta informe'}]},
+    {name:'Landing de precios', mono:'Lp', color:Component.PAL[2], status:'idle', statusLine:'en reposo · hace 3 d',
+      usarHref:'sala-v2/sala-v2.html', editHref:'Cuarto.dc.html',
+      chips:[{t:'escribe código'},{t:'lo prueba'},{t:'deja preview'}]},
+  ];
+
+  /* [tema claro] Los arquetipos ya NO traen color propio: el carrusel es el acento de la
+     plataforma, y el acento es un TOKEN (--accent) que gira con el tema. Antes cada chip
+     cargaba '#8E8BF5' —el acento del tema OSCURO— hardcodeado, así que en claro quedaba
+     morado pálido sobre lila: 1.86:1. Los que piden tu OK se marcan con `gate:true`, igual
+     que los chips de los agentes, y salen por los tokens de ámbar. */
+  archetypes = [
+    {name:'Un reportero de finanzas',
+      desc:'Junta tus números de la semana, los ordena y arma el cierre con su gráfico.',
+      chips:[{g:'▦',t:'Leer planillas'},{g:'∑',t:'Calcular totales'},{g:'▥',t:'Gráficos'},{g:'¶',t:'Armar informe'},{g:'✉',t:'Mail · con tu OK',gate:true}]},
+    {name:'Un asistente de research',
+      desc:'Busca, contrasta fuentes y te deja un informe corto con todas sus citas.',
+      chips:[{g:'◍',t:'Buscar en la web'},{g:'⚖',t:'Contrastar fuentes'},{g:'¶',t:'Resumir'},{g:'¶',t:'Informe citado'}]},
+    {name:'Un ayudante de programación',
+      desc:'Escribe el código, lo prueba y te deja el preview corriendo en localhost.',
+      chips:[{g:'{ }',t:'Leer el repo'},{g:'{ }',t:'Escribir código'},{g:'▷',t:'Ejecutar & testear'},{g:'▣',t:'Preview en vivo'}]},
+    {name:'Un tutor a medida',
+      desc:'Explica el tema a su ritmo y arma ejercicios al nivel de cada alumno.',
+      chips:[{g:'✎',t:'Explicar el tema'},{g:'¶',t:'Armar ejercicios'},{g:'▤',t:'Slides'},{g:'◷',t:'Datos públicos'}]},
+    {name:'Un redactor de contenido',
+      desc:'Investiga el tema, redacta las piezas y las prepara para tus canales.',
+      chips:[{g:'✎',t:'Redactar'},{g:'◍',t:'Investigar'},{g:'▤',t:'Adaptar por canal'},{g:'✉',t:'Publicar · con tu OK',gate:true}]},
+  ];
+
+  rgba(hex,a){ const h=hex.replace('#',''); const n=parseInt(h,16); return 'rgba('+((n>>16)&255)+','+((n>>8)&255)+','+(n&255)+','+a+')'; }
+
+  componentDidMount(){
+    // step5 · CONTRACT-AUTH-v2 (fix viejo, se CONSERVA): al volver de un OAuth de Supabase
+    // el token llega en el FRAGMENTO de la URL y canjearlo es ASÍNCRONO — no se puede tirar
+    // a Auth antes o se pierde el fragmento con el token (costó tres intentos encontrarlo).
+    // login-suave: y la puerta JAMÁS exige login — sin sesión → sesión LOCAL anónima
+    // (device user, /v1/auth/local); Auth queda solo para cuando el dato sale de la máquina
+    // (sincronizar · traer · premium). Si el backend no ofrece auth local (control web), a Auth.
+    const A=window.AlephSession;
+    const arranca=(u)=>{
+      try{ this.setState({theme:(window.AlephTheme&&window.AlephTheme.resolved())||'dark', anon:!!(A&&A.isAnon&&A.isAnon(u))}); }catch(e){}
+      this.start(); this.loadAleph(); this.retryMerge(u);
+    };
+    let u=null; try{ u=A&&A.get(); }catch(e){}
+    if(u&&u.id&&u.session_token){ arranca(u); return; }
+    // ¿volviendo de un OAuth? darle tiempo al SDK a canjear el token antes de decidir.
+    try{
+      var _volviendoDeOAuth = /[#?&](access_token|code|error)=/.test(location.hash + location.search);
+      if(!sessionStorage.getItem('puppet_user') && _volviendoDeOAuth){
+        window.addEventListener('aleph:identidad', function(e){ if(e && e.detail) location.reload(); });
+        setTimeout(function(){ if(!sessionStorage.getItem('puppet_user')) location.replace('Auth.dc.html'); }, 6000);
+        return;
+      }
+    }catch(e){}
+    // sin sesión y no es retorno de OAuth → sesión local anónima (o Auth si no la ofrece el backend).
+    ((A&&A.ensureLocal)?A.ensureLocal():Promise.resolve(null)).then(nu=>{
+      if(nu&&nu.id){ arranca(nu); } else { location.replace('Auth.dc.html'); }
+    });
+  }
+  // FUSIÓN pendiente: si un login anterior no llegó a ligar el trabajo local a la
+  // cuenta (red caída justo ahí), el token local queda en un stash y se reintenta acá.
+  retryMerge(u){
+    try{
+      const A=window.AlephSession; if(!u||!u.id||(A&&A.isAnon&&A.isAnon(u))) return;
+      const tok=localStorage.getItem('aleph_merge_pending'); if(!tok) return;
+      fetch('/v1/auth/merge-local',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({local_token:tok})}).then(r=>{
+          if(r.ok||r.status===400) localStorage.removeItem('aleph_merge_pending');
+          if(r.ok) this.loadAleph();   // lo fusionado aparece en "Tus Aleph" al toque
+        }).catch(()=>{});
+    }catch(e){}
+  }
+  // CABLEADO REAL (Fase 4·Capa 3): "Tus Aleph" ← GET /v1/users/{id}/puppets de la sesión.
+  async loadAleph(){
+    try{
+      // login suave + relaunch: leer por AlephSession.get() (rehidrata desde localStorage; la sesión
+      // ya la garantizó componentDidMount). Antes leía sessionStorage directo → dependía de que el
+      // bootstrap ya lo hubiera repoblado.
+      const u=(window.AlephSession&&window.AlephSession.get)?window.AlephSession.get():JSON.parse(sessionStorage.getItem('puppet_user')||'{}'); if(!u||!u.id) return;
+      const r=await fetch('/v1/users/'+u.id+'/puppets'); if(!r.ok) return;
+      const data=await r.json(); const pal=Component.PAL;   // [identidad visual] la MISMA paleta AA que la muestra (ver Component.PAL)
+      this.agents=(data.puppets||[]).map((p,i)=>{
+        const cfg=p.config||{}, tf=(cfg.belt&&cfg.belt.tool_filters)||{}, servers=Object.keys(tf);
+        const purpose=(cfg.meta&&cfg.meta.descripcion)||'';
+        return { name:p.name||'Aleph', mono:(p.name||'Al').replace(/[^A-Za-zÁÉÍÓÚáéíóúñ]/g,'').slice(0,2)||'Al',
+          color:pal[i%pal.length], status:'idle', statusLine: purpose? purpose.slice(0,44) : 'listo para usar',
+          chips: servers.length? servers.slice(0,4).map(s=>({t:s})) : [{t:'sin habilidades aún'}],
+          usarHref:'sala-v2/sala-v2.html?puppet='+encodeURIComponent(p.id),
+          editHref:'Cuarto.dc.html?puppet='+encodeURIComponent(p.id) };
+      });
+      this.setState({loaded:true});
+    }catch(e){}
+  }
+  componentWillUnmount(){ clearInterval(this._iv); }
+  componentDidUpdate(prev){
+    if(this._idx!==this.state.idx){ this._idx=this.state.idx; this.fade(); }
+  }
+  /* UN SOLO CAMINO PARA LOS TRES GESTOS. El mouse, el teclado y las flechas del encabezado
+     llaman todos acá: si hubiera tres caminos, tarde o temprano dirían cosas distintas. */
+  elegir(i){ const n=Math.max(0, Math.min(6, i)); if(n!==this.state.sel) this.setState({sel:n}); }
+
+  /* Mover con las flechas o con el teclado además LLEVA EL FOCO a la fila elegida: si el
+     destacado se moviera y el foco se quedara atrás, un Enter abriría otro espacio que el
+     que se está viendo grande. */
+  mover(d){
+    const n=Math.max(0, Math.min(6, this.state.sel + d));
+    this.setState({sel:n});
+    try{ const el=this._refs[n]; if(el && el.focus) el.focus({preventScroll:false}); }catch(e){}
+  }
+
+  teclas(e){
+    if(!e) return;
+    const k=e.key;
+    if(k==='ArrowDown' || k==='ArrowRight'){ e.preventDefault(); this.mover(1); }
+    else if(k==='ArrowUp' || k==='ArrowLeft'){ e.preventDefault(); this.mover(-1); }
+    else if(k==='Home'){ e.preventDefault(); this.mover(-6); }
+    else if(k==='End'){ e.preventDefault(); this.mover(6); }
+  }
+
+  toggleTheme(){ const t=this.state.theme==='dark'?'light':'dark'; if(window.AlephTheme) window.AlephTheme.set(t); this.setState({theme:t}); }
+  start(){ clearInterval(this._iv); this._iv=setInterval(()=>{ if(!this.state.paused) this.setState(s=>({idx:(s.idx+1)%this.archetypes.length})); }, 3800); }
+  fade(){ const el=this._stage; if(el&&el.animate) el.animate([{opacity:0.3,transform:'translateY(14px) scale(.99)'},{opacity:1,transform:'translateY(0) scale(1)'}],{duration:470,easing:'cubic-bezier(.2,.7,.2,1)'}); }
+  go(i){ this.setState({idx:i}); this.start(); }
+
+  renderVals(){
+    const cur=this.archetypes[this.state.idx];
+    const T=window.t||function(k){return k;};   // i18n ES/EN
+    const ARCH_KEYS=['fin','research','prog','tutor','redactor'];
+    const ak=ARCH_KEYS[this.state.idx]||'fin';
+
+    const agents=this.agents.map(a=>{
+      const live=a.status==='live';
+      return {
+        name:a.name, mono:a.mono, color:a.color, statusLine:a.statusLine,
+        /* [sistema 2026-07-31 · 90/8/2] El avatar deja de llevar el color de identidad del
+           agente: el sistema pide neutros. Newsreader para la inicial, sin relieve (el inset
+           era exactamente el "elemento hundido" que el sistema prohíbe). */
+        monoStyle:'width:38px;height:38px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;color:var(--muted);font-family:var(--font-brand);font-weight:400;font-size:14px;flex:none;background:var(--paper2)',
+        statusDot:'position:absolute;top:13px;right:13px;width:9px;height:9px;border-radius:50%;'+(live?'background:var(--green);box-shadow:0 0 0 3px var(--green-bg);animation:livePulse 1.6s ease-in-out infinite':'background:var(--quiet)'),
+        /* La acción primaria del sistema INVIERTE el campo en vez de teñirse con el color del
+           agente: --ink sobre --paper da tinta clara en oscuro y oscura en claro, sin tocar
+           el token de acento (el violeta queda reservado al 8%). */
+        usarStyle:'background:var(--ink);color:var(--paper);border-radius:var(--r-md);padding:9px 0;font-size:12px;font-weight:400',
+        usarHref:a.usarHref, editHref:a.editHref,
+        chips:a.chips.map(c=>({ text:c.t,
+          style: c.gate
+            ? 'font-size:10.5px;font-weight:500;color:var(--amber);background:var(--amber-bg);border:1px solid var(--amber-line);border-radius:999px;padding:3px 9px'
+            : 'font-size:10.5px;color:var(--muted);background:var(--paper2);border:1px solid var(--line);border-radius:999px;padding:3px 9px' })),
+      };
+    });
+
+    /* [tema claro] chips del carrusel POR TOKEN. Antes el color salía de un hex fijo y su
+       fondo de rgba(hex,.14): en claro daba 1.86:1 (y 1.45:1 el de ámbar). --accent-deep es
+       "el acento como TEXTO sobre --accent-soft", que es justo este caso; los gateados usan
+       la terna de ámbar. Los dos pares están medidos AA en ambos temas por la hoja. */
+    const archChips=cur.chips.map(c=>({ glyph:c.g, text:c.t,
+      style:'display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:500;border-radius:999px;padding:6px 12px;'+(c.gate
+        ? 'color:var(--amber);background:var(--amber-bg);border:1px solid var(--amber-line)'
+        : 'color:var(--accent-deep);background:var(--accent-soft);border:1px solid var(--line2)') }));
+
+    const dots=this.archetypes.map((_,i)=>({ go:()=>this.go(i),
+      style: i===this.state.idx
+        ? 'width:24px;height:7px;border-radius:999px;border:none;cursor:pointer;background:var(--accent);transition:all .25s'
+        : 'width:7px;height:7px;border-radius:999px;border:none;cursor:pointer;background:var(--line2);transition:all .25s' }));
+
+    /* ── HUB "¿a dónde vas?" — LOS DESTINOS, DE LA MISMA TABLA QUE LA BARRA ──────────────
+       [convergencia · superficie 8] Acá había una segunda copia de la lista de destinos, y
+       decía de sí misma «mismo set que el launcher nav.js». No lo era, y la deriva se veía:
+
+         · enlazaba `Estados.dc.html`, que la barra sacó A PROPÓSITO por ser el catálogo de
+           ESPECIFICACIÓN de diseño — o sea que el hub seguía llevando a documentación
+           interna con un clic, que es literalmente el defecto que ese arreglo cerró;
+         · le faltaban CUATRO destinos que la barra sí tiene: Modelos, Conectores, Métodos
+           e Inspección;
+         · y apuntaba a `Conectar.dc.html`, que hoy es un shim que redirige a `Conectores`.
+
+       Ahora la lista sale de `window.AlephDestinos`, que publica `nav.js` —ya cargado en
+       esta pantalla— y que es la MISMA que pinta la barra. Lo único propio del hub es la
+       DESCRIPCIÓN de cada destino, que la barra no tiene y que sí es de acá. Un destino sin
+       descripción se muestra igual, sin ella: la lista la manda la tabla, no este mapa. */
+    const DESC={ 'Cuarto.dc.html':'home.hub.armar.d', 'sala-v2/sala-v2.html':'home.hub.sala.d',
+      'Conectores.dc.html':'home.hub.conectar.d', 'Historial.dc.html':'home.hub.historial.d',
+      'Biblioteca.dc.html':'home.hub.biblioteca.d', 'Settings.dc.html':'home.hub.ajustes.d',
+      'Ayuda.dc.html':'home.hub.ayuda.d', 'Modelos.dc.html':'home.hub.modelos.d',
+      'metodo/metodo.html':'home.hub.metodo.d', 'inspeccion/inspeccion.html':'home.hub.inspeccion.d' };
+    const D=window.AlephDestinos;
+    const HUB=(D?D.items:[])
+      /* Inicio no va: ya estás acá. Es la única exclusión y es del hub, no de la tabla. */
+      .filter(it=>it.id!=='Home.dc.html')
+      .map(it=>({ href:D.href(it.id), icon:it.icon, t:D.etiqueta(it),
+                  d: DESC[it.id]?T(DESC[it.id]):'' }));
+    const hubItems=HUB.map(it=>({ href:it.href, icon:it.icon, t:it.t, d:it.d,
+      iconStyle:'width:38px;height:38px;border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;font-size:17px;flex:none;background:var(--accent-soft);color:var(--accent-deep);border:1px solid var(--line)' }));
+
+    /* [rediseño · fase 6] EL SALUDO DEL DISEÑO. La pantalla 01 lo pone suelto arriba:
+     * «Buenas noches, / Renata». La franja horaria sale del reloj del equipo, que es el único
+     * dato que la casa tiene sin preguntarle nada a nadie. El nombre sale de la sesión; si no
+     * hay sesión, el saludo queda solo y no se inventa un nombre. */
+    const _s = this.state;
+    /* LOS ÍCONOS SON LOS DEL ARTBOARD, no glifos de texto. Acá había ◈ ▦ ∑ ✎ ◌ ◇ §, que son
+       caracteres prestados: el § de Legal es un signo de sección y el ∑ de Finanzas una suma.
+       El diseño le da a cada espacio su ícono de línea propio, bitono. Se copian sus paths
+       con el trazo en `currentColor` y el relleno en `currentColor` al 42%, así el bitono
+       existe en los dos temas sin un solo hex clavado. */
+    const _ESP = [
+      { n:"La Sala", h:'sala-v2/sala-v2.html', k:'home.espacio.sala',
+        g:'<path d="M4 8.6A2.6 2.6 0 0 1 6.6 6h7.4A2.6 2.6 0 0 1 16.6 8.6v3.6A2.6 2.6 0 0 1 14 14.8H9.2L5.6 17.4V14.8A1.6 1.6 0 0 1 4 13.2z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"></path><circle cx="18.4" cy="16.8" r="2.4" fill="currentColor" fill-opacity=".42"></circle>' },
+      { n:"Oficina", h:'workspaces/oficina.html', k:'home.espacio.oficina',
+        g:'<path d="M6 3.8h7.2L17.6 8.2V20H6z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"></path><path d="M13.2 3.8 17.6 8.2h-4.4z" fill="currentColor" fill-opacity=".42"></path><path d="M8.8 12.4h6M8.8 15.8h3.8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path>' },
+      { n:"Finanzas", h:'workspaces/finanzas.html', k:'home.espacio.finanzas',
+        g:'<path d="M4.8 19.4v-6.2M9.6 19.4V6.6M14.4 19.4v-4.4M19.2 19.4V9.6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><circle cx="9.6" cy="6.6" r="2.1" fill="currentColor" fill-opacity=".42"></circle>' },
+      { n:"Educación", h:'workspaces/educacion.html', k:'home.espacio.educacion',
+        g:'<path d="M4 5.6h5.6A2.4 2.4 0 0 1 12 8v10.8a2 2 0 0 0-2-1.8H4z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"></path><path d="M20 5.6h-5.6A2.4 2.4 0 0 0 12 8v10.8a2 2 0 0 1 2-1.8h6z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"></path><path d="M15.4 5.6h2.8v5.2l-1.4-1.2-1.4 1.2z" fill="currentColor" fill-opacity=".42"></path>' },
+      { n:"Ciencia", h:'workspaces/ciencia.html', k:'home.espacio.ciencia',
+        g:'<path d="M9.6 4.2h4.8M10.6 4.2v5.2l-4.4 7.6A1.6 1.6 0 0 0 7.6 19.4h8.8a1.6 1.6 0 0 0 1.4-2.4l-4.4-7.6V4.2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="12" cy="15.4" r="2.1" fill="currentColor" fill-opacity=".42"></circle>' },
+      { n:"Diseño", h:'workspaces/diseno.html', k:'home.espacio.diseno',
+        g:'<path d="M4.2 16.4C8.6 16.4 15.4 7.6 19.8 7.6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path><circle cx="4.2" cy="16.4" r="2.2" fill="currentColor" fill-opacity=".42"></circle><circle cx="19.8" cy="7.6" r="2.2" stroke="currentColor" stroke-width="1.4"></circle>' },
+      { n:"Legal", h:'workspaces/legal.html', k:'home.espacio.legal',
+        g:'<path d="M12 6.4v12.8M8 19.2h8M4.6 9.2h14.8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path><path d="M4.6 9.2 2.4 13.6a2.7 2.7 0 0 0 4.4 0zM19.4 9.2l2.2 4.4a2.7 2.7 0 0 1-4.4 0z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"></path><circle cx="12" cy="5.2" r="1.9" fill="currentColor" fill-opacity=".42"></circle>' },
+    ];
+
+    /* EL SALUDO EN OCHO IDIOMAS. Es la MISMA frase traducida —no frases distintas—, así que
+       la pantalla sigue diciendo la hora del día que es. Los idiomas son los de la pizarra de
+       Auth, para que el gesto sea uno solo. El del idioma activo va PRIMERO: es el que ve
+       quien pide menos movimiento y el que leen los lectores de pantalla. */
+    const _SALUDOS = {
+      manana:   { es:'Buenos días', en:'Good morning',   fr:'Bonjour',        it:'Buongiorno',
+                  de:'Guten Morgen', pt:'Bom dia',       ja:'おはよう',        ko:'좋은 아침' },
+      tarde:    { es:'Buenas tardes', en:'Good afternoon', fr:'Bon après-midi', it:'Buon pomeriggio',
+                  de:'Guten Tag',   pt:'Boa tarde',      ja:'こんにちは',      ko:'좋은 오후' },
+      noche:    { es:'Buenas noches', en:'Good evening', fr:'Bonsoir',        it:'Buonasera',
+                  de:'Guten Abend', pt:'Boa noite',      ja:'こんばんは',      ko:'좋은 저녁' },
+    };
+    _SALUDOS.madrugada = _SALUDOS.noche;   // la casa ya trata la madrugada como la noche
+
+    const _h = new Date().getHours();
+    const _franja = _h < 6 ? 'madrugada' : _h < 13 ? 'manana' : _h < 20 ? 'tarde' : 'noche';
+
+    /* LA COMA ES DEL NOMBRE, no del saludo. Con sesión local no hay nombre —y la casa no
+       inventa uno—, así que la línea terminaba en «Buenos días,» y ahí se cortaba: una coma
+       anunciando algo que nunca llegaba. Ahora la coma viaja con el nombre o no viaja. */
+    const _nombre = (this.state.usuario && this.state.usuario.nombre) || '';
+
+    /* El idioma es un INTERRUPTOR de dos posiciones: la cápsula muestra el idioma ACTIVO y
+       un click lleva al otro. `AlephI18n.setLang` es el mismo cable que usa Auth. */
+    const _lang = (window.AlephI18n && window.AlephI18n.lang && window.AlephI18n.lang()) || 'es';
+
+    return {
+      saludo: T('home.saludo.' + _franja) + (_nombre ? ',' : ''),
+      saludos: (function(){
+        const tabla=_SALUDOS[_franja]||_SALUDOS.noche;
+        const activo=_lang in tabla ? _lang : 'es';
+        const orden=[activo].concat(Object.keys(tabla).filter(k=>k!==activo));
+        return orden.map((k,i)=>({ txt: tabla[k] + (_nombre ? ',' : ''),
+                                   retardo: 'animation-delay:' + (i*5) + 's' }));
+      })(),
+      nombre: _nombre,
+      abrirTablero: T('home.abrir_tablero'),
+      entraTitulo: T('home.entra_titulo'),
+      /* LOS SIETE, EN UNA SOLA LISTA. Antes eran siete `<a>` escritos a mano en la plantilla
+         —seis iguales y uno distinto—; por eso el destacado no se podía mover. Los `href` son
+         exactamente los mismos siete de antes, uno por uno. */
+      espacios: _ESP.map((x,i)=>({
+        nombre:x.k==='home.espacio.sala' ? T('nav.sala') : T('ws.'+x.k.split('.').pop()+'.nombre'), href:x.h, sub:T(x.k),
+        /* El `<svg>` se arma acá y no se guarda en la tabla: así el ícono mide 57% de su
+           círculo y CRECE SOLO cuando la baldosa se agranda, sin una segunda animación.
+           (El runtime DC no tiene prop de HTML crudo; este `ref` es el mismo camino que ya
+           usa Modelos.dc.html.) */
+        refIco: (el)=>{ if(el && el.dataset.ico!==x.n){
+          el.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" '
+            + 'stroke-linecap="round" stroke-linejoin="round" style="width:57%;height:57%;display:block">'
+            + x.g + '</svg>';
+          el.dataset.ico=x.n; } },
+        sel: _s.sel===i ? '1' : '0',
+        actual: _s.sel===i ? 'true' : 'false',
+        entra: ()=>this.elegir(i),
+        ref: (el)=>{ this._refs[i]=el; },
+      })),
+      pista: _ESP.map((x,i)=>({ clase: _s.sel===i ? 'on' : '' })),
+      subir: ()=>this.mover(-1), bajar: ()=>this.mover(1),
+      noSube: _s.sel<=0, noBaja: _s.sel>=6,
+      anteriorTit: T('home.espacio.anterior'), siguienteTit: T('home.espacio.siguiente'),
+      temaTitulo: T('home.tema_titulo'), idiomaTitulo: T('home.idioma_titulo'),
+      teclas:(e)=>this.teclas(e),
+      langLabel: _lang.toUpperCase(),
+      toggleLang: () => { if (window.AlephI18n) window.AlephI18n.setLang(_lang === 'es' ? 'en' : 'es'); },
+      agents, hubItems, hubTitle:T('home.hub_title'), hubSub:T('home.hub_sub'),
+      archName:T('arch.'+ak+'.name'), archDesc:T('arch.'+ak+'.desc'), archChips,
+      // chrome i18n (ES/EN)
+      headerSub:T('home.header_sub'), tusAleph:T('home.tus_aleph'), tusAlephSub:T('home.tus_aleph_sub'),
+      crearAleph:T('common.crear_aleph'), usarLabel:T('home.usar'), editarLabel:T('home.editar'),
+      nuevo:T('home.nuevo'), nuevoSub:T('home.nuevo_sub'), podesArmar:T('home.podes_armar'), podesArmarSub:T('home.podes_armar_sub'),
+      ejemplo:T('home.ejemplo'), armadoCon:T('home.armado_con'), armarUnoAsi:T('home.armar_uno_asi'),
+      footerLine:T('home.footer_line'), armarCuarto:T('home.armar_cuarto'),
+      // login suave: la sesión local anónima OFRECE (no exige) ingresar
+      anonLocal:this.state.anon, anonPill:T('home.local.pill'),
+      anonTraer1:T('home.local.traer1'), anonTraer2:T('home.local.traer2'),
+      theme:this.state.theme, toggleTheme:()=>this.toggleTheme(), themeIcon: this.state.theme==='dark' ? '☀' : '☾',
+      /* [tema claro] el showcase y su tag salen de TOKENS, no de rgba() sobre un hex fijo.
+         El fondo importa tanto como la tinta: era el rgba del acento OSCURO lo que volvía
+         lila el panel en tema claro y hundía a 1.85:1 todo lo que iba encima. Y la CTA usa
+         --on-accent, el token que existe exactamente para esto (en oscuro el acento es
+         claro, así que el blanco daba 2.93:1 y la tinta va oscura). */
+      showcaseStyle:'background:linear-gradient(110deg, var(--accent-soft), var(--paper) 60%);border:1px solid var(--line2)',
+      showcaseGlow:'background:radial-gradient(circle, var(--accent-soft) 0%, rgba(0,0,0,0) 66%)',
+      archTagStyle:'font-size:11px;font-weight:500;letter-spacing:.08em;color:var(--accent-deep);background:var(--accent-soft);border:1px solid var(--line2);border-radius:999px;padding:4px 11px',
+      archCtaStyle:'background:var(--accent);color:var(--on-accent);border-radius:var(--r-md);padding:10px 18px;font-size:13.5px;font-weight:500',
+      dots, rotateHint: this.state.paused ? 'en pausa — suelta para que siga' : 'rota solo · pasa el mouse para fijar',
+      stageRef:(el)=>{ this._stage=el; },
+      pause:()=>this.setState({paused:true}), resume:()=>this.setState({paused:false}),
+    };
+  }
+}
+</script>
+</body>
+</html>

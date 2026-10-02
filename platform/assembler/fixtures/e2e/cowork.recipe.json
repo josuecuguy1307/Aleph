@@ -1,0 +1,26 @@
+{
+  "schema_version": "v1",
+  "meta": {
+    "name": "Agente Cowork (E2E Fase 2)",
+    "nicho": "cowork",
+    "descripcion": "Asistente de utilidad que delega la aritmética a herramientas en vez de calcular de cabeza."
+  },
+  "model": {
+    "primary": "openai/gpt-oss-120b",
+    "fallback": "llama-3.3-70b-versatile",
+    "base_url": "https://api.groq.com/openai/v1",
+    "temperature": 0,
+    "max_tokens": 1024,
+    "max_turns": 6
+  },
+  "belt": {
+    "belt_ref": "platform/assembler/fixtures/belt-calc.mcp.json",
+    "tool_filters": { "calc": ["add", "mul"] }
+  },
+  "framing": {
+    "inline": "Sos un asistente de utilidad. Para CUALQUIER operación aritmética usá las herramientas cableadas (add, mul) — no calcules de cabeza. Respondé con el número final."
+  },
+  "rag": { "enabled": false },
+  "keys": {},
+  "gates": {}
+}

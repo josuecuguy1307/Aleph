@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aleph · Conectar un servicio</title>
+<link rel="stylesheet" href="vendor/fonts.css">
+<link rel="stylesheet" href="aleph-tokens.css"><!-- [identidad visual] la piel: tokens, forma y tipografía en un solo lugar -->
+<style>
+  /* [sistema 2026-07-31] Resolver entra al sistema "Híbrido Spatial + Soft futurism".
+     Las primitivas (.ds-plane/.ds-title/.ds-sub/…) llegan solas por aleph-tokens.css →
+     @import aleph-ds.css. Acá NO se redeclara ningún token: el bloque `:root` propio
+     (--bg/--panel/--panel2/--line/--violet/--ink/--mut/--ok/--bad/--warn) MURIÓ — pisaba
+     los del sistema (--ink y --line eran suyos) y hacía que esta pantalla fuera de otra app.
+     Lo que cambia es la PIEL: cero bordes, cero relieves, cero hundidos — la jerarquía es
+     sombra + radio. Color 90/8/2: neutros casi todo, el violeta sólo en la identidad,
+     verde/ámbar/rojo sólo como estado.
+     Lo que NO cambia: ni un id (#service #btnFind #findMsg #found #f_* #credential #btnEquip
+     #btnReset #equipMsg #result #r_*), ni una clase que lea el script, ni una acción, ni un
+     texto, ni un estado. */
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page-bg);color:var(--ink);
+    font:300 15px/1.5 var(--font-ui);min-height:100vh;padding:32px 18px;
+    -webkit-font-smoothing:antialiased}
+  .wrap{max-width:720px;margin:0 auto}
+  .brand{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+  /* la mascota va SIN MARCO, sobre un halo radial (identidad = el 8% del color) */
+  .glyph{width:36px;height:36px;border-radius:var(--r-sm);flex:none;border:0;box-shadow:none;
+    background:radial-gradient(circle,var(--accent-soft) 0%,transparent 76%);
+    display:grid;place-items:center;font-weight:300;font-size:21px;color:var(--accent)}
+  h1{margin:0}
+  .sub{margin:11px 0 0;max-width:66ch;line-height:1.55}
+  .sub b{color:var(--ink);font-weight:400}
+  /* cada paso es AIRE sobre el plano, no una caja: el sistema separa con espacio y
+     con el rótulo del paso, nunca con una línea. El POZO (r18) es el CAMPO. */
+  .card{background:transparent;border:0;border-radius:var(--r-lg);padding:0;margin:26px 0 0;
+    box-shadow:none}
+  label{display:block;font:400 var(--fs-xs) var(--font-ui);color:var(--muted);margin:0 0 7px;
+    text-transform:uppercase;letter-spacing:.08em}
+  input{width:100%;background:var(--paper2);border:0;color:var(--ink);
+    border-radius:var(--r-md);padding:12px 15px;font:300 14px var(--font-ui);outline:none}
+  /* el foco NO se marca con línea: se tiñe con el acento */
+  input:focus{background:var(--accent-soft)}
+  .row{display:flex;gap:10px}
+  .row > *{flex:1}
+  /* la acción primaria INVIERTE el campo; el acento queda reservado al 8% */
+  button{background:var(--ink);color:var(--paper);border:0;border-radius:var(--r-md);
+    padding:12px 18px;font:400 12.5px var(--font-ui);cursor:pointer;transition:.15s}
+  button:hover{filter:brightness(1.12)}
+  button:disabled{opacity:.5;cursor:wait}
+  button.ghost{background:var(--paper2);border:0;color:var(--muted)}
+  button.ghost:hover{color:var(--ink);filter:none}
+  .hidden{display:none}
+  .badge{display:inline-flex;align-items:center;gap:6px;font:400 var(--fs-sm) var(--font-ui);
+    padding:4px 11px;border:0;border-radius:var(--r-full);vertical-align:middle}
+  .badge.ok{background:var(--green-bg);color:var(--green)}
+  .badge.bad{background:var(--red-bg);color:var(--red)}
+  .badge.dim{background:var(--paper2);color:var(--muted)}
+  .mono{font-family:var(--font-mono);font-size:12.5px;color:var(--ink)}
+  .tools{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+  .tool{background:var(--paper2);border:0;border-radius:var(--r-full);padding:6px 12px;
+    font:400 12px var(--font-mono);color:var(--muted)}
+  .rank{font:300 12.5px var(--font-ui);color:var(--muted);margin-top:10px}
+  .rank b{color:var(--ink);font-weight:400}
+  .msg{font:300 13px var(--font-ui);margin-top:8px}
+  .msg.bad{color:var(--red)} .msg.ok{color:var(--green)} .msg.warn{color:var(--amber)}
+  .step-title{font:400 var(--fs-xs) var(--font-ui);color:var(--muted);margin:0 0 12px;
+    text-transform:uppercase;letter-spacing:.09em}
+  /* el desenlace "equipada" se distingue por TINTE de estado, no por borde ni gradiente */
+  .equip{border:0;background:var(--green-bg);border-radius:var(--r-lg);padding:18px 20px}
+  .equip .tool{background:var(--paper)}
+  .kv{display:flex;justify-content:space-between;gap:12px;font:300 12.5px var(--font-ui);color:var(--muted);margin:4px 0}
+  .kv b{color:var(--ink);font-weight:400;text-align:right}
+  /* el spinner SIN BORDE: un anillo de gradiente enmascarado, no una línea */
+  .spin{display:inline-block;width:13px;height:13px;border:0;border-radius:50%;
+    background:conic-gradient(from 0deg,transparent 0deg,var(--accent) 310deg);
+    -webkit-mask:radial-gradient(circle,transparent 3.4px,#000 4px);
+    mask:radial-gradient(circle,transparent 3.4px,#000 4px);
+    animation:s .7s linear infinite;vertical-align:-2px;margin-right:7px}
+  @keyframes s{to{transform:rotate(360deg)}}
+</style>
+  <script src="./aleph-config.js"></script>
+  <script src="./vendor/supabase.min.js"></script>
+  <script src="./supabase-auth.js"></script>
+  <script src="./paywall.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <!-- el PLANO DE CONTENIDO (r30 + sombra ambiental) envuelve toda la pantalla -->
+  <div class="ds-plane">
+  <div class="brand"><div class="glyph">⌬</div><h1 class="ds-title">Conectar un servicio</h1></div>
+  <div class="sub ds-sub">Di el <b>nombre</b> de un servicio y trae tu credencial. Aleph encuentra el MCP
+    que ya existe, lo valida con tu key y lo equipa — sin pegar nada a mano.</div>
+
+  <!-- PASO 1: buscar el servicio -->
+  <div class="card">
+    <div class="step-title">1 · ¿Qué servicio quieres conectar?</div>
+    <div class="row">
+      <input id="service" placeholder="stripe, airtable, github, notion…" autocomplete="off">
+      <button id="btnFind" style="flex:0 0 auto">Buscar el MCP</button>
+    </div>
+    <div id="findMsg" class="msg"></div>
+  </div>
+
+  <!-- PASO 2: el MCP encontrado + credencial -->
+  <div id="found" class="card hidden">
+    <div class="step-title">2 · Encontré esto</div>
+    <div class="kv"><span>Servicio</span><b id="f_service"></b></div>
+    <div class="kv"><span>MCP</span><b class="mono" id="f_server"></b></div>
+    <div class="kv"><span>Autenticidad</span><b id="f_auth"></b></div>
+    <div class="kv"><span>Fuente</span><b id="f_source"></b></div>
+    <div class="kv"><span>Credencial va en</span><b class="mono" id="f_where"></b></div>
+    <div id="f_rank" class="rank"></div>
+    <div style="margin-top:14px">
+      <label for="credential">Tu credencial</label>
+      <input id="credential" type="password" placeholder="sk_test_…  ·  se cifra en el vault, nunca en claro" autocomplete="off">
+    </div>
+    <div class="row" style="margin-top:12px">
+      <button id="btnEquip">Conectar y equipar</button>
+      <button class="ghost" id="btnReset" style="flex:0 0 auto">Otro servicio</button>
+    </div>
+    <div id="equipMsg" class="msg"></div>
+  </div>
+
+  <!-- PASO 3: resultado -->
+  <div id="result" class="card equip hidden">
+    <div class="step-title" style="color:var(--green)">3 · ✓ Pieza equipada en El Cuarto</div>
+    <div class="kv"><span>MCP</span><b class="mono" id="r_server"></b></div>
+    <div class="kv"><span>Credencial</span><b id="r_cred"></b></div>
+    <div class="kv"><span>Equipada en puppet</span><b class="mono" id="r_puppet"></b></div>
+    <div class="step-title" style="margin:14px 0 0">Tools reales que trajo el MCP:</div>
+    <div id="r_tools" class="tools"></div>
+  </div>
+  </div>
+</div>
+
+<script>
+const qs = new URLSearchParams(location.search);
+const TOKEN = qs.get('token') || localStorage.getItem('aleph_token') || '';
+const PUPPET = qs.get('puppet') || localStorage.getItem('aleph_puppet') || '';
+let RESOLUTION = null;
+
+const $ = id => document.getElementById(id);
+function authHeaders(){ const h={'Content-Type':'application/json'}; if(TOKEN) h['Authorization']='Bearer '+TOKEN; return h; }
+
+$('btnFind').onclick = findService;
+$('service').addEventListener('keydown', e => { if(e.key==='Enter') findService(); });
+$('btnReset').onclick = () => { $('found').classList.add('hidden'); $('result').classList.add('hidden');
+  $('service').value=''; $('findMsg').textContent=''; $('service').focus(); };
+$('btnEquip').onclick = equip;
+
+async function findService(){
+  const svc = $('service').value.trim();
+  if(!svc) return;
+  $('btnFind').disabled = true; $('findMsg').className='msg'; $('findMsg').innerHTML='<span class="spin"></span>buscando en el registro oficial de MCPs…';
+  $('found').classList.add('hidden'); $('result').classList.add('hidden');
+  try{
+    const res = await fetch('/v1/resolve/preview?service='+encodeURIComponent(svc));
+    const data = await res.json();
+    if(!res.ok){
+      $('findMsg').className='msg bad';
+      $('findMsg').innerHTML = '✗ '+(data.detail?.detail || 'no encontré un MCP confiable para “'+svc+'”');
+      return;
+    }
+    RESOLUTION = data;
+    $('findMsg').textContent='';
+    $('f_service').textContent = data.service;
+    $('f_server').textContent = data.server_name;
+    const verified = data.vendor_kind==='dns' || data.vendor_kind==='github_org';
+    $('f_auth').innerHTML = verified
+      ? '<span class="badge ok">✓ namespace verificado ('+data.vendor_kind+')</span>'
+      : (data.vendor_kind==='curated_manual'
+          ? '<span class="badge dim">pin curado (oficial)</span>'
+          : '<span class="badge dim">'+(data.vendor_kind||'—')+'</span>');
+    $('f_source').textContent = data.source;
+    $('f_where').textContent = data.credential.where + ' · ' + data.credential.transport;
+    if(data.ranked && data.ranked.length){
+      $('f_rank').innerHTML = 'Ranking del matcher: ' + data.ranked.slice(0,3).map(r =>
+        '<br><b>'+r.score.toFixed(3)+'</b> '+(r.verified?'✓':'·')+' '+r.name).join('');
+    } else { $('f_rank').textContent=''; }
+    $('found').classList.remove('hidden');
+    $('credential').focus();
+  }catch(e){ $('findMsg').className='msg bad'; $('findMsg').textContent='✗ error de red: '+e.message; }
+  finally{ $('btnFind').disabled = false; }
+}
+
+async function equip(){
+  const svc = RESOLUTION.service;
+  const cred = $('credential').value.trim();
+  $('btnEquip').disabled = true; $('equipMsg').className='msg'; $('equipMsg').innerHTML='<span class="spin"></span>guardando en el vault → validando vivo con tu key…';
+  $('result').classList.add('hidden');
+  try{
+    const res = await fetch('/v1/resolve', { method:'POST', headers:authHeaders(),
+      body: JSON.stringify({ service:svc, credential:cred, puppet_id:PUPPET }) });
+    const data = await res.json();
+    if(!res.ok){
+      $('equipMsg').className='msg bad';
+      const d = data.detail || {};
+      $('equipMsg').innerHTML = '✗ '+(d.error==='validacion_fallo'?'tu credencial no validó':'no se pudo equipar')
+        +'<br><span class="mono">'+(d.detail||'')+'</span>';
+      return;
+    }
+    $('equipMsg').textContent='';
+    $('r_server').textContent = data.server_name;
+    $('r_cred').innerHTML = '<span class="badge ok">cifrada en vault</span> <span class="mono">byok_ref keys:'+data.provider+'</span>';
+    $('r_puppet').textContent = data.puppet_id || '(anónimo)';
+    $('r_tools').innerHTML = (data.tools_detail||[]).map(t => '<span class="tool">'+t.name+'</span>').join('');
+    $('result').classList.remove('hidden');
+  }catch(e){ $('equipMsg').className='msg bad'; $('equipMsg').textContent='✗ error de red: '+e.message; }
+  finally{ $('btnEquip').disabled = false; }
+}
+</script>
+</body>
+</html>

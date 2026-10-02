@@ -1,0 +1,76 @@
+{
+  "_meta": {
+    "que_es": "base_matrix del belt FINANZAS (mercados + macro). Declara como auto-ejecuta las tools de LECTURA keyless (estados financieros SEC EDGAR, cotizaciones/historico yfinance, macro FRED) y la de BACKTEST de cartera (backtest_portfolio: computo local sobre precios publicos, baja consecuencia), para que el agente no quede paralizado pidiendo OK por cada consulta o iteracion del loop. El enforcer (recipe_enforcer) planta SIEMPRE y PRIMERO la regla mandatoria send/money: esta base NO puede aflojarla.",
+    "consumido_por": "assemble_and_run(recipe, base_matrix=<este json>) o auto-carga via _meta.base_matrix del belt-finanzas-markets.mcp.json.",
+    "principio": "seguro pero no paralizado — leer fundamentals/precios/macro y backtestear una cartera fluye (lectura publica / computo local, baja consecuencia, no toca plata ni manda nada); mandar correo o ejecutar una orden real preguntaria cada vez (no hay tools de ese tipo en este belt).",
+    "fuente": "platform/gates/recipe_enforcer.py + base-matrix-electronica.json (patron ing-fem-headless: una tool de computo/lectura keyless de baja consecuencia auto-ejecuta)."
+  },
+  "tier": "average",
+  "default_level": "auto-ejecuta",
+  "rules": [
+    {
+      "id": "fin-backtest-loop",
+      "match": {
+        "server": "backtest",
+        "tools": [
+          "backtest_portfolio"
+        ]
+      },
+      "level": "auto-ejecuta",
+      "what": "correr un backtest de cartera (Sharpe, retorno, volatilidad, drawdown) y acumular la convergencia del loop de optimizacion",
+      "where": "tu maquina (computo local sobre precios publicos de Yahoo Finance via yfinance; no toca plata ni manda nada; sin API key)",
+      "preview_kind": "accion",
+      "action_class": "read"
+    },
+    {
+      "id": "fin-secedgar-lectura",
+      "match": {
+        "server": "secedgar",
+        "tools": [
+          "get_cik_by_ticker",
+          "get_recent_filings",
+          "get_financials",
+          "get_xbrl_concepts",
+          "get_company_facts",
+          "get_key_metrics"
+        ]
+      },
+      "level": "auto-ejecuta",
+      "what": "leer estados financieros y filings reales (XBRL US GAAP) de SEC EDGAR",
+      "where": "api.sec.gov (solo lectura; no toca plata ni manda nada; sin API key)",
+      "preview_kind": "accion"
+    },
+    {
+      "id": "fin-yfinance-lectura",
+      "match": {
+        "server": "yfinance",
+        "tools": [
+          "yfinance_get_ticker_info",
+          "yfinance_get_financials",
+          "yfinance_get_price_history"
+        ]
+      },
+      "level": "auto-ejecuta",
+      "what": "leer cotizaciones, fundamentals e historico de precios (Yahoo Finance)",
+      "where": "Yahoo Finance publico (solo lectura; no toca plata ni manda nada; sin API key)",
+      "preview_kind": "accion"
+    },
+    {
+      "id": "fin-fred-macro-lectura",
+      "match": {
+        "server": "fred",
+        "tools": [
+          "fed_rates",
+          "macro_dashboard",
+          "inflation",
+          "yield_curve",
+          "gdp_growth"
+        ]
+      },
+      "level": "auto-ejecuta",
+      "what": "leer indicadores macro de la Fed (tasa de fondos, inflacion/CPI, curva de rendimientos, dashboard)",
+      "where": "feedoracle MacroOracle (FRED/BLS, free tier; solo lectura; no toca plata ni manda nada)",
+      "preview_kind": "accion"
+    }
+  ]
+}

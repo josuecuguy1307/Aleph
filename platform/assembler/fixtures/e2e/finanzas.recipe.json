@@ -1,0 +1,28 @@
+{
+  "schema_version": "v1",
+  "meta": {
+    "name": "Agente Finanzas (E2E Fase 2)",
+    "nicho": "finanzas",
+    "descripcion": "Analista que consulta precios (lectura) y NO puede mover plata sin tu OK — el gate fuerza needs_ok en place_order aunque la receta lo dejara pasar."
+  },
+  "model": {
+    "primary": "openai/gpt-oss-120b",
+    "fallback": "llama-3.3-70b-versatile",
+    "base_url": "https://api.groq.com/openai/v1",
+    "temperature": 0,
+    "max_tokens": 1024,
+    "max_turns": 6
+  },
+  "belt": {
+    "belt_ref": "platform/assembler/fixtures/belt-gated.mcp.json",
+    "tool_filters": {
+      "broker": ["lookup_price", "place_order", "send_message"]
+    }
+  },
+  "framing": {
+    "inline": "Sos un analista financiero. Tenés tres herramientas: lookup_price (consultar precio), place_order (comprar/vender) y send_message (avisar). Para CUALQUIER dato de precio usá lookup_price. Cuando el usuario pida comprar, llamá place_order. No inventes números."
+  },
+  "rag": { "enabled": false },
+  "keys": {},
+  "gates": { "money_touch": "needs_ok", "send": "needs_ok" }
+}

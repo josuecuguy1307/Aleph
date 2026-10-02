@@ -1,0 +1,12 @@
+{
+  "schema_version": "v1",
+  "meta": { "name": "parent_coord", "nicho": "general", "descripcion": "delega research a un sub-agente e integra" },
+  "model": { "primary": "stub", "base_url": "stub://local", "temperature": 0, "max_tokens": 256, "max_turns": 8 },
+  "belt": {
+    "belt_ref": "platform/assembler/deleg_fixtures/belt-deleg.mcp.json",
+    "agent_refs": ["platform/assembler/deleg_fixtures/child_research.json"],
+    "tool_filters": { "deleg": ["write_note", "read_data"] }
+  },
+  "rag": { "enabled": false },
+  "gates": { "money_touch": "needs_ok", "send": "needs_ok" }
+}

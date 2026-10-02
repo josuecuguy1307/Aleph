@@ -1,0 +1,23 @@
+{
+  "mcpServers": {
+    "calc": {
+      "command": "python3",
+      "args": ["${PUPPET_BELTS}/generalistas/calc_server.py"],
+      "description": "Calculadora MCP (stdio, 6 tools: add/sub/mul/div/pow/mod, solo stdlib). Fixture credential-free de un nicho distinto a echo — sirve para probar el filtro de subset curado y carga diferida."
+    }
+  },
+  "_meta": {
+    "slug": "calc",
+    "cards": [
+      {
+        "id": "calc",
+        "connector": "calc",
+        "label": "Calculadora",
+        "sub": "suma, resta y multiplicación exactas",
+        "auth": "keyless",
+        "backed_by": "calc",
+        "tools": ["add", "sub", "mul"]
+      }
+    ]
+  }
+}

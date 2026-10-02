@@ -1,0 +1,58 @@
+import { useEffect, useState } from "react"
+import { useLanguage } from "../i18n"
+
+// Both backends (the engine and the document service) are separate processes
+// that may still be starting when the web app first loads. Until both answer,
+// the list pages would fetch a dead socket and fall through to a misleading
+// "nothing here yet" empty state — so we hold the whole app behind this screen
+// and surface which service is still coming up.
+
+// Shown one at a time while the backends come up. Whimsical or factually true;
+// nothing that implies real legal work is happening (same rule as onboarding).
+const BOOT_PHRASES = [
+  "Sharpening pencils...",
+  "Unlocking the filing cabinet...",
+  "Warming up the engine...",
+  "Stacking the case files...",
+  "Aligning the margins...",
+  "Untangling the red tape...",
+]
+
+export default function BootScreen({ engineReady, ingestReady }: { engineReady: boolean; ingestReady: boolean }) {
+  const { t } = useLanguage()
+  const [phrase, setPhrase] = useState(0)
+  useEffect(() => {
+    const t = setInterval(() => setPhrase((p) => (p + 1) % BOOT_PHRASES.length), 2200)
+    return () => clearInterval(t)
+  }, [])
+
+  const steps = [
+    { label: "Starting the engine", ready: engineReady },
+    { label: "Opening the document service", ready: ingestReady },
+  ]
+
+  return (
+    <div className="boot-screen">
+      <div className="onboard-loading">
+        <div className="onboard-doc">
+          <span className="sk-line" />
+          <span className="sk-line" />
+          <span className="sk-line" />
+          <span className="sk-line" />
+        </div>
+        {/* Keyed on the index so each phrase replays the fade-in. */}
+        <p key={phrase} className="onboard-phrase">
+          {t(BOOT_PHRASES[phrase])}
+        </p>
+      </div>
+      <ul className="boot-steps">
+        {steps.map((s) => (
+          <li key={s.label} className={s.ready ? "boot-step done" : "boot-step"}>
+            <span className="boot-dot" />
+            {t(s.label)}
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}

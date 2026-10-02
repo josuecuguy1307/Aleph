@@ -1,0 +1,134 @@
+{
+  "_meta": {
+    "que_es": "En qué workspaces se RECOMIENDA cada conector curado. Un dato del catálogo, no lógica.",
+    "por_que_existe": "La Lista B estaba agrupada por ORIGEN (de qué stack vino el conector), y la cara necesita lo contrario: dado un workspace, qué le ofrezco. Agrupar por origen es una propiedad de cómo llegó el conector al árbol; agrupar por recomendación es una decisión de producto, con autor, y por eso vive en el catálogo y no en una superficie.",
+    "la_regla": "LA RECOMENDACIÓN NO ES EXCLUSIVA. El mismo conector puede estar recomendado en Ciencia y en Finanzas. Se configura UNA vez —la credencial es del usuario, no del workspace— y los dos lo ven configurado. Una lista vacía significa 'no se recomienda en ninguno': va sólo al llavero general, y eso NO es un olvido.",
+    "de_donde_salen_los_ids": "De los archivos de `catalog/connectors/onboarding/*.json`, uno por archivo. Son 29. Si aparece uno nuevo ahí y no acá, la vara lo dice: la cobertura tiene que ser total, para que 'no recomendado' sea siempre una decisión y nunca un hueco.",
+    "por_que_29_y_no_99": "«Los 99 de la Lista B» viene de un censo que NO está en el árbol ni en el escritorio (se buscó: `04-CONECTORES-CENSO-Y-PLAN.md` no existe). Lo que sí existe y tiene metadata de autor son estos 29. Los demás candidatos son catálogos que traen los inquilinos —Educación 45 MCP curados (`services/mcp/catalog/vendor/curated.json`), Ciencia sus conectores de ciencia, Finanzas sus brokers— y ésos se recomiendan por PERTENENCIA: ya viven dentro de su workspace y no hay nada que decidir. La decisión sólo existe para el catálogo transversal, que es éste.",
+    "quien_lo_lee": [
+      "(Fase 3) la cara de conectores — dado un workspace, qué ofrecer",
+      "qa/vara_f1_recomendaciones.py — cobertura total y forma"
+    ],
+    "owner": "catálogo de conectores",
+    "desde": "2026-08-17"
+  },
+  "workspaces": ["ciencia", "oficina", "legal", "educacion", "diseno", "finanzas"],
+  "recomendaciones": {
+    "alphavantage": {
+      "en": ["finanzas"],
+      "por_que": "precios de mercado y series técnicas — es el dominio de Finanzas y de ninguno más"
+    },
+    "asana": {
+      "en": ["oficina"],
+      "por_que": "proyectos y tareas de equipo"
+    },
+    "canvas": {
+      "en": ["educacion"],
+      "por_que": "cursos y tareas — LMS"
+    },
+    "classroom": {
+      "en": ["educacion"],
+      "por_que": "cursos de Classroom y sus tareas — LMS"
+    },
+    "coingecko": {
+      "en": ["finanzas"],
+      "por_que": "precios cripto"
+    },
+    "context7": {
+      "en": ["ciencia", "diseno"],
+      "por_que": "documentación de librerías al día: sirve donde se escribe código — el notebook de Ciencia y el motor de Diseño"
+    },
+    "exa": {
+      "en": ["legal", "ciencia"],
+      "por_que": "búsqueda neural. En Legal NO es una recomendación teórica: su propio lector la espera en `preferences.searchApiKey` (`dochaus/lib/research.ts:78-84`). En Ciencia, para literatura"
+    },
+    "fred": {
+      "en": ["finanzas"],
+      "por_que": "series macro (inflación, desempleo, tasas)"
+    },
+    "github": {
+      "en": ["ciencia", "diseno", "oficina"],
+      "por_que": "repos y commits: código en Ciencia y Diseño, y trabajo de equipo en Oficina"
+    },
+    "gmail": {
+      "en": ["oficina"],
+      "por_que": "correo — y su envío pasa por Ó11"
+    },
+    "google_calendar": {
+      "en": ["oficina"],
+      "por_que": "agenda y eventos"
+    },
+    "google_drive": {
+      "en": ["oficina"],
+      "por_que": "archivos de trabajo"
+    },
+    "hubspot": {
+      "en": ["oficina"],
+      "por_que": "CRM: contactos y negocios"
+    },
+    "huggingface": {
+      "en": ["ciencia"],
+      "por_que": "papers, modelos y datasets"
+    },
+    "jupyter": {
+      "en": ["ciencia"],
+      "por_que": "ejecutar celdas — notebooks reproducibles"
+    },
+    "linear": {
+      "en": ["oficina"],
+      "por_que": "issues y proyectos"
+    },
+    "massive": {
+      "en": ["finanzas"],
+      "por_que": "datos de mercado: acciones y opciones con griegas"
+    },
+    "materialsproject": {
+      "en": ["ciencia"],
+      "por_que": "base de datos de materiales"
+    },
+    "moodle": {
+      "en": ["educacion"],
+      "por_que": "cursos — LMS"
+    },
+    "notion": {
+      "en": ["oficina", "educacion"],
+      "por_que": "notas y tareas: espacio de trabajo en Oficina, y apuntes en Educación"
+    },
+    "onshape": {
+      "en": ["diseno"],
+      "por_que": "CAD paramétrico"
+    },
+    "openbom": {
+      "en": ["diseno"],
+      "por_que": "listas de materiales (BOM) — ingeniería de producto"
+    },
+    "orcid": {
+      "en": ["ciencia"],
+      "por_que": "producción registrada del investigador, para citar"
+    },
+    "osf": {
+      "en": ["ciencia"],
+      "por_que": "Open Science Framework: proyectos de investigación"
+    },
+    "slack": {
+      "en": ["oficina"],
+      "por_que": "canales y mensajes — el envío pide OK"
+    },
+    "worldbank": {
+      "en": ["finanzas"],
+      "por_que": "series macro del Banco Mundial. Es el único KEYLESS de los 29: se recomienda igual, y no pide credencial"
+    },
+    "xero": {
+      "en": ["finanzas", "legal"],
+      "por_que": "su propia línea lo dice: «registros societarios/financieros para la investigación» — contable en Finanzas, due diligence en Legal"
+    },
+    "zenodo": {
+      "en": ["ciencia"],
+      "por_que": "depósitos y su cita"
+    },
+    "zotero": {
+      "en": ["ciencia", "legal"],
+      "por_que": "gestor de referencias: bibliografía en Ciencia y citas en Legal"
+    }
+  }
+}

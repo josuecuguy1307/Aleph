@@ -1,0 +1,223 @@
+import { buildStandaloneDocument } from '@open-codesign/runtime';
+import { LEGACY_SOURCE_ENTRY } from '@open-codesign/shared';
+import {
+  findHtmlStartTag,
+  getHtmlAttribute,
+  insertAfterHtmlStartTag,
+  transformHtmlElementBlocks,
+} from '@open-codesign/shared/html-utils';
+import { inlineLocalAssetsInHtml, type LocalAssetOptions } from './assets';
+import type { ExportResult } from './index';
+
+const TAILWIND_CDN = 'https://cdn.tailwindcss.com';
+const TAILWIND_TAG = `<script src="${TAILWIND_CDN}"></script>`;
+
+export interface ExportHtmlOptions extends LocalAssetOptions {
+  /** Inject the Tailwind CDN script if missing. Defaults to false for offline exports. */
+  injectTailwind?: boolean;
+  /** Inline local src/href/url() references as data URIs when assetBasePath is set. */
+  inlineLocalAssets?: boolean;
+  /** Prettify with two-space indentation. Defaults to true. */
+  prettify?: boolean;
+  /** Comment banner injected at the top of the file. */
+  bannerComment?: string;
+}
+
+/**
+ * Export a design source artifact to disk as a single self-contained HTML file.
+ * Workspace-local src/href/url() references are inlined when the caller
+ * provides asset paths.
+ *
+ * JSX sources are first wrapped into a standalone web document by the runtime.
+ * The export shell then injects a doctype, viewport metadata, and a small
+ * comment banner. Remote assets still depend on network availability; local
+ * workspace references are handled during export.
+ */
+export async function exportHtml(
+  artifactSource: string,
+  destinationPath: string,
+  opts: ExportHtmlOptions = {},
+): Promise<ExportResult> {
+  const fs = await import('node:fs/promises');
+  let final = buildHtmlDocument(artifactSource, opts);
+  if (opts.inlineLocalAssets ?? true) {
+    final = await inlineLocalAssetsInHtml(final, opts);
+  }
+  await fs.writeFile(destinationPath, final, 'utf8');
+  const stat = await fs.stat(destinationPath);
+  return { bytes: stat.size, path: destinationPath };
+}
+
+export function buildHtmlDocument(artifactSource: string, opts: ExportHtmlOptions = {}): string {
+  const injectTailwind = opts.injectTailwind ?? false;
+  const prettify = opts.prettify ?? true;
+  const banner =
+    opts.bannerComment ??
+    'Generado con Diseño · Aleph';
+
+  let out = ensureDocumentShell(
+    buildStandaloneDocument(artifactSource, {
+      path: opts.sourcePath ?? inferLegacyHtmlPath(artifactSource),
+    }),
+  );
+  if (injectTailwind && !hasTailwindScript(out)) {
+    out = injectIntoHead(out, TAILWIND_TAG);
+  }
+  out = injectIntoHead(out, `<meta name="generator" content="Diseño · Aleph" />`);
+  out = `<!-- ${banner} -->\n${out}`;
+  if (prettify) out = prettifyHtml(out);
+  return out;
+}
+
+function inferLegacyHtmlPath(source: string): string | undefined {
+  const trimmed = source.trimStart();
+  if (!trimmed.startsWith('<')) return undefined;
+  const firstTagChar = trimmed[1];
+  if (firstTagChar && /[A-Z]/u.test(firstTagChar)) return undefined;
+  return LEGACY_SOURCE_ENTRY;
+}
+
+function ensureDocumentShell(html: string): string {
+  const trimmed = html.trim();
+  if (trimmed.toLowerCase().startsWith('<!doctype')) return trimmed;
+  if (findHtmlStartTag(trimmed, 'html')) return `<!doctype html>\n${trimmed}`;
+  return `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Diseño · Aleph</title>
+</head>
+<body>
+${trimmed}
+</body>
+</html>`;
+}
+
+function hasTailwindScript(html: string): boolean {
+  let found = false;
+  transformHtmlElementBlocks(html, 'script', ({ attrs, tag }) => {
+    const src = getHtmlAttribute(attrs, 'src');
+    if (src !== null) {
+      try {
+        found = new URL(src).hostname.toLowerCase() === 'cdn.tailwindcss.com';
+      } catch {
+        found = src.toLowerCase() === TAILWIND_CDN;
+      }
+    }
+    return tag;
+  });
+  return found;
+}
+
+function injectIntoHead(html: string, tag: string): string {
+  if (findHtmlStartTag(html, 'head')) {
+    return insertAfterHtmlStartTag(html, 'head', `\n  ${tag}`);
+  }
+  if (findHtmlStartTag(html, 'html')) {
+    return insertAfterHtmlStartTag(html, 'html', `\n<head>\n  ${tag}\n</head>`);
+  }
+  return `${tag}\n${html}`;
+}
+
+/**
+ * Indentation-only prettifier. Splits inline tags onto fresh lines and
+ * reflows indentation. We deliberately avoid pulling in `prettier` /
+ * `js-beautify` (would blow the dep budget) — Tier 2 can swap this out.
+ */
+function prettifyHtml(html: string): string {
+  const protectedHtml = protectRawTextBlocks(html);
+  const tokens = protectedHtml.html.replace(/>\s+</g, '><').replace(/></g, '>\n<').split('\n');
+
+  const voidElements = new Set([
+    'area',
+    'base',
+    'br',
+    'col',
+    'embed',
+    'hr',
+    'img',
+    'input',
+    'link',
+    'meta',
+    'param',
+    'source',
+    'track',
+    'wbr',
+  ]);
+  const inline = new Set(['script', 'style', 'pre', 'textarea']);
+
+  let depth = 0;
+  let inInline: string | null = null;
+  const lines: string[] = [];
+
+  for (const raw of tokens) {
+    const line = raw.trim();
+    if (!line) continue;
+
+    const rawBlock = protectedHtml.blocks.get(line);
+    if (rawBlock !== undefined) {
+      lines.push(`${'  '.repeat(depth)}${rawBlock}`);
+      continue;
+    }
+
+    if (inInline) {
+      lines.push(line);
+      if (new RegExp(`</${inInline}\\s*>`, 'i').test(line)) {
+        inInline = null;
+        depth = Math.max(0, depth - 1);
+      }
+      continue;
+    }
+
+    const closing = /^<\//.test(line);
+    const selfClosing = /\/>\s*$/.test(line) || isVoidTag(line, voidElements);
+    const isComment = /^<!--/.test(line);
+    const isDoctype = /^<!doctype/i.test(line);
+
+    if (closing) depth = Math.max(0, depth - 1);
+
+    lines.push(`${'  '.repeat(depth)}${line}`);
+
+    const tagName = openTagName(line);
+    if (tagName && inline.has(tagName) && !selfClosing) {
+      const sameLine = new RegExp(`</${tagName}\\s*>`, 'i').test(line);
+      if (!sameLine) {
+        inInline = tagName;
+        depth += 1;
+      }
+      continue;
+    }
+
+    if (!closing && !selfClosing && !isComment && !isDoctype && tagName) {
+      depth += 1;
+    }
+  }
+
+  return `${lines.join('\n')}\n`;
+}
+
+function protectRawTextBlocks(html: string): { html: string; blocks: Map<string, string> } {
+  const blocks = new Map<string, string>();
+  let index = 0;
+  const protectedHtml = html.replace(
+    /<(script|style|pre|textarea)\b[\s\S]*?<\/\1>/gi,
+    (block: string) => {
+      const key = `__CODESIGN_RAW_BLOCK_${index}__`;
+      index += 1;
+      blocks.set(key, block);
+      return key;
+    },
+  );
+  return { html: protectedHtml, blocks };
+}
+
+function openTagName(line: string): string | null {
+  const m = /^<([a-zA-Z][a-zA-Z0-9-]*)/.exec(line);
+  return m ? (m[1] as string).toLowerCase() : null;
+}
+
+function isVoidTag(line: string, voids: Set<string>): boolean {
+  const name = openTagName(line);
+  return name !== null && voids.has(name);
+}

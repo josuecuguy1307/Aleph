@@ -1,0 +1,11 @@
+{
+  "schema_version": "v1",
+  "meta": { "name": "Lector de reportes SEC", "nicho": "general",
+    "descripcion": "Busca y lista los reportes públicos recientes de una empresa ante la SEC (read-only)." },
+  "model": { "primary": "openai/gpt-oss-120b", "fallback": "llama-3.3-70b-versatile",
+    "base_url": "https://api.groq.com/openai/v1", "temperature": 0, "max_tokens": 1024, "max_turns": 6 },
+  "belt": { "belt_ref": "catalog/templates/finanzas/belt-finanzas.mcp.json",
+    "tool_filters": { "secedgar": ["get_cik_by_ticker", "get_recent_filings"] } },
+  "framing": { "inline": "Sos un analista. Para datos de la SEC usá SOLO las herramientas (get_cik_by_ticker, get_recent_filings). Listá los reportes recientes con su tipo y fecha. No inventes." },
+  "rag": { "enabled": false }, "keys": {}, "gates": {}
+}

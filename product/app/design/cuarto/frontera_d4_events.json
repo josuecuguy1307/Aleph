@@ -1,0 +1,345 @@
+{
+ "meta": {
+  "source": "verify_frontera_d4.py — FakeBrain-over-real-motor (recipe_assembler.assemble_and_run)",
+  "honest": "REAL structural engine events; only LLM token-output scripted; model_final NEVER claimed as opus",
+  "clean_slug": "child_readonly_d4",
+  "held_slug": "child_research",
+  "clean_model_final": "fake-brain",
+  "degraded_model_final": "qwen-2.5-oss"
+ },
+ "clean": [
+  {
+   "type": "cost",
+   "kind": "model",
+   "user_id": null,
+   "run_id": "frontera-clean",
+   "model": "fake-brain",
+   "tier": "primary",
+   "degraded": false,
+   "tokens": {
+    "prompt": 0,
+    "completion": 0,
+    "total": 0
+   },
+   "tokens_measured": true,
+   "usd": null,
+   "price_source": null
+  },
+  {
+   "type": "sub_agent_started",
+   "kind": "delegation",
+   "tool": "readonly_sub",
+   "tool_raw": "readonly_sub",
+   "slug": "child_readonly_d4",
+   "meta_name": "readonly_sub",
+   "depth": 1,
+   "parent_run_id": "frontera-clean",
+   "task": "CHILD_D4",
+   "turn": 1
+  },
+  {
+   "type": "tool_call_finished",
+   "kind": "delegation",
+   "tool": "readonly_sub",
+   "tool_raw": "readonly_sub",
+   "args": {
+    "task": "CHILD_D4"
+   },
+   "result": "{\"sub_agente\": \"readonly_sub\", \"ok\": true, \"resultado\": \"RESULTADO-DEL-HIJO: el dato X = 42\", \"truncado\": false, \"error\": null}",
+   "status": "ok",
+   "delegated": true,
+   "turn": 1
+  },
+  {
+   "type": "sub_agent_finished",
+   "kind": "delegation",
+   "tool": "readonly_sub",
+   "tool_raw": "readonly_sub",
+   "slug": "child_readonly_d4",
+   "result": "{\"sub_agente\": \"readonly_sub\", \"ok\": true, \"resultado\": \"RESULTADO-DEL-HIJO: el dato X = 42\", \"truncado\": false, \"error\": null}",
+   "status": "ok",
+   "child_ok": true,
+   "held": 0,
+   "depth": 1,
+   "parent_run_id": "frontera-clean",
+   "turn": 1
+  },
+  {
+   "type": "cost",
+   "kind": "model",
+   "user_id": null,
+   "run_id": "frontera-clean",
+   "model": "fake-brain",
+   "tier": "primary",
+   "degraded": false,
+   "tokens": {
+    "prompt": 0,
+    "completion": 0,
+    "total": 0
+   },
+   "tokens_measured": true,
+   "usd": null,
+   "price_source": null
+  },
+  {
+   "type": "final",
+   "kind": "final",
+   "answer": "El padre integró el resultado del sub-agente solo-lectura.",
+   "model_final": "fake-brain",
+   "ok": true,
+   "run_id": "frontera-clean",
+   "degraded": null,
+   "stop_reason": null
+  }
+ ],
+ "held": [
+  {
+   "type": "cost",
+   "kind": "model",
+   "user_id": null,
+   "run_id": "frontera-held",
+   "model": "fake-brain",
+   "tier": "primary",
+   "degraded": false,
+   "tokens": {
+    "prompt": 0,
+    "completion": 0,
+    "total": 0
+   },
+   "tokens_measured": true,
+   "usd": null,
+   "price_source": null
+  },
+  {
+   "type": "tool_call_started",
+   "kind": "tool_call",
+   "call_id": "call_0",
+   "tool": "deleg",
+   "tool_raw": "write_note",
+   "tool_name": "write_note",
+   "args": {
+    "text": "NOTA-DEL-PADRE"
+   },
+   "turn": 1
+  },
+  {
+   "type": "cost",
+   "kind": "tool",
+   "user_id": null,
+   "run_id": "frontera-held",
+   "tool": "write_note",
+   "server": "deleg",
+   "executed": true,
+   "tokens": {
+    "prompt": 0,
+    "completion": 0,
+    "total": 0
+   },
+   "usd": 0.0
+  },
+  {
+   "type": "tool_call_finished",
+   "kind": "tool_call",
+   "call_id": "call_0",
+   "tool": "deleg",
+   "tool_raw": "write_note",
+   "tool_name": "write_note",
+   "args": {
+    "text": "NOTA-DEL-PADRE"
+   },
+   "result": "escribí /[secreto removido]/.deleg-workdirs/frontera-held/note.txt",
+   "status": "ok",
+   "executed": true,
+   "gate_action": "execute",
+   "gate_decision": "execute",
+   "turn": 1,
+   "wall_s": 0.0006871669993415708
+  },
+  {
+   "type": "cost",
+   "kind": "model",
+   "user_id": null,
+   "run_id": "frontera-held",
+   "model": "fake-brain",
+   "tier": "primary",
+   "degraded": false,
+   "tokens": {
+    "prompt": 0,
+    "completion": 0,
+    "total": 0
+   },
+   "tokens_measured": true,
+   "usd": null,
+   "price_source": null
+  },
+  {
+   "type": "sub_agent_started",
+   "kind": "delegation",
+   "tool": "research_sub",
+   "tool_raw": "research_sub",
+   "slug": "child_research",
+   "meta_name": "research_sub",
+   "depth": 1,
+   "parent_run_id": "frontera-held",
+   "task": "CHILD_RESEARCH",
+   "turn": 2
+  },
+  {
+   "type": "tool_call_finished",
+   "kind": "delegation",
+   "tool": "research_sub",
+   "tool_raw": "research_sub",
+   "args": {
+    "task": "CHILD_RESEARCH"
+   },
+   "result": "{\"sub_agente\": \"research_sub\", \"ok\": true, \"resultado\": \"RESULTADO-DEL-HIJO: el dato X = 42\", \"truncado\": false, \"error\": null}",
+   "status": "ok",
+   "delegated": true,
+   "turn": 2
+  },
+  {
+   "type": "sub_agent_finished",
+   "kind": "delegation",
+   "tool": "research_sub",
+   "tool_raw": "research_sub",
+   "slug": "child_research",
+   "result": "{\"sub_agente\": \"research_sub\", \"ok\": true, \"resultado\": \"RESULTADO-DEL-HIJO: el dato X = 42\", \"truncado\": false, \"error\": null}",
+   "status": "gate",
+   "child_ok": true,
+   "held": 1,
+   "depth": 1,
+   "parent_run_id": "frontera-held",
+   "turn": 2
+  },
+  {
+   "type": "cost",
+   "kind": "model",
+   "user_id": null,
+   "run_id": "frontera-held",
+   "model": "fake-brain",
+   "tier": "primary",
+   "degraded": false,
+   "tokens": {
+    "prompt": 0,
+    "completion": 0,
+    "total": 0
+   },
+   "tokens_measured": true,
+   "usd": null,
+   "price_source": null
+  },
+  {
+   "type": "final",
+   "kind": "final",
+   "answer": "El padre integró el resultado del sub-agente.",
+   "model_final": "fake-brain",
+   "ok": true,
+   "run_id": "frontera-held",
+   "degraded": null,
+   "stop_reason": null
+  }
+ ],
+ "degraded": [
+  {
+   "type": "notice",
+   "kind": "degraded",
+   "user_id": null,
+   "run_id": "frontera-degraded",
+   "intended_model": "stub",
+   "intended_alias": null,
+   "actual_model": "qwen-2.5-oss",
+   "tier": "fallback",
+   "causa": null,
+   "message": "Cerebro degradado a fallback: se pidió 'stub' pero respondió 'qwen-2.5-oss' (fallback). No es el cerebro — fallback visible, no silencioso."
+  },
+  {
+   "type": "cost",
+   "kind": "model",
+   "user_id": null,
+   "run_id": "frontera-degraded",
+   "model": "qwen-2.5-oss",
+   "tier": "fallback",
+   "degraded": true,
+   "tokens": {
+    "prompt": 0,
+    "completion": 0,
+    "total": 0
+   },
+   "tokens_measured": true,
+   "usd": null,
+   "price_source": null
+  },
+  {
+   "type": "sub_agent_started",
+   "kind": "delegation",
+   "tool": "readonly_sub",
+   "tool_raw": "readonly_sub",
+   "slug": "child_readonly_d4",
+   "meta_name": "readonly_sub",
+   "depth": 1,
+   "parent_run_id": "frontera-degraded",
+   "task": "CHILD_D4",
+   "turn": 1
+  },
+  {
+   "type": "tool_call_finished",
+   "kind": "delegation",
+   "tool": "readonly_sub",
+   "tool_raw": "readonly_sub",
+   "args": {
+    "task": "CHILD_D4"
+   },
+   "result": "{\"sub_agente\": \"readonly_sub\", \"ok\": true, \"resultado\": \"RESULTADO-DEL-HIJO: el dato X = 42\", \"truncado\": false, \"error\": null}",
+   "status": "ok",
+   "delegated": true,
+   "turn": 1
+  },
+  {
+   "type": "sub_agent_finished",
+   "kind": "delegation",
+   "tool": "readonly_sub",
+   "tool_raw": "readonly_sub",
+   "slug": "child_readonly_d4",
+   "result": "{\"sub_agente\": \"readonly_sub\", \"ok\": true, \"resultado\": \"RESULTADO-DEL-HIJO: el dato X = 42\", \"truncado\": false, \"error\": null}",
+   "status": "ok",
+   "child_ok": true,
+   "held": 0,
+   "depth": 1,
+   "parent_run_id": "frontera-degraded",
+   "turn": 1
+  },
+  {
+   "type": "cost",
+   "kind": "model",
+   "user_id": null,
+   "run_id": "frontera-degraded",
+   "model": "qwen-2.5-oss",
+   "tier": "fallback",
+   "degraded": true,
+   "tokens": {
+    "prompt": 0,
+    "completion": 0,
+    "total": 0
+   },
+   "tokens_measured": true,
+   "usd": null,
+   "price_source": null
+  },
+  {
+   "type": "final",
+   "kind": "final",
+   "answer": "El padre integró el resultado del sub-agente solo-lectura.",
+   "model_final": "qwen-2.5-oss",
+   "ok": true,
+   "run_id": "frontera-degraded",
+   "degraded": {
+    "intended_model": "stub",
+    "intended_alias": null,
+    "actual_model": "qwen-2.5-oss",
+    "tier": "fallback",
+    "causa": null
+   },
+   "stop_reason": null
+  }
+ ]
+}

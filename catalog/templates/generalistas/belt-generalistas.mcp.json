@@ -1,0 +1,206 @@
+{
+  "_meta": {
+    "belt": "generalistas",
+    "slug": "generalistas",
+    "que_es": "Cinturon GENERALISTA del catalogo: las piezas commodity que sirven a cualquier nicho. Computo Python real (anti-fabricacion) + archivos descargables reales (.xlsx/.csv) + calculadora exacta + Wikipedia (lectura, recurso abierto). Todo keyless, all-python stdlib, boot rapido.",
+    "fuente": "Promocion 2026-07-04 (org/system/PLATFORM-LEDGER.md 'frontera fixtures→prod'): servers/cards copiados de platform/assembler/fixtures/{belt-inline-rich,belt-calc,belt-wikipedia}.mcp.json. Los fixtures QUEDAN (test-only, referenciados por tests y recetas existentes); el catalogo se sirve de este template.",
+    "verificado": "PASS-gate verify_catalog_batch.py 2026-07-04 (tools/call REAL por el cliente de PROD assembler.MCPServer): calc.add(2,2)→4.0 · pysandbox.run_python(print(6*7))→42 · datatools.write_csv→probe.csv real escrito en el workdir · wikipedia.get_summary('Albert Einstein',en)→extract real de wikipedia.org. Evidencia en reports/catalog-wave-a/.",
+    "credencial": "ninguna. Todo keyless. Lo que ESCRIBE a cuentas/plata (email/slack/pagos) NO esta en este belt y queda gateado por diseño.",
+    "cards": [
+      {
+        "id": "calc",
+        "connector": "calc",
+        "label": "Calculadora",
+        "sub": "aritmética exacta",
+        "auth": "keyless",
+        "armario": "datos",
+        "backed_by": "calc",
+        "tools": [
+          "add",
+          "sub",
+          "mul",
+          "div",
+          "pow",
+          "mod"
+        ]
+      },
+      {
+        "id": "pysandbox",
+        "connector": "pysandbox",
+        "label": "Python (cómputo)",
+        "sub": "ejecuta código real: cálculo, SQL (sqlite3), CSV, leer/escribir archivos, traer una URL (urllib)",
+        "auth": "keyless",
+        "armario": "datos",
+        "backed_by": "pysandbox",
+        "tools": [
+          "run_python"
+        ]
+      },
+      {
+        "id": "datatools",
+        "connector": "datatools",
+        "label": "Archivos (Excel / CSV)",
+        "sub": "produce un .xlsx o .csv REAL descargable a partir de datos",
+        "auth": "keyless",
+        "armario": "archivos",
+        "backed_by": "datatools",
+        "tools": [
+          "write_xlsx",
+          "write_csv"
+        ]
+      },
+      {
+        "id": "wikipedia",
+        "connector": "wikipedia",
+        "label": "Wikipedia",
+        "sub": "busca artículos y trae su resumen (Wikimedia, lectura) · sin llave",
+        "auth": "keyless",
+        "armario": "mundo",
+        "backed_by": "wikipedia",
+        "tools": [
+          "search_pages",
+          "get_summary"
+        ]
+      },
+      {
+        "id": "duckduckgo",
+        "label": "Búsqueda web (DuckDuckGo)",
+        "sub": "busca en la web y trae el contenido de una página · sin llave",
+        "auth": "keyless",
+        "armario": "fuentes",
+        "backed_by": "duckduckgo",
+        "tools": [
+          "search",
+          "fetch_content"
+        ]
+      },
+      {
+        "id": "time",
+        "label": "Hora y zonas horarias",
+        "sub": "hora actual en cualquier zona + conversión entre zonas · sin llave",
+        "auth": "keyless",
+        "armario": "apps",
+        "backed_by": "time",
+        "tools": [
+          "get_current_time",
+          "convert_time"
+        ]
+      },
+      {
+        "id": "sqlite",
+        "label": "Base de datos SQL",
+        "sub": "crea tablas y consulta datos reales (SQLite en el espacio del run) · sin llave",
+        "auth": "keyless",
+        "armario": "apps",
+        "backed_by": "sqlite",
+        "tools": [
+          "read_query",
+          "write_query",
+          "create_table",
+          "list_tables",
+          "describe_table"
+        ]
+      },
+      {
+        "id": "git",
+        "label": "Git local",
+        "sub": "status, diff, log y commits de un repositorio local · sin llave",
+        "auth": "keyless",
+        "armario": "apps",
+        "backed_by": "git",
+        "tools": [
+          "git_status",
+          "git_diff_unstaged",
+          "git_log"
+        ]
+      }
+    ]
+  },
+  "mcpServers": {
+    "calc": {
+      "command": "python3",
+      "args": [
+        "${PUPPET_BELTS}/generalistas/calc_server.py"
+      ],
+      "description": "Calculadora MCP (stdio, keyless, 6 tools: add/sub/mul/div/pow/mod, solo stdlib). Promovido de fixtures (2026-07-04)."
+    },
+    "pysandbox": {
+      "command": "python3",
+      "args": [
+        "${PUPPET_BELTS}/generalistas/pysandbox_server.py"
+      ],
+      "env": {
+        "PUPPET_WORKDIR": "${PUPPET_WORKDIR}"
+      },
+      "description": "Python MCP (stdio, keyless). run_python ejecuta código real en un subproceso del host y requiere confirmación siempre. python3 -I, entorno mínimo, cwd inicial bajo ${PUPPET_WORKDIR} y timeout reducen exposición, pero no confinan filesystem, procesos ni red."
+    },
+    "datatools": {
+      "command": "python3",
+      "args": [
+        "${PUPPET_BELTS}/generalistas/datatools_server.py"
+      ],
+      "env": {
+        "PUPPET_WORKDIR": "${PUPPET_WORKDIR}"
+      },
+      "description": "Data-tools MCP (stdio, keyless). write_xlsx / write_csv escriben un archivo REAL y descargable en ${PUPPET_WORKDIR} (capturado a Biblioteca). No ejecuta código del modelo; recibe datos estructurados. Auto-ejecuta (no toca plata ni manda afuera). Promovido de fixtures (2026-07-04)."
+    },
+    "wikipedia": {
+      "command": "python3",
+      "args": [
+        "${PUPPET_BELTS}/generalistas/wikipedia_server.py"
+      ],
+      "description": "Wikipedia/Wikimedia MCP (stdio, keyless, read-only). 2 tools: search_pages (busca artículos) y get_summary (extracto por título). REST APIs públicas de Wikimedia sin key ni OAuth, default español. Promovido de fixtures (2026-07-04)."
+    },
+    "duckduckgo": {
+      "command": "uvx",
+      "args": [
+        "duckduckgo-mcp-server"
+      ],
+      "description": "Búsqueda web DuckDuckGo (stdio, keyless): search + fetch_content. Sin API key — oro para el tier free."
+    },
+    "time": {
+      "command": "uvx",
+      "args": [
+        "mcp-server-time"
+      ],
+      "description": "Hora y zonas horarias (stdio, keyless, referencia oficial MCP): get_current_time + convert_time."
+    },
+    "sqlite": {
+      "command": "uvx",
+      "args": [
+        "--with",
+        "mcp==1.29.0",
+        "mcp-server-sqlite",
+        "--db-path",
+        "${PUPPET_WORKDIR}/datos.db"
+      ],
+      "description": "Base SQL local (stdio, keyless, referencia oficial MCP): tablas + consultas reales en el workdir del run.",
+      "pin_sdk": {
+        "mcp": "1.29.0",
+        "por_que": "El SDK `mcp` publicó 2.0.0 (major = ruptura) y este server está escrito contra la serie 1.x. Su metadata declara `mcp>=…` —rango abierto—, así que `uvx` resolvía 2.0.0 y el proceso moría en el import. MEDIDO: pinear el PAQUETE no alcanza (tres versiones distintas de mcp-server-git, las tres rotas): el pin tiene que ir en el SDK. `==` exacto, jamás un rango: el rango es el bug con otro nombre."
+      }
+    },
+    "git": {
+      "command": "uvx",
+      "args": [
+        "--with",
+        "mcp==1.29.0",
+        "mcp-server-git"
+      ],
+      "description": "Git local (stdio, keyless, referencia oficial MCP): status/diff/log/commit sobre un repo por path.",
+      "pin_sdk": {
+        "mcp": "1.29.0",
+        "por_que": "El SDK `mcp` publicó 2.0.0 (major = ruptura) y este server está escrito contra la serie 1.x. Su metadata declara `mcp>=…` —rango abierto—, así que `uvx` resolvía 2.0.0 y el proceso moría en el import. MEDIDO: pinear el PAQUETE no alcanza (tres versiones distintas de mcp-server-git, las tres rotas): el pin tiene que ir en el SDK. `==` exacto, jamás un rango: el rango es el bug con otro nombre."
+      },
+      "tool_sonda": "git_status",
+      "args_sonda": {
+        "repo_path": "${PUPPET_WORKDIR}"
+      },
+      "sonda_por_que": {
+        "clase": "territorio propio",
+        "lectura_pura": true,
+        "motivo": "Las 12 tools de este server piden `repo_path` y ninguna se puede llamar a ciegas. `git_status` es lectura pura y el path se resuelve en runtime al workdir que Aleph posee — nunca una ruta literal de una máquina. Si el workdir no es un repo, el server contesta con un error tipado: eso también prueba que el canal vive, que es lo único que esta sonda mide."
+      }
+    }
+  }
+}

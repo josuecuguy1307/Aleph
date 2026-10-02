@@ -1,0 +1,94 @@
+{
+ "feedoracle": {
+  "belt_ref": "catalog/templates/finanzas/belt-finanzas-markets.mcp.json",
+  "backed_by": "fred"
+ },
+ "coingecko": {
+  "belt_ref": "catalog/templates/finanzas/belt-finanzas-markets.mcp.json",
+  "backed_by": "coingecko"
+ },
+ "massive": {
+  "belt_ref": "catalog/templates/finanzas/belt-finanzas-markets.mcp.json",
+  "backed_by": "massive"
+ },
+ "alphavantage": {
+  "belt_ref": "catalog/templates/finanzas/belt-finanzas.mcp.json",
+  "backed_by": "alphavantage"
+ },
+ "jupyter": {
+  "belt_ref": "catalog/templates/finanzas/belt-finanzas.mcp.json",
+  "backed_by": "jupyter"
+ },
+ "calc": {
+  "belt_ref": "catalog/templates/generalistas/belt-generalistas.mcp.json",
+  "backed_by": "calc"
+ },
+ "pysandbox": {
+  "belt_ref": "catalog/templates/generalistas/belt-generalistas.mcp.json",
+  "backed_by": "pysandbox"
+ },
+ "datatools": {
+  "belt_ref": "catalog/templates/generalistas/belt-generalistas.mcp.json",
+  "backed_by": "datatools"
+ },
+ "wikipedia": {
+  "belt_ref": "catalog/templates/generalistas/belt-generalistas.mcp.json",
+  "backed_by": "wikipedia"
+ },
+ "gmail": {
+  "belt_ref": "catalog/templates/ingenieria/belt-ingenieria.mcp.json",
+  "backed_by": "gmail"
+ },
+ "materialsproject": {
+  "belt_ref": "catalog/templates/ingenieria/belt-ingenieria.mcp.json",
+  "backed_by": "materialsproject"
+ },
+ "globalfishingwatch": {
+  "belt_ref": "catalog/templates/research/belt-osint-maritimo.mcp.json",
+  "backed_by": "maritime"
+ },
+ "opensanctions": {
+  "belt_ref": "catalog/templates/research/belt-osint-maritimo.mcp.json",
+  "backed_by": "maritime"
+ },
+ "exa": {
+  "belt_ref": "catalog/templates/research/belt-research.mcp.json",
+  "backed_by": "exa"
+ },
+ "huggingface": {
+  "belt_ref": "catalog/templates/research/belt-research.mcp.json",
+  "backed_by": "huggingface"
+ },
+ "context7": {
+  "belt_ref": "catalog/templates/research/belt-research.mcp.json",
+  "backed_by": "context7"
+ },
+ "crossref": {
+  "belt_ref": "catalog/templates/research/belt-research.mcp.json",
+  "backed_by": "crossref"
+ },
+ "openalex": {
+  "belt_ref": "catalog/templates/research/belt-research.mcp.json",
+  "backed_by": "openalex"
+ },
+ "arxiv": {
+  "belt_ref": "catalog/templates/research/belt-research.mcp.json",
+  "backed_by": "arxiv"
+ },
+ "pubmed": {
+  "belt_ref": "catalog/templates/research/belt-research.mcp.json",
+  "backed_by": "pubmed"
+ },
+ "orcid": {
+  "belt_ref": "catalog/templates/research/belt-research.mcp.json",
+  "backed_by": "orcid"
+ },
+ "zotero": {
+  "belt_ref": "catalog/templates/research/belt-research.mcp.json",
+  "backed_by": "zotero"
+ },
+ "github": {
+  "belt_ref": "catalog/templates/research/belt-research.mcp.json",
+  "backed_by": "github"
+ }
+}

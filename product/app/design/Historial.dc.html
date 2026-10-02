@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./aleph-config.js"></script>
+<script src="./vendor/supabase.min.js"></script>
+<script src="./supabase-auth.js"></script>
+<script src="./support.js"></script>
+<script src="./auth.js"></script>
+<script src="./paywall.js"></script>
+<script src="./i18n.js"></script>
+<script src="./nav.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="vendor/fonts.css"><!-- [Casa 2 · F1.b] fuentes locales: antes 2 preconnect + css2 de Google -->
+<link rel="stylesheet" href="aleph-tokens.css"><!-- [identidad visual] la piel: tokens, forma y tipografía en un solo lugar -->
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0}
+
+  body{background:var(--page-bg);min-height:100vh;font-family:var(--font-ui);color:var(--ink);-webkit-font-smoothing:antialiased}
+  a{text-decoration:none;color:inherit}
+  @keyframes livePulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
+  @keyframes sweep{0%{transform:translateX(-110%)}100%{transform:translateX(420%)}}
+</style>
+
+<style id="aleph-theme-style">
+
+body{background:var(--page-bg)}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+<script src="./theme.js"></script>
+</helmet>
+
+<div style="min-height:100vh;padding:22px 30px 70px">
+  <div style="max-width:1080px;margin:0 auto">
+
+    <!-- HEADER — el acento SOLO en el destino activo (8%). Los bordes murieron: el chip
+         inactivo no es una caja con línea, es texto; el activo es un tinte. -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px">
+      <div style="display:flex;align-items:center;gap:11px">
+        <div style="display:flex;align-items:center;gap:3px">
+          <a href="Home.dc.html" data-i18n="nav.inicio" style="font:300 12.5px var(--font-ui);color:var(--muted);padding:8px 14px;border-radius:var(--r-full)" style-hover="color:var(--ink)">Inicio</a>
+          <a href="Biblioteca.dc.html" style="font:300 12.5px var(--font-ui);color:var(--muted);padding:8px 14px;border-radius:var(--r-full)" style-hover="color:var(--ink)">Biblioteca</a>
+          <span style="font:400 12.5px var(--font-ui);color:var(--accent-deep);padding:8px 14px;border-radius:var(--r-full);background:var(--accent-soft)">Historial</span>
+          <a href="Cuarto.dc.html" style="font:300 12.5px var(--font-ui);color:var(--muted);padding:8px 14px;border-radius:var(--r-full)" style-hover="color:var(--ink)">Taller</a>
+        </div>
+      </div>
+      <a href="Home.dc.html" style="font:300 12.5px var(--font-ui);color:var(--muted);background:var(--paper2);border-radius:var(--r-full);padding:9px 16px" style-hover="color:var(--ink)">mis Aleph →</a>
+    </div>
+
+    <!-- ===== EL PLANO DE CONTENIDO (r30 + sombra ambiental) =====
+         [sistema 2026-07-31] Antes esto era una pila de tarjetas con borde de 1px flotando
+         sobre el campo. Ahora hay TRES planos: campo → plano de contenido → pozo. La lista
+         de sesiones deja de ser una pila y pasa a ser una PISTA (Vertical Sliding Focus):
+         exactamente un elemento en foco a tamaño real con sus acciones, el resto retrocedido
+         conservando título y metadato legibles. Ningún binding cambió: los mismos {{ }} y los
+         mismos <sc-for>/<sc-if> de antes, en el mismo orden. -->
+    <div class="ds-plane">
+
+      <!-- TITLE + intro -->
+      <div style="margin-bottom:20px">
+        <h1 class="ds-title">Historial de sesiones</h1>
+        <div class="ds-sub" style="margin-top:9px;max-width:62ch;line-height:1.55">Cada sesión es un estado congelado de la Sala —la charla, los pasos y los artefactos. <b style="color:var(--ink);font-weight:400">Retomar</b> descongela y te devuelve justo donde lo dejaste.</div>
+      </div>
+
+      <!-- TOOLBAR -->
+      <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:18px">
+        <div style="display:flex;align-items:center;gap:8px;background:var(--paper2);border-radius:var(--r-md);padding:10px 15px;width:240px"><span style="color:var(--faint);font-size:13px">⌕</span><input value="{{ query }}" onInput="{{ setQuery }}" placeholder="Buscar sesión…" style="border:none;background:none;outline:none;width:100%;font:300 12.5px var(--font-ui);color:var(--ink)"></div>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+          <span class="ds-meta" style="margin-right:2px">Aleph</span>
+          <sc-for list="{{ agentChips }}" as="c" hint-placeholder-count="5"><button onClick="{{ c.pick }}" style="{{ c.style }}">{{ c.label }}</button></sc-for>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+          <span class="ds-meta" style="margin-right:2px">estado</span>
+          <sc-for list="{{ statusChips }}" as="c" hint-placeholder-count="5"><button onClick="{{ c.pick }}" style="{{ c.style }}">{{ c.label }}</button></sc-for>
+        </div>
+        <sc-if value="{{ espShow }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+            <span class="ds-meta" style="margin-right:2px">espacio</span>
+            <sc-for list="{{ espChips }}" as="c" hint-placeholder-count="7"><button onClick="{{ c.pick }}" style="{{ c.style }}">{{ c.label }}</button></sc-for>
+          </div>
+        </sc-if>
+      </div>
+
+      <!-- ===== LA PISTA · un solo pozo, un solo foco =====
+           Las dos listas (las sin terminar y las agrupadas por tiempo) viven en la MISMA
+           pista: el patrón dice "exactamente UN elemento en foco por pista", así que dos
+           pozos darían dos focos. Los encabezados de sección siguen siendo encabezados. -->
+      <div class="ds-well ds-track" data-ds-track style="padding:18px 20px">
+
+        <!-- PINNED -->
+        <sc-if value="{{ pinnedShow }}" hint-placeholder-val="{{ true }}">
+          <div style="margin-bottom:16px">
+            <div style="display:flex;align-items:center;gap:9px;margin-bottom:12px">
+              <span class="ds-name">📌 Sin terminar</span>
+              <span class="ds-meta">sigue donde lo dejaste</span>
+            </div>
+            <sc-for list="{{ pinned }}" as="s" hint-placeholder-count="2">
+              <div class="ds-card ds-item" style="position:relative;display:flex;align-items:center;gap:16px;padding:16px 18px;margin-bottom:10px;overflow:hidden">
+                <sc-if value="{{ s.isRunning }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;left:0;top:0;right:0;height:2px;overflow:hidden;background:var(--paper2)"><span style="position:absolute;top:0;left:0;width:26%;height:100%;background:var(--accent)"></span></span></sc-if>
+                <div style="{{ s.monoStyle }}">{{ s.mono }}</div>
+                <div style="flex:1;min-width:0">
+                  <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap"><span style="font:400 15px var(--font-ui);color:var(--ink)" data-no-tm>{{ s.title }}</span><span style="{{ s.statusStyle }}"><span style="{{ s.statusDot }}"></span>{{ s.statusText }}</span></div>
+                  <div class="ds-meta" style="margin-top:4px">{{ s.byName }} · {{ s.when }} · {{ s.steps }}</div>
+                  <div style="display:flex;align-items:center;gap:7px;margin-top:8px"><span style="font-size:11px;color:var(--muted);flex:none">{{ s.lastIcon }}</span><span style="font:300 12px var(--font-ui);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ s.last }}</span></div>
+                </div>
+                <div style="{{ s.peekStyle }}">
+                  <span style="position:absolute;top:6px;left:7px;font:400 9px var(--font-ui);letter-spacing:.04em;color:var(--ink);background:var(--glass);border-radius:var(--r-xs);padding:2px 6px;z-index:2">{{ s.peekLabel }}</span>
+                  <div style="position:absolute;inset:0">{{ s.peekArt }}</div>
+                </div>
+                <div class="ds-actions" style="flex:none;display:flex;flex-direction:column;gap:7px;width:136px">
+                  <a href="sala-v2/sala-v2.html" class="ds-btn" style="display:block;padding:10px 0" style-hover="filter:brightness(1.12)">{{ s.resumeLabel }}</a>
+                  <a href="sala-v2/sala-v2.html" class="ds-btn-ghost" style="display:block;padding:8px 0" style-hover="color:var(--ink)">Ver replay</a>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <!-- TIME GROUPS -->
+        <sc-for list="{{ groups }}" as="g" hint-placeholder-count="3">
+          <div style="margin-bottom:16px">
+            <div style="display:flex;align-items:center;gap:9px;margin-bottom:12px">
+              <span class="ds-name">{{ g.label }}</span>
+              <span class="ds-meta">{{ g.count }}</span>
+            </div>
+            <sc-for list="{{ g.items }}" as="s" hint-placeholder-count="3">
+              <div class="ds-card ds-item" style="display:flex;align-items:center;gap:15px;padding:13px 18px;margin-bottom:10px">
+                <div style="{{ s.monoStyle }}">{{ s.mono }}</div>
+                <div style="flex:1;min-width:0">
+                  <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap"><span style="font:400 13.5px var(--font-ui);color:var(--ink)" data-no-tm>{{ s.title }}</span><span style="{{ s.statusStyle }}"><span style="{{ s.statusDot }}"></span>{{ s.statusText }}</span></div>
+                  <div class="ds-meta" style="margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ s.byName }} · {{ s.when }} · {{ s.steps }} · produjo {{ s.produced }}</div>
+                </div>
+                <div style="{{ s.peekStyleSm }}">
+                  <div style="position:absolute;inset:0">{{ s.peekArt }}</div>
+                </div>
+                <div class="ds-actions" style="flex:none;display:flex;align-items:center;gap:8px">
+                  <a href="sala-v2/sala-v2.html" class="ds-btn" style-hover="filter:brightness(1.12)">Retomar</a>
+                  <a href="sala-v2/sala-v2.html" class="ds-btn-ghost" style-hover="color:var(--ink)">Ver</a>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-for>
+
+        <sc-if value="{{ empty }}" hint-placeholder-val="{{ false }}">
+          <div style="text-align:center;padding:50px 20px">
+            <div style="font:300 15px var(--font-ui);color:var(--muted)">{{ emptyTitle }}</div>
+            <div class="ds-meta" style="margin-top:6px">{{ emptyHint }}</div>
+          </div>
+        </sc-if>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+<!-- [convergencia · superficie 1] El filtro por espacio. Una pantalla `.dc.html` corre su
+     lógica en un bloque `text/x-dc` y no puede `import`, así que el módulo se carga aparte y
+     deja su superficie en `window.AlephEspacios` — mismo puente que
+     `workspaces/conectores-del-espacio.js`. -->
+<script type="module" src="./espacios.js"></script>
+<script type="text/x-dc" data-dc-script data-props="{&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#8E8BF5&quot;}}">
+class Component extends DCLogic {
+  state = { query:'', agent:'all', status:'all', espacio:'general' };
+
+  /* [sistema 2026-07-31 · 90/8/2] El color de identidad por agente MURIÓ. El sistema pide
+     neutros en el 90% y reserva el violeta al destino activo y al elemento en foco; cuatro
+     hexadecimales saturados repartidos por avatar y miniatura eran justo lo contrario.
+     El campo `color` se conserva (lo consumen peekArt y rgba()) apuntando a un gris único. */
+  static NEUTRAL = '#8A8A90';
+
+  /* [convergencia · superficie 1] ACÁ HABÍA NUEVE SESIONES INVENTADAS —«Cierre semanal ·
+     S24», «Migración del endpoint de auth», «Guía de fracciones · 6° grado»— y cuatro
+     agentes que no existen (Reportero · Investigador · Programador · Tutora). Eran la
+     maqueta de diseño, y se pintaban cuando `loadHist()` no traía nada:
+
+         async loadHist(){ … if(!runs.length) return;   ← y el seed quedaba puesto
+
+     O sea que las veía EXACTAMENTE una persona: la que tiene cero runs. El usuario nuevo,
+     en su primera pantalla. El dueño real, con 48 runs, no las vio nunca — por eso nadie
+     las reportó en un año. Es el mismo caso que `Estados.dc.html`, que salió del nav por
+     ser documentación interna a un clic de cualquiera.
+
+     El vacío no es mudo: abajo hay DOS causas y DOS copys, que es la regla que
+     `sala-v2/ui/sidebar.js:162` ya dejó escrita — «no hay nada» y «nada coincide» son
+     estados distintos, y confundirlos manda a corregir un filtro que el usuario no puso. */
+  agents = {};
+  sessions = [];
+  /* Lo que trajo el índice interno para la búsqueda en curso. Vive aparte de `sessions`
+     porque es EFÍMERO: se recalcula por consulta y se borra al vaciar el campo. */
+  _deIndice = [];
+
+
+  /* [rediseño · fase 2 · la carrera que cazó la vara visual] ESPERAR AL MÓDULO, NO MUESTREARLO.
+     `espacios.js` es `type="module"`: corre DESPUÉS de parsear el documento, y esta pantalla
+     leía `window.AlephEspacios` UNA vez y se rendía (`if(!E) return;`). Si el módulo llegaba
+     tarde, la fila de chips no se dibujaba NUNCA — sin reintento y sin error. La misma
+     pantalla tenía dos caras según quién ganara la carrera: medido por `qa/vara_visual.mjs`,
+     2,4–2,9 % de diferencia entre dos capturas seguidas sin tocar nada.
+     Se escucha el evento que ahora publica el módulo. `addEventListener` es nativo, así que
+     esto funciona esté el módulo cargado o no — que es justo lo que un ayudante publicado por
+     el propio módulo NO podía garantizar. */
+  esperarEspacios(){
+    if(window.AlephEspacios) return;
+    window.addEventListener('aleph:espacios', ()=>{
+      this.loadEspacios ? this.loadEspacios() : this.loadObraDeEspacios();
+      this.setState({ espacio: this.state.espacio });   // repintar con los chips ya disponibles
+    }, { once:true });
+  }
+  componentDidMount(){ const a=this.props.accent; if(a) document.documentElement.style.setProperty('--accent',a); this.loadHist(); this.loadEspacios(); this.esperarEspacios(); this.dsKeepFocus(); }
+  componentWillUnmount_busqueda(){ clearTimeout(this._tq); }
+
+  /* [convergencia · superficie 5 · F.6] EL BUSCADOR LLEGA A TODO EL HISTORIAL, NO A LO
+     CARGADO. El campo de arriba filtraba `this.sessions`, que son los últimos 50 runs
+     (`GET /v1/users/{id}/runs?limit=50`) más los seis hilos de workspace. O sea que buscar
+     una conversación del mes pasado no la encontraba nunca — y no decía que no la había
+     buscado: decía «Ninguna sesión coincide», que es distinto.
+
+     El índice interno (`GET /v1/busqueda`) ya busca en TODO lo del dueño y no lo llamaba
+     nadie. De sus tres grupos, acá se usa el de HILOS: son sesiones, que es lo que esta
+     pantalla sabe pintar. Los otros dos —mensajes y artefactos— tienen su cara en La Sala;
+     traerlos acá sería pintar dos cosas que esta lista no sabe abrir.
+
+     ⚠️ No es la búsqueda web: acá se busca en lo del usuario.
+
+     El dueño no viaja en la URL a propósito: lo pone el backend con la sesión, y el índice
+     lo exige como token del match. */
+  buscarEnElIndice(q){
+    clearTimeout(this._tq);
+    // El mínimo es del índice (`_MIN_Q = 2`); con una letra contesta 422.
+    if(!q || q.trim().length<2){ this._deIndice=[]; this._b=null; this.setState({}); return; }
+    this._tq=setTimeout(async ()=>{
+      try{
+        const u=(window.AlephSession && window.AlephSession.get) ? window.AlephSession.get() : null;
+        if(!u || !u.id) return;
+        const h={}; if(u.session_token) h.Authorization='Bearer '+u.session_token;
+        const r=await fetch('/v1/busqueda?q='+encodeURIComponent(q.trim()), {headers:h});
+        if(!r.ok) return;              // sin respuesta se conserva lo local; no se finge vacío
+        const d=await r.json();
+        const conocidos=new Set(this.sessions.map(x=>String(x.chat_id||x.id)));
+        const now=Date.now();
+        this._deIndice=(d.hilos||[]).filter(x=>x.ref && !conocidos.has(String(x.ref))).map(x=>{
+          const t=x.fecha?Date.parse(x.fecha):now, ageH=(now-t)/3.6e6;
+          return { id:'ix-'+x.ref, chat_id:x.ref, ws:null, agent:'ix', title:x.titulo||'Conversación',
+            status:'done', group: ageH<24?'today':(ageH<168?'week':'old'),
+            when: ageH<1?'recién':(ageH<24?('hace '+Math.round(ageH)+' h'):('hace '+Math.round(ageH/24)+' d')),
+            steps:'', last:'', lastIcon:'✓', produced:'conversación', peek:'doc' };
+        });
+        if(this._deIndice.length && !this.agents['ix']){
+          this.agents['ix']={ name:'Aleph', mono:'Al', color:Component.NEUTRAL };
+        }
+        this.setState({});
+      }catch(e){}
+    },250);
+  }
+  componentDidUpdate(p){ const a=this.props.accent; if(p&&p.accent!==a&&a) document.documentElement.style.setProperty('--accent',a); this.dsKeepFocus(); }
+  componentWillUnmount(){ (this._dsT||[]).forEach(clearTimeout); }
+
+  /* [sistema · Vertical Sliding Focus] REACT SE COME EL data-focus.
+     Medido con removeAttribute() instrumentado: en el commit que sigue al primer apply() de
+     aleph-ds.js, react-dom llama removeAttribute('data-focus') sobre las filas (stack:
+     react-dom.production.min.js → setValueForProperty). Y aleph-ds.js solo re-aplica cuando
+     CAMBIA la cantidad de filas (`n !== track._dsCount`), así que un commit que no cambia el
+     conteo deja la pista SIN foco: todas las filas a tamaño real con todas sus acciones —
+     exactamente lo contrario del patrón. Con el backend vivo el fetch de /runs cambia el
+     conteo y tapa el agujero; sin backend (o con el historial vacío) queda a la vista.
+     Esto NO re-implementa el patrón: usa la API pública del sistema (AlephDS.focus) y solo
+     entra si el atributo efectivamente falta, así que no roba scroll ni mueve el foco que el
+     usuario eligió. El arreglo de fondo va en aleph-ds.js y afecta a todas las pistas. */
+  dsKeepFocus(){
+    (this._dsT||[]).forEach(clearTimeout);
+    this._dsT=[0,120,400].map(ms=>setTimeout(()=>{
+      try{
+        const t=document.querySelector('[data-ds-track]');
+        if(!t || !window.AlephDS || !t.querySelector('.ds-item')) return;
+        if(!t.querySelector('.ds-item[data-focus]')) window.AlephDS.focus(t, t._dsIndex||0);
+      }catch(e){}
+    },ms));
+  }
+  // CABLEADO REAL (Fase 4·Capa 3): sesiones ← GET /v1/users/{id}/runs (+ costo real).
+  async loadHist(){
+    try{
+      // login suave + relaunch: leer por AlephSession.get() (rehidrata desde localStorage; leer
+      // sessionStorage directo dejaba el historial vacío tras relanzar la .app, con la sesión viva en
+      // localStorage). Sin sesión usable → minta/reusa la local anónima y carga las sesiones reales.
+      let u=(window.AlephSession && window.AlephSession.get) ? window.AlephSession.get() : null;
+      if(!u || !u.id){ const A=window.AlephSession; u=await ((A&&A.ensureLocal)?A.ensureLocal():Promise.resolve(null)); }
+      if(!u || !u.id) return;
+      const r=await fetch('/v1/users/'+u.id+'/runs'); if(!r.ok) return;
+      const runs=(await r.json()).runs||[]; if(!runs.length) return;
+      const now=Date.now(), agents={}, sessions=[];
+      runs.forEach((rn,i)=>{
+        const key='a'+(rn.puppet_id||i);
+        if(!agents[key]) agents[key]={name:(rn.puppet_name||'Aleph'), mono:(rn.puppet_name||'Al').replace(/[^A-Za-zÁÉÍÓÚáéíóúñ]/g,'').slice(0,2)||'Al', color:Component.NEUTRAL};
+        const st = rn.status==='error'?'failed':(rn.status==='running'?'running':'done');
+        const t = rn.started_at? Date.parse(rn.started_at) : now, ageH=(now-t)/3.6e6;
+        const group = ageH<24?'today':(ageH<168?'week':'old');
+        const when = ageH<1?'recién':(ageH<24?('hace '+Math.round(ageH)+' h'):('hace '+Math.round(ageH/24)+' d'));
+        sessions.push({ id:i+1, agent:key, title:(rn.intent||rn.puppet_name||'Sesión').slice(0,64), status:st, group, when,
+          steps: rn.total_tokens? (rn.total_tokens+' tokens') : '', last: rn.usd_total? ('costo US$'+(+rn.usd_total).toFixed(4)) : '',
+          lastIcon: st==='done'?'✓':(st==='failed'?'✗':'⏳'), produced:'resultado', peek:'doc' });
+      });
+      this.agents=agents; this.sessions=sessions; this.setState({loaded:true});
+    }catch(e){}
+  }
+
+  /* [convergencia · superficie 1] LOS SEIS HILOS DE WORKSPACE, QUE TAMBIÉN SON SESIONES.
+     Y son MÁS sesión que un `run`, que es una ejecución suelta: un hilo de workspace tiene
+     título, dueño, continuidad y turnos. Estaban en la misma tabla `chats` que los de la
+     Sala y no aparecían en ninguna pantalla de la casa.
+
+     Por qué no salen de `/runs` como el resto: medido, `runs.space_id` de workspace es 0 de
+     2.341 — un turno de workspace no crea un run. El mapa `(dueño, workspace) → chat_id` sí
+     existe y ya se sirve (`GET /v1/workspaces/{ws}/memoria`), y es de DOMINIO: ahí sale el
+     hilo de ESTA cuenta, no el de esta instalación.
+
+     Se agrega, no se reemplaza: sin filtro los runs y los hilos van juntos, que es lo que
+     el usuario pidió ver por default. */
+  async loadEspacios(){
+    try{
+      const E=window.AlephEspacios; if(!E) return;
+      let u=(window.AlephSession && window.AlephSession.get) ? window.AlephSession.get() : null;
+      if(!u || !u.id) return;
+      const hilos=await E.hilosDeEspacio(u.id);
+      if(!hilos.length) return;
+      const now=Date.now();
+      hilos.forEach((h,i)=>{
+        if(!this.agents['ws-'+h.ws]) this.agents['ws-'+h.ws]={
+          name:E.etiqueta(h.ws), mono:E.etiqueta(h.ws).slice(0,2), color:Component.NEUTRAL };
+        const t=h.updated_at?Date.parse(h.updated_at):now, ageH=(now-t)/3.6e6;
+        this.sessions.push({
+          id:'ws-'+h.ws, ws:h.ws, agent:'ws-'+h.ws, title:h.title||E.etiqueta(h.ws),
+          status:'done', group: ageH<24?'today':(ageH<168?'week':'old'),
+          when: ageH<1?'recién':(ageH<24?('hace '+Math.round(ageH)+' h'):('hace '+Math.round(ageH/24)+' d')),
+          /* LA AUSENCIA NO ES UN CERO: `n_messages` viene de `GET /v1/chats`, y si el hilo
+             existe pero todavía no tiene turnos se dice «sin turnos todavía», no «0». */
+          steps: h.n ? (h.n+(h.n===1?' turno':' turnos')) : 'sin turnos todavía',
+          last:'', lastIcon:'✓', produced:'conversación', peek:'doc' });
+      });
+      this.setState({loaded:true});
+    }catch(e){}
+  }
+
+  rgba(hex,a){ const h=hex.replace('#',''); const n=parseInt(h,16); return 'rgba('+((n>>16)&255)+','+((n>>8)&255)+','+(n&255)+','+a+')'; }
+
+  // mini polymorphic preview as React element (so it can sit in a {{ }} hole)
+  /* [sistema 2026-07-31] La miniatura se repintó por dos razones, no por gusto:
+     (1) los rellenos salían de --line / --line2, y en el sistema nuevo esos tokens son
+         TRANSPARENTES (cero bordes) → la mitad de las barras se habría vuelto invisible;
+     (2) traía tres hex crudos (#C9C6FF, #E0A23C) y bordes de 1px, las dos cosas que el
+         sistema prohíbe. Ahora es una escala de tres pesos del MISMO gris neutro, así que
+         funciona en los dos temas sin tocar un solo hexadecimal por tema. */
+  peekArt(type,color){
+    const e=React.createElement, bar=(w,h,c,extra)=>e('div',{style:Object.assign({width:w,height:h,borderRadius:2,background:c},extra||{})});
+    const wrap=(kids,style)=>e('div',{style:Object.assign({position:'absolute',inset:0,padding:'10px 11px',display:'flex'},style)},kids);
+    const f=this.rgba(color,.72), m=this.rgba(color,.40), q=this.rgba(color,.20);
+    if(type==='chart') return wrap([
+      bar('14%','22%',q,{alignSelf:'flex-end'}),
+      bar('14%','40%',q,{alignSelf:'flex-end'}),
+      bar('14%','30%',q,{alignSelf:'flex-end'}),
+      bar('14%','52%',m,{alignSelf:'flex-end'}),
+      bar('14%','68%',f,{alignSelf:'flex-end'}),
+    ],{alignItems:'flex-end',gap:'6px'});
+    if(type==='table') return wrap([
+      e('div',{style:{display:'flex',gap:4}},[bar('48%','6px',m),bar('26%','6px',m),bar('20%','6px',m)]),
+      e('div',{style:{display:'flex',gap:4}},[bar('48%','7px',q),bar('26%','7px',q),bar('20%','7px',f)]),
+      e('div',{style:{display:'flex',gap:4}},[bar('48%','7px',q),bar('26%','7px',q),bar('20%','7px',q)]),
+      e('div',{style:{display:'flex',gap:4}},[bar('48%','7px',q),bar('26%','7px',q),bar('20%','7px',m)]),
+    ],{flexDirection:'column',gap:5,justifyContent:'center'});
+    if(type==='doc') return wrap([
+      bar('56%','8px',f),bar('100%','5px',m),bar('94%','5px',m),bar('88%','5px',m),bar('60%','5px',q),
+    ],{flexDirection:'column',gap:5,justifyContent:'center'});
+    if(type==='sources') return wrap([0,1,2].map(i=>e('div',{key:i,style:{display:'flex',gap:6,alignItems:'center'}},[
+      bar('13px','13px',i===0?f:q,{flex:'none',borderRadius:4}),
+      e('div',{style:{flex:1}},[bar((70-i*8)+'%','5px',m),bar((44-i*5)+'%','4px',q,{marginTop:3})])
+    ])),{flexDirection:'column',gap:6,justifyContent:'center'});
+    if(type==='code') return wrap([
+      e('div',{style:{display:'flex',gap:4}},[bar('18%','6px',f),bar('30%','6px',m)]),
+      e('div',{style:{display:'flex',gap:4,paddingLeft:10}},[bar('22%','6px',m),bar('38%','6px',q)]),
+      e('div',{style:{display:'flex',gap:4,paddingLeft:10}},[bar('14%','6px',f),bar('22%','6px',m)]),
+      bar('10%','6px',q),
+    ],{flexDirection:'column',gap:5,justifyContent:'center',fontFamily:'monospace'});
+    if(type==='preview') return e('div',{style:{position:'absolute',inset:0,display:'flex',flexDirection:'column'}},[
+      e('div',{style:{height:13,background:q,display:'flex',alignItems:'center',gap:3,padding:'0 7px'}},[0,1,2].map(i=>bar('4px','4px',m,{key:i,borderRadius:'50%'}))),
+      e('div',{style:{flex:1,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:5}},[
+        bar('42%','7px',f),
+        e('div',{style:{display:'flex',gap:5,width:'100%',padding:'0 9px'}},[bar('33%','16px',q,{borderRadius:5}),bar('33%','16px',m,{borderRadius:5}),bar('33%','16px',q,{borderRadius:5})])
+      ])
+    ]);
+    if(type==='slides') return wrap([
+      e('div',{style:{flex:2,borderRadius:6,background:q,padding:7,display:'flex',flexDirection:'column',gap:4,justifyContent:'center'}},[bar('70%','7px',f),bar('90%','4px',m),bar('55%','4px',m)]),
+      e('div',{style:{flex:1,display:'flex',flexDirection:'column',gap:6}},[bar('100%','100%',q,{flex:1,borderRadius:5}),bar('100%','100%',q,{flex:1,borderRadius:5})])
+    ],{gap:7,alignItems:'stretch'});
+    return null;
+  }
+
+  statusMeta(st){
+    const M={
+      done:{t:'terminada',c:'var(--green)',bg:'var(--green-bg)',bd:'var(--green-line)',anim:false},
+      paused:{t:'pausada',c:'var(--amber)',bg:'var(--amber-bg)',bd:'var(--amber-line)',anim:false},
+      running:{t:'corriendo',c:'var(--accent-deep)',bg:'var(--accent-soft)',bd:'var(--line2)',anim:true},
+      failed:{t:'falló',c:'var(--red)',bg:'var(--red-bg)',bd:'var(--red-line)',anim:false},
+    };
+    return M[st];
+  }
+  peekLabelOf(t){ return {table:'Planilla',chart:'Gráfico',doc:'Documento',sources:'Fuentes',code:'Código',preview:'Preview',slides:'Clase'}[t]||'Archivo'; }
+
+  deco(s, big){
+    const a=this.agents[s.agent], m=this.statusMeta(s.status);
+    const sz = big?46:38, fs = big?16:14;
+    return {
+      id:s.id, title:s.title, byName:a.name, mono:a.mono, color:a.color, when:s.when, steps:s.steps,
+      produced:s.produced, last:s.last, lastIcon:s.lastIcon||'·', isRunning:s.status==='running',
+      /* [sistema] El avatar era un cuadrado de color saturado con `box-shadow: inset` — o sea
+         exactamente el "elemento hundido" que el sistema prohíbe, más un relieve. Ahora es
+         neutro sobre el pozo, y la inicial va en Newsreader (la serif queda para la marca y
+         las iniciales de avatar, nada más). */
+      monoStyle:'width:'+sz+'px;height:'+sz+'px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;color:var(--muted);font-family:var(--font-brand);font-weight:400;font-size:'+fs+'px;flex:none;background:var(--paper2)',
+      statusText:m.t,
+      // el estado es un PUNTO de color + su tinte: el 2%. Sin borde, sin peso 700.
+      statusStyle:'display:inline-flex;align-items:center;gap:5px;white-space:nowrap;font:400 10.5px var(--font-ui);color:'+m.c+';background:'+m.bg+';border-radius:var(--r-full);padding:3px 10px',
+      statusDot:'width:5px;height:5px;border-radius:50%;flex:none;background:'+m.c+';'+(m.anim?'animation:livePulse 1.4s ease-in-out infinite':''),
+      stripe:a.color,
+      resumeLabel: s.status==='running'?'Mirar →':'Retomar →',
+      peekLabel:this.peekLabelOf(s.peek),
+      peekArt:this.peekArt(s.peek,a.color),
+      peekStyle:'flex:none;width:128px;height:74px;border-radius:var(--r-md);overflow:hidden;background:var(--paper2);position:relative',
+      peekStyleSm:'flex:none;width:92px;height:54px;border-radius:var(--r-sm);overflow:hidden;background:var(--paper2);position:relative',
+    };
+  }
+
+  renderVals(){
+    const s=this.state;
+    /* El módulo puede no haber cargado todavía (es `type=module`, o sea diferido). Sin él
+       NO se esconde nada: `pasa` devuelve true y el chip de espacios no se dibuja. Un
+       filtro a medio cargar que ocultara filas sería peor que no tenerlo. */
+    const EE=window.AlephEspacios||{ GENERAL:'general', pasa:()=>true, espacios:()=>[] };
+    const q=s.query.trim().toLowerCase();
+    const match=x=>{
+      if(s.agent!=='all' && x.agent!==s.agent) return false;
+      if(s.status!=='all' && x.status!==s.status) return false;
+      /* EL FILTRO POR ESPACIO. `pasa()` vive en el módulo y no acá porque la Biblioteca
+         hace la misma pregunta: sin filtro pasa todo (GENERAL no es un espacio, es su
+         ausencia), con filtro pasa sólo el que coincide. Una fila sin `ws` —un run de la
+         Sala— nunca coincide con un espacio, y eso es correcto: no se hizo en uno. */
+      if(!EE.pasa(s.espacio, x.ws)) return false;
+      if(q && !(x.title+' '+this.agents[x.agent].name).toLowerCase().includes(q)) return false;
+      return true;
+    };
+    /* Lo del índice se suma a lo cargado, sin pisarlo: son hilos que esta pantalla no
+       tenía (más viejos que los últimos 50 runs), ya deduplicados por `chat_id`. */
+    const todas=this.sessions.concat(this._deIndice||[]);
+    const all=todas.filter(match);
+
+    const pinnedRaw=all.filter(x=>x.status==='paused'||x.status==='running');
+    const pinned=pinnedRaw.map(x=>this.deco(x,true));
+
+    const rest=all.filter(x=>x.status!=='paused'&&x.status!=='running');
+    const order={today:0,week:1,old:2};
+    const labels={today:'Hoy',week:'Esta semana',old:'Antes'};
+    const grouped={};
+    rest.forEach(x=>{ (grouped[x.group]=grouped[x.group]||[]).push(x); });
+    const groups=Object.keys(grouped).sort((a,b)=>order[a]-order[b]).map(k=>({
+      label:labels[k], count:grouped[k].length+(grouped[k].length===1?' sesión':' sesiones'),
+      items:grouped[k].map(x=>this.deco(x,false)),
+    }));
+
+    /* chips — el chip ELEGIDO es "el elemento en foco" del filtro, y por eso es el único que
+       se lleva el violeta (8%). El resto es pozo + gris. El borde de 1px se fue: la selección
+       se lee por tinte, no por línea. */
+    const chip=(on)=>'border:0;background:'+(on?'var(--accent-soft)':'var(--paper2)')+';color:'+(on?'var(--accent-deep)':'var(--muted)')+';border-radius:var(--r-full);padding:6px 13px;font:400 11.5px var(--font-ui);cursor:pointer';
+    const agentChips=[['all','Todas']].concat(Object.keys(this.agents).map(k=>[k,this.agents[k].name])).map(([k,l])=>({
+      label:l, pick:()=>this.setState({agent:k}), style:chip(s.agent===k),
+    }));
+    const statusChips=[['all','Todas'],['running','⏳ corriendo'],['paused','⏸ pausada'],['done','✓ terminada'],['failed','✗ falló']].map(([k,l])=>({
+      label:l, pick:()=>this.setState({status:k}), style:chip(s.status===k),
+    }));
+    /* CHIPS Y NO UN `<select>`, y la diferencia es deliberada: esta pantalla ya filtra con
+       dos filas de chips y su helper `chip()` resuelve el repintado. Meter el `<select>` de
+       Recomendados acá sería un tercer control con otra forma para la misma pregunta. Lo
+       que SÍ se reusa es su tabla de espacios (`ORDEN_ETIQUETA`, ahora exportada), que es
+       la pieza que no puede estar dos veces. */
+    const espChips=EE.espacios().map(({id,label})=>({
+      label, pick:()=>this.setState({espacio:id}), style:chip(s.espacio===id),
+    }));
+
+    return {
+      query:s.query, setQuery:e=>{ const v=e.target.value; this.setState({query:v}); this.buscarEnElIndice(v); },
+      agentChips, statusChips, espChips, espShow: espChips.length>1,
+      pinned, pinnedShow:pinned.length>0,
+      groups, empty: all.length===0,
+      /* DOS CAUSAS, DOS COPYS. Con la lista vacía de origen, «Ninguna sesión coincide»
+         es literalmente falso —no hay filtro que aflojar— y manda a pelear con los chips
+         en vez de a hacer lo único que sirve: pedirle algo a un agente. */
+      emptyTitle: !todas.length ? 'Todavía no hay sesiones'
+                : (s.espacio!==EE.GENERAL ? 'Nada en ' + (EE.etiqueta?EE.etiqueta(s.espacio):s.espacio)
+                                          : 'Ninguna sesión coincide'),
+      emptyHint: !todas.length ? 'Cuando le pidas algo a un agente, la sesión aparece aquí.'
+                : (s.espacio!==EE.GENERAL ? 'Todavía no trabajaste en ese espacio — prueba GENERAL.'
+                                          : 'Prueba con otro filtro o búsqueda.'),
+    };
+  }
+}
+</script>
+</body>
+</html>

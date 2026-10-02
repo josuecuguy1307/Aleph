@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./aleph-config.js"></script>
+<script src="./vendor/supabase.min.js"></script>
+<script src="./supabase-auth.js"></script>
+<script src="./support.js"></script>
+<script src="./auth.js"></script>
+<script src="./paywall.js"></script>
+<script src="./i18n.js"></script>
+<script src="./nav.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="vendor/fonts.css"><!-- [Casa 2 · F1.b] fuentes locales: antes 2 preconnect + css2 de Google -->
+<link rel="stylesheet" href="aleph-tokens.css"><!-- [identidad visual] la piel: tokens, forma y tipografía en un solo lugar -->
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0}
+
+  body{background:var(--page-bg);min-height:100vh;font-family:var(--font-ui);color:var(--ink);-webkit-font-smoothing:antialiased}
+  a{text-decoration:none;color:inherit}
+  /* [sistema 2026-07-31] el pulgar de la barra salía de --line, que en el sistema nuevo es
+     TRANSPARENTE (cero bordes) → la barra quedaba invisible. Va por el pozo. */
+  ::-webkit-scrollbar{width:9px;height:9px}::-webkit-scrollbar-thumb{background:var(--paper2);border-radius:var(--r-sm)}
+  @keyframes livePulse{0%,100%{opacity:1}50%{opacity:.4}}
+  @keyframes fadeUp{0%{transform:translateY(8px)}100%{transform:translateY(0)}}
+  /* [T3 · Calma] fix del overflow del roster a 520px (WebKit): las columnas fijas
+     (nombre 188px + total 120px + tira) no encogían y empujaban el ancho > viewport.
+     A ≤560px el nombre flexiona (min-width:0), la tira decorativa se oculta y el total
+     toma su ancho natural — nada se recorta, cero scroll horizontal. */
+  @media (max-width:560px){
+    .libRosterRow{gap:11px!important;padding:13px 14px!important}
+    .libRosterName{width:auto!important;flex:1 1 auto!important;min-width:0!important}
+    .libRosterStrip{display:none!important}
+    .libRosterTotal{width:auto!important;flex:none!important}
+  }
+</style>
+
+<style id="aleph-theme-style">
+
+body{background:var(--page-bg)}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+<script src="./theme.js"></script>
+</helmet>
+
+<div style="min-height:100vh;padding:22px 30px 70px">
+  <div style="max-width:1180px;margin:0 auto">
+
+    <!-- HEADER -->
+    <!-- [sistema 2026-07-31] Los tres destinos viven en un POZO (r18, plano, sin sombra) y el
+         activo es el único que se lleva el violeta — es literalmente "el destino activo" del
+         90/8/2. La cápsula de la derecha pierde su borde: en el sistema no hay líneas. -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;gap:12px;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:11px">
+        <div style="display:flex;align-items:center;gap:2px;background:var(--paper2);border-radius:var(--r-md);padding:4px">
+          <a href="Home.dc.html" data-i18n="nav.inicio" style="font:300 12.5px var(--font-ui);color:var(--muted);padding:7px 14px;border-radius:var(--r-sm)" style-hover="color:var(--ink)">Inicio</a>
+          <span style="font:400 12.5px var(--font-ui);color:var(--accent-deep);padding:7px 14px;border-radius:var(--r-sm);background:var(--accent-soft)">Biblioteca</span>
+          <a href="Cuarto.dc.html" style="font:300 12.5px var(--font-ui);color:var(--muted);padding:7px 14px;border-radius:var(--r-sm)" style-hover="color:var(--ink)">Taller</a>
+        </div>
+      </div>
+      <a href="Home.dc.html" class="ds-btn-ghost" style="font:300 12.5px var(--font-ui);padding:9px 16px" style-hover="color:var(--ink)">mis Aleph →</a>
+    </div>
+
+    <!-- ============ LIBRARY VIEW ============ -->
+    <sc-if value="{{ isLib }}" hint-placeholder-val="{{ true }}">
+      <div>
+        <!-- HERO: global heatmap -->
+        <!-- [sistema 2026-07-31] La tarjeta con borde muere: pasa a ser PLANO DE CONTENIDO
+             (.ds-plane = r30 + sombra ambiental, la única sombra de este nivel). El título
+             toma el gesto del sistema (34px peso 200, tracking -.025em) y el total deja de
+             ser violeta: el acento queda reservado al destino activo y al foco de la pista. -->
+        <div class="ds-plane" style="margin-bottom:26px">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap">
+            <div>
+              <h1 class="ds-title">El pulso del taller</h1>
+              <p class="ds-sub" style="margin:9px 0 0;max-width:54ch;line-height:1.55">Todo lo que produjeron tus Aleph, día a día. Toca un día para ver qué salió.</p>
+            </div>
+            <div style="text-align:right">
+              <div style="font:200 var(--fs-3xl)/1 var(--font-ui);letter-spacing:var(--tracking-title);color:var(--ink)">{{ globalTotal }}</div>
+              <div class="ds-meta" style="margin-top:7px">{{ outputsPeriod }}</div>
+            </div>
+          </div>
+
+          <!-- heatmap -->
+          <div style="margin-top:22px;overflow-x:auto;padding-bottom:4px">
+            <div style="display:flex;gap:3px;margin-bottom:6px;padding-left:1px">
+              <sc-for list="{{ globalMonths }}" as="m" hint-placeholder-count="18"><div style="width:14px;font:300 10px var(--font-ui);color:var(--faint);white-space:nowrap;overflow:visible">{{ m.label }}</div></sc-for>
+            </div>
+            <div style="display:flex;gap:3px">
+              <sc-for list="{{ globalWeeks }}" as="w" hint-placeholder-count="18">
+                <div style="display:flex;flex-direction:column;gap:3px">
+                  <sc-for list="{{ w.cells }}" as="c" hint-placeholder-count="7"><div onClick="{{ c.click }}" title="{{ c.title }}" style="{{ c.style }}"></div></sc-for>
+                </div>
+              </sc-for>
+            </div>
+            <div class="ds-meta" style="display:flex;align-items:center;gap:7px;margin-top:14px">
+              <span>menos</span>
+              <span style="width:12px;height:12px;border-radius:var(--r-2xs);background:color-mix(in srgb, var(--ink) 14%, transparent)"></span>
+              <span style="width:12px;height:12px;border-radius:var(--r-2xs);background:color-mix(in srgb, var(--accent) 28%, transparent)"></span>
+              <span style="width:12px;height:12px;border-radius:var(--r-2xs);background:color-mix(in srgb, var(--accent) 50%, transparent)"></span>
+              <span style="width:12px;height:12px;border-radius:var(--r-2xs);background:color-mix(in srgb, var(--accent) 74%, transparent)"></span>
+              <span style="width:12px;height:12px;border-radius:var(--r-2xs);background:var(--accent)"></span>
+              <span>más</span>
+            </div>
+          </div>
+
+          <!-- day detail -->
+          <sc-if value="{{ libDay.active }}" hint-placeholder-val="{{ false }}">
+            <!-- [sistema] el separador de línea muere: el detalle del día es un POZO dentro
+                 del plano (r22, plano, sin sombra propia). La jerarquía es forma, no línea. -->
+            <div class="ds-well" style="margin-top:20px;padding:16px 18px;animation:fadeUp .25s ease both">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:13px;gap:12px;flex-wrap:wrap">
+                <div class="ds-name"><b style="font-weight:400">{{ libDay.label }}</b><span class="ds-meta" style="margin-left:8px">{{ libDay.countCopy }}</span></div>
+                <button onClick="{{ libDay.clear }}" class="ds-btn-ghost" style="padding:7px 13px">cerrar</button>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+                <sc-for list="{{ libDay.outputs }}" as="o" hint-placeholder-count="3"><dc-import name="OutputCard" o="{{ o }}" hint-size="100%,210px"></dc-import></sc-for>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+
+        <!-- ROSTER -->
+        <!-- [sistema 2026-07-31] La lista suelta de tarjetas con borde MURIÓ. El roster es la
+             lista principal de la pantalla, así que toma el patrón de listas del sistema:
+             VERTICAL SLIDING FOCUS. Plano de contenido (r30 + sombra ambiental) envuelve;
+             el pozo (r22, plano, sin sombra propia) contiene la pista; exactamente un Aleph
+             queda en foco a tamaño real con su acción, el resto retrocede conservando nombre,
+             obra y total legibles. El control ^ˇ lo inyecta aleph-ds.js.
+             La lista, su iteración y sus acciones son las mismas de antes: cambia cómo se
+             ALCANZAN, no cuáles son. -->
+        <div class="ds-plane">
+          <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:16px">
+            <div>
+              <h2 class="ds-title">Tus Aleph</h2>
+              <div class="ds-sub" style="margin-top:9px">cada uno con su obra</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap">
+              <div style="display:flex;align-items:center;gap:8px;background:var(--paper2);border-radius:var(--r-md);padding:10px 15px;width:190px"><span style="color:var(--faint);font-size:13px">⌕</span><input value="{{ query }}" onInput="{{ setQuery }}" placeholder="Buscar Aleph…" style="border:none;background:none;outline:none;width:100%;font:300 12.5px var(--font-ui);color:var(--ink)"></div>
+              <div style="display:flex;gap:2px;background:var(--paper2);border-radius:var(--r-md);padding:4px">
+                <sc-for list="{{ sorts }}" as="s" hint-placeholder-count="3"><button onClick="{{ s.pick }}" style="{{ s.style }}">{{ s.label }}</button></sc-for>
+              </div>
+              <sc-if value="{{ espShow }}" hint-placeholder-val="{{ true }}">
+                <div style="display:flex;gap:2px;background:var(--paper2);border-radius:var(--r-md);padding:4px;flex-wrap:wrap">
+                  <sc-for list="{{ espChips }}" as="e" hint-placeholder-count="7"><button onClick="{{ e.pick }}" style="{{ e.style }}">{{ e.label }}</button></sc-for>
+                </div>
+              </sc-if>
+            </div>
+          </div>
+
+          <div class="ds-well ds-track" data-ds-track style="padding:18px 20px">
+            <sc-for list="{{ roster }}" as="a" hint-placeholder-count="4">
+              <div onClick="{{ a.open }}" class="ds-card ds-item libRosterRow" style="display:flex;align-items:center;gap:16px;margin-bottom:10px;cursor:pointer" style-hover="box-shadow:var(--sh-3)">
+                <span class="ds-meta" style="width:16px;text-align:center;flex:none">{{ a.rank }}</span>
+                <div style="{{ a.monoStyle }}">{{ a.mono }}</div>
+                <div class="libRosterName" style="flex:none;width:188px;min-width:0">
+                  <div class="ds-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis" data-no-tm>{{ a.name }}</div>
+                  <div class="ds-meta" style="margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" data-no-tm>{{ a.role }}</div>
+                </div>
+                <div class="libRosterStrip" style="flex:1;display:flex;justify-content:center;gap:3px;min-width:0">
+                  <sc-for list="{{ a.strip }}" as="w" hint-placeholder-count="6">
+                    <div style="display:flex;flex-direction:column;gap:3px">
+                      <sc-for list="{{ w.cells }}" as="c" hint-placeholder-count="7"><div title="{{ c.title }}" style="{{ c.style }}"></div></sc-for>
+                    </div>
+                  </sc-for>
+                </div>
+                <div class="libRosterTotal" style="flex:none;text-align:right;width:120px">
+                  <div style="font:300 var(--fs-xl)/1 var(--font-ui);color:var(--ink)">{{ a.total }}</div>
+                  <div class="ds-meta" style="margin-top:4px">{{ a.totalCopy }}</div>
+                </div>
+                <!-- la única acción de la fila (abrir ese Aleph) es la fila entera; su
+                     affordance se alcanza en el elemento en foco, como pide el patrón. -->
+                <div class="ds-actions" style="flex:none;display:flex;align-items:center;color:var(--muted);font-size:16px">›</div>
+              </div>
+            </sc-for>
+            <!-- DOS CAUSAS, DOS COPYS (la regla de `sala-v2/ui/sidebar.js:162`): con el
+                 buscador escrito, «Todavía no hay obra» es falso y manda al lugar
+                 equivocado; sin nada de nada, «ningún Aleph coincide» manda a pelear con
+                 un filtro que el usuario no puso. -->
+            <sc-if value="{{ rosterEmpty.show }}" hint-placeholder-val="{{ false }}">
+              <div style="text-align:center;padding:44px 20px">
+                <div style="font:300 15px var(--font-ui);color:var(--muted)">{{ rosterEmpty.title }}</div>
+                <div class="ds-meta" style="margin-top:6px">{{ rosterEmpty.hint }}</div>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ============ AGENT (ARTIST) VIEW ============ -->
+    <sc-if value="{{ isAgent }}" hint-placeholder-val="{{ false }}">
+      <div>
+        <button onClick="{{ back }}" class="ds-btn-ghost" style="background:var(--paper2);margin-bottom:18px" style-hover="color:var(--ink)">← la biblioteca</button>
+
+        <!-- artist header -->
+        <div style="display:flex;align-items:center;gap:20px;margin-bottom:24px;flex-wrap:wrap">
+          <div style="{{ ag.bigMonoStyle }}">{{ ag.mono }}</div>
+          <div style="flex:1;min-width:0">
+            <div class="ds-meta" style="letter-spacing:.1em;text-transform:uppercase">{{ ag.niche }}</div>
+            <h1 class="ds-title" style="margin:5px 0 6px">{{ ag.name }}</h1>
+            <div class="ds-sub">{{ ag.role }}</div>
+          </div>
+          <div style="display:flex;gap:30px;flex:none">
+            <div><div style="font:200 var(--fs-2xl)/1 var(--font-ui);letter-spacing:var(--tracking-title);color:var(--ink)">{{ ag.total }}</div><div class="ds-meta" style="margin-top:5px">producidos</div></div>
+            <div><div style="font:200 var(--fs-2xl)/1 var(--font-ui);letter-spacing:var(--tracking-title);color:var(--ink)">{{ ag.since }}</div><div class="ds-meta" style="margin-top:5px">activo desde</div></div>
+            <div><div style="font:300 var(--fs-lg)/1 var(--font-ui);color:var(--ink);margin-top:7px">{{ ag.bestDay }}</div><div class="ds-meta" style="margin-top:5px">día más movido</div></div>
+          </div>
+        </div>
+
+        <!-- full heatmap = time navigator -->
+        <div class="ds-plane" style="margin-bottom:22px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px;flex-wrap:wrap">
+            <div class="ds-name">Su historia de producción</div>
+            <span class="ds-meta">toca un día para ver qué hizo</span>
+          </div>
+          <div style="overflow-x:auto;padding-bottom:4px">
+            <div style="display:flex;gap:3px;margin-bottom:6px;padding-left:1px">
+              <sc-for list="{{ agMonths }}" as="m" hint-placeholder-count="18"><div style="width:14px;font:300 10px var(--font-ui);color:var(--faint);white-space:nowrap;overflow:visible">{{ m.label }}</div></sc-for>
+            </div>
+            <div style="display:flex;gap:3px">
+              <sc-for list="{{ agWeeks }}" as="w" hint-placeholder-count="18">
+                <div style="display:flex;flex-direction:column;gap:3px">
+                  <sc-for list="{{ w.cells }}" as="c" hint-placeholder-count="7"><div onClick="{{ c.click }}" title="{{ c.title }}" style="{{ c.style }}"></div></sc-for>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+
+        <!-- cuerpo de obra -->
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:16px;gap:16px;flex-wrap:wrap">
+          <h2 class="ds-title">Su obra</h2>
+          <sc-if value="{{ agShowing.active }}" hint-placeholder-val="{{ false }}">
+            <div class="ds-sub" style="display:flex;align-items:center;gap:10px"><span>mostrando <b style="color:var(--ink);font-weight:400">{{ agShowing.label }}</b> · {{ agShowing.count }}</span><button onClick="{{ agShowing.clear }}" class="ds-btn-ghost" style="padding:6px 12px">ver todo</button></div>
+          </sc-if>
+          <sc-if value="{{ agShowing.idle }}" hint-placeholder-val="{{ true }}"><span class="ds-sub">lo último, arriba</span></sc-if>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:13px">
+          <sc-for list="{{ agOutputs }}" as="o" hint-placeholder-count="8"><dc-import name="OutputCard" o="{{ o }}" hint-size="100%,210px"></dc-import></sc-for>
+        </div>
+        <sc-if value="{{ agMore.show }}" hint-placeholder-val="{{ false }}">
+          <div style="text-align:center;margin-top:18px"><button onClick="{{ agMore.more }}" class="ds-btn-ghost" style="background:var(--paper2)" style-hover="color:var(--ink)">{{ agMore.label }}</button></div>
+        </sc-if>
+      </div>
+    </sc-if>
+
+  </div>
+</div>
+</x-dc>
+<!-- [convergencia · superficie 1] El filtro por espacio. Ver la nota gemela en
+     `Historial.dc.html`: una `.dc.html` no puede `import`, así que el módulo deja su
+     superficie en `window.AlephEspacios`. -->
+<script type="module" src="./espacios.js"></script>
+<script type="text/x-dc" data-dc-script data-props="{&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#8E8BF5&quot;}}">
+class Component extends DCLogic {
+  /* [rediseño · fase 6 · el frame] EL ESPACIO PUEDE VENIR EN LA URL. El ítem `Library` del
+   * frame de un workspace abre esta pantalla desde adentro de su iframe; si llegara sin el
+   * espacio, el usuario que apretó «Library» dentro de Educación vería la Biblioteca de TODA
+   * la casa y el rótulo estaría mintiendo. Se lee UNA vez, al construir el estado, y el chip
+   * elegido sigue mandando después: es un valor inicial, no un candado.
+   * Sin parámetro —o con uno que no es un espacio conocido— el default es el de siempre. */
+  static espacioDeLaUrl() {
+    try {
+      const v = new URLSearchParams(location.search).get('espacio') || '';
+      if (!v) return 'general';
+      const EE = window.AlephEspacios;
+      if (!EE || typeof EE.espacios !== 'function') return v;   /* el módulo llega tarde: se confía y el chip corrige */
+      return EE.espacios().some(e => e.id === v) ? v : 'general';
+    } catch (e) { return 'general'; }
+  }
+
+  state = { view:'lib', agentId:null, libSel:null, agSel:null, query:'', sort:'recent', deleted:{}, agLimit:12, espacio: Component.espacioDeLaUrl() };
+
+  build(){
+    if(this._b) return this._b;
+    const WEEKS=18, DAYS=WEEKS*7;
+    const today=new Date();   // hoy REAL
+    const dateAt=i=>{ const d=new Date(today); d.setDate(d.getDate()-(DAYS-1-i)); return d; };
+    const idioma=window.AlephI18n?.lang?.() || 'es';
+    const MES=Array.from({length:12},(_,i)=>new Intl.DateTimeFormat(idioma,{month:'short'}).format(new Date(2026,i,1)));
+    const DOW=Array.from({length:7},(_,i)=>new Intl.DateTimeFormat(idioma,{weekday:'short'}).format(new Date(2026,0,4+i)));
+    const fmt=d=>d.getDate()+' '+MES[d.getMonth()];
+    const fmtFull=d=>DOW[d.getDay()]+' '+d.getDate()+' '+MES[d.getMonth()];
+    const noun={table:'Planilla',chart:'Gráfico',doc:'Informe',sources:'Fuentes',code:'Módulo',preview:'Preview',slides:'Clase'};
+    const KINDT={message:'doc',report:'doc',file:'doc',image:'chart',chart:'chart',table:'table'};
+    let AG;
+    const real=this._realOutputs;
+    const arts=this._artefactos;
+    if((real && real.length) || (arts && arts.length)){
+      // CABLEADO REAL (Fase 4·Capa 3): la "obra" = GET /v1/users/{id}/outputs, agrupada por Aleph.
+      const byP={};
+      /* `(real||[])` y no `real`: desde que esta rama también corre con SÓLO artefactos —un
+         dueño que trabajó en un workspace y nunca en la Sala— `real` puede no existir. Lo
+         destapó la vara del filtro, que entró justamente por ese caso. */
+      (real||[]).forEach(o=>{ const pid=o.puppet_id||'aleph';
+        if(!byP[pid]) byP[pid]={ id:pid, name:o.puppet_name||'Aleph', niche:'', mono:(o.puppet_name||'Al').replace(/[^A-Za-zÁÉÍÓÚáéíóúñ]/g,'').slice(0,2)||'Al', color:'#5B4BC4', role:(o.intent||'').slice(0,42), outputs:[], counts:new Array(DAYS).fill(0) };
+        const a=byP[pid]; const d=o.created_at?new Date(o.created_at):today;
+        let di=DAYS-1-Math.round((today-d)/864e5); di=Math.max(0,Math.min(DAYS-1,di));
+        const type=KINDT[o.kind]||'doc'; a.counts[di]++;
+        a.outputs.push({ id:o.id, type, agent:pid, dayIdx:di, date:fmt(dateAt(di)), title:(o.intent||noun[type]||'Obra').slice(0,48)+' · '+fmt(dateAt(di)) });
+      });
+      /* LA OBRA DE UN WORKSPACE ENTRA COMO UNA FILA MÁS DEL ROSTER, con el nombre del
+         espacio. No se le inventa un agente: un artefacto de Legal lo produjo Legal, y
+         colgarlo del agente equipado diría que lo hizo alguien que no lo hizo. El `ws`
+         viaja en cada obra porque es por lo que filtra la pantalla. */
+      (arts||[]).forEach(a0=>{
+        const E=window.AlephEspacios;
+        const ws=a0.workspace||null;
+        const pid=ws?('ws:'+ws):'aleph';
+        const nombre=ws?(E?E.etiqueta(ws):ws):'Aleph';
+        if(!byP[pid]) byP[pid]={ id:pid, ws, name:nombre, niche:'',
+          mono:nombre.replace(/[^A-Za-zÁÉÍÓÚáéíóúñ]/g,'').slice(0,2)||'Al', color:'#5B4BC4',
+          role:ws?window.AlephI18n.t('biblioteca.workspace_role'):'', outputs:[], counts:new Array(DAYS).fill(0) };
+        const a=byP[pid]; const d=a0.created_at?new Date(a0.created_at):today;
+        let di=DAYS-1-Math.round((today-d)/864e5); di=Math.max(0,Math.min(DAYS-1,di));
+        const type=KINDT[a0.type]||'doc'; a.counts[di]++;
+        a.outputs.push({ id:a0.id, type, agent:pid, ws, dayIdx:di, date:fmt(dateAt(di)),
+                         title:(a0.title||noun[type]||'Obra').slice(0,48)+' · '+fmt(dateAt(di)) });
+      });
+      AG=Object.values(byP);
+    } else {
+      /* [convergencia · superficie 1] ACÁ HABÍA CUATRO ALEPH QUE NO EXISTEN —Reportero ·
+         Investigador · Programador · Tutora— con su obra fabricada por un PRNG sembrado:
+         `s=(s*1103515245+12345)` repartía entre 1 y 4 «cosas producidas» por día sobre 13
+         semanas, con rachas y todo. Era la maqueta de diseño, y esta rama `else` corre
+         cuando `/v1/users/{id}/outputs` no trae nada.
+
+         O sea: la veía EXACTAMENTE el usuario nuevo, que abría su Biblioteca y encontraba
+         un año de trabajo ajeno con mapa de calor. El dueño real, con obra de verdad, no
+         la vio nunca — y por eso nadie la reportó. Gemelo del seed de `Historial.dc.html`.
+
+         El vacío es el vacío, y lo dice el roster con su copy (`rosterEmpty` abajo). */
+      AG=[];
+    }
+    AG.forEach(a=>{ a.total=a.outputs.length;
+      const fi=a.counts.findIndex(c=>c>0); a.since=fmt(dateAt(fi<0?0:fi));
+      let bi=0,bm=0; a.counts.forEach((c,i)=>{if(c>bm){bm=c;bi=i;}}); a.bestDay=fmt(dateAt(bi));
+      a.lastActive=a.counts.reduce((m,c,i)=>c>0?i:m,0); });
+    const global=new Array(DAYS).fill(0); AG.forEach(a=>a.counts.forEach((c,i)=>global[i]+=c));
+    const byId={}; AG.forEach(a=>byId[a.id]=a);
+    this._b={AG,byId,WEEKS,DAYS,global,dateAt,fmt,fmtFull,MES,gtotal:global.reduce((x,y)=>x+y,0)};
+    return this._b;
+  }
+
+
+  /* [rediseño · fase 2 · la carrera que cazó la vara visual] ESPERAR AL MÓDULO, NO MUESTREARLO.
+     `espacios.js` es `type="module"`: corre DESPUÉS de parsear el documento, y esta pantalla
+     leía `window.AlephEspacios` UNA vez y se rendía (`if(!E) return;`). Si el módulo llegaba
+     tarde, la fila de chips no se dibujaba NUNCA — sin reintento y sin error. La misma
+     pantalla tenía dos caras según quién ganara la carrera: medido por `qa/vara_visual.mjs`,
+     2,4–2,9 % de diferencia entre dos capturas seguidas sin tocar nada.
+     Se escucha el evento que ahora publica el módulo. `addEventListener` es nativo, así que
+     esto funciona esté el módulo cargado o no — que es justo lo que un ayudante publicado por
+     el propio módulo NO podía garantizar. */
+  esperarEspacios(){
+    if(window.AlephEspacios) return;
+    window.addEventListener('aleph:espacios', ()=>{
+      this.loadEspacios ? this.loadEspacios() : this.loadObraDeEspacios();
+      this.setState({ espacio: this.state.espacio });   // repintar con los chips ya disponibles
+    }, { once:true });
+  }
+  componentDidMount(){ const a=this.props.accent; if(a) document.documentElement.style.setProperty('--accent',a); this.loadObra(); this.loadObraDeEspacios(); this.esperarEspacios(); }
+  async loadObra(){
+    try{
+      // login suave + relaunch: leer por AlephSession.get() (rehidrata desde localStorage; leer
+      // sessionStorage directo mostraba la biblioteca DEMO tras relanzar la .app, cuando la sesión
+      // vive en localStorage). Sin sesión usable → minta/reusa la local anónima y carga la obra real.
+      let u=(window.AlephSession && window.AlephSession.get) ? window.AlephSession.get() : null;
+      if(!u || !u.id){ const A=window.AlephSession; u=await ((A&&A.ensureLocal)?A.ensureLocal():Promise.resolve(null)); }
+      if(!u || !u.id) return;
+      const r=await fetch('/v1/users/'+u.id+'/outputs'); if(!r.ok) return;
+      const outs=(await r.json()).outputs||[];
+      if(outs.length){ this._realOutputs=outs; this._b=null; this.setState({loaded:true}); }
+    }catch(e){}
+  }
+
+  /* [convergencia · superficie 1] LA OBRA DE LOS WORKSPACES, QUE ESTA PANTALLA NO VEÍA.
+     Medido antes de escribirlo: la tabla `outputs` —lo único que la Biblioteca leía— es
+     `id · run_id · kind · mime · uri · content · bytes · created_at`. **No tiene ninguna
+     columna que pueda llevar un workspace**, y la obra de un workspace no va ahí: va a
+     `artifact_store`, que es otro almacén, con su procedencia resuelta del lado del
+     servidor. O sea que la Biblioteca no mostraba nada de los seis, y un filtro por espacio
+     sobre `outputs` sólo podía dar vacío.
+
+     Las sesiones de obra son POCAS y casi siempre UNA: la Sala y los seis comparten `sid` a
+     propósito («la biblioteca es una sola»), así que esto normalmente es un pedido. */
+  async loadObraDeEspacios(){
+    try{
+      const E=window.AlephEspacios; if(!E) return;
+      let u=(window.AlephSession && window.AlephSession.get) ? window.AlephSession.get() : null;
+      if(!u || !u.id) return;
+      let sidSala=null;
+      try{ sidSala=(await import('./sala-v2/artefactos.js')).artSid(null); }catch(e){}
+      const arts=await E.obraDeEspacio(u.id, sidSala);
+      if(!arts.length) return;
+      this._artefactos=arts; this._b=null; this.setState({loaded:true});
+    }catch(e){}
+  }
+  componentDidUpdate(p){ const a=this.props.accent; if(p&&p.accent!==a&&a) document.documentElement.style.setProperty('--accent',a); }
+
+  lvl(c){ return c<=0?0:(c===1?1:(c===2?2:(c<=3?3:4))); }
+  cellStyle(c,size,sel){
+    /* El día VACÍO no puede salir de --paper2: la tira del roster vive dentro de una tarjeta
+       que, cuando queda EN FOCO, se tiñe de --accent-soft — y en tema claro --paper2 (#F4F4F5)
+       sobre ese tinte (#F2F1FE) desaparecía, o sea que el Aleph en foco perdía su calendario.
+       Un neutro con alfa sobre la tinta se lee sobre CUALQUIERA de los tres fondos (pozo,
+       tarjeta y tarjeta en foco) y en los dos temas, sin agregar un token nuevo. */
+    const COL=['color-mix(in srgb, var(--ink) 14%, transparent)','color-mix(in srgb, var(--accent) 30%, transparent)','color-mix(in srgb, var(--accent) 52%, transparent)','color-mix(in srgb, var(--accent) 76%, transparent)','var(--accent)'];
+    const l=this.lvl(c);
+    /* [sistema 2026-07-31] El día vacío llevaba un borde de 1px: en el sistema no hay líneas,
+       así que el nivel 0 se dice SOLO con la superficie del pozo. La selección tampoco es un
+       anillo de acento sobre el borde — es el halo de acento, que acá sí corresponde porque
+       el día elegido ES el elemento en foco (el 8% del 90/8/2). */
+    return 'width:'+size+'px;height:'+size+'px;border-radius:var(--r-2xs);flex:none;background:'+COL[l]+';'+(size>=11?'cursor:pointer;':'')+(sel?'box-shadow:0 0 0 3px var(--accent-soft),0 0 0 1.5px var(--accent);z-index:1;':'');
+  }
+  weeksFrom(counts, startIdx, size, selIdx, onClick, B){
+    const weeks=[]; const n=counts.length;
+    for(let w=0; w*7<n; w++){
+      const cells=[];
+      for(let d=0; d<7; d++){
+        const i=w*7+d; if(i>=n) break;
+        const gi=startIdx+i; const c=counts[i];
+        const sel=selIdx===gi;
+        const activity = c <= 0
+          ? window.AlephI18n.t('biblioteca.day_none')
+          : window.AlephI18n.t(c === 1 ? 'biblioteca.day_one' : 'biblioteca.day_many', {n:c});
+        cells.push({ style:this.cellStyle(c,size,sel),
+          title: B.fmtFull(B.dateAt(gi))+' · '+activity,
+          click: onClick?(()=>onClick(gi,c)):null });
+      }
+      weeks.push({cells});
+    }
+    return weeks;
+  }
+  months(startIdx, weeks, B){
+    const out=[]; let last=-1;
+    for(let w=0; w<weeks; w++){ const d=B.dateAt(startIdx+w*7); const m=d.getMonth(); out.push({label: m!==last?B.MES[m]:''}); last=m; }
+    return out;
+  }
+
+  selDay(view,gi,c){ if(c<=0) return; if(view==='lib') this.setState({libSel:gi}); else this.setState({agSel:gi}); }
+  openAgent(id){ this.setState({view:'agent',agentId:id,agSel:null,agLimit:12}); window.scrollTo(0,0); }
+  back(){ this.setState({view:'lib'}); }
+  del(id){ this.setState(s=>({deleted:{...s.deleted,[id]:true}})); }
+
+  cardOf(o,B){ const a=B.byId[o.agent];
+    return { id:o.id, type:o.type, title:o.title, byName:a.name, byMono:a.mono, byColor:a.color, date:o.date,
+      del:()=>this.del(o.id) };
+  }
+
+  renderVals(){
+    const B=this.build(); const s=this.state;
+    /* Igual que en Historial: sin el módulo cargado, `pasa` deja pasar todo y el chip no se
+       dibuja. Un filtro a medio cargar que escondiera obra sería peor que no tenerlo. */
+    const EE=window.AlephEspacios||{ GENERAL:'general', pasa:()=>true, espacios:()=>[], etiqueta:(x)=>x };
+    const isLib=s.view==='lib', isAgent=s.view==='agent';
+
+    // global heatmap
+    const globalWeeks=this.weeksFrom(B.global,0,13,s.libSel,(gi,c)=>this.selDay('lib',gi,c),B);
+    const globalMonths=this.months(0,B.WEEKS,B);
+
+    // lib day detail
+    let libDay={active:false,idle:true};
+    if(s.libSel!=null){
+      const outs=[]; B.AG.forEach(a=>a.outputs.forEach(o=>{ if(o.dayIdx===s.libSel && !s.deleted[o.id]) outs.push(this.cardOf(o,B)); }));
+      libDay={active:true, label:B.fmtFull(B.dateAt(s.libSel)), count:outs.length,
+        countCopy:window.AlephI18n.t('biblioteca.day_outputs',{n:outs.length}),
+        outputs:outs, clear:()=>this.setState({libSel:null})};
+    }
+
+    // roster
+    const q=s.query.trim().toLowerCase();
+    /* EL FILTRO POR ESPACIO, sobre la MISMA función que usa Historial. Una fila sin `ws`
+       —lo que produjo la Sala— no coincide con ningún espacio, y eso es correcto: no se
+       hizo en uno. Con GENERAL pasan las dos clases, que es el default que se pidió. */
+    let ros=B.AG.filter(a=>EE.pasa(s.espacio, a.ws))
+                .filter(a=>!q || (a.name+' '+a.role+' '+a.niche).toLowerCase().includes(q)).slice();
+    if(s.sort==='recent') ros.sort((x,y)=>y.lastActive-x.lastActive);
+    else if(s.sort==='name') ros.sort((x,y)=>x.name.localeCompare(y.name));
+    else if(s.sort==='total') ros.sort((x,y)=>y.total-x.total);
+    const roster=ros.map((a,i)=>{
+      const recent=a.counts.slice(B.DAYS-42);
+      return { name:a.name, role:a.role, mono:a.mono, color:a.color, total:a.total,
+        totalCopy:window.AlephI18n.t(a.total===1?'biblioteca.produced_one':'biblioteca.produced_other'), rank:(i+1),
+        /* [sistema 2026-07-31 · 90/8/2] El avatar deja de llevar el color de identidad del
+           agente y su relieve: neutros y sin hundidos, igual que en Home. La inicial va en
+           Newsreader (--font-brand), la única licencia serif del sistema. */
+        monoStyle:'width:42px;height:42px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;color:var(--muted);font-family:var(--font-brand);font-weight:400;font-size:16px;flex:none;background:var(--paper2)',
+        strip:this.weeksFrom(recent,B.DAYS-42,9,null,null,B),
+        open:()=>this.openAgent(a.id) };
+    });
+    /* El orden elegido es un DESTINO ACTIVO, no una acción primaria: va con el violeta suave
+       (el 8%), no con el acento sólido. La acción primaria del sistema invierte el campo. */
+    /* El estilo del chip elegido ya estaba acá, en línea, dentro de `sorts`. Se saca a una
+       función porque ahora lo usan dos grupos y una copia divergiría al primer retoque —
+       exactamente lo que ya pasó con el mapa de los seis espacios. */
+    const chip=(on)=>'border:none;border-radius:var(--r-sm);padding:7px 13px;font:400 12px var(--font-ui);cursor:pointer;'
+      +(on?'background:var(--accent-soft);color:var(--accent-deep)':'background:none;color:var(--muted)');
+    const sorts=[['recent','Reciente'],['name','Aleph'],['total','Volumen']].map(([k,l])=>({
+      label:l, pick:()=>this.setState({sort:k}), style:chip(s.sort===k)}));
+
+    // agent view
+    let ag={}, agWeeks=[], agMonths=[], agOutputs=[], agShowing={active:false,idle:true}, agMore={show:false};
+    if(isAgent && s.agentId){
+      const a=B.byId[s.agentId];
+      ag={ name:a.name, niche:a.niche, mono:a.mono, role:a.role, total:a.total, since:a.since, bestDay:a.bestDay,
+        /* mismo criterio que el avatar del roster: neutro, sin relieve, inicial en Newsreader */
+        bigMonoStyle:'width:96px;height:96px;border-radius:var(--r-lg);display:flex;align-items:center;justify-content:center;color:var(--muted);font-family:var(--font-brand);font-weight:400;font-size:38px;flex:none;background:var(--paper2)' };
+      agWeeks=this.weeksFrom(a.counts,0,13,s.agSel,(gi,c)=>this.selDay('ag',gi,c),B);
+      agMonths=this.months(0,B.WEEKS,B);
+      let list=a.outputs.filter(o=>!s.deleted[o.id]);
+      if(s.agSel!=null){
+        const day=list.filter(o=>o.dayIdx===s.agSel).map(o=>this.cardOf(o,B));
+        agOutputs=day;
+        agShowing={active:true, idle:false, label:B.fmtFull(B.dateAt(s.agSel)),
+          count:window.AlephI18n.t('biblioteca.output_count',{n:day.length}),
+          clear:()=>this.setState({agSel:null})};
+      } else {
+        const all=list.slice().reverse();
+        agOutputs=all.slice(0,s.agLimit).map(o=>this.cardOf(o,B));
+        agShowing={active:false, idle:true};
+        if(all.length>s.agLimit) agMore={show:true, label:'Ver más ('+(all.length-s.agLimit)+')', more:()=>this.setState(st=>({agLimit:st.agLimit+12}))};
+      }
+    }
+
+    return {
+      isLib, isAgent,
+      globalTotal:B.gtotal,
+      outputsPeriod:window.AlephI18n.t('biblioteca.outputs_period',{n:B.WEEKS}),
+      globalWeeks, globalMonths, libDay,
+      roster, sorts, query:s.query, setQuery:e=>this.setState({query:e.target.value}),
+      espChips: EE.espacios().map(({id,label})=>({
+        label, pick:()=>this.setState({espacio:id}), style:chip(s.espacio===id),
+      })),
+      espShow: EE.espacios().length>1,
+      /* TRES CAUSAS, TRES COPYS. La tercera la trajo el filtro: «Ningún Aleph coincide»
+         con un espacio elegido manda a cambiar el buscador, cuando lo que hay que tocar es
+         el chip — o directamente ir a trabajar a ese espacio. */
+      rosterEmpty: { show: roster.length===0,
+        title: !B.AG.length ? 'Todavía no hay obra'
+             : (s.espacio!==EE.GENERAL ? 'Nada en ' + EE.etiqueta(s.espacio)
+                                       : 'Ningún Aleph coincide'),
+        hint: !B.AG.length ? 'Lo que produzcan tus agentes se junta aquí.'
+             : (s.espacio!==EE.GENERAL ? 'Todavía no produjiste nada en ese espacio — prueba GENERAL.'
+                                       : 'Prueba con otro nombre.') },
+      back:()=>this.back(),
+      ag, agWeeks, agMonths, agOutputs, agShowing, agMore,
+    };
+  }
+}
+</script>
+</body>
+</html>

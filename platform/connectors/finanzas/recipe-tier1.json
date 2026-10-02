@@ -1,0 +1,28 @@
+{
+  "schema_version": "v1",
+  "meta": {
+    "name": "Agente Finanzas — Obra con procedencia",
+    "nicho": "finanzas",
+    "descripcion": "Arma un .xlsx con una serie macro real del Banco Mundial + una tabla del Banco Central del Ecuador parseada por el ingestor. Cada número traza a su fuente; nunca inventa."
+  },
+  "model": {
+    "primary": "llama-3.3-70b-versatile",
+    "fallback": "llama-3.3-70b-versatile",
+    "base_url": "https://api.groq.com/openai/v1",
+    "temperature": 0,
+    "max_tokens": 1024,
+    "max_turns": 8
+  },
+  "belt": {
+    "belt_ref": "platform/connectors/finanzas/belt-finanzas-data.mcp.json",
+    "tool_filters": {
+      "finanzas": ["worldbank_series", "bce_pdf_ingest", "build_workbook"]
+    }
+  },
+  "framing": {
+    "inline": "Eres un analista de finanzas. Tu regla de oro: NÚMERO = FUENTE, NUNCA INVENTADO. No transcribes cifras a mano: las tools traen los datos con su procedencia y tú solo orquestas.\n\nPara armar la obra que pide el usuario, haz EXACTAMENTE estos pasos en orden:\n1) Llama worldbank_series (sin argumentos extra: ya trae PIB de Ecuador 2015-2023). Guarda el `handle` que devuelve.\n2) Llama bce_pdf_ingest (sin argumentos: usa el PDF y la receta del Banco Central del Ecuador ya incluidos). Guarda el `handle` que devuelve.\n3) Llama build_workbook con filename='finanzas_ecuador.xlsx' y handles=[los dos handles de los pasos 1 y 2]. NO inventes números: pasa solo los handles.\n4) Cierra contándole al usuario, en 2-3 líneas, qué archivo se generó (la ruta), cuántas celdas de dato tiene y que cada una está trazada a su fuente (Banco Mundial / Banco Central del Ecuador)."
+  },
+  "rag": { "enabled": false },
+  "keys": {},
+  "gates": { "money_touch": "needs_ok", "send": "needs_ok" }
+}

@@ -1,0 +1,13 @@
+{
+  "_doc": "Belt fixture para el test E2E de CONEXIÓN JIT. El server 'testapi' declara un placeholder ${TEST_API_KEY} (secreto de usuario) — el diff debe pedir conexión hasta que se guarde en el vault. Arranca con el echo server real (sin clave; PRUEBA la plomería de boot), por eso el comando apunta al echo_server.py ya probado.",
+  "mcpServers": {
+    "testapi": {
+      "command": "python3",
+      "args": ["${PUPPET_REPO}/platform/assembler/fixtures/echo_server.py"],
+      "env": {
+        "TEST_API_KEY": "${TEST_API_KEY}"
+      },
+      "description": "Server de prueba con clave ${TEST_API_KEY}. Ejecuta el echo server real (el echo ignora el env pero el boot prueba la plomería del hot-mount)."
+    }
+  }
+}

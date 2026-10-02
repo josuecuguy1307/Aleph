@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:#DED6C7;font-family:'Hanken Grotesk',system-ui,-apple-system,sans-serif;color:#2B2925;-webkit-font-smoothing:antialiased}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes blink{0%,92%,100%{transform:scaleY(1)}96%{transform:scaleY(.12)}}
+  .orbit{transform-origin:32px 32px}
+  .ctr{transform-box:fill-box;transform-origin:center}
+</style>
+</helmet>
+
+<div style="min-height:100vh;padding:42px 40px 72px">
+  <div style="max-width:1180px;margin:0 auto">
+
+    <div style="font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#9A9082">Mascota · formas del núcleo</div>
+    <h1 style="font-family:'Spectral',Georgia,serif;font-weight:600;font-size:31px;margin:8px 0 6px;letter-spacing:-.015em">El núcleo, en seis geometrías</h1>
+    <p style="margin:0 0 38px;color:#6F6A60;font-size:14.5px;max-width:74ch;line-height:1.6">Mismo átomo, mismas órbitas — pero el cuerpo deja de ser una bolita. Cada forma le da otro carácter: el hexágono se siente «tech», el triángulo más pícaro, la cápsula más blandita. Ojos solos. Decime qué silueta te gusta.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px">
+
+      <!-- 1 · Hexágono -->
+      <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+        <div style="display:flex;align-items:center;justify-content:center;height:182px;background:#16172A">
+          <svg width="108" height="108" viewBox="0 0 64 64" fill="none">
+            <g class="orbit" style="animation:spin 10s linear infinite">
+              <g transform="rotate(0 32 32)"><ellipse cx="32" cy="32" rx="24" ry="9.5" stroke="#6E6BD0" stroke-width="1.7"></ellipse><circle cx="56" cy="32" r="3" fill="#C9C6FF"></circle></g>
+              <g transform="rotate(60 32 32)"><ellipse cx="32" cy="32" rx="24" ry="9.5" stroke="#6E6BD0" stroke-width="1.7"></ellipse><circle cx="56" cy="32" r="3" fill="#C9C6FF"></circle></g>
+              <g transform="rotate(120 32 32)"><ellipse cx="32" cy="32" rx="24" ry="9.5" stroke="#6E6BD0" stroke-width="1.7"></ellipse><circle cx="56" cy="32" r="3" fill="#C9C6FF"></circle></g>
+            </g>
+            <path d="M32 20 L42.4 26 L42.4 38 L32 44 L21.6 38 L21.6 26 Z" fill="#8E8BF5" stroke="#8E8BF5" stroke-width="4" stroke-linejoin="round"></path>
+            <circle cx="28.5" cy="32" r="2" fill="#211E3A"></circle>
+            <circle cx="35.5" cy="32" r="2" fill="#211E3A"></circle>
+          </svg>
+        </div>
+        <div style="padding:14px 16px;border-top:1px solid #F0E8D8">
+          <div style="font-family:'Spectral',serif;font-weight:600;font-size:16px">1 · Hexágono</div>
+          <div style="font-size:12.5px;color:#7C766B;line-height:1.5;margin-top:3px">El más «tech» — celda, panal, chip. Estructurado y moderno.</div>
+        </div>
+      </div>
+
+      <!-- 2 · Cuadrado redondeado -->
+      <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+        <div style="display:flex;align-items:center;justify-content:center;height:182px;background:#16172A">
+          <svg width="108" height="108" viewBox="0 0 64 64" fill="none">
+            <g class="orbit" style="animation:spin 10s linear infinite">
+              <g transform="rotate(0 32 32)"><ellipse cx="32" cy="32" rx="24" ry="9.5" stroke="#6E6BD0" stroke-width="1.7"></ellipse><circle cx="56" cy="32" r="3" fill="#C9C6FF"></circle></g>
+              <g transform="rotate(60 32 32)"><ellipse cx="32" cy="32" rx="24" ry="9.5" stroke="#6E6BD0" stroke-width="1.7"></ellipse><circle cx="56" cy="32" r="3" fill="#C9C6FF"></circle></g>
+              <g transform="rotate(120 32 32)"><ellipse cx="32" cy="32" rx="24" ry="9.5" stroke="#6E6BD0" stroke-width="1.7"></ellipse><circle cx="56" cy="32" r="3" fill="#C9C6FF"></circle></g>
+            </g>
+            <rect x="21" y="21" width="22" height="22" rx="7.5" fill="#8E8BF5"></rect>
+            <circle cx="28.5" cy="32" r="2" fill="#211E3A"></circle>
+            <circle cx="35.5" cy="32" r="2" fill="#211E3A"></circle>
+          </svg>
+        </div>
+        <div style="padding:14px 16px;border-top:1px solid #F0E8D8">
+          <div style="font-family:'Spectral',serif;font-weight:600;font-size:16px">2 · Cuadrado redondeado</div>
+          <div style="font-size:12.5px;color:#7C766B;line-height:1.5;margin-top:3px">Forma de app icon. Sólido, amable, encaja perfecto en un botón.</div>
+        </div>
+      </div>
+
+      <!-- 3 · Triángulo -->
+      <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+        <div style="display:flex;align-items:center;justify-content:center;height:182px;background:#16172A">
+          <svg width="108" height="108" viewBox="0 0 64 64" fill="none">
+            <g class="orbit" style="animation:spin 10s linear infinite">
+              <g transform="rotate(0 32 32)"><ellipse cx="32" cy="32" rx="24" ry="9.5" stroke="#6E6BD0" stroke-width="1.7"></ellipse><circle cx="56" cy="32" r="3" fill="#C9C6FF"></circle></g>
+              <g transform="rotate(60 32 32)"><ellipse cx="32" cy="32" rx="24" ry="9.5" stroke="#6E6BD0" stroke-width="1.7"></ellipse><circle cx="56" cy="32" r="3" fill="#C9C6FF"></circle></g>
+              <g transform="rotate(120 32 32)"><ellipse cx="32" cy="32" rx="24" ry="9.5" stroke="#6E6BD0" stroke-width="1.7"></ellipse><circle cx="56" cy="32" r="3" fill="#C9C6FF"></circle></g>
+            </g>
+            <path d="M32 21 L43 42 L21 42 Z" fill="#8E8BF5" stroke="#8E8BF5" stroke-width="5" stroke-linejoin="round"></path>
+            <circle cx="29" cy="35.5" r="2" fill="#211E3A"></circle>
+            <circle cx="35" cy="35.5" r="2" fill="#211E3A"></circle>
+          </svg>
+        </div>
+        <div style="padding:14px 16px;border-top:1px solid #F0E8D8">
+          <div style="font-family:'Spectral',serif;font-weight:600;font-size:16px">3 · Triángulo</div>
+          <div style="font-size:12.5px;color:#7C766B;line-height:1.5;margin-top:3px">Pícaro y juguetón, casi una carita de gato. El más distinto.</div>
+        </div>
+      </div>
+
+      <!-- 4 · Rombo -->
+      <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+        <div style="display:flex;align-items:center;justify-content:center;height:182px;background:#16172A">
+          <svg width="108" height="108" viewBox="0 0 64 64" fill="none">
+            <g class="orbit" style="animation:spin 10s linear infinite">
+              <g transform="rotate(0 32 32)"><ellipse cx="32" cy="32" rx="24" ry="9.5" stroke="#6E6BD0" stroke-width="1.7"></ellipse><circle cx="56" cy="32" r="3" fill="#C9C6FF"></circle></g>
+              <g transform="rotate(60 32 32)"><ellipse cx="32" cy="32" rx="24" ry="9.5" stroke="#6E6BD0" stroke-width="1.7"></ellipse><circle cx="56" cy="32" r="3" fill="#C9C6FF"></circle></g>
+              <g transform="rotate(120 32 32)"><ellipse cx="32" cy="32" rx="24" ry="9.5" stroke="#6E6BD0" stroke-width="1.7"></ellipse><circle cx="56" cy="32" r="3" fill="#C9C6FF"></circle></g>
+            </g>
+            <path d="M32 19 L45 32 L32 45 L19 32 Z" fill="#8E8BF5" stroke="#8E8BF5" stroke-width="4.5" stroke-linejoin="round"></path>
+            <circle cx="28.7" cy="31.5" r="2" fill="#211E3A"></circle>
+            <circle cx="35.3" cy="31.5" r="2" fill="#211E3A"></circle>
+          </svg>
+        </div>
+        <div style="padding:14px 16px;border-top:1px solid #F0E8D8">
+          <div style="font-family:'Spectral',serif;font-weight:600;font-size:16px">4 · Rombo</div>
+          <div style="font-size:12.5px;color:#7C766B;line-height:1.5;margin-top:3px">Gema, cristal, joya. Elegante y un poco mágico — premium.</div>
+        </div>
+      </div>
+
+      <!-- 5 · Pentágono -->
+      <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+        <div style="display:flex;align-items:center;justify-content:center;height:182px;background:#16172A">
+          <svg width="108" height="108" viewBox="0 0 64 64" fill="none">
+            <g class="orbit" style="animation:spin 10s linear infinite">
+              <g transform="rotate(0 32 32)"><ellipse cx="32" cy="32" rx="24" ry="9.5" stroke="#6E6BD0" stroke-width="1.7"></ellipse><circle cx="56" cy="32" r="3" fill="#C9C6FF"></circle></g>
+              <g transform="rotate(60 32 32)"><ellipse cx="32" cy="32" rx="24" ry="9.5" stroke="#6E6BD0" stroke-width="1.7"></ellipse><circle cx="56" cy="32" r="3" fill="#C9C6FF"></circle></g>
+              <g transform="rotate(120 32 32)"><ellipse cx="32" cy="32" rx="24" ry="9.5" stroke="#6E6BD0" stroke-width="1.7"></ellipse><circle cx="56" cy="32" r="3" fill="#C9C6FF"></circle></g>
+            </g>
+            <path d="M32 20 L43.4 28.3 L39 41.7 L25 41.7 L20.6 28.3 Z" fill="#8E8BF5" stroke="#8E8BF5" stroke-width="4.5" stroke-linejoin="round"></path>
+            <circle cx="28.7" cy="32.5" r="2" fill="#211E3A"></circle>
+            <circle cx="35.3" cy="32.5" r="2" fill="#211E3A"></circle>
+          </svg>
+        </div>
+        <div style="padding:14px 16px;border-top:1px solid #F0E8D8">
+          <div style="font-family:'Spectral',serif;font-weight:600;font-size:16px">5 · Pentágono</div>
+          <div style="font-size:12.5px;color:#7C766B;line-height:1.5;margin-top:3px">Como un escudo chiquito. Firme y confiable, con onda de insignia.</div>
+        </div>
+      </div>
+
+      <!-- 6 · Cápsula -->
+      <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+        <div style="display:flex;align-items:center;justify-content:center;height:182px;background:#16172A">
+          <svg width="108" height="108" viewBox="0 0 64 64" fill="none">
+            <g class="orbit" style="animation:spin 10s linear infinite">
+              <g transform="rotate(0 32 32)"><ellipse cx="32" cy="32" rx="24" ry="9.5" stroke="#6E6BD0" stroke-width="1.7"></ellipse><circle cx="56" cy="32" r="3" fill="#C9C6FF"></circle></g>
+              <g transform="rotate(60 32 32)"><ellipse cx="32" cy="32" rx="24" ry="9.5" stroke="#6E6BD0" stroke-width="1.7"></ellipse><circle cx="56" cy="32" r="3" fill="#C9C6FF"></circle></g>
+              <g transform="rotate(120 32 32)"><ellipse cx="32" cy="32" rx="24" ry="9.5" stroke="#6E6BD0" stroke-width="1.7"></ellipse><circle cx="56" cy="32" r="3" fill="#C9C6FF"></circle></g>
+            </g>
+            <rect x="17" y="24" width="30" height="16" rx="8" fill="#8E8BF5"></rect>
+            <g class="ctr" style="animation:blink 5s ease-in-out infinite">
+              <circle cx="28.5" cy="32" r="2" fill="#211E3A"></circle>
+              <circle cx="35.5" cy="32" r="2" fill="#211E3A"></circle>
+            </g>
+          </svg>
+        </div>
+        <div style="padding:14px 16px;border-top:1px solid #F0E8D8">
+          <div style="font-family:'Spectral',serif;font-weight:600;font-size:16px">6 · Cápsula · parpadea</div>
+          <div style="font-size:12.5px;color:#7C766B;line-height:1.5;margin-top:3px">Pastilla blandita y horizontal. La más tierna — y parpadea cada tanto.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:38px;padding-top:24px;border-top:1px solid #CFC6B5">
+      <span style="font-size:13.5px;color:#6F6A60">¿Qué silueta te gusta? La cruzo con la animación que más te gustó y armo el lockup.</span>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

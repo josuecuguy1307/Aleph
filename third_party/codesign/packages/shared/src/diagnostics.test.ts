@@ -1,0 +1,387 @@
+import { describe, expect, it } from 'vitest';
+import { diagnose, diagnoseGenerateFailure } from './diagnostics';
+
+const baseCtx = {
+  provider: 'openai',
+  baseUrl: 'https://api.example.com',
+};
+
+describe('diagnose', () => {
+  it('maps 401 to keyInvalid hypothesis with updateKey fix', () => {
+    const result = diagnose('401', baseCtx);
+    expect(result).toHaveLength(1);
+    expect(result[0]?.cause).toBe('diagnostics.cause.keyInvalid');
+    expect(result[0]?.suggestedFix?.label).toBe('diagnostics.fix.updateKey');
+  });
+
+  it('maps 403 to keyInvalid hypothesis (same as 401)', () => {
+    const result = diagnose('403', baseCtx);
+    expect(result[0]?.cause).toBe('diagnostics.cause.keyInvalid');
+  });
+
+  it('maps 402 to balanceEmpty with addCredits fix', () => {
+    const result = diagnose('402', baseCtx);
+    expect(result[0]?.cause).toBe('diagnostics.cause.balanceEmpty');
+    expect(result[0]?.suggestedFix?.label).toBe('diagnostics.fix.addCredits');
+    expect(result[0]?.suggestedFix?.externalUrl).toBe(
+      'https://platform.openai.com/settings/organization/billing',
+    );
+  });
+
+  it('402 returns provider-specific billing URL for anthropic', () => {
+    const result = diagnose('402', { ...baseCtx, provider: 'anthropic' });
+    expect(result[0]?.suggestedFix?.externalUrl).toBe(
+      'https://console.anthropic.com/settings/billing',
+    );
+  });
+
+  it('402 returns provider-specific billing URL for openrouter', () => {
+    const result = diagnose('402', { ...baseCtx, provider: 'openrouter' });
+    expect(result[0]?.suggestedFix?.externalUrl).toBe('https://openrouter.ai/settings/credits');
+  });
+
+  it('402 returns generic message (no URL) for unknown provider', () => {
+    const result = diagnose('402', { ...baseCtx, provider: 'mystery-provider' });
+    expect(result[0]?.suggestedFix?.label).toBe('diagnostics.fix.addCreditsGeneric');
+    expect(result[0]?.suggestedFix?.externalUrl).toBeUndefined();
+  });
+
+  it('maps 404 to missingV1 with a baseUrl transform', () => {
+    const result = diagnose('404', baseCtx);
+    expect(result[0]?.cause).toBe('diagnostics.cause.missingV1');
+    const fix = result[0]?.suggestedFix;
+    expect(fix?.baseUrlTransform).toBeDefined();
+    expect(fix?.baseUrlTransform?.('https://api.example.com')).toBe('https://api.example.com/v1');
+  });
+
+  // Regression: Zhipu GLM (issue #179) — baseUrl is /api/paas/v4, /models 404
+  // is because GLM does not expose /models, NOT because /v1 is missing.
+  // Auto-suggesting "add /v1" would corrupt a correct baseUrl.
+  it('404 classifies endpoint-not-found when baseUrl already has /v4 (GLM)', () => {
+    const result = diagnose('404', {
+      ...baseCtx,
+      baseUrl: 'https://open.bigmodel.cn/api/paas/v4',
+    });
+    expect(result[0]?.cause).toBe('diagnostics.cause.endpointNotFound');
+    expect(result[0]?.category).toBe('endpoint-not-found');
+    expect(result[0]?.suggestedFix).toBeUndefined();
+  });
+
+  it('404 classifies endpoint-not-found when baseUrl already has /v1 (e.g. Cloudflare Workers AI)', () => {
+    const result = diagnose('404', {
+      ...baseCtx,
+      baseUrl: 'https://gateway.ai.cloudflare.com/v1/account/foo/openai',
+    });
+    expect(result[0]?.cause).toBe('diagnostics.cause.endpointNotFound');
+    expect(result[0]?.category).toBe('endpoint-not-found');
+    expect(result[0]?.suggestedFix).toBeUndefined();
+  });
+
+  it('404 classifies endpoint-not-found when baseUrl already has /v1beta (AI Studio)', () => {
+    const result = diagnose('404', {
+      ...baseCtx,
+      baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai',
+    });
+    expect(result[0]?.cause).toBe('diagnostics.cause.endpointNotFound');
+    expect(result[0]?.category).toBe('endpoint-not-found');
+    expect(result[0]?.suggestedFix).toBeUndefined();
+  });
+
+  it('404 still suggests missingV1 when baseUrl has NO version segment', () => {
+    const result = diagnose('404', { ...baseCtx, baseUrl: 'https://api.example.com' });
+    expect(result[0]?.cause).toBe('diagnostics.cause.missingV1');
+    expect(result[0]?.suggestedFix?.label).toBe('diagnostics.fix.addV1');
+  });
+
+  it('maps 429 to rateLimit with waitAndRetry fix', () => {
+    const result = diagnose('429', baseCtx);
+    expect(result[0]?.cause).toBe('diagnostics.cause.rateLimit');
+    expect(result[0]?.suggestedFix?.label).toBe('diagnostics.fix.waitAndRetry');
+  });
+
+  it('maps ECONNREFUSED to hostUnreachable', () => {
+    const result = diagnose('ECONNREFUSED', baseCtx);
+    expect(result[0]?.cause).toBe('diagnostics.cause.hostUnreachable');
+    expect(result[0]?.suggestedFix?.label).toBe('diagnostics.fix.checkNetwork');
+  });
+
+  it('maps ETIMEDOUT to timedOut', () => {
+    const result = diagnose('ETIMEDOUT', baseCtx);
+    expect(result[0]?.cause).toBe('diagnostics.cause.timedOut');
+    expect(result[0]?.suggestedFix?.label).toBe('diagnostics.fix.checkVpn');
+  });
+
+  it('maps CORS to corsError with reportBug fix', () => {
+    const result = diagnose('CORS', baseCtx);
+    expect(result[0]?.cause).toBe('diagnostics.cause.corsError');
+    expect(result[0]?.suggestedFix?.label).toBe('diagnostics.fix.reportBug');
+  });
+
+  it('maps SSL to sslError with disableTls fix', () => {
+    const result = diagnose('SSL', baseCtx);
+    expect(result[0]?.cause).toBe('diagnostics.cause.sslError');
+    expect(result[0]?.suggestedFix?.label).toBe('diagnostics.fix.disableTls');
+  });
+
+  it('maps unknown codes to generic unknown cause', () => {
+    const result = diagnose('SOME_UNKNOWN_CODE', baseCtx);
+    expect(result[0]?.cause).toBe('diagnostics.cause.unknown');
+    expect(result[0]?.suggestedFix).toBeUndefined();
+  });
+
+  it('all hypothesis objects have at least a cause string', () => {
+    const codes = ['401', '402', '403', '404', '429', 'ECONNREFUSED', 'ETIMEDOUT', 'NETWORK'];
+    for (const code of codes) {
+      const results = diagnose(code, baseCtx);
+      expect(results.length).toBeGreaterThan(0);
+      for (const h of results) {
+        expect(typeof h.cause).toBe('string');
+        expect(h.cause.length).toBeGreaterThan(0);
+      }
+    }
+  });
+});
+
+describe('diagnoseGenerateFailure', () => {
+  const ctx = { provider: 'openai', baseUrl: 'https://relay.example.com' };
+
+  it('maps 404 to missingV1 with an /v1 baseUrl transform', () => {
+    const result = diagnoseGenerateFailure({ ...ctx, status: 404 });
+    expect(result[0]?.cause).toBe('diagnostics.cause.missingV1');
+    expect(result[0]?.category).toBe('missing-base-v1');
+    expect(result[0]?.severity).toBe('warning');
+    expect(result[0]?.suggestedFix?.kind).toBe('baseUrlTransform');
+    expect(result[0]?.suggestedFix?.baseUrlTransform?.('https://relay.example.com')).toBe(
+      'https://relay.example.com/v1',
+    );
+  });
+
+  it('maps a "404 page not found" message with no status to missingV1', () => {
+    // The Win11 gateway (#130) surfaces this as a plain message body,
+    // sometimes without any HTTP metadata attached to the error. Pattern
+    // matching on the message is the only way to recognise it.
+    const result = diagnoseGenerateFailure({
+      ...ctx,
+      message: '404 page not found',
+    });
+    expect(result[0]?.cause).toBe('diagnostics.cause.missingV1');
+    expect(result[0]?.suggestedFix?.baseUrlTransform).toBeDefined();
+  });
+
+  it('maps 401 to keyInvalid hypothesis', () => {
+    const result = diagnoseGenerateFailure({ ...ctx, status: 401 });
+    expect(result[0]?.cause).toBe('diagnostics.cause.keyInvalid');
+  });
+
+  it('maps plain 403 to keyInvalid hypothesis', () => {
+    const result = diagnoseGenerateFailure({ ...ctx, status: 403 });
+    expect(result[0]?.cause).toBe('diagnostics.cause.keyInvalid');
+    expect(result[0]?.category).toBe('auth');
+  });
+
+  it('maps 403 blocked generation responses to gatewayWafBlocked', () => {
+    const result = diagnoseGenerateFailure({
+      ...ctx,
+      status: 403,
+      message: '403 Your request was blocked.',
+    });
+    expect(result[0]?.cause).toBe('diagnostics.cause.gatewayWafBlocked');
+    expect(result[0]?.category).toBe('gateway-waf-blocked');
+    expect(result[0]?.suggestedFix?.label).toBe('diagnostics.fix.gatewayWafBlocked');
+  });
+
+  it('maps 422 developer role rejection to unsupported-role with a wire switch fix', () => {
+    const result = diagnoseGenerateFailure({
+      ...ctx,
+      status: 422,
+      wire: 'openai-chat',
+      message:
+        'Invalid input: messages.0.role Input should be system, user, assistant or tool; input "developer"',
+    });
+    expect(result[0]?.category).toBe('unsupported-role');
+    expect(result[0]?.cause).toBe('diagnostics.cause.unsupportedRole');
+    expect(result[0]?.suggestedFix?.kind).toBe('switchWire');
+    expect(result[0]?.suggestedFix?.wire).toBe('openai-chat');
+  });
+
+  it('maps reasoning_content round-trip errors to reasoning-policy', () => {
+    const result = diagnoseGenerateFailure({
+      ...ctx,
+      status: 400,
+      message: 'The `reasoning_content` in the thinking mode must be passed back to the API.',
+    });
+    expect(result[0]?.category).toBe('reasoning-policy');
+    expect(result[0]?.cause).toBe('diagnostics.cause.reasoningPolicy');
+    expect(result[0]?.suggestedFix?.kind).toBe('setReasoning');
+    expect(result[0]?.suggestedFix?.reasoningLevel).toBe('off');
+  });
+
+  it('maps models/ prefixed 404 model errors to model-id-shape', () => {
+    const result = diagnoseGenerateFailure({
+      provider: 'ollama',
+      baseUrl: 'http://127.0.0.1:11434/v1',
+      status: 404,
+      message: "404 model 'models/gemini-2.5-pro' not found",
+    });
+    expect(result[0]?.category).toBe('model-id-shape');
+    expect(result[0]?.cause).toBe('diagnostics.cause.modelIdShape');
+    expect(result[0]?.suggestedFix?.kind).toBe('normalizeModelId');
+    expect(result[0]?.suggestedFix?.modelIdTransform?.('models/gemini-2.5-pro')).toBe(
+      'gemini-2.5-pro',
+    );
+  });
+
+  it('maps models/ prefixed 400 errors to model-id-shape even without a useful body', () => {
+    const result = diagnoseGenerateFailure({
+      provider: 'custom-cliproxyapi',
+      baseUrl: 'https://relay.example.com/v1',
+      status: 400,
+      message: '400 status code (no body)',
+      modelId: 'models/gemini-2.5-flash',
+    });
+
+    expect(result[0]?.category).toBe('model-id-shape');
+    expect(result[0]?.cause).toBe('diagnostics.cause.modelIdShape');
+    expect(result[0]?.suggestedFix?.kind).toBe('normalizeModelId');
+  });
+
+  it('maps generation timeout errors to the Advanced timeout setting', () => {
+    const result = diagnoseGenerateFailure({
+      ...ctx,
+      code: 'GENERATION_TIMEOUT',
+      message: 'Generation aborted after 1200s (Settings -> Advanced -> Generation timeout).',
+    });
+
+    expect(result[0]?.category).toBe('generation-timeout');
+    expect(result[0]?.cause).toBe('diagnostics.cause.generationTimeout');
+    expect(result[0]?.suggestedFix?.kind).toBe('openSettings');
+    expect(result[0]?.suggestedFix?.settingsTab).toBe('advanced');
+  });
+
+  it('maps reference URL errors by CodesignError code before provider heuristics', () => {
+    const result = diagnoseGenerateFailure({
+      ...ctx,
+      code: 'REFERENCE_URL_FETCH_TIMEOUT',
+      message: 'Failed to fetch reference URL https://example.com',
+    });
+    expect(result[0]?.category).toBe('reference-url-fetch-timeout');
+    expect(result[0]?.cause).toBe('diagnostics.cause.referenceUrlTimeout');
+    expect(result[0]?.suggestedFix?.kind).toBe('openSettings');
+  });
+
+  it('maps 500 with "not implemented" body to gatewayIncompatible', () => {
+    const result = diagnoseGenerateFailure({
+      ...ctx,
+      status: 500,
+      message: 'upstream: not implemented',
+    });
+    expect(result[0]?.cause).toBe('diagnostics.cause.gatewayIncompatible');
+    expect(result[0]?.suggestedFix?.label).toBe('diagnostics.fix.switchWire');
+  });
+
+  it('maps 502 with "404 page not found" body to gatewayIncompatible', () => {
+    // Third-party gateways sometimes wrap a 404 inside a 5xx envelope.
+    const result = diagnoseGenerateFailure({
+      ...ctx,
+      status: 502,
+      message: 'backend returned 404 page not found',
+    });
+    expect(result[0]?.cause).toBe('diagnostics.cause.gatewayIncompatible');
+  });
+
+  it('maps generic 503 to serverError', () => {
+    const result = diagnoseGenerateFailure({
+      ...ctx,
+      status: 503,
+      message: 'service unavailable',
+    });
+    expect(result[0]?.cause).toBe('diagnostics.cause.serverError');
+    expect(result[0]?.suggestedFix?.label).toBe('diagnostics.fix.waitAndRetry');
+  });
+
+  it('maps 400 with "instructions are required" body to openaiResponsesMisconfigured', () => {
+    const result = diagnoseGenerateFailure({
+      ...ctx,
+      status: 400,
+      message: 'Invalid request: instructions are required',
+    });
+    expect(result[0]?.cause).toBe('diagnostics.cause.openaiResponsesMisconfigured');
+    expect(result[0]?.suggestedFix?.label).toBe('diagnostics.fix.switchWire');
+  });
+
+  it('maps 429 to rateLimit', () => {
+    const result = diagnoseGenerateFailure({ ...ctx, status: 429 });
+    expect(result[0]?.cause).toBe('diagnostics.cause.rateLimit');
+  });
+
+  it('uses unknown when nothing matches', () => {
+    const result = diagnoseGenerateFailure({ ...ctx, message: 'something odd' });
+    expect(result[0]?.cause).toBe('diagnostics.cause.unknown');
+  });
+
+  describe('relay streaming bug (#180)', () => {
+    it('openai-responses + custom baseUrl + "terminated" → relayStreamingBug', () => {
+      const result = diagnoseGenerateFailure({
+        provider: 'openai',
+        baseUrl: 'https://relay.example.com/v1',
+        wire: 'openai-responses',
+        message: 'fetch failed: terminated',
+      });
+      expect(result[0]?.category).toBe('relay-stream-cutoff');
+      expect(result[0]?.cause).toBe('diagnostics.cause.relayStreamingBug');
+      expect(result[0]?.suggestedFix?.label).toBe('diagnostics.fix.relayStreamingBug');
+    });
+
+    it('openai-responses + api.openai.com + "terminated" → NOT relayStreamingBug', () => {
+      const result = diagnoseGenerateFailure({
+        provider: 'openai',
+        baseUrl: 'https://api.openai.com/v1',
+        wire: 'openai-responses',
+        message: 'fetch failed: terminated',
+      });
+      expect(result[0]?.cause).not.toBe('diagnostics.cause.relayStreamingBug');
+    });
+
+    it('openai-responses + custom baseUrl + 500 HTTP error → NOT relayStreamingBug', () => {
+      const result = diagnoseGenerateFailure({
+        provider: 'openai',
+        baseUrl: 'https://relay.example.com/v1',
+        wire: 'openai-responses',
+        status: 500,
+        message: 'internal server error',
+      });
+      expect(result[0]?.cause).not.toBe('diagnostics.cause.relayStreamingBug');
+      expect(result[0]?.cause).toBe('diagnostics.cause.serverError');
+    });
+
+    it('anthropic wire + "terminated" → NOT relayStreamingBug', () => {
+      const result = diagnoseGenerateFailure({
+        provider: 'anthropic',
+        baseUrl: 'https://relay.example.com/v1',
+        wire: 'anthropic',
+        message: 'stream terminated',
+      });
+      expect(result[0]?.cause).not.toBe('diagnostics.cause.relayStreamingBug');
+    });
+
+    it('matches "premature close" message shape', () => {
+      const result = diagnoseGenerateFailure({
+        provider: 'openai',
+        baseUrl: 'https://relay.example.com/v1',
+        wire: 'openai-responses',
+        message: 'Error: Premature close',
+      });
+      expect(result[0]?.cause).toBe('diagnostics.cause.relayStreamingBug');
+    });
+
+    it('matches ECONNRESET message shape', () => {
+      const result = diagnoseGenerateFailure({
+        provider: 'openai',
+        baseUrl: 'https://relay.example.com/v1',
+        wire: 'openai-responses',
+        message: 'read ECONNRESET',
+      });
+      expect(result[0]?.cause).toBe('diagnostics.cause.relayStreamingBug');
+    });
+  });
+});

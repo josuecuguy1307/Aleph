@@ -1,0 +1,176 @@
+import { dentroDeAleph } from "@/aleph"
+import { lazy, type Component } from "solid-js"
+import type { IconProps } from "@synsci/ui/icon"
+
+// ── Panel contract ──────────────────────────────────────────────────────────
+//
+// Every settings panel is a lazily-loaded SolidJS component keyed by a stable
+// `id`. Panel authors own exactly one file — `components/settings/<Panel>.tsx`
+// — and `export default` a `Component`. The shell (dialog-settings.tsx) renders
+// the header (back/forward + title + expand/close) and the left rail from this
+// registry; the panel component only renders its own scrollable body.
+//
+// To add real behaviour a panel either:
+//   • calls an existing local-server endpoint via the SDK (`useSDK().client.*`
+//     or `useGlobalSDK().client.*`), or
+//   • ships a NEW minimal backend route at
+//     `backend/cli/src/server/routes/settings/<name>.ts` (export a Hono route;
+//     mount it in `backend/cli/src/server/server.ts`) that persists to a JSON
+//     config store — so the control does something real.
+//
+// HARD RULE: no dead buttons. A panel either wires to a real backend or omits
+// the control. Placeholder panels below ship with zero interactive controls.
+
+export type SettingsSection = "inference" | "capabilities" | "runtime" | "app"
+
+export type SettingsPanelId =
+  | "models"
+  | "skills"
+  | "connectors"
+  | "specialists"
+  | "compute"
+  | "network"
+  | "permissions"
+  | "sandbox"
+  | "credentials"
+  | "storage"
+  | "general"
+
+export interface SettingsPanel {
+  /** Stable key used for routing/history. */
+  id: SettingsPanelId
+  /** Title shown in the shell header + rail label. */
+  title: string
+  /** Icon name from `@synsci/ui/icon`. */
+  icon: IconProps["name"]
+  /** Which rail group the row lives under. */
+  section: SettingsSection
+  /** Lazily-loaded panel body (default export of the file). */
+  component: Component
+}
+
+// Order here is the render order in the rail (top→bottom within each section).
+export const SETTINGS_PANELS: SettingsPanel[] = [
+  // ── Inference ──
+  {
+    id: "models",
+    title: "Models",
+    icon: "models",
+    section: "inference",
+    component: lazy(() => import("./Models")),
+  },
+  // ── Capabilities ──
+  {
+    id: "skills",
+    title: "Skills",
+    icon: "brain",
+    section: "capabilities",
+    component: lazy(() => import("./Skills")),
+  },
+  {
+    id: "connectors",
+    title: "Connectors",
+    icon: "mcp",
+    section: "capabilities",
+    component: lazy(() => import("./Connectors")),
+  },
+  {
+    id: "specialists",
+    title: "Specialists",
+    icon: "models",
+    section: "capabilities",
+    component: lazy(() => import("./Specialists")),
+  },
+  // Local models remain implemented but hidden until chat, tool-call, and
+  // streaming behavior pass a full runtime smoke.
+  // ── Runtime ──
+  {
+    id: "compute",
+    title: "Compute",
+    icon: "server",
+    section: "runtime",
+    component: lazy(() => import("./Compute")),
+  },
+  {
+    id: "network",
+    title: "Network",
+    icon: "share",
+    section: "runtime",
+    component: lazy(() => import("./Network")),
+  },
+  {
+    id: "permissions",
+    title: "Permissions",
+    icon: "check",
+    section: "runtime",
+    component: lazy(() => import("./Permissions")),
+  },
+  {
+    id: "sandbox",
+    title: "Sandbox",
+    icon: "console",
+    section: "runtime",
+    component: lazy(() => import("./Sandbox")),
+  },
+  {
+    id: "credentials",
+    title: "Credentials",
+    icon: "providers",
+    section: "runtime",
+    component: lazy(() => import("./Credentials")),
+  },
+  // ── App ──
+  // Managed inference and its wallet live in Models. Usage stays hidden until
+  // the product can report it reliably; General links to account billing.
+  { id: "storage", title: "Storage", icon: "folder", section: "app", component: lazy(() => import("./Storage")) },
+  {
+    id: "general",
+    title: "General",
+    icon: "settings-gear",
+    section: "app",
+    component: lazy(() => import("./General")),
+  },
+]
+
+export const SETTINGS_SECTIONS: { id: SettingsSection; label: string }[] = [
+  { id: "inference", label: "Inference" },
+  { id: "capabilities", label: "Capabilities" },
+  { id: "runtime", label: "Runtime" },
+  { id: "app", label: "App" },
+]
+
+/**
+ * [Aleph · un solo Ajustes] LOS PANELES QUE SON DE LA CASA, NO DEL OFICIO.
+ *
+ * Adentro de Aleph estos tres no se muestran, porque la casa ya es dueña de lo que hacen y
+ * dos superficies para la misma decisión es peor que una fea:
+ *
+ *   · `models`      — los modelos los resuelve Aleph y se los BAJA a esta UI por
+ *                     `postMessage` (`modelo-del-espacio.js`). El picker sigue siendo el de
+ *                     este stack; lo que sale es la pantalla de administrarlos.
+ *   · `credentials` — son API keys, y el vault es de la casa.
+ *   · `connectors`  — son servidores MCP, o sea las Conexiones de Aleph.
+ *
+ * Lo que NO está en esta lista se queda: skills, especialistas, cómputo, red, permisos,
+ * sandbox y almacenamiento son del oficio de Ciencia y la casa no tiene dónde ponerlos.
+ * El día que tengan lugar propio, entran acá — no antes.
+ *
+ * El arreglo NO borra la tabla: `SETTINGS_PANELS` sigue entera y `findPanel` sigue
+ * resolviendo por id, para que una ruta vieja no explote. Lo que cambia es qué se OFRECE.
+ */
+const PANELES_DE_LA_CASA = new Set<SettingsPanelId>(["models", "credentials", "connectors"])
+
+export function panelVisible(panel: SettingsPanel): boolean {
+  return !dentroDeAleph || !PANELES_DE_LA_CASA.has(panel.id)
+}
+
+/** El primero que sí se puede mostrar. Existe porque `DEFAULT_PANEL` es `models`. */
+export function primerPanelVisible(): SettingsPanelId {
+  return (SETTINGS_PANELS.find(panelVisible) ?? SETTINGS_PANELS[0]).id
+}
+
+export function findPanel(id: SettingsPanelId): SettingsPanel {
+  return SETTINGS_PANELS.find((p) => p.id === id) ?? SETTINGS_PANELS[0]
+}
+
+export const DEFAULT_PANEL: SettingsPanelId = "models"

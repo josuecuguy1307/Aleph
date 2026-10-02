@@ -1,0 +1,13 @@
+{
+  "schema_version": "v1",
+  "meta": { "name": "parent_real", "nicho": "general",
+            "descripcion": "delega un cálculo a un sub-agente que usa la calculadora real (caso feliz E2E)" },
+  "model": { "alias": "brain", "temperature": 0, "max_tokens": 1024, "max_turns": 6 },
+  "belt": {
+    "belt_ref": "platform/assembler/deleg_fixtures/belt-deleg.mcp.json",
+    "agent_refs": ["platform/assembler/deleg_fixtures/child_calc_real.json"],
+    "tool_filters": {}
+  },
+  "rag": { "enabled": false },
+  "gates": { "money_touch": "needs_ok", "send": "needs_ok" }
+}

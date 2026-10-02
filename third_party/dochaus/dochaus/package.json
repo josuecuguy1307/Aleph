@@ -1,0 +1,16 @@
+{
+  "name": "@dochaus/config",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@huggingface/transformers": "4.2.0",
+    "@opencode-ai/plugin": "1.16.0",
+    "docxodus": "^6.4.0",
+    "fflate": "0.8.3",
+    "mammoth": "^1.8.0",
+    "unpdf": "^1.6.2"
+  },
+  "patchedDependencies": {
+    "docxodus@6.4.0": "patches/docxodus@6.4.0.patch"
+  }
+}

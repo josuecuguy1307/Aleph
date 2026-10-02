@@ -1,0 +1,3 @@
+.deleg-workdirs/
+__pycache__/
+*.pyc

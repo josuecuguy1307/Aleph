@@ -1,0 +1,26 @@
+{
+  "schema_version": "v1",
+  "meta": {
+    "name": "Agente Research keyless (Crossref)",
+    "nicho": "research",
+    "descripcion": "Asistente de investigación que busca papers reales en Crossref (keyless, read-only) y reporta DOI/título/autores verificables. Tier B Caso 1."
+  },
+  "model": {
+    "primary": "openai/gpt-oss-120b",
+    "fallback": "llama-3.3-70b-versatile",
+    "base_url": "https://api.groq.com/openai/v1",
+    "temperature": 0,
+    "max_tokens": 1024,
+    "max_turns": 6
+  },
+  "belt": {
+    "belt_ref": "platform/assembler/fixtures/belt-crossref.mcp.json",
+    "tool_filters": { "crossref": ["search_works", "get_work"] }
+  },
+  "framing": {
+    "inline": "Sos un asistente de investigación académica. Para CUALQUIER pedido de papers o referencias usá SIEMPRE la herramienta search_works (nunca inventes citas). Reportá los resultados con su título y DOI exactos tal como vienen de la herramienta. No alucines DOIs."
+  },
+  "rag": { "enabled": false },
+  "keys": {},
+  "gates": {}
+}

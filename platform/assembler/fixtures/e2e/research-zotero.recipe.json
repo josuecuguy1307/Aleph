@@ -1,0 +1,30 @@
+{
+  "schema_version": "v1",
+  "meta": {
+    "name": "Agente Research — persistir cita en Zotero (BYOK)",
+    "nicho": "research",
+    "descripcion": "Escribe UNA referencia (con DOI real) en la biblioteca de Zotero del usuario. La llave se inyecta por keys.zotero.byok_ref desde la cuenta conectada (connect-wizard)."
+  },
+  "model": {
+    "primary": "openai/gpt-oss-120b",
+    "fallback": "llama-3.3-70b-versatile",
+    "base_url": "https://api.groq.com/openai/v1",
+    "temperature": 0,
+    "max_tokens": 1200,
+    "max_turns": 6
+  },
+  "belt": {
+    "belt_ref": "platform/assembler/fixtures/belt-research-live.mcp.json",
+    "tool_filters": {
+      "zotero": ["whoami", "create_item"]
+    }
+  },
+  "framing": {
+    "inline": "Sos un asistente que guarda referencias en Zotero. Primero verificá la cuenta con whoami. Luego guardá la referencia que te den con create_item, pasando title, doi, authors, year, container y url EXACTOS (no inventes). Confirmá con la KEY que devuelve Zotero. Si la llave no está, decílo claro: hay que conectar Zotero primero."
+  },
+  "rag": { "enabled": false },
+  "keys": {
+    "zotero": { "byok_ref": "keys:zotero" }
+  },
+  "gates": {}
+}

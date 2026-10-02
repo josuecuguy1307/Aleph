@@ -1,0 +1,132 @@
+{
+  "arquetipo": "exa",
+  "paso": "list_tools",
+  "transporte": "stdio",
+  "servidor": "verificador",
+  "grabado_en": "2026-08-04T09:46:05",
+  "huella_receta": "7a0e0a7b1656",
+  "env_declarado": false,
+  "receta": {
+    "command": "npx",
+    "args": [
+      "-y",
+      "exa-mcp-server"
+    ],
+    "cwd": ""
+  },
+  "peticion": {
+    "metodo": "tools/list",
+    "args": {}
+  },
+  "respuesta": [
+    {
+      "name": "web_search_exa",
+      "description": "Search the web for any topic and get clean, ready-to-use content.\n\n      Best for: Finding current information, news, facts, people, companies, or answering questions about any topic.\n      Returns: Clean text content from top search results.\n\n      Query tips:\n      describe the ideal page, not keywords. \"blog post comparing React and Vue performance\" not \"React vs Vue\".\n      Use category:people / category:company to search through Linkedin profiles / companies respectively.\n      If highlights are insufficient, follow up with web_fetch_exa on the best URLs.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Natural language search query. Should be a semantically rich description of the ideal page, not just keywords. Optionally include category:<type> (company, people) to focus results — e.g. 'category:people John Doe software engineer'."
+          },
+          "numResults": {
+            "type": "number",
+            "description": "Number of search results to return (default: 10)."
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "web_fetch_exa",
+      "description": "Read a webpage's full content as clean markdown. Use after web_search_exa when highlights are insufficient or to read any URL.\n\nBest for: Extracting full content from known URLs. Batch multiple URLs in one call.\nReturns: Clean text content and metadata from the page(s).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "urls": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "URLs to read. Batch multiple URLs in one call."
+          },
+          "maxCharacters": {
+            "type": "number",
+            "minimum": 1,
+            "description": "Maximum characters to extract per page (default: 3000)"
+          }
+        },
+        "required": [
+          "urls"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    }
+  ],
+  "diagnostico": {
+    "stderr": "",
+    "exit_code": null,
+    "exit_code_fuente": "no expuesto: stdio_client (mcp 2.0.0) hace `yield read_stream, write_stream` y se queda el Process",
+    "murio": false,
+    "t_eof": null,
+    "timeouts": [],
+    "rpc_timeout_s": 45.0,
+    "stderr_lineas": 0,
+    "stderr_bytes": 0,
+    "stderr_cap_bytes": 32768,
+    "stderr_cap_lineas": 80,
+    "command": "npx",
+    "transporte": "sdk-stdio",
+    "entorno": {
+      "omitido": "ambiente de la máquina, no del veredicto"
+    },
+    "server_info": {
+      "name": "exa-search-server",
+      "title": "Exa",
+      "version": "3.4.0",
+      "websiteUrl": "https://exa.ai",
+      "icons": [
+        {
+          "src": "https://exa.ai/images/favicon-32x32.png",
+          "mimeType": "image/png",
+          "sizes": [
+            "32x32"
+          ]
+        }
+      ]
+    },
+    "protocolo": {
+      "cliente": "2025-11-25",
+      "servidor": "2025-11-25",
+      "negociacion": "aceptada"
+    },
+    "detail": "el proceso arrancó pero no respondió al saludo initialize de MCP"
+  },
+  "scrubber": {
+    "hallazgos_neutralizados": 0
+  }
+}

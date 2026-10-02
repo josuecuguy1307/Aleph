@@ -1,0 +1,33 @@
+{
+  "schema_version": "v1",
+  "meta": {
+    "name": "Mi primer agente",
+    "nicho": "demo",
+    "descripcion": "Agente de arranque, sin llaves. Hace cálculos exactos con una herramienta real, para que tu Cuarto nunca esté vacío y obtengas valor desde el primer clic."
+  },
+  "model": {
+    "primary": "qwen3:8b",
+    "fallback": null,
+    "base_url": "http://127.0.0.1:11434/v1",
+    "temperature": 0,
+    "max_tokens": 1024,
+    "max_turns": 6
+  },
+  "belt": {
+    "belt_ref": "platform/assembler/fixtures/belt-calc.mcp.json",
+    "tool_filters": { "calc": ["add", "sub", "mul"] }
+  },
+  "framing": {
+    "ref": null,
+    "inline": "Eres un asistente exacto. Para cualquier cálculo usa la tool calc; no calcules de cabeza. Muestra el resultado de la tool."
+  },
+  "rag": { "enabled": false, "mode": "manual", "dir": null },
+  "keys": {},
+  "gates": { "money_touch": "needs_ok", "send": "needs_ok" },
+  "_onboarding": {
+    "persona": "ambas",
+    "first_prompt": "¿Cuánto es 1234 * 5678? Usa la tool.",
+    "runs_keyless": true,
+    "note": "El default que siempre funciona sin llaves ni motor. Cambia base_url a tu gateway o a tu modelo (BYOK) cuando quieras subir de cerebro."
+  }
+}

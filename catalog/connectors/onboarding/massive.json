@@ -1,0 +1,80 @@
+{
+  "connector": "massive",
+  "auth_method": "personal_token",
+  "tier": "average",
+  "needs_base_url": false,
+  "deep_link": "https://massive.com/dashboard/keys",
+  "api_base": "https://api.massive.com",
+  "credential_fields": [
+    {
+      "id": "key",
+      "label": "Tu API key de Massive.com (ex Polygon.io)",
+      "shape": "cadena alfanumérica larga",
+      "secret": true
+    }
+  ],
+  "auth": {
+    "scheme": "query",
+    "name": "apiKey",
+    "value": "{key}"
+  },
+  "steps": [
+    {
+      "txt": "Te llevo al dashboard de Massive.com (el nuevo nombre de Polygon.io) a crear una API key — hay tier gratuito para empezar. Si ya tenías key de Polygon, sirve la misma.",
+      "emphasis": [
+        "API key"
+      ]
+    },
+    {
+      "txt": "Pega tu llave aquí."
+    }
+  ],
+  "validate": {
+    "soft": true,
+    "path": "/v1/marketstatus/now",
+    "method": "GET"
+  },
+  "permissions": [
+    "lectura de datos de mercado: acciones, opciones (greeks/IV), forex y cripto"
+  ],
+  "requires_sharing": false,
+  "errors": {
+    "invalid": "Esa key no funcionó — Massive respondió 'Unknown API Key'. Genera una nueva en el dashboard y pégala.",
+    "network": "No pude verificar ahora — prueba de nuevo en un momento."
+  },
+  "escape_hatch": true,
+  "capability_line": "Listo — ya puedo traer datos de mercado de Massive (acciones, opciones con greeks, forex, cripto).",
+  "trust_line": "Tu key se guarda cifrada · la quitas cuando quieras.",
+  "verification": {
+    "deep_link_ok": true,
+    "anchor_ok": false,
+    "validated_with_test_key": false,
+    "notes": "[FIX-P11 · 2026-07-27] validate era {soft:true} SIN path -> connect_engine pegaba contra GET https://api.massive.com (la raiz) -> 404 'page not found' -> llave rechazada por defecto. MEDIDO hoy: GET /v1/marketstatus/now?apiKey=<mala> -> 401 {'error':'Unknown API Key'}. Endpoint barato del legado Polygon.io."
+  },
+  "en": {
+    "steps": [
+      {
+        "txt": "I'll take you to the Massive.com dashboard (the new name for Polygon.io) to create an API key — there's a free tier to get started. If you already had a Polygon key, the same one works.",
+        "emphasis": [
+          "API key"
+        ]
+      },
+      {
+        "txt": "Paste it here."
+      }
+    ],
+    "trust_line": "Your key is stored encrypted · remove it anytime.",
+    "capability_line": "Done — I can now pull market data from Massive (stocks, options with greeks, forex, crypto).",
+    "errors": {
+      "invalid": "That key didn't work — Massive returned 'Unknown API Key'. Generate a new one in the dashboard and paste it.",
+      "network": "I couldn't verify right now — try again in a moment."
+    },
+    "credential_fields": [
+      {
+        "id": "key",
+        "label": "Your Massive.com API key (formerly Polygon.io)",
+        "shape": "long alphanumeric string"
+      }
+    ]
+  }
+}

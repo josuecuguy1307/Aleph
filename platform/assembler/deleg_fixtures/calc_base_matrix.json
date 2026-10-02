@@ -1,0 +1,10 @@
+{
+  "rules": [
+    {
+      "id": "calc-benign-arith",
+      "match": {"server": "*", "tool_name_contains": ["add", "sub", "mul", "div", "pow", "mod"]},
+      "level": "auto-ejecuta",
+      "what": "una operación aritmética local de la calculadora (no toca plata ni manda afuera)"
+    }
+  ]
+}

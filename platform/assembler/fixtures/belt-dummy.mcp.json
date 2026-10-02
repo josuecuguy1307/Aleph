@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "echo": {
+      "command": "python3",
+      "args": ["${PUPPET_REPO}/platform/assembler/fixtures/echo_server.py"],
+      "description": "Trivial echo tool for assembler smoke testing. No credentials, no dependencies."
+    }
+  }
+}

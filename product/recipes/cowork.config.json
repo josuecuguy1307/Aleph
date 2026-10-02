@@ -1,0 +1,55 @@
+{
+  "schema_version": "v1",
+  "meta": {
+    "name": "Agente Cowork",
+    "nicho": "cowork",
+    "descripcion": "Asistente de oficina que lee tu Drive/Calendar/correo, prepara el borrador y la agenda, y NUNCA manda ni invita sin tu OK explicito."
+  },
+  "model": {
+    "primary": "openai/gpt-oss-120b",
+    "fallback": "openai/gpt-oss-20b",
+    "base_url": "https://api.groq.com/openai/v1",
+    "temperature": 0,
+    "max_tokens": 2048,
+    "max_turns": 12
+  },
+  "belt": {
+    "belt_ref": "catalog/belts/cowork.md",
+    "tool_filters": {
+      "google_drive": [
+        "search_files",
+        "read_file_content",
+        "create_file"
+      ],
+      "google_calendar": [
+        "list_events",
+        "find_free_time",
+        "create_event"
+      ],
+      "gmail": [
+        "search_messages",
+        "read_message",
+        "create_draft"
+      ],
+      "slack": [
+        "slack_list_channels",
+        "slack_get_channel_history",
+        "slack_get_thread_replies"
+      ]
+    }
+  },
+  "framing": {
+    "ref": "product/recipes/framing/cowork.md",
+    "inline": null
+  },
+  "rag": {
+    "enabled": false,
+    "mode": "manual",
+    "dir": null
+  },
+  "keys": {},
+  "gates": {
+    "money_touch": "off",
+    "send": "needs_ok"
+  }
+}

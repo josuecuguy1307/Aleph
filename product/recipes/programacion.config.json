@@ -1,0 +1,57 @@
+{
+  "schema_version": "v1",
+  "meta": {
+    "name": "Agente Programacion",
+    "nicho": "programacion",
+    "descripcion": "Ingeniero que edita el repo, corre los tests en sandbox y solo declara verde cuando el runner devuelve pass real, no cuando 'deberia' funcionar."
+  },
+  "model": {
+    "primary": "openai/gpt-oss-120b",
+    "fallback": "openai/gpt-oss-20b",
+    "base_url": "https://api.groq.com/openai/v1",
+    "temperature": 0,
+    "max_tokens": 4096,
+    "max_turns": 20
+  },
+  "belt": {
+    "belt_ref": "catalog/belts/programacion.md",
+    "tool_filters": {
+      "github": [
+        "get_file_contents",
+        "create_or_update_file"
+      ],
+      "context7": [
+        "resolve-library-id",
+        "query-docs"
+      ],
+      "filesystem": [
+        "read_file",
+        "write_file",
+        "edit_file",
+        "list_directory"
+      ],
+      "script_runner": [
+        "run_python",
+        "run_shell"
+      ]
+    }
+  },
+  "framing": {
+    "ref": "product/recipes/framing/programacion.md",
+    "inline": null
+  },
+  "rag": {
+    "enabled": false,
+    "mode": "manual",
+    "dir": null
+  },
+  "keys": {
+    "github": {
+      "byok_ref": "keys:github"
+    }
+  },
+  "gates": {
+    "money_touch": "off",
+    "send": "needs_ok"
+  }
+}

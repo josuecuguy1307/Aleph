@@ -1,0 +1,412 @@
+[
+  {
+    "name": "brainstorm",
+    "keys": [
+      "toolHints.brainstorm.short_description",
+      "toolHints.brainstorm.when_to_use",
+      "toolHints.brainstorm.input_format",
+      "toolHints.brainstorm.guideline",
+      "toolHints.brainstorm.note",
+      "toolParams.brainstorm.topic",
+      "toolParams.brainstorm.context"
+    ]
+  },
+  {
+    "name": "rag",
+    "keys": [
+      "toolHints.rag.short_description",
+      "toolHints.rag.when_to_use",
+      "toolHints.rag.input_format",
+      "toolHints.rag.guideline",
+      "toolHints.rag.note",
+      "toolParams.rag.query",
+      "toolParams.rag.kb_name"
+    ]
+  },
+  {
+    "name": "kb_files",
+    "keys": [
+      "toolHints.kb_files.short_description",
+      "toolHints.kb_files.when_to_use",
+      "toolHints.kb_files.input_format",
+      "toolHints.kb_files.guideline",
+      "toolHints.kb_files.note",
+      "toolParams.kb_files.kb_name",
+      "toolParams.kb_files.pattern",
+      "toolParams.kb_files.limit"
+    ]
+  },
+  {
+    "name": "web_search",
+    "keys": [
+      "toolHints.web_search.short_description",
+      "toolHints.web_search.when_to_use",
+      "toolHints.web_search.input_format",
+      "toolHints.web_search.guideline",
+      "toolHints.web_search.note",
+      "toolParams.web_search.query"
+    ]
+  },
+  {
+    "name": "code_execution",
+    "keys": [
+      "toolHints.code_execution.short_description",
+      "toolHints.code_execution.when_to_use",
+      "toolHints.code_execution.input_format",
+      "toolHints.code_execution.guideline",
+      "toolHints.code_execution.note",
+      "toolParams.code_execution.language",
+      "toolParams.code_execution.code",
+      "toolParams.code_execution.stdin",
+      "toolParams.code_execution.timeout"
+    ]
+  },
+  {
+    "name": "reason",
+    "keys": [
+      "toolHints.reason.short_description",
+      "toolHints.reason.when_to_use",
+      "toolHints.reason.input_format",
+      "toolHints.reason.guideline",
+      "toolHints.reason.note",
+      "toolParams.reason.query",
+      "toolParams.reason.context"
+    ]
+  },
+  {
+    "name": "paper_search",
+    "keys": [
+      "toolHints.paper_search.short_description",
+      "toolHints.paper_search.when_to_use",
+      "toolHints.paper_search.input_format",
+      "toolHints.paper_search.guideline",
+      "toolHints.paper_search.note",
+      "toolParams.paper_search.query",
+      "toolParams.paper_search.max_results",
+      "toolParams.paper_search.years_limit",
+      "toolParams.paper_search.sort_by"
+    ]
+  },
+  {
+    "name": "read_source",
+    "keys": [
+      "toolHints.read_source.short_description",
+      "toolHints.read_source.when_to_use",
+      "toolHints.read_source.input_format",
+      "toolHints.read_source.guideline",
+      "toolHints.read_source.note",
+      "toolParams.read_source.source_id"
+    ]
+  },
+  {
+    "name": "read_memory",
+    "keys": [
+      "toolHints.read_memory.short_description",
+      "toolHints.read_memory.when_to_use",
+      "toolHints.read_memory.input_format",
+      "toolHints.read_memory.guideline",
+      "toolHints.read_memory.note"
+    ]
+  },
+  {
+    "name": "write_memory",
+    "keys": [
+      "toolHints.write_memory.short_description",
+      "toolHints.write_memory.when_to_use",
+      "toolHints.write_memory.input_format",
+      "toolHints.write_memory.guideline",
+      "toolHints.write_memory.note",
+      "toolParams.write_memory.op",
+      "toolParams.write_memory.text",
+      "toolParams.write_memory.target_id",
+      "toolParams.write_memory.reason"
+    ]
+  },
+  {
+    "name": "read_skill",
+    "keys": [
+      "toolHints.read_skill.short_description",
+      "toolHints.read_skill.when_to_use",
+      "toolHints.read_skill.input_format",
+      "toolHints.read_skill.guideline",
+      "toolHints.read_skill.note",
+      "toolParams.read_skill.name",
+      "toolParams.read_skill.file"
+    ]
+  },
+  {
+    "name": "load_tools",
+    "keys": [
+      "toolHints.load_tools.short_description",
+      "toolHints.load_tools.when_to_use",
+      "toolHints.load_tools.input_format",
+      "toolHints.load_tools.guideline",
+      "toolHints.load_tools.note",
+      "toolParams.load_tools.names"
+    ]
+  },
+  {
+    "name": "exec",
+    "keys": [
+      "toolHints.exec.short_description",
+      "toolHints.exec.when_to_use",
+      "toolHints.exec.input_format",
+      "toolHints.exec.guideline",
+      "toolHints.exec.note",
+      "toolParams.exec.command",
+      "toolParams.exec.timeout"
+    ]
+  },
+  {
+    "name": "web_fetch",
+    "keys": [
+      "toolHints.web_fetch.short_description",
+      "toolHints.web_fetch.when_to_use",
+      "toolHints.web_fetch.input_format",
+      "toolHints.web_fetch.guideline",
+      "toolHints.web_fetch.note",
+      "toolParams.web_fetch.url",
+      "toolParams.web_fetch.max_chars"
+    ]
+  },
+  {
+    "name": "list_notebook",
+    "keys": [
+      "toolHints.list_notebook.short_description",
+      "toolHints.list_notebook.when_to_use",
+      "toolHints.list_notebook.input_format",
+      "toolHints.list_notebook.guideline",
+      "toolHints.list_notebook.note",
+      "toolParams.list_notebook.notebook_id"
+    ]
+  },
+  {
+    "name": "write_note",
+    "keys": [
+      "toolHints.write_note.short_description",
+      "toolHints.write_note.when_to_use",
+      "toolHints.write_note.input_format",
+      "toolHints.write_note.guideline",
+      "toolHints.write_note.note",
+      "toolParams.write_note.mode",
+      "toolParams.write_note.notebook_id",
+      "toolParams.write_note.record_id",
+      "toolParams.write_note.title",
+      "toolParams.write_note.content",
+      "toolParams.write_note.turns_to_include",
+      "toolParams.write_note.note"
+    ]
+  },
+  {
+    "name": "github",
+    "keys": [
+      "toolHints.github.short_description",
+      "toolHints.github.when_to_use",
+      "toolHints.github.input_format",
+      "toolHints.github.guideline",
+      "toolHints.github.note",
+      "toolParams.github.query_type",
+      "toolParams.github.target"
+    ]
+  },
+  {
+    "name": "ask_user",
+    "keys": [
+      "toolHints.ask_user.short_description",
+      "toolHints.ask_user.when_to_use",
+      "toolHints.ask_user.input_format",
+      "toolHints.ask_user.guideline",
+      "toolHints.ask_user.note",
+      "toolParams.ask_user.questions",
+      "toolParams.ask_user.intro"
+    ]
+  },
+  {
+    "name": "cron",
+    "keys": [
+      "toolDescriptions.cron",
+      "toolParams.cron.action",
+      "toolParams.cron.message",
+      "toolParams.cron.name",
+      "toolParams.cron.at",
+      "toolParams.cron.every_seconds",
+      "toolParams.cron.cron_expr",
+      "toolParams.cron.tz",
+      "toolParams.cron.delete_after_run",
+      "toolParams.cron.job_id"
+    ]
+  },
+  {
+    "name": "geogebra_analysis",
+    "keys": [
+      "toolHints.geogebra_analysis.short_description",
+      "toolHints.geogebra_analysis.when_to_use",
+      "toolHints.geogebra_analysis.input_format",
+      "toolHints.geogebra_analysis.guideline",
+      "toolHints.geogebra_analysis.note",
+      "toolParams.geogebra_analysis.question",
+      "toolParams.geogebra_analysis.image_base64"
+    ]
+  },
+  {
+    "name": "imagegen",
+    "keys": [
+      "toolHints.imagegen.short_description",
+      "toolParams.imagegen.prompt",
+      "toolParams.imagegen.size",
+      "toolParams.imagegen.n"
+    ]
+  },
+  {
+    "name": "videogen",
+    "keys": [
+      "toolHints.videogen.short_description",
+      "toolParams.videogen.prompt",
+      "toolParams.videogen.aspect_ratio",
+      "toolParams.videogen.duration"
+    ]
+  },
+  {
+    "name": "mastery_status",
+    "keys": [
+      "toolHints.mastery_status.short_description"
+    ]
+  },
+  {
+    "name": "mastery_quiz",
+    "keys": [
+      "toolHints.mastery_quiz.short_description",
+      "toolParams.mastery_quiz.knowledge_point_id",
+      "toolParams.mastery_quiz.question",
+      "toolParams.mastery_quiz.expected_answer",
+      "toolParams.mastery_quiz.question_type",
+      "toolParams.mastery_quiz.options"
+    ]
+  },
+  {
+    "name": "mastery_grade",
+    "keys": [
+      "toolHints.mastery_grade.short_description",
+      "toolParams.mastery_grade.answer",
+      "toolParams.mastery_grade.question_id"
+    ]
+  },
+  {
+    "name": "mastery_assess",
+    "keys": [
+      "toolHints.mastery_assess.short_description",
+      "toolParams.mastery_assess.knowledge_point_id",
+      "toolParams.mastery_assess.passed",
+      "toolParams.mastery_assess.feedback"
+    ]
+  },
+  {
+    "name": "mastery_build",
+    "keys": [
+      "toolHints.mastery_build.short_description",
+      "toolParams.mastery_build.modules",
+      "toolParams.mastery_build.mode"
+    ]
+  },
+  {
+    "name": "solve_plan",
+    "keys": [
+      "toolHints.solve_plan.short_description",
+      "toolParams.solve_plan.analysis",
+      "toolParams.solve_plan.steps"
+    ]
+  },
+  {
+    "name": "solve_finish_step",
+    "keys": [
+      "toolHints.solve_finish_step.short_description",
+      "toolParams.solve_finish_step.step_id",
+      "toolParams.solve_finish_step.summary"
+    ]
+  },
+  {
+    "name": "solve_replan",
+    "keys": [
+      "toolHints.solve_replan.short_description",
+      "toolParams.solve_replan.reason",
+      "toolParams.solve_replan.steps"
+    ]
+  },
+  {
+    "name": "obsidian_search",
+    "keys": [
+      "toolHints.obsidian_search.short_description",
+      "toolParams.obsidian_search.query",
+      "toolParams.obsidian_search.limit"
+    ]
+  },
+  {
+    "name": "obsidian_read",
+    "keys": [
+      "toolHints.obsidian_read.short_description",
+      "toolParams.obsidian_read.note"
+    ]
+  },
+  {
+    "name": "obsidian_list",
+    "keys": [
+      "toolHints.obsidian_list.short_description",
+      "toolParams.obsidian_list.folder",
+      "toolParams.obsidian_list.limit"
+    ]
+  },
+  {
+    "name": "obsidian_backlinks",
+    "keys": [
+      "toolHints.obsidian_backlinks.short_description",
+      "toolParams.obsidian_backlinks.note"
+    ]
+  },
+  {
+    "name": "obsidian_links",
+    "keys": [
+      "toolHints.obsidian_links.short_description",
+      "toolParams.obsidian_links.note"
+    ]
+  },
+  {
+    "name": "obsidian_tags",
+    "keys": [
+      "toolHints.obsidian_tags.short_description",
+      "toolParams.obsidian_tags.limit"
+    ]
+  },
+  {
+    "name": "obsidian_create_note",
+    "keys": [
+      "toolHints.obsidian_create_note.short_description",
+      "toolParams.obsidian_create_note.path",
+      "toolParams.obsidian_create_note.content",
+      "toolParams.obsidian_create_note.properties"
+    ]
+  },
+  {
+    "name": "obsidian_append",
+    "keys": [
+      "toolHints.obsidian_append.short_description",
+      "toolParams.obsidian_append.note",
+      "toolParams.obsidian_append.content"
+    ]
+  },
+  {
+    "name": "obsidian_set_property",
+    "keys": [
+      "toolHints.obsidian_set_property.short_description",
+      "toolParams.obsidian_set_property.note",
+      "toolParams.obsidian_set_property.key",
+      "toolParams.obsidian_set_property.value"
+    ]
+  },
+  {
+    "name": "consult_subagent",
+    "keys": [
+      "toolHints.consult_subagent.short_description",
+      "toolParams.consult_subagent.question"
+    ]
+  }
+]

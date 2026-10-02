@@ -1,0 +1,111 @@
+{
+  "_meta": {
+    "que_es": "Eval de la FORJA (Fase 3). Cada caso = una intención de persona real + el GOLD esperado (servers, zona por server, gate money/send, conexión). El runner llama POST /v1/forge y puntúa. Es el GATE de la fase.",
+    "zonas": "zones[server] = lista de zonas ACEPTABLES. Pura lectura→fuentes; send→entrega es no-negociable; data/proceso ambiguo permite [fuentes,mesa].",
+    "scoring": "tool-F1 (servers, con ok_extra sin penalizar), zona (sobre TP), gate_recall (casos con gate), conexión, alucinación.",
+    "bars": { "tool_f1": 0.80, "zone_acc": 0.90, "gate_recall": 1.0, "hallucination": 0 }
+  },
+  "cases": [
+    {
+      "id": "reportero-financiero",
+      "canonical": true,
+      "intent": "cada lunes lee los reportes financieros de empresas y manda un resumen por correo",
+      "gold": { "servers": ["gmail"], "any_of": [["secedgar", "yfinance"]], "ok_extra": ["fred"],
+                "zones": { "secedgar": ["fuentes"], "yfinance": ["fuentes", "mesa"], "gmail": ["entrega"] },
+                "gate": true, "gate_servers": ["gmail"], "connection": "gmail" }
+    },
+    {
+      "id": "papers-zotero",
+      "intent": "buscar papers cientificos sobre un tema y guardarlos en mi zotero",
+      "gold": { "servers": ["crossref", "zotero"], "ok_extra": ["openalex", "arxiv", "pubmed"],
+                "zones": { "crossref": ["fuentes"], "zotero": ["entrega", "mesa"] },
+                "gate": false, "connection": "zotero" }
+    },
+    {
+      "id": "cad-stress",
+      "intent": "diseñar una pieza mecanica en CAD y analizar sus esfuerzos",
+      "gold": { "servers": ["freecad"], "ok_extra": ["openfoam", "materialsproject", "filesystem"],
+                "zones": { "freecad": ["mesa"] }, "gate": false, "connection": null }
+    },
+    {
+      "id": "acciones",
+      "intent": "analizame una empresa que cotiza: traeme sus precios y sus ratios financieros",
+      "gold": { "any_of": [["yfinance", "secedgar"]], "ok_extra": ["fred"],
+                "zones": { "yfinance": ["mesa", "fuentes"], "secedgar": ["fuentes", "mesa"] },
+                "gate": false, "connection": null }
+    },
+    {
+      "id": "python-excel",
+      "intent": "corré un calculo en python sobre unos datos y armame un excel con el resultado",
+      "gold": { "servers": ["pysandbox", "datatools"], "ok_extra": ["calc", "filesystem"],
+                "zones": { "pysandbox": ["mesa"], "datatools": ["mesa", "entrega"] },
+                "gate": false, "connection": null }
+    },
+    {
+      "id": "web-search",
+      "intent": "buscá en la web informacion actual sobre un tema y resumila",
+      "gold": { "servers": ["exa"], "ok_extra": ["fetch", "context7"],
+                "zones": { "exa": ["fuentes", "mesa"] }, "gate": false, "connection": "exa" }
+    },
+    {
+      "id": "circuito",
+      "intent": "diseñame el esquematico de un circuito electronico",
+      "gold": { "servers": ["kicad"], "ok_extra": [],
+                "zones": { "kicad": ["mesa", "entrega"] }, "gate": false, "connection": null }
+    },
+    {
+      "id": "pubmed-medico",
+      "intent": "buscá estudios medicos publicados sobre una enfermedad",
+      "gold": { "servers": ["pubmed"], "ok_extra": ["crossref", "openalex", "arxiv"],
+                "zones": { "pubmed": ["fuentes", "mesa"] }, "gate": false, "connection": null }
+    },
+    {
+      "id": "macro-fed",
+      "intent": "mostrame las tasas de la reserva federal y la inflacion",
+      "gold": { "servers": ["fred"], "ok_extra": ["yfinance"],
+                "zones": { "fred": ["fuentes", "mesa"] }, "gate": false, "connection": "feedoracle" }
+    },
+    {
+      "id": "github-commits",
+      "intent": "revisá los commits recientes de mi repositorio de github",
+      "gold": { "servers": ["github"], "ok_extra": [],
+                "zones": { "github": ["fuentes", "mesa"] }, "gate": false, "connection": "github" }
+    },
+    {
+      "id": "materiales",
+      "intent": "buscá las propiedades de un material y sus constantes elasticas",
+      "gold": { "servers": ["materialsproject"], "ok_extra": ["freecad"],
+                "zones": { "materialsproject": ["fuentes", "mesa"] }, "gate": false, "connection": "materialsproject" }
+    },
+    {
+      "id": "arxiv-ia",
+      "intent": "encontrá preprints recientes en arxiv sobre inteligencia artificial",
+      "gold": { "servers": ["arxiv"], "ok_extra": ["crossref", "openalex", "pubmed"],
+                "zones": { "arxiv": ["fuentes", "mesa"] }, "gate": false, "connection": null }
+    },
+    {
+      "id": "cfd-flujo",
+      "intent": "simulá el flujo de aire alrededor de una pieza y dame el resultado",
+      "gold": { "servers": ["openfoam"], "ok_extra": ["freecad"],
+                "zones": { "openfoam": ["mesa", "entrega"] }, "gate": false, "connection": null }
+    },
+    {
+      "id": "doc-pdf",
+      "intent": "convertí mi documento en markdown a un pdf prolijo",
+      "gold": { "servers": ["pandoc"], "ok_extra": ["filesystem"],
+                "zones": { "pandoc": ["mesa", "entrega"] }, "gate": false, "connection": null }
+    },
+    {
+      "id": "investigador",
+      "intent": "buscá un investigador y la lista de sus publicaciones",
+      "gold": { "servers": ["orcid"], "ok_extra": ["crossref", "openalex"],
+                "zones": { "orcid": ["fuentes", "mesa"] }, "gate": false, "connection": null }
+    },
+    {
+      "id": "mandar-correo",
+      "intent": "preparame un correo con el reporte y dejalo listo para mandar",
+      "gold": { "servers": ["gmail"], "ok_extra": [],
+                "zones": { "gmail": ["entrega"] }, "gate": true, "gate_servers": ["gmail"], "connection": "gmail" }
+    }
+  ]
+}

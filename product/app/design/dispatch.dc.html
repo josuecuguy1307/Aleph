@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
+<title>Aleph · Conectar o forjar un servicio</title>
+<link rel="stylesheet" href="vendor/fonts.css">
+<link rel="stylesheet" href="aleph-tokens.css"><!-- [identidad visual] la piel: tokens, forma y tipografía en un solo lugar -->
+<style>
+  /* [sistema 2026-07-31] Despacho entra al sistema "Híbrido Spatial + Soft futurism".
+     Las primitivas (.ds-plane/.ds-title/.ds-sub/…) llegan solas por aleph-tokens.css →
+     @import aleph-ds.css. Acá NO se redeclara ningún token: el bloque `:root` propio
+     (--bg/--panel/--panel2/--line/--violet/--ink/--mut/--ok/--bad/--warn) MURIÓ — pisaba
+     los del sistema (--ink y --line eran suyos) y hacía que esta pantalla fuera de otra app.
+     Lo que cambia es la PIEL: cero bordes, cero relieves, cero hundidos — la jerarquía es
+     sombra + radio. Color 90/8/2: neutros casi todo, el violeta sólo en la identidad y el
+     desenlace forjado, verde/ámbar/rojo sólo como estado.
+     Lo que NO cambia: ni un id (#service #url #credential #go #pistaCard #estado #pista
+     #resRegistry #resForged #rg_* #fg_*), ni una clase que lea el script, ni una acción, ni
+     un texto, ni un estado. verify_dispatch_playwright.py sigue leyendo lo mismo. */
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page-bg);color:var(--ink);
+    font:300 15px/1.5 var(--font-ui);min-height:100vh;padding:32px 18px;
+    -webkit-font-smoothing:antialiased}
+  .wrap{max-width:760px;margin:0 auto}
+  .brand{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+  /* la mascota va SIN MARCO, sobre un halo radial (identidad = el 8% del color) */
+  .glyph{width:36px;height:36px;border-radius:var(--r-sm);flex:none;border:0;box-shadow:none;
+    background:radial-gradient(circle,var(--accent-soft) 0%,transparent 76%);
+    display:grid;place-items:center;font-weight:300;font-size:21px;color:var(--accent)}
+  h1{margin:0}
+  .sub{margin:11px 0 0;max-width:66ch;line-height:1.55}
+  .sub b{color:var(--ink);font-weight:400}
+  /* cada paso es AIRE sobre el plano, no una caja: el sistema separa con espacio y
+     con el rótulo del paso, nunca con una línea. El POZO (r18) es el CAMPO. */
+  .card{background:transparent;border:0;border-radius:var(--r-lg);padding:0;margin:26px 0 0;
+    box-shadow:none}
+  label{display:block;font:400 var(--fs-xs) var(--font-ui);color:var(--muted);margin:0 0 7px;
+    text-transform:uppercase;letter-spacing:.08em}
+  input{width:100%;background:var(--paper2);border:0;color:var(--ink);
+    border-radius:var(--r-md);padding:12px 15px;font:300 14px var(--font-ui);outline:none}
+  /* el foco NO se marca con línea: se tiñe con el acento */
+  input:focus{background:var(--accent-soft)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .field{margin-top:12px}
+  /* la acción primaria INVIERTE el campo; el acento queda reservado al 8% */
+  button{background:var(--ink);color:var(--paper);border:0;border-radius:var(--r-md);
+    padding:12px 22px;font:400 12.5px var(--font-ui);cursor:pointer;transition:.15s;margin-top:20px}
+  button:hover{filter:brightness(1.12)}
+  button:disabled{opacity:.5;cursor:wait}
+  .hidden{display:none}
+  .badge{display:inline-flex;align-items:center;gap:6px;font:400 var(--fs-sm) var(--font-ui);
+    padding:4px 11px;border:0;border-radius:var(--r-full);vertical-align:middle}
+  .badge.ok{background:var(--green-bg);color:var(--green)}
+  .badge.bad{background:var(--red-bg);color:var(--red)}
+  .badge.dim{background:var(--paper2);color:var(--muted)}
+  .badge.forge{background:var(--accent-soft);color:var(--accent-deep)}
+  .mono{font-family:var(--font-mono);font-size:12.5px;color:var(--ink);word-break:break-all}
+  .tools{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+  .tool{background:var(--paper2);border:0;border-radius:var(--r-full);padding:6px 12px;
+    font:400 12px var(--font-mono);color:var(--muted)}
+  .step-title{font:400 var(--fs-xs) var(--font-ui);color:var(--muted);margin:0 0 12px;
+    text-transform:uppercase;letter-spacing:.09em}
+  .kv{display:flex;justify-content:space-between;font:300 12.5px var(--font-ui);color:var(--muted);margin:4px 0;gap:12px}
+  .kv b{color:var(--ink);font-weight:400;text-align:right}
+  /* TIMELINE de la decisión del despachador — la línea separadora muere; separa el aire */
+  #pista{font-family:var(--font-mono);font-size:11.5px;color:var(--muted);
+    max-height:260px;overflow:auto;margin-top:6px}
+  #pista .ev{padding:4px 0;border:0;display:flex;gap:8px}
+  #pista .ev .t{color:var(--muted);min-width:150px}
+  #pista .ev.found .t{color:var(--green)} #pista .ev.forge .t{color:var(--amber)}
+  #pista .ev.bad .t{color:var(--red)}
+  /* RESULTADO — los DOS desenlaces, sin conflar: el tinte los distingue, no el borde */
+  .result{border:0;border-radius:var(--r-lg);padding:18px 20px;margin:14px 0}
+  .result.registry{background:var(--green-bg)}
+  .result.forged{background:var(--accent-soft)}
+  .result h2{margin:0 0 6px;font:300 17px var(--font-ui)}
+  .result .lead{font:300 13px/1.5 var(--font-ui);color:var(--muted);margin:0 0 12px}
+  .result .lead b{color:var(--ink);font-weight:400}
+  /* el spinner SIN BORDE: un anillo de gradiente enmascarado, no una línea */
+  .spin{display:inline-block;width:13px;height:13px;border:0;border-radius:50%;
+    background:conic-gradient(from 0deg,transparent 0deg,var(--accent) 310deg);
+    -webkit-mask:radial-gradient(circle,transparent 3.4px,#000 4px);
+    mask:radial-gradient(circle,transparent 3.4px,#000 4px);
+    animation:s .7s linear infinite;vertical-align:-2px;margin-right:7px}
+  @keyframes s{to{transform:rotate(360deg)}}
+  .msg{font:300 13px var(--font-ui);margin-top:8px}
+  .msg b{font-weight:400;color:inherit}
+  .msg.bad{color:var(--red)} .msg.ok{color:var(--green)} .msg.warn{color:var(--amber)}
+</style>
+  <script src="./aleph-config.js"></script>
+  <script src="./vendor/supabase.min.js"></script>
+  <script src="./supabase-auth.js"></script>
+  <script src="./paywall.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <!-- el PLANO DE CONTENIDO (r30 + sombra ambiental) envuelve toda la pantalla -->
+  <div class="ds-plane">
+  <div class="brand"><div class="glyph">⌬</div><h1 class="ds-title">Conectar o forjar un servicio</h1></div>
+  <div class="sub ds-sub">Di el <b>nombre</b> de un servicio (o pega la URL de su API) y trae tu credencial.
+    Aleph <b>busca antes de forjar</b>: si ya existe un MCP <b>verificado</b> en el registry, lo trae
+    hecho (barato); si no existe, recién ahí <b>forja</b> uno desde cero con el Motor B.</div>
+
+  <div class="card">
+    <div class="step-title">1 · ¿Qué servicio quieres?</div>
+    <div class="field">
+      <label for="service">Nombre del servicio o URL de la API</label>
+      <input id="service" placeholder="stripe, github, notion…  ·  o https://api.tu-servicio.com" autocomplete="off">
+    </div>
+    <div class="grid2 field">
+      <div>
+        <label for="url">URL de la API <span style="text-transform:none">(para forjar si no existe)</span></label>
+        <input id="url" placeholder="https://api.tu-servicio.com  (opcional)" autocomplete="off">
+      </div>
+      <div>
+        <label for="credential">Tu credencial</label>
+        <input id="credential" type="password" placeholder="se cifra en el vault, nunca en claro" autocomplete="off">
+      </div>
+    </div>
+    <button id="go">Buscar &amp; conectar</button>
+  </div>
+
+  <!-- la PISTA: cómo decidió el despachador (resolver → encontrado | miss → forja) -->
+  <div id="pistaCard" class="card hidden">
+    <div class="step-title">2 · Qué está pasando</div>
+    <div id="estado" class="msg"></div>
+    <div id="pista"></div>
+  </div>
+
+  <!-- RESULTADO A · encontrado en el registry (equipado por el path 1-B, sin forjar) -->
+  <div id="resRegistry" class="result registry hidden">
+    <h2><span class="badge ok">✓ Encontrado en el registry</span></h2>
+    <p class="lead">Ya existía un MCP <b>verificado</b> para esto. Lo traje hecho y lo equipé — <b>sin forjar</b>.</p>
+    <div class="kv"><span>MCP</span><b class="mono" id="rg_server"></b></div>
+    <div class="kv"><span>Identidad</span><b id="rg_vendor"></b></div>
+    <div class="kv"><span>Belt equipada</span><b class="mono" id="rg_belt"></b></div>
+    <div class="step-title" style="margin:14px 0 0">Tools reales que trajo el MCP:</div>
+    <div id="rg_tools" class="tools"></div>
+  </div>
+
+  <!-- RESULTADO B · forjado nuevo (Motor B, desde cero) -->
+  <div id="resForged" class="result forged hidden">
+    <h2><span class="badge forge">✦ Forjado nuevo (Motor B)</span></h2>
+    <p class="lead">No existía un MCP verificado en el registry, así que <b>forjé uno desde cero</b>
+      inspeccionando la API en vivo.</p>
+    <div class="kv"><span>MCP forjado</span><b class="mono" id="fg_server"></b></div>
+    <div class="kv"><span>Belt forjada</span><b class="mono" id="fg_belt"></b></div>
+    <div class="step-title" style="margin:14px 0 0">Tools verificadas vivas y forjadas:</div>
+    <div id="fg_tools" class="tools"></div>
+  </div>
+  </div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const qs = new URLSearchParams(location.search);
+const TOKEN = qs.get('token') || localStorage.getItem('aleph_token') || '';
+const PUPPET = qs.get('puppet') || localStorage.getItem('aleph_puppet') || '';
+
+function authHeaders(){ const h={'Content-Type':'application/json'}; if(TOKEN) h['Authorization']='Bearer '+TOKEN; return h; }
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+const ORIGIN_CLASS = { 'resolver.encontrado':'found', 'mcp.equipado':'found',
+  'resolver.miss':'forge', 'dispatch.forjando':'forge', 'forge.iniciado':'forge',
+  'mcp.forjado':'forge', 'error':'bad' };
+
+function log(ev){
+  const row = document.createElement('div');
+  row.className = 'ev ' + (ORIGIN_CLASS[ev.type] || '');
+  const tag = ev.server || ev.server_name || ev.nombre || ev.url || ev.reason || '';
+  row.innerHTML = '<span class="t">'+esc(ev.type)+'</span><span>'+esc(String(tag).slice(0,90))+'</span>';
+  $('pista').appendChild(row); $('pista').scrollTop = $('pista').scrollHeight;
+}
+
+// lee un stream SSE servido por POST (EventSource sólo hace GET) → callback por evento.
+async function streamPost(url, body, onEvent){
+  const resp = await fetch(url, { method:'POST', headers:authHeaders(), body:JSON.stringify(body) });
+  if(!resp.ok || !resp.body){
+    let detail = 'HTTP '+resp.status;
+    try{ const j = await resp.json(); detail = (j.detail && (j.detail.detail||j.detail.error)) || JSON.stringify(j.detail||j); }catch(e){}
+    throw new Error(detail);
+  }
+  const reader = resp.body.getReader(), dec = new TextDecoder();
+  let buf = '', curType = null;
+  while(true){
+    const { value, done } = await reader.read();
+    if(done) break;
+    buf += dec.decode(value, { stream:true });
+    let idx;
+    while((idx = buf.indexOf('\n')) >= 0){
+      const line = buf.slice(0, idx).replace(/\r$/, ''); buf = buf.slice(idx+1);
+      if(line.startsWith('event:')) curType = line.slice(6).trim();
+      else if(line.startsWith('data:')){
+        const blob = line.slice(5).trim();
+        let ev; try{ ev = JSON.parse(blob); }catch(e){ ev = { type:curType, _raw:blob }; }
+        if(!ev.type) ev.type = curType;
+        onEvent(ev);
+      }
+    }
+  }
+}
+
+// EL DESPACHADOR desde la UI: arma el body del form (+ extra para verificación) y consume el
+// stream, pintando UNO de los dos desenlaces. Devuelve un resumen para los tests.
+async function runDispatch(extra){
+  extra = extra || {};
+  const body = {
+    service: extra.service || ($('service').value || '').trim(),
+    url: extra.url !== undefined ? extra.url : (($('url').value || '').trim() || null),
+    credential: extra.credential !== undefined ? extra.credential : (($('credential').value || '').trim() || null),
+    puppet_id: PUPPET || null,
+  };
+  // perillas del Motor B (camino forja) y hooks de verificación (sólo si el backend los habilita)
+  for(const k of ['forma','auth_in','auth_param','auth_header','auth_template','validate_path',
+    'validate_query','max_rounds','synth_alias','seed_candidates','seed_spec','seed_probes']){
+    if(extra[k] !== undefined) body[k] = extra[k];
+  }
+  if(!body.service){ $('estado').className='msg bad'; $('estado').textContent='Di el nombre de un servicio o pega una URL.'; return null; }
+
+  $('go').disabled = true;
+  $('pistaCard').classList.remove('hidden');
+  $('resRegistry').classList.add('hidden'); $('resForged').classList.add('hidden');
+  $('pista').innerHTML = '';
+  $('estado').className = 'msg'; $('estado').innerHTML = '<span class="spin"></span>consultando el registry (busca-antes-de-forjar)…';
+
+  const summary = { ok:false, path:null, origin:null, server:null, tools:[], events:[],
+    rejected_impostor:false, miss_reason:null };
+  try{
+    await streamPost('/v1/inspect/dispatch', body, ev => {
+      summary.events.push(ev.type);
+      log(ev);
+      if(ev.type === 'resolver.encontrado'){
+        $('estado').className='msg ok';
+        $('estado').innerHTML = '✓ <b>encontrado en el registry</b> ('+esc(ev.vendor_kind||'verificado')+') — equipando sin forjar…';
+      } else if(ev.type === 'resolver.miss'){
+        summary.rejected_impostor = !!ev.rejected_impostor; summary.miss_reason = ev.reason || '';
+        $('estado').className='msg warn';
+        $('estado').innerHTML = ev.rejected_impostor
+          ? '✗ <b>impostor rechazado por el resolver</b> — '+esc((ev.reason||'').slice(0,90))
+          : '· no hay MCP verificado en el registry — ' + ((body.url || /^https?:\/\//.test(body.service)) ? 'forjando desde cero…' : 'sin URL para forjar');
+      } else if(ev.type === 'dispatch.forjando'){
+        $('estado').className='msg warn';
+        $('estado').innerHTML = '<span class="spin"></span>✦ <b>forjando nuevo</b> con el Motor B (inspección en vivo)…';
+      } else if(ev.type === 'mcp.equipado'){
+        summary.origin='registry'; summary.server=ev.server; summary.tools=ev.tools||[];
+        $('rg_server').textContent = ev.server || '—';
+        $('rg_belt').textContent = ev.belt_ref || '—';
+        $('rg_tools').innerHTML = (ev.tools||[]).map(t => '<span class="tool">'+esc(t)+'</span>').join('');
+      } else if(ev.type === 'resolver.encontrado'){
+        $('rg_vendor').innerHTML = '<span class="badge ok">'+esc(ev.vendor_kind||'verificado')+'</span>';
+      } else if(ev.type === 'mcp.forjado'){
+        summary.origin='forged'; summary.server=ev.server; summary.tools=ev.tools||[];
+        $('fg_server').textContent = ev.server || '—';
+        $('fg_belt').textContent = ev.belt_ref || '—';
+        $('fg_tools').innerHTML = (ev.tools||[]).map(t => '<span class="tool">'+esc(t.name||t)+'</span>').join('');
+      } else if(ev.type === 'cerrado'){
+        summary.path = ev.path; summary.ok = !!ev.ok;
+      } else if(ev.type === 'error'){
+        // un impostor rechazado NO es un error de forja: mantené el veredicto del resolver.
+        if(summary.rejected_impostor){
+          $('estado').className='msg warn';
+          $('estado').innerHTML = '✗ <b>impostor rechazado por el resolver</b> — '+esc((summary.miss_reason||'').slice(0,90));
+        } else {
+          $('estado').className='msg bad';
+          $('estado').innerHTML = '✗ '+esc(ev.detail || ev.stage || 'error');
+        }
+      }
+    });
+    // pinta el desenlace correcto (sin conflar)
+    if(summary.origin === 'registry'){ $('resRegistry').classList.remove('hidden');
+      if($('estado').className.indexOf('bad')<0){ $('estado').className='msg ok'; $('estado').innerHTML='✓ listo · pieza traída del registry y equipada.'; } }
+    else if(summary.origin === 'forged'){ $('resForged').classList.remove('hidden');
+      $('estado').className='msg ok'; $('estado').innerHTML='✦ listo · MCP forjado desde cero y equipado.'; summary.ok = true; }
+  }catch(e){
+    $('estado').className='msg bad'; $('estado').textContent = '✗ '+e.message;
+  }finally{ $('go').disabled = false; }
+  return summary;
+}
+
+$('go').addEventListener('click', () => { runDispatch(); });
+$('service').addEventListener('keydown', e => { if(e.key==='Enter') runDispatch(); });
+// expuesto para verificación (Playwright pasa seed_candidates/seed_spec por extra)
+window.runDispatch = runDispatch;
+</script>
+</body>
+</html>

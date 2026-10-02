@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:#DED6C7;font-family:'Hanken Grotesk',system-ui,-apple-system,sans-serif;color:#2B2925;-webkit-font-smoothing:antialiased}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+  .orbit{transform-origin:32px 32px}
+</style>
+</helmet>
+
+<div style="min-height:100vh;padding:42px 40px 72px">
+  <div style="max-width:1180px;margin:0 auto">
+
+    <div style="font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#9A9082">Mascota · la órbita</div>
+    <h1 style="font-family:'Spectral',Georgia,serif;font-weight:600;font-size:31px;margin:8px 0 6px;letter-spacing:-.015em">Misma cara, distinta órbita</h1>
+    <p style="margin:0 0 38px;color:#6F6A60;font-size:14.5px;max-width:74ch;line-height:1.6">El hexágono plano clásico es fijo — lo que cambia es lo que gira a su alrededor. De tres órbitas cruzadas a un solo anillo tipo Saturno. Decime cuál te cierra y ahí sí lo dejamos definitivo.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px">
+
+      <!-- 1 · Tres órbitas -->
+      <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+        <div style="display:flex;align-items:center;justify-content:center;height:184px;background:#16172A">
+          <svg width="108" height="108" viewBox="0 0 64 64" fill="none" style="animation:bob 4.4s ease-in-out infinite">
+            <g class="orbit" style="animation:spin 13s linear infinite">
+              <g transform="rotate(0 32 32)"><ellipse cx="32" cy="32" rx="23" ry="9" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="55" cy="32" r="2.8" fill="#C9C6FF"></circle></g>
+              <g transform="rotate(60 32 32)"><ellipse cx="32" cy="32" rx="23" ry="9" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="55" cy="32" r="2.8" fill="#C9C6FF"></circle></g>
+              <g transform="rotate(120 32 32)"><ellipse cx="32" cy="32" rx="23" ry="9" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="55" cy="32" r="2.8" fill="#C9C6FF"></circle></g>
+            </g>
+            <path d="M32 20 L42.4 26 L42.4 38 L32 44 L21.6 38 L21.6 26 Z" fill="#8E8BF5" stroke="#8E8BF5" stroke-width="4" stroke-linejoin="round"></path>
+            <path d="M26.6 33 q2.4 -3 4.8 0" stroke="#211E3A" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+            <path d="M33.6 33 q2.4 -3 4.8 0" stroke="#211E3A" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+          </svg>
+        </div>
+        <div style="padding:14px 16px;border-top:1px solid #F0E8D8"><div style="font-family:'Spectral',serif;font-weight:600;font-size:16px">1 · Tres órbitas</div><div style="font-size:12.5px;color:#7C766B;line-height:1.5;margin-top:3px">El clásico, el más «átomo». Energético y rico.</div></div>
+      </div>
+
+      <!-- 2 · Dos órbitas -->
+      <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+        <div style="display:flex;align-items:center;justify-content:center;height:184px;background:#16172A">
+          <svg width="108" height="108" viewBox="0 0 64 64" fill="none" style="animation:bob 4.4s ease-in-out infinite">
+            <g class="orbit" style="animation:spin 12s linear infinite">
+              <g transform="rotate(35 32 32)"><ellipse cx="32" cy="32" rx="23" ry="8" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="55" cy="32" r="2.8" fill="#C9C6FF"></circle></g>
+              <g transform="rotate(-35 32 32)"><ellipse cx="32" cy="32" rx="23" ry="8" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="9" cy="32" r="2.8" fill="#C9C6FF"></circle></g>
+            </g>
+            <path d="M32 20 L42.4 26 L42.4 38 L32 44 L21.6 38 L21.6 26 Z" fill="#8E8BF5" stroke="#8E8BF5" stroke-width="4" stroke-linejoin="round"></path>
+            <path d="M26.6 33 q2.4 -3 4.8 0" stroke="#211E3A" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+            <path d="M33.6 33 q2.4 -3 4.8 0" stroke="#211E3A" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+          </svg>
+        </div>
+        <div style="padding:14px 16px;border-top:1px solid #F0E8D8"><div style="font-family:'Spectral',serif;font-weight:600;font-size:16px">2 · Dos órbitas</div><div style="font-size:12.5px;color:#7C766B;line-height:1.5;margin-top:3px">Una X suave. Equilibrado entre vivo y limpio.</div></div>
+      </div>
+
+      <!-- 3 · Una órbita -->
+      <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+        <div style="display:flex;align-items:center;justify-content:center;height:184px;background:#16172A">
+          <svg width="108" height="108" viewBox="0 0 64 64" fill="none" style="animation:bob 4.4s ease-in-out infinite">
+            <g class="orbit" style="animation:spin 9s linear infinite">
+              <g transform="rotate(-20 32 32)"><ellipse cx="32" cy="32" rx="24" ry="8" stroke="#6E6BD0" stroke-width="1.7"></ellipse><circle cx="56" cy="32" r="3" fill="#C9C6FF"></circle></g>
+            </g>
+            <path d="M32 20 L42.4 26 L42.4 38 L32 44 L21.6 38 L21.6 26 Z" fill="#8E8BF5" stroke="#8E8BF5" stroke-width="4" stroke-linejoin="round"></path>
+            <path d="M26.6 33 q2.4 -3 4.8 0" stroke="#211E3A" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+            <path d="M33.6 33 q2.4 -3 4.8 0" stroke="#211E3A" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+          </svg>
+        </div>
+        <div style="padding:14px 16px;border-top:1px solid #F0E8D8"><div style="font-family:'Spectral',serif;font-weight:600;font-size:16px">3 · Una órbita</div><div style="font-size:12.5px;color:#7C766B;line-height:1.5;margin-top:3px">Minimal y moderno. Perfecto a 16px.</div></div>
+      </div>
+
+      <!-- 4 · Anillo circular -->
+      <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+        <div style="display:flex;align-items:center;justify-content:center;height:184px;background:#16172A">
+          <svg width="108" height="108" viewBox="0 0 64 64" fill="none" style="animation:bob 4.4s ease-in-out infinite">
+            <g class="orbit" style="animation:spin 11s linear infinite">
+              <circle cx="32" cy="32" r="24" stroke="#6E6BD0" stroke-width="1.6"></circle>
+              <circle cx="56" cy="32" r="2.8" fill="#C9C6FF"></circle>
+              <circle cx="8" cy="32" r="2.8" fill="#C9C6FF"></circle>
+            </g>
+            <path d="M32 20 L42.4 26 L42.4 38 L32 44 L21.6 38 L21.6 26 Z" fill="#8E8BF5" stroke="#8E8BF5" stroke-width="4" stroke-linejoin="round"></path>
+            <path d="M26.6 33 q2.4 -3 4.8 0" stroke="#211E3A" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+            <path d="M33.6 33 q2.4 -3 4.8 0" stroke="#211E3A" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+          </svg>
+        </div>
+        <div style="padding:14px 16px;border-top:1px solid #F0E8D8"><div style="font-family:'Spectral',serif;font-weight:600;font-size:16px">4 · Anillo circular</div><div style="font-size:12.5px;color:#7C766B;line-height:1.5;margin-top:3px">Un círculo perfecto con dos cuentas. Geométrico y prolijo.</div></div>
+      </div>
+
+      <!-- 5 · Saturno -->
+      <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+        <div style="display:flex;align-items:center;justify-content:center;height:184px;background:#16172A">
+          <svg width="108" height="108" viewBox="0 0 64 64" fill="none" style="animation:bob 4.4s ease-in-out infinite">
+            <ellipse cx="32" cy="33" rx="26" ry="7" stroke="#6E6BD0" stroke-width="1.6" transform="rotate(-12 32 33)"></ellipse>
+            <path d="M32 20 L42.4 26 L42.4 38 L32 44 L21.6 38 L21.6 26 Z" fill="#8E8BF5" stroke="#8E8BF5" stroke-width="4" stroke-linejoin="round"></path>
+            <path d="M26.6 33 q2.4 -3 4.8 0" stroke="#211E3A" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+            <path d="M33.6 33 q2.4 -3 4.8 0" stroke="#211E3A" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+            <path d="M6.6 30.5 A26 7 -12 0 0 56.5 40" stroke="#8A87E0" stroke-width="1.6" fill="none"></path>
+            <circle cx="56.5" cy="27" r="2.6" fill="#C9C6FF"></circle>
+          </svg>
+        </div>
+        <div style="padding:14px 16px;border-top:1px solid #F0E8D8"><div style="font-family:'Spectral',serif;font-weight:600;font-size:16px">5 · Saturno</div><div style="font-size:12.5px;color:#7C766B;line-height:1.5;margin-top:3px">Un solo anillo que lo abraza. Distinto, planetario y cálido.</div></div>
+      </div>
+
+      <!-- 6 · Punteada -->
+      <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+        <div style="display:flex;align-items:center;justify-content:center;height:184px;background:#16172A">
+          <svg width="108" height="108" viewBox="0 0 64 64" fill="none" style="animation:bob 4.4s ease-in-out infinite">
+            <g class="orbit" style="animation:spin 16s linear infinite">
+              <g transform="rotate(0 32 32)"><ellipse cx="32" cy="32" rx="23" ry="9" stroke="#6E6BD0" stroke-width="1.5" stroke-dasharray="1.6 3.2"></ellipse><circle cx="55" cy="32" r="2.6" fill="#C9C6FF"></circle></g>
+              <g transform="rotate(60 32 32)"><ellipse cx="32" cy="32" rx="23" ry="9" stroke="#6E6BD0" stroke-width="1.5" stroke-dasharray="1.6 3.2"></ellipse><circle cx="55" cy="32" r="2.6" fill="#C9C6FF"></circle></g>
+              <g transform="rotate(120 32 32)"><ellipse cx="32" cy="32" rx="23" ry="9" stroke="#6E6BD0" stroke-width="1.5" stroke-dasharray="1.6 3.2"></ellipse><circle cx="55" cy="32" r="2.6" fill="#C9C6FF"></circle></g>
+            </g>
+            <path d="M32 20 L42.4 26 L42.4 38 L32 44 L21.6 38 L21.6 26 Z" fill="#8E8BF5" stroke="#8E8BF5" stroke-width="4" stroke-linejoin="round"></path>
+            <path d="M26.6 33 q2.4 -3 4.8 0" stroke="#211E3A" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+            <path d="M33.6 33 q2.4 -3 4.8 0" stroke="#211E3A" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+          </svg>
+        </div>
+        <div style="padding:14px 16px;border-top:1px solid #F0E8D8"><div style="font-family:'Spectral',serif;font-weight:600;font-size:16px">6 · Punteada</div><div style="font-size:12.5px;color:#7C766B;line-height:1.5;margin-top:3px">Órbitas de puntitos. Delicado, casi como datos girando.</div></div>
+      </div>
+
+    </div>
+
+    <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:38px;padding-top:24px;border-top:1px solid #CFC6B5">
+      <span style="font-size:13.5px;color:#6F6A60">¿Cuál órbita te cierra? Con eso fijo la mascota final + lockup «Puppet AI» + favicon.</span>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

@@ -1,0 +1,1158 @@
+{
+  "schema_version": 1,
+  "notice_files": [
+    "ATTRIBUTIONS.md",
+    "product/app/design/cuarto/vendor/pixi.LICENSE",
+    "product/app/design/vendor/mermaid.LICENSE",
+    "product/app/design/vendor/deep-chat.LICENSE",
+    "third_party/assistant-ui/LICENSE",
+    "third_party/ag-ui/LICENSE",
+    "third_party/openscience/LICENSE",
+    "third_party/openscience/NOTICE",
+    "third_party/dochaus/LICENSE",
+    "third_party/dochaus/ATTRIBUTIONS",
+    "third_party/codesign/LICENSE",
+    "third_party/codesign/NOTICE",
+    "third_party/deeptutor/LICENSE",
+    "third_party/vibetrading/LICENSE",
+    "third_party/vibetrading/NOTICE",
+    "third_party/openwork/LICENSE",
+    "third_party/officecli/LICENSE",
+    "third_party/officecli/NOTICE",
+    "third_party/officecli/THIRD-PARTY-NOTICES.txt",
+    "third_party/gws/LICENSE",
+    "third_party/opencode/LICENSE",
+    "third_party/ldr/LICENSE",
+    "third_party/vane/LICENSE",
+    "third_party/browser-use/LICENSE",
+    "product/app/design/vendor/fonts/hankengrotesk.OFL.txt",
+    "product/app/design/vendor/fonts/poppins.OFL.txt",
+    "product/app/design/vendor/fonts/newsreader.OFL.txt",
+    "product/app/design/vendor/fonts/spectral.OFL.txt",
+    "product/app/design/vendor/fonts/jetbrainsmono.OFL.txt",
+    "product/app/design/vendor/fonts/outfit.OFL.txt",
+    "product/app/design/vendor/fonts/instrumentserif.OFL.txt",
+    "third_party/openwork/apps/app/public/fonts/LICENSE",
+    "third_party/vibetrading/frontend/public/fonts/LICENSE",
+    "docs/licencias/CC-BY-4.0.txt"
+  ],
+  "resource_matrix": [
+    {
+      "resource": "third_party/assistant-ui",
+      "origin": "https://github.com/assistant-ui/assistant-ui",
+      "version_commit": "0ae51a8e8c4c49c4b8810b9c64845eeeded8b9bc",
+      "license": "MIT",
+      "required_notice": "Preserve LICENSE/copyright, NOTICE where present, third-party attribution and modification notices",
+      "local_evidence": [
+        "third_party/assistant-ui/IMPORT.md",
+        "third_party/assistant-ui/LICENSE"
+      ],
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "Local declared import/license; generated package verification pending"
+    },
+    {
+      "resource": "third_party/ag-ui",
+      "origin": "https://github.com/ag-ui-protocol/ag-ui",
+      "version_commit": "68b99d8bb8910cc624964818000f6b71cce4d66f",
+      "license": "MIT",
+      "required_notice": "Preserve LICENSE/copyright, NOTICE where present, third-party attribution and modification notices",
+      "local_evidence": [
+        "third_party/ag-ui/IMPORT.md",
+        "third_party/ag-ui/LICENSE"
+      ],
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "Local declared import/license; generated package verification pending"
+    },
+    {
+      "resource": "third_party/openscience",
+      "origin": "https://github.com/synthetic-sciences/openscience",
+      "version_commit": "edd585468549a0921be5b3b19cb6284d65d6b5d9",
+      "license": "Apache-2.0",
+      "required_notice": "Preserve LICENSE/copyright, NOTICE where present, third-party attribution and modification notices",
+      "local_evidence": [
+        "third_party/openscience/IMPORT.md",
+        "third_party/openscience/LICENSE",
+        "third_party/openscience/NOTICE"
+      ],
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "Local declared import/license; generated package verification pending"
+    },
+    {
+      "resource": "third_party/dochaus",
+      "origin": "https://github.com/sure-scale/doc-haus",
+      "version_commit": "f3cdfd15f7b675e651773b3f6a8ef9468f56ed14",
+      "license": "MIT + attributed CC BY4.0/public-domain materials",
+      "required_notice": "Preserve LICENSE/copyright, NOTICE where present, third-party attribution and modification notices",
+      "local_evidence": [
+        "third_party/dochaus/IMPORT.md",
+        "third_party/dochaus/LICENSE",
+        "third_party/dochaus/ATTRIBUTIONS"
+      ],
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "113 public blobs + explicit local deltas verified"
+    },
+    {
+      "resource": "third_party/codesign",
+      "origin": "https://github.com/OpenCoworkAI/open-codesign",
+      "version_commit": "b94d7156bf4aeb2c79892c91dc9934911a4e3741",
+      "license": "MIT",
+      "required_notice": "Preserve LICENSE/copyright, NOTICE where present, third-party attribution and modification notices",
+      "local_evidence": [
+        "third_party/codesign/IMPORT.md",
+        "third_party/codesign/LICENSE",
+        "third_party/codesign/NOTICE"
+      ],
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "Local declared import/license; generated package verification pending"
+    },
+    {
+      "resource": "third_party/deeptutor",
+      "origin": "https://github.com/HKUDS/DeepTutor",
+      "version_commit": "456f9c24226e008f1ff07a7e3455d7b4d39f6221",
+      "license": "Apache-2.0",
+      "required_notice": "Preserve LICENSE/copyright, NOTICE where present, third-party attribution and modification notices",
+      "local_evidence": [
+        "third_party/deeptutor/IMPORT.md",
+        "third_party/deeptutor/LICENSE"
+      ],
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "Local declared import/license; generated package verification pending"
+    },
+    {
+      "resource": "third_party/vibetrading",
+      "origin": "https://github.com/HKUDS/Vibe-Trading",
+      "version_commit": "281c87755f7a619ef41fa8804439909c6926034a",
+      "license": "MIT",
+      "required_notice": "Preserve LICENSE/copyright, NOTICE where present, third-party attribution and modification notices",
+      "local_evidence": [
+        "third_party/vibetrading/IMPORT.md",
+        "third_party/vibetrading/LICENSE",
+        "third_party/vibetrading/NOTICE",
+        "third_party/vibetrading/frontend/public/fonts/LICENSE"
+      ],
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "Local declared import/license; generated package verification pending"
+    },
+    {
+      "resource": "third_party/openwork",
+      "origin": "https://github.com/different-ai/openwork",
+      "version_commit": "fc8b43b530b468026760c5da4e13dbb9c2fd78a0",
+      "license": "MIT selected apps/packages, EE excluded",
+      "required_notice": "Preserve LICENSE/copyright, NOTICE where present, third-party attribution and modification notices",
+      "local_evidence": [
+        "third_party/openwork/IMPORT.md",
+        "third_party/openwork/LICENSE",
+        "third_party/openwork/apps/app/public/fonts/LICENSE"
+      ],
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "Local declared import/license; generated package verification pending"
+    },
+    {
+      "resource": "third_party/officecli",
+      "origin": "https://github.com/iOfficeAI/OfficeCLI",
+      "version_commit": "v1.0.145; tag commit e402d2853259177aba05ee6f79d38b7e1ff067ae; exact official macOS arm64 asset",
+      "license": "Apache-2.0",
+      "required_notice": "Preserve LICENSE/copyright, NOTICE where present, third-party attribution and modification notices",
+      "local_evidence": [
+        "third_party/officecli/IMPORT.md",
+        "third_party/officecli/UPSTREAM-IDENTITY.json",
+        "third_party/officecli/LICENSE",
+        "third_party/officecli/NOTICE",
+        "third_party/officecli/THIRD-PARTY-NOTICES.txt"
+      ],
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "A: unchanged local binary byte-identical to official v1.0.145 asset; 30 isolated MCP calls PASS per binary; source-to-binary rebuild not claimed",
+      "upstream_sha256": "d66763a563bc844c3cc67036ebc7c4a9caa9319b9592814d9acd3706da231fc1"
+    },
+    {
+      "resource": "third_party/gws",
+      "origin": "https://github.com/googleworkspace/cli",
+      "version_commit": "a3768d0e82ad83cca2da97724e46bea4ff0e6dbd / v0.22.5",
+      "license": "Apache-2.0",
+      "required_notice": "Preserve LICENSE/copyright, NOTICE where present, third-party attribution and modification notices",
+      "local_evidence": [
+        "third_party/gws/IMPORT.md",
+        "third_party/gws/LICENSE"
+      ],
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "Local declared import/license; generated package verification pending"
+    },
+    {
+      "resource": "third_party/opencode",
+      "origin": "https://github.com/anomalyco/opencode",
+      "version_commit": "v1.17.11",
+      "license": "MIT",
+      "required_notice": "Preserve LICENSE/copyright, NOTICE where present, third-party attribution and modification notices",
+      "local_evidence": [
+        "third_party/opencode/IMPORT.md",
+        "third_party/opencode/LICENSE"
+      ],
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "Local declared import/license; generated package verification pending"
+    },
+    {
+      "resource": "third_party/ldr",
+      "origin": "https://github.com/LearningCircuit/local-deep-research",
+      "version_commit": "a734d52913879b82783ddd54e1eacfe809de3c3b",
+      "license": "MIT",
+      "required_notice": "Preserve LICENSE/copyright, NOTICE where present, third-party attribution and modification notices",
+      "local_evidence": [
+        "third_party/ldr/IMPORT.md",
+        "third_party/ldr/LICENSE"
+      ],
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "Local declared import/license; generated package verification pending"
+    },
+    {
+      "resource": "third_party/vane",
+      "origin": "https://github.com/ItzCrazyKns/Vane",
+      "version_commit": "7dc5d088f7262fbc5e39037f84940a8a2193c5fb",
+      "license": "MIT",
+      "required_notice": "Preserve LICENSE/copyright, NOTICE where present, third-party attribution and modification notices",
+      "local_evidence": [
+        "third_party/vane/IMPORT.md",
+        "third_party/vane/LICENSE"
+      ],
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "Local declared import/license; generated package verification pending"
+    },
+    {
+      "resource": "third_party/browser-use",
+      "origin": "https://github.com/browser-use/browser-use",
+      "version_commit": "see local IMPORT.md",
+      "license": "MIT",
+      "required_notice": "Preserve LICENSE/copyright, NOTICE where present, third-party attribution and modification notices",
+      "local_evidence": [
+        "third_party/browser-use/IMPORT.md",
+        "third_party/browser-use/LICENSE"
+      ],
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "Local declared import/license; generated package verification pending"
+    },
+    {
+      "resource": "product/app/design/vendor/fonts/ieVn2YZDLWuGJpnzaiwFXS9tYtpQ59CxCis4UvI.woff2",
+      "origin": "https://fonts.gstatic.com/s/hankengrotesk/v12/ieVn2YZDLWuGJpnzaiwFXS9tYtpQ59CxCis4UvI.woff2",
+      "version_commit": "Google Fonts serving v12; internal font version 3.013",
+      "license": "OFL-1.1",
+      "required_notice": "product/app/design/vendor/fonts/hankengrotesk.OFL.txt",
+      "local_evidence": [
+        "product/app/design/vendor/fonts/ieVn2YZDLWuGJpnzaiwFXS9tYtpQ59CxCis4UvI.woff2",
+        "product/app/design/vendor/fonts/UPSTREAM-PROVENANCE.json",
+        "product/app/design/vendor/fonts/hankengrotesk.OFL.txt"
+      ],
+      "sha256": "2f52020a90793104e4178b0ae3ccd30eea28cac27e0fea8fcf4f246151777f74",
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "A — exact SHA256 match to official fonts.gstatic.com artifact; no font transformation",
+      "provenance_classification": "A",
+      "upstream_sha256": "2f52020a90793104e4178b0ae3ccd30eea28cac27e0fea8fcf4f246151777f74"
+    },
+    {
+      "resource": "product/app/design/vendor/fonts/ieVn2YZDLWuGJpnzaiwFXS9tYtpS59CxCis4UvI.woff2",
+      "origin": "https://fonts.gstatic.com/s/hankengrotesk/v12/ieVn2YZDLWuGJpnzaiwFXS9tYtpS59CxCis4UvI.woff2",
+      "version_commit": "Google Fonts serving v12; internal font version 3.013",
+      "license": "OFL-1.1",
+      "required_notice": "product/app/design/vendor/fonts/hankengrotesk.OFL.txt",
+      "local_evidence": [
+        "product/app/design/vendor/fonts/ieVn2YZDLWuGJpnzaiwFXS9tYtpS59CxCis4UvI.woff2",
+        "product/app/design/vendor/fonts/UPSTREAM-PROVENANCE.json",
+        "product/app/design/vendor/fonts/hankengrotesk.OFL.txt"
+      ],
+      "sha256": "2f467719b2167cc4778b5780a2fb42fadf5203b29d0fb5f1482bbab32b1b7999",
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "A — exact SHA256 match to official fonts.gstatic.com artifact; no font transformation",
+      "provenance_classification": "A",
+      "upstream_sha256": "2f467719b2167cc4778b5780a2fb42fadf5203b29d0fb5f1482bbab32b1b7999"
+    },
+    {
+      "resource": "product/app/design/vendor/fonts/ieVn2YZDLWuGJpnzaiwFXS9tYtpT59CxCis4UvI.woff2",
+      "origin": "https://fonts.gstatic.com/s/hankengrotesk/v12/ieVn2YZDLWuGJpnzaiwFXS9tYtpT59CxCis4UvI.woff2",
+      "version_commit": "Google Fonts serving v12; internal font version 3.013",
+      "license": "OFL-1.1",
+      "required_notice": "product/app/design/vendor/fonts/hankengrotesk.OFL.txt",
+      "local_evidence": [
+        "product/app/design/vendor/fonts/ieVn2YZDLWuGJpnzaiwFXS9tYtpT59CxCis4UvI.woff2",
+        "product/app/design/vendor/fonts/UPSTREAM-PROVENANCE.json",
+        "product/app/design/vendor/fonts/hankengrotesk.OFL.txt"
+      ],
+      "sha256": "a1376a563717f1efa2f5286ab23da2b61ae8dec827a77b97adfa01cad4ec4ee2",
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "A — exact SHA256 match to official fonts.gstatic.com artifact; no font transformation",
+      "provenance_classification": "A",
+      "upstream_sha256": "a1376a563717f1efa2f5286ab23da2b61ae8dec827a77b97adfa01cad4ec4ee2"
+    },
+    {
+      "resource": "product/app/design/vendor/fonts/ieVn2YZDLWuGJpnzaiwFXS9tYtpd59CxCis4.woff2",
+      "origin": "https://fonts.gstatic.com/s/hankengrotesk/v12/ieVn2YZDLWuGJpnzaiwFXS9tYtpd59CxCis4.woff2",
+      "version_commit": "Google Fonts serving v12; internal font version 3.013",
+      "license": "OFL-1.1",
+      "required_notice": "product/app/design/vendor/fonts/hankengrotesk.OFL.txt",
+      "local_evidence": [
+        "product/app/design/vendor/fonts/ieVn2YZDLWuGJpnzaiwFXS9tYtpd59CxCis4.woff2",
+        "product/app/design/vendor/fonts/UPSTREAM-PROVENANCE.json",
+        "product/app/design/vendor/fonts/hankengrotesk.OFL.txt"
+      ],
+      "sha256": "1f21c6eaa0000f3329cfcfac966b43d5bebf5aa610303e33294ac31bc6f4bb59",
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "A — exact SHA256 match to official fonts.gstatic.com artifact; no font transformation",
+      "provenance_classification": "A",
+      "upstream_sha256": "1f21c6eaa0000f3329cfcfac966b43d5bebf5aa610303e33294ac31bc6f4bb59"
+    },
+    {
+      "resource": "product/app/design/vendor/fonts/instrumentserif-60c06664.woff2",
+      "origin": "https://fonts.gstatic.com/s/instrumentserif/v5/jizBRFtNs2ka5fXjeivQ4LroWlx-6zUTjnTLgNs.woff2",
+      "version_commit": "Google Fonts serving v5; internal font version 1",
+      "license": "OFL-1.1",
+      "required_notice": "product/app/design/vendor/fonts/instrumentserif.OFL.txt",
+      "local_evidence": [
+        "product/app/design/vendor/fonts/instrumentserif-60c06664.woff2",
+        "product/app/design/vendor/fonts/UPSTREAM-PROVENANCE.json",
+        "product/app/design/vendor/fonts/instrumentserif.OFL.txt"
+      ],
+      "sha256": "60c06664b5a95c7de6cc3e00d1f9034d78bd1e40b564016b241674449a067d4d",
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "A — exact SHA256 match to official fonts.gstatic.com artifact; no font transformation",
+      "provenance_classification": "A",
+      "upstream_sha256": "60c06664b5a95c7de6cc3e00d1f9034d78bd1e40b564016b241674449a067d4d"
+    },
+    {
+      "resource": "product/app/design/vendor/fonts/instrumentserif-a8c4bd7c.woff2",
+      "origin": "https://fonts.gstatic.com/s/instrumentserif/v5/jizBRFtNs2ka5fXjeivQ4LroWlx-6zsTjnTLgNuZ5w.woff2",
+      "version_commit": "Google Fonts serving v5; internal font version 1",
+      "license": "OFL-1.1",
+      "required_notice": "product/app/design/vendor/fonts/instrumentserif.OFL.txt",
+      "local_evidence": [
+        "product/app/design/vendor/fonts/instrumentserif-a8c4bd7c.woff2",
+        "product/app/design/vendor/fonts/UPSTREAM-PROVENANCE.json",
+        "product/app/design/vendor/fonts/instrumentserif.OFL.txt"
+      ],
+      "sha256": "a8c4bd7cd7073180e740d2d83a616b5cb0845579b73207eeafeae8532e70c901",
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "A — exact SHA256 match to official fonts.gstatic.com artifact; no font transformation",
+      "provenance_classification": "A",
+      "upstream_sha256": "a8c4bd7cd7073180e740d2d83a616b5cb0845579b73207eeafeae8532e70c901"
+    },
+    {
+      "resource": "product/app/design/vendor/fonts/jetbrainsmono-2c32b9b3.woff2",
+      "origin": "https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxDcwgknk-4.woff2",
+      "version_commit": "Google Fonts serving v24; internal font version 2.210999",
+      "license": "OFL-1.1",
+      "required_notice": "product/app/design/vendor/fonts/jetbrainsmono.OFL.txt",
+      "local_evidence": [
+        "product/app/design/vendor/fonts/jetbrainsmono-2c32b9b3.woff2",
+        "product/app/design/vendor/fonts/UPSTREAM-PROVENANCE.json",
+        "product/app/design/vendor/fonts/jetbrainsmono.OFL.txt"
+      ],
+      "sha256": "2c32b9b3ee358c119e210f6f5195f9bd34894d78a785ff2e95d60e718e400af4",
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "A — exact SHA256 match to official fonts.gstatic.com artifact; no font transformation",
+      "provenance_classification": "A",
+      "upstream_sha256": "2c32b9b3ee358c119e210f6f5195f9bd34894d78a785ff2e95d60e718e400af4"
+    },
+    {
+      "resource": "product/app/design/vendor/fonts/jetbrainsmono-4995a9a4.woff2",
+      "origin": "https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxTcwgknk-6nFg.woff2",
+      "version_commit": "Google Fonts serving v24; internal font version 2.210999",
+      "license": "OFL-1.1",
+      "required_notice": "product/app/design/vendor/fonts/jetbrainsmono.OFL.txt",
+      "local_evidence": [
+        "product/app/design/vendor/fonts/jetbrainsmono-4995a9a4.woff2",
+        "product/app/design/vendor/fonts/UPSTREAM-PROVENANCE.json",
+        "product/app/design/vendor/fonts/jetbrainsmono.OFL.txt"
+      ],
+      "sha256": "4995a9a43ac659ec32fcd8b463755cd6a07b31a6e6b3894a6a153b661cf490e2",
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "A — exact SHA256 match to official fonts.gstatic.com artifact; no font transformation",
+      "provenance_classification": "A",
+      "upstream_sha256": "4995a9a43ac659ec32fcd8b463755cd6a07b31a6e6b3894a6a153b661cf490e2"
+    },
+    {
+      "resource": "product/app/design/vendor/fonts/jetbrainsmono-49c3da6c.woff2",
+      "origin": "https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxPcwgknk-6nFg.woff2",
+      "version_commit": "Google Fonts serving v24; internal font version 2.210999",
+      "license": "OFL-1.1",
+      "required_notice": "product/app/design/vendor/fonts/jetbrainsmono.OFL.txt",
+      "local_evidence": [
+        "product/app/design/vendor/fonts/jetbrainsmono-49c3da6c.woff2",
+        "product/app/design/vendor/fonts/UPSTREAM-PROVENANCE.json",
+        "product/app/design/vendor/fonts/jetbrainsmono.OFL.txt"
+      ],
+      "sha256": "49c3da6c9a2b279b0f1f860f5cfb1f5dc38d88a5c7be9c9b1837bbc4e3db6111",
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "A — exact SHA256 match to official fonts.gstatic.com artifact; no font transformation",
+      "provenance_classification": "A",
+      "upstream_sha256": "49c3da6c9a2b279b0f1f860f5cfb1f5dc38d88a5c7be9c9b1837bbc4e3db6111"
+    },
+    {
+      "resource": "product/app/design/vendor/fonts/jetbrainsmono-9343de2c.woff2",
+      "origin": "https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPx3cwgknk-6nFg.woff2",
+      "version_commit": "Google Fonts serving v24; internal font version 2.210999",
+      "license": "OFL-1.1",
+      "required_notice": "product/app/design/vendor/fonts/jetbrainsmono.OFL.txt",
+      "local_evidence": [
+        "product/app/design/vendor/fonts/jetbrainsmono-9343de2c.woff2",
+        "product/app/design/vendor/fonts/UPSTREAM-PROVENANCE.json",
+        "product/app/design/vendor/fonts/jetbrainsmono.OFL.txt"
+      ],
+      "sha256": "9343de2ca5d9549f792e7962375af8efb0f320c7643bfd36c884b5a30e5c396f",
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "A — exact SHA256 match to official fonts.gstatic.com artifact; no font transformation",
+      "provenance_classification": "A",
+      "upstream_sha256": "9343de2ca5d9549f792e7962375af8efb0f320c7643bfd36c884b5a30e5c396f"
+    },
+    {
+      "resource": "product/app/design/vendor/fonts/jetbrainsmono-9c38cb2d.woff2",
+      "origin": "https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPx7cwgknk-6nFg.woff2",
+      "version_commit": "Google Fonts serving v24; internal font version 2.210999",
+      "license": "OFL-1.1",
+      "required_notice": "product/app/design/vendor/fonts/jetbrainsmono.OFL.txt",
+      "local_evidence": [
+        "product/app/design/vendor/fonts/jetbrainsmono-9c38cb2d.woff2",
+        "product/app/design/vendor/fonts/UPSTREAM-PROVENANCE.json",
+        "product/app/design/vendor/fonts/jetbrainsmono.OFL.txt"
+      ],
+      "sha256": "9c38cb2d0d2d93c1ee6e21fa78db76f13ea7e15e15cc64214c7ca89b6aaa35c4",
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "A — exact SHA256 match to official fonts.gstatic.com artifact; no font transformation",
+      "provenance_classification": "A",
+      "upstream_sha256": "9c38cb2d0d2d93c1ee6e21fa78db76f13ea7e15e15cc64214c7ca89b6aaa35c4"
+    },
+    {
+      "resource": "product/app/design/vendor/fonts/jetbrainsmono-d44eb193.woff2",
+      "origin": "https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPx_cwgknk-6nFg.woff2",
+      "version_commit": "Google Fonts serving v24; internal font version 2.210999",
+      "license": "OFL-1.1",
+      "required_notice": "product/app/design/vendor/fonts/jetbrainsmono.OFL.txt",
+      "local_evidence": [
+        "product/app/design/vendor/fonts/jetbrainsmono-d44eb193.woff2",
+        "product/app/design/vendor/fonts/UPSTREAM-PROVENANCE.json",
+        "product/app/design/vendor/fonts/jetbrainsmono.OFL.txt"
+      ],
+      "sha256": "d44eb1936043a56038eb02dd70b243f379bef65783f94ec12f277550720411f1",
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "A — exact SHA256 match to official fonts.gstatic.com artifact; no font transformation",
+      "provenance_classification": "A",
+      "upstream_sha256": "d44eb1936043a56038eb02dd70b243f379bef65783f94ec12f277550720411f1"
+    },
+    {
+      "resource": "product/app/design/vendor/fonts/newsreader-2879c96c.woff2",
+      "origin": "https://fonts.gstatic.com/s/newsreader/v26/cY9AfjOCX1hbuyalUrK439HyjIJFJpeBZQ.woff2",
+      "version_commit": "Google Fonts serving v26; internal font version 1.003006",
+      "license": "OFL-1.1",
+      "required_notice": "product/app/design/vendor/fonts/newsreader.OFL.txt",
+      "local_evidence": [
+        "product/app/design/vendor/fonts/newsreader-2879c96c.woff2",
+        "product/app/design/vendor/fonts/UPSTREAM-PROVENANCE.json",
+        "product/app/design/vendor/fonts/newsreader.OFL.txt"
+      ],
+      "sha256": "68ef9a14f1462e2218ecd03c39d26236402ff6a9e78da39ba5591a430a229824",
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "A — exact SHA256 match to official fonts.gstatic.com artifact; no font transformation",
+      "provenance_classification": "A",
+      "upstream_sha256": "68ef9a14f1462e2218ecd03c39d26236402ff6a9e78da39ba5591a430a229824"
+    },
+    {
+      "resource": "product/app/design/vendor/fonts/newsreader-4aa9bb70.woff2",
+      "origin": "https://fonts.gstatic.com/s/newsreader/v26/cY9AfjOCX1hbuyalUrK4397yjIJFJpc.woff2",
+      "version_commit": "Google Fonts serving v26; internal font version 1.003006",
+      "license": "OFL-1.1",
+      "required_notice": "product/app/design/vendor/fonts/newsreader.OFL.txt",
+      "local_evidence": [
+        "product/app/design/vendor/fonts/newsreader-4aa9bb70.woff2",
+        "product/app/design/vendor/fonts/UPSTREAM-PROVENANCE.json",
+        "product/app/design/vendor/fonts/newsreader.OFL.txt"
+      ],
+      "sha256": "01817351be3edfc1714fe6d60ddea6a22a169a5ebd033b50c7f9495e5d9c386a",
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "A — exact SHA256 match to official fonts.gstatic.com artifact; no font transformation",
+      "provenance_classification": "A",
+      "upstream_sha256": "01817351be3edfc1714fe6d60ddea6a22a169a5ebd033b50c7f9495e5d9c386a"
+    },
+    {
+      "resource": "product/app/design/vendor/fonts/newsreader-997f7492.woff2",
+      "origin": "https://fonts.gstatic.com/s/newsreader/v26/cY9AfjOCX1hbuyalUrK439DyjIJFJpeBZQ.woff2",
+      "version_commit": "Google Fonts serving v26; internal font version 1.003006",
+      "license": "OFL-1.1",
+      "required_notice": "product/app/design/vendor/fonts/newsreader.OFL.txt",
+      "local_evidence": [
+        "product/app/design/vendor/fonts/newsreader-997f7492.woff2",
+        "product/app/design/vendor/fonts/UPSTREAM-PROVENANCE.json",
+        "product/app/design/vendor/fonts/newsreader.OFL.txt"
+      ],
+      "sha256": "cbca001188852d514d8654be7ddc97868f039bdf986b926ec5c985c117853cfd",
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "A — exact SHA256 match to official fonts.gstatic.com artifact; no font transformation",
+      "provenance_classification": "A",
+      "upstream_sha256": "cbca001188852d514d8654be7ddc97868f039bdf986b926ec5c985c117853cfd"
+    },
+    {
+      "resource": "product/app/design/vendor/fonts/outfit-74499760.woff2",
+      "origin": "https://fonts.gstatic.com/s/outfit/v15/QGYvz_MVcBeNP4NJuktqUYLkn8BJ.woff2",
+      "version_commit": "Google Fonts serving v15; internal font version 1.100006",
+      "license": "OFL-1.1",
+      "required_notice": "product/app/design/vendor/fonts/outfit.OFL.txt",
+      "local_evidence": [
+        "product/app/design/vendor/fonts/outfit-74499760.woff2",
+        "product/app/design/vendor/fonts/UPSTREAM-PROVENANCE.json",
+        "product/app/design/vendor/fonts/outfit.OFL.txt"
+      ],
+      "sha256": "9e38b3f1575daba3435ef09d33a202585ed5bd204bd0a8c744955c750c2b9091",
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "A — exact SHA256 match to official fonts.gstatic.com artifact; no font transformation",
+      "provenance_classification": "A",
+      "upstream_sha256": "9e38b3f1575daba3435ef09d33a202585ed5bd204bd0a8c744955c750c2b9091"
+    },
+    {
+      "resource": "product/app/design/vendor/fonts/outfit-ebadd8b7.woff2",
+      "origin": "https://fonts.gstatic.com/s/outfit/v15/QGYvz_MVcBeNP4NJtEtqUYLknw.woff2",
+      "version_commit": "Google Fonts serving v15; internal font version 1.100006",
+      "license": "OFL-1.1",
+      "required_notice": "product/app/design/vendor/fonts/outfit.OFL.txt",
+      "local_evidence": [
+        "product/app/design/vendor/fonts/outfit-ebadd8b7.woff2",
+        "product/app/design/vendor/fonts/UPSTREAM-PROVENANCE.json",
+        "product/app/design/vendor/fonts/outfit.OFL.txt"
+      ],
+      "sha256": "92684e4acde79ef07758cd09380b7e01e9824d8b061eddeda046f78c166d7b12",
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "A — exact SHA256 match to official fonts.gstatic.com artifact; no font transformation",
+      "provenance_classification": "A",
+      "upstream_sha256": "92684e4acde79ef07758cd09380b7e01e9824d8b061eddeda046f78c166d7b12"
+    },
+    {
+      "resource": "product/app/design/vendor/fonts/poppins-1fae5e73.woff2",
+      "origin": "https://fonts.gstatic.com/s/poppins/v24/pxiEyp8kv8JHgFVrJJnecnFHGPezSQ.woff2",
+      "version_commit": "Google Fonts serving v24; internal font version 4.003998",
+      "license": "OFL-1.1",
+      "required_notice": "product/app/design/vendor/fonts/poppins.OFL.txt",
+      "local_evidence": [
+        "product/app/design/vendor/fonts/poppins-1fae5e73.woff2",
+        "product/app/design/vendor/fonts/UPSTREAM-PROVENANCE.json",
+        "product/app/design/vendor/fonts/poppins.OFL.txt"
+      ],
+      "sha256": "1fae5e73d2788ee1dea1d76eca3a9f157a0386de6be8c280d076a53a64c358a1",
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "A — exact SHA256 match to official fonts.gstatic.com artifact; no font transformation",
+      "provenance_classification": "A",
+      "upstream_sha256": "1fae5e73d2788ee1dea1d76eca3a9f157a0386de6be8c280d076a53a64c358a1"
+    },
+    {
+      "resource": "product/app/design/vendor/fonts/poppins-23617a1b.woff2",
+      "origin": "https://fonts.gstatic.com/s/poppins/v24/pxiEyp8kv8JHgFVrJJbecnFHGPezSQ.woff2",
+      "version_commit": "Google Fonts serving v24; internal font version 4.003998",
+      "license": "OFL-1.1",
+      "required_notice": "product/app/design/vendor/fonts/poppins.OFL.txt",
+      "local_evidence": [
+        "product/app/design/vendor/fonts/poppins-23617a1b.woff2",
+        "product/app/design/vendor/fonts/UPSTREAM-PROVENANCE.json",
+        "product/app/design/vendor/fonts/poppins.OFL.txt"
+      ],
+      "sha256": "23617a1bf667dd6a29e2724ac6595e75924549d1c25e8672e2346ef38bc9984a",
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "A — exact SHA256 match to official fonts.gstatic.com artifact; no font transformation",
+      "provenance_classification": "A",
+      "upstream_sha256": "23617a1bf667dd6a29e2724ac6595e75924549d1c25e8672e2346ef38bc9984a"
+    },
+    {
+      "resource": "product/app/design/vendor/fonts/poppins-244dd57d.woff2",
+      "origin": "https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLFj_Z1xlFd2JQEk.woff2",
+      "version_commit": "Google Fonts serving v24; internal font version 4.003998",
+      "license": "OFL-1.1",
+      "required_notice": "product/app/design/vendor/fonts/poppins.OFL.txt",
+      "local_evidence": [
+        "product/app/design/vendor/fonts/poppins-244dd57d.woff2",
+        "product/app/design/vendor/fonts/UPSTREAM-PROVENANCE.json",
+        "product/app/design/vendor/fonts/poppins.OFL.txt"
+      ],
+      "sha256": "244dd57da310b3fe9a789ef87179bb433b8628016354c4ce80896fd7e4e53968",
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "A — exact SHA256 match to official fonts.gstatic.com artifact; no font transformation",
+      "provenance_classification": "A",
+      "upstream_sha256": "244dd57da310b3fe9a789ef87179bb433b8628016354c4ce80896fd7e4e53968"
+    },
+    {
+      "resource": "product/app/design/vendor/fonts/poppins-289e0afc.woff2",
+      "origin": "https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLGT9Z1xlFd2JQEk.woff2",
+      "version_commit": "Google Fonts serving v24; internal font version 4.003998",
+      "license": "OFL-1.1",
+      "required_notice": "product/app/design/vendor/fonts/poppins.OFL.txt",
+      "local_evidence": [
+        "product/app/design/vendor/fonts/poppins-289e0afc.woff2",
+        "product/app/design/vendor/fonts/UPSTREAM-PROVENANCE.json",
+        "product/app/design/vendor/fonts/poppins.OFL.txt"
+      ],
+      "sha256": "289e0afc8be731a86822349e54557296f145926496bd2138db1bac0db77f77a2",
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "A — exact SHA256 match to official fonts.gstatic.com artifact; no font transformation",
+      "provenance_classification": "A",
+      "upstream_sha256": "289e0afc8be731a86822349e54557296f145926496bd2138db1bac0db77f77a2"
+    },
+    {
+      "resource": "product/app/design/vendor/fonts/poppins-3dc5d0c5.woff2",
+      "origin": "https://fonts.gstatic.com/s/poppins/v24/pxiEyp8kv8JHgFVrJJfecnFHGPc.woff2",
+      "version_commit": "Google Fonts serving v24; internal font version 4.003998",
+      "license": "OFL-1.1",
+      "required_notice": "product/app/design/vendor/fonts/poppins.OFL.txt",
+      "local_evidence": [
+        "product/app/design/vendor/fonts/poppins-3dc5d0c5.woff2",
+        "product/app/design/vendor/fonts/UPSTREAM-PROVENANCE.json",
+        "product/app/design/vendor/fonts/poppins.OFL.txt"
+      ],
+      "sha256": "3dc5d0c52428fe1696264907a1054ebbaac07f8cbe45832c105f819c2ae397c0",
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "A — exact SHA256 match to official fonts.gstatic.com artifact; no font transformation",
+      "provenance_classification": "A",
+      "upstream_sha256": "3dc5d0c52428fe1696264907a1054ebbaac07f8cbe45832c105f819c2ae397c0"
+    },
+    {
+      "resource": "product/app/design/vendor/fonts/poppins-45d9ed43.woff2",
+      "origin": "https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLFj_Z1JlFd2JQEl8qw.woff2",
+      "version_commit": "Google Fonts serving v24; internal font version 4.003998",
+      "license": "OFL-1.1",
+      "required_notice": "product/app/design/vendor/fonts/poppins.OFL.txt",
+      "local_evidence": [
+        "product/app/design/vendor/fonts/poppins-45d9ed43.woff2",
+        "product/app/design/vendor/fonts/UPSTREAM-PROVENANCE.json",
+        "product/app/design/vendor/fonts/poppins.OFL.txt"
+      ],
+      "sha256": "45d9ed43e433b923a0c0498dc68131e0d4bd27893169ffcb102b78ad76cf7b82",
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "A — exact SHA256 match to official fonts.gstatic.com artifact; no font transformation",
+      "provenance_classification": "A",
+      "upstream_sha256": "45d9ed43e433b923a0c0498dc68131e0d4bd27893169ffcb102b78ad76cf7b82"
+    },
+    {
+      "resource": "product/app/design/vendor/fonts/poppins-643e38d8.woff2",
+      "origin": "https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLDz8Z1xlFd2JQEk.woff2",
+      "version_commit": "Google Fonts serving v24; internal font version 4.003998",
+      "license": "OFL-1.1",
+      "required_notice": "product/app/design/vendor/fonts/poppins.OFL.txt",
+      "local_evidence": [
+        "product/app/design/vendor/fonts/poppins-643e38d8.woff2",
+        "product/app/design/vendor/fonts/UPSTREAM-PROVENANCE.json",
+        "product/app/design/vendor/fonts/poppins.OFL.txt"
+      ],
+      "sha256": "643e38d8c288a1da34a14a68a5012441929108d50054414ce8cc33fad36a2354",
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "A — exact SHA256 match to official fonts.gstatic.com artifact; no font transformation",
+      "provenance_classification": "A",
+      "upstream_sha256": "643e38d8c288a1da34a14a68a5012441929108d50054414ce8cc33fad36a2354"
+    },
+    {
+      "resource": "product/app/design/vendor/fonts/poppins-9c8c47ee.woff2",
+      "origin": "https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLGT9Z11lFd2JQEl8qw.woff2",
+      "version_commit": "Google Fonts serving v24; internal font version 4.003998",
+      "license": "OFL-1.1",
+      "required_notice": "product/app/design/vendor/fonts/poppins.OFL.txt",
+      "local_evidence": [
+        "product/app/design/vendor/fonts/poppins-9c8c47ee.woff2",
+        "product/app/design/vendor/fonts/UPSTREAM-PROVENANCE.json",
+        "product/app/design/vendor/fonts/poppins.OFL.txt"
+      ],
+      "sha256": "9c8c47ee0aeaa2d378f4e5d5719ecbf05a601a35c285d0d48b888106bb15cf49",
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "A — exact SHA256 match to official fonts.gstatic.com artifact; no font transformation",
+      "provenance_classification": "A",
+      "upstream_sha256": "9c8c47ee0aeaa2d378f4e5d5719ecbf05a601a35c285d0d48b888106bb15cf49"
+    },
+    {
+      "resource": "product/app/design/vendor/fonts/poppins-a17766e2.woff2",
+      "origin": "https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLFj_Z11lFd2JQEl8qw.woff2",
+      "version_commit": "Google Fonts serving v24; internal font version 4.003998",
+      "license": "OFL-1.1",
+      "required_notice": "product/app/design/vendor/fonts/poppins.OFL.txt",
+      "local_evidence": [
+        "product/app/design/vendor/fonts/poppins-a17766e2.woff2",
+        "product/app/design/vendor/fonts/UPSTREAM-PROVENANCE.json",
+        "product/app/design/vendor/fonts/poppins.OFL.txt"
+      ],
+      "sha256": "a17766e20e5ec85b66150bc637ed9f4f1de7f6b75dc012444c0ec8a312b3a21c",
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "A — exact SHA256 match to official fonts.gstatic.com artifact; no font transformation",
+      "provenance_classification": "A",
+      "upstream_sha256": "a17766e20e5ec85b66150bc637ed9f4f1de7f6b75dc012444c0ec8a312b3a21c"
+    },
+    {
+      "resource": "product/app/design/vendor/fonts/poppins-c2857fb5.woff2",
+      "origin": "https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLDz8Z1JlFd2JQEl8qw.woff2",
+      "version_commit": "Google Fonts serving v24; internal font version 4.003998",
+      "license": "OFL-1.1",
+      "required_notice": "product/app/design/vendor/fonts/poppins.OFL.txt",
+      "local_evidence": [
+        "product/app/design/vendor/fonts/poppins-c2857fb5.woff2",
+        "product/app/design/vendor/fonts/UPSTREAM-PROVENANCE.json",
+        "product/app/design/vendor/fonts/poppins.OFL.txt"
+      ],
+      "sha256": "c2857fb5c3f971df45e8c2764709acbcc5c6d60b9e47d945ae2e7bc51415afeb",
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "A — exact SHA256 match to official fonts.gstatic.com artifact; no font transformation",
+      "provenance_classification": "A",
+      "upstream_sha256": "c2857fb5c3f971df45e8c2764709acbcc5c6d60b9e47d945ae2e7bc51415afeb"
+    },
+    {
+      "resource": "product/app/design/vendor/fonts/poppins-f019bf8f.woff2",
+      "origin": "https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLDz8Z11lFd2JQEl8qw.woff2",
+      "version_commit": "Google Fonts serving v24; internal font version 4.003998",
+      "license": "OFL-1.1",
+      "required_notice": "product/app/design/vendor/fonts/poppins.OFL.txt",
+      "local_evidence": [
+        "product/app/design/vendor/fonts/poppins-f019bf8f.woff2",
+        "product/app/design/vendor/fonts/UPSTREAM-PROVENANCE.json",
+        "product/app/design/vendor/fonts/poppins.OFL.txt"
+      ],
+      "sha256": "f019bf8fa642981b9f12647688e825ccad3522d51f2f2859b1af372d5dc1ac31",
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "A — exact SHA256 match to official fonts.gstatic.com artifact; no font transformation",
+      "provenance_classification": "A",
+      "upstream_sha256": "f019bf8fa642981b9f12647688e825ccad3522d51f2f2859b1af372d5dc1ac31"
+    },
+    {
+      "resource": "product/app/design/vendor/fonts/poppins-f8f0c286.woff2",
+      "origin": "https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLGT9Z1JlFd2JQEl8qw.woff2",
+      "version_commit": "Google Fonts serving v24; internal font version 4.003998",
+      "license": "OFL-1.1",
+      "required_notice": "product/app/design/vendor/fonts/poppins.OFL.txt",
+      "local_evidence": [
+        "product/app/design/vendor/fonts/poppins-f8f0c286.woff2",
+        "product/app/design/vendor/fonts/UPSTREAM-PROVENANCE.json",
+        "product/app/design/vendor/fonts/poppins.OFL.txt"
+      ],
+      "sha256": "f8f0c28661c88edbcee022a4a80657619e8931af8c2a47c28e230307e2af30e5",
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "A — exact SHA256 match to official fonts.gstatic.com artifact; no font transformation",
+      "provenance_classification": "A",
+      "upstream_sha256": "f8f0c28661c88edbcee022a4a80657619e8931af8c2a47c28e230307e2af30e5"
+    },
+    {
+      "resource": "product/app/design/vendor/fonts/rnCr-xNNww_2s0amA9M0knjsS_ulYHs.woff2",
+      "origin": "https://fonts.gstatic.com/s/spectral/v15/rnCr-xNNww_2s0amA9M0knjsS_ulYHs.woff2",
+      "version_commit": "Google Fonts serving v15; internal font version 2.005005",
+      "license": "OFL-1.1",
+      "required_notice": "product/app/design/vendor/fonts/spectral.OFL.txt",
+      "local_evidence": [
+        "product/app/design/vendor/fonts/rnCr-xNNww_2s0amA9M0knjsS_ulYHs.woff2",
+        "product/app/design/vendor/fonts/UPSTREAM-PROVENANCE.json",
+        "product/app/design/vendor/fonts/spectral.OFL.txt"
+      ],
+      "sha256": "9d95c480ed17a573649ca7c3dad392239dfd7bec6daf3fa86ef229d5ba2f696a",
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "A — exact SHA256 match to official fonts.gstatic.com artifact; no font transformation",
+      "provenance_classification": "A",
+      "upstream_sha256": "9d95c480ed17a573649ca7c3dad392239dfd7bec6daf3fa86ef229d5ba2f696a"
+    },
+    {
+      "resource": "product/app/design/vendor/fonts/rnCr-xNNww_2s0amA9M2knjsS_ulYHs.woff2",
+      "origin": "https://fonts.gstatic.com/s/spectral/v15/rnCr-xNNww_2s0amA9M2knjsS_ulYHs.woff2",
+      "version_commit": "Google Fonts serving v15; internal font version 2.005005",
+      "license": "OFL-1.1",
+      "required_notice": "product/app/design/vendor/fonts/spectral.OFL.txt",
+      "local_evidence": [
+        "product/app/design/vendor/fonts/rnCr-xNNww_2s0amA9M2knjsS_ulYHs.woff2",
+        "product/app/design/vendor/fonts/UPSTREAM-PROVENANCE.json",
+        "product/app/design/vendor/fonts/spectral.OFL.txt"
+      ],
+      "sha256": "ae7786642b55f76c12636756c694d0ec6d8bc90aca2965a6c1c68e3222307379",
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "A — exact SHA256 match to official fonts.gstatic.com artifact; no font transformation",
+      "provenance_classification": "A",
+      "upstream_sha256": "ae7786642b55f76c12636756c694d0ec6d8bc90aca2965a6c1c68e3222307379"
+    },
+    {
+      "resource": "product/app/design/vendor/fonts/rnCr-xNNww_2s0amA9M3knjsS_ulYHs.woff2",
+      "origin": "https://fonts.gstatic.com/s/spectral/v15/rnCr-xNNww_2s0amA9M3knjsS_ulYHs.woff2",
+      "version_commit": "Google Fonts serving v15; internal font version 2.005005",
+      "license": "OFL-1.1",
+      "required_notice": "product/app/design/vendor/fonts/spectral.OFL.txt",
+      "local_evidence": [
+        "product/app/design/vendor/fonts/rnCr-xNNww_2s0amA9M3knjsS_ulYHs.woff2",
+        "product/app/design/vendor/fonts/UPSTREAM-PROVENANCE.json",
+        "product/app/design/vendor/fonts/spectral.OFL.txt"
+      ],
+      "sha256": "a62b9bdf669d8fb395c8685321cbf86c2f2bc324e0b28ecf867a036095383d49",
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "A — exact SHA256 match to official fonts.gstatic.com artifact; no font transformation",
+      "provenance_classification": "A",
+      "upstream_sha256": "a62b9bdf669d8fb395c8685321cbf86c2f2bc324e0b28ecf867a036095383d49"
+    },
+    {
+      "resource": "product/app/design/vendor/fonts/rnCr-xNNww_2s0amA9M5knjsS_ul.woff2",
+      "origin": "https://fonts.gstatic.com/s/spectral/v15/rnCr-xNNww_2s0amA9M5knjsS_ul.woff2",
+      "version_commit": "Google Fonts serving v15; internal font version 2.005005",
+      "license": "OFL-1.1",
+      "required_notice": "product/app/design/vendor/fonts/spectral.OFL.txt",
+      "local_evidence": [
+        "product/app/design/vendor/fonts/rnCr-xNNww_2s0amA9M5knjsS_ul.woff2",
+        "product/app/design/vendor/fonts/UPSTREAM-PROVENANCE.json",
+        "product/app/design/vendor/fonts/spectral.OFL.txt"
+      ],
+      "sha256": "bcb83e9c56d40c5111a2bdbc3d8bdabf66bd31337e968f1c223b61879b8d3cad",
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "A — exact SHA256 match to official fonts.gstatic.com artifact; no font transformation",
+      "provenance_classification": "A",
+      "upstream_sha256": "bcb83e9c56d40c5111a2bdbc3d8bdabf66bd31337e968f1c223b61879b8d3cad"
+    },
+    {
+      "resource": "product/app/design/vendor/fonts/rnCr-xNNww_2s0amA9M9knjsS_ulYHs.woff2",
+      "origin": "https://fonts.gstatic.com/s/spectral/v15/rnCr-xNNww_2s0amA9M9knjsS_ulYHs.woff2",
+      "version_commit": "Google Fonts serving v15; internal font version 2.005005",
+      "license": "OFL-1.1",
+      "required_notice": "product/app/design/vendor/fonts/spectral.OFL.txt",
+      "local_evidence": [
+        "product/app/design/vendor/fonts/rnCr-xNNww_2s0amA9M9knjsS_ulYHs.woff2",
+        "product/app/design/vendor/fonts/UPSTREAM-PROVENANCE.json",
+        "product/app/design/vendor/fonts/spectral.OFL.txt"
+      ],
+      "sha256": "32457570dd484b9ba601e401e87da25ac826fee759885ed7c29469694db87821",
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "A — exact SHA256 match to official fonts.gstatic.com artifact; no font transformation",
+      "provenance_classification": "A",
+      "upstream_sha256": "32457570dd484b9ba601e401e87da25ac826fee759885ed7c29469694db87821"
+    },
+    {
+      "resource": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9uCt23BafaPWnII.woff2",
+      "origin": "https://fonts.gstatic.com/s/spectral/v15/rnCs-xNNww_2s0amA9uCt23BafaPWnII.woff2",
+      "version_commit": "Google Fonts serving v15; internal font version 2.005005",
+      "license": "OFL-1.1",
+      "required_notice": "product/app/design/vendor/fonts/spectral.OFL.txt",
+      "local_evidence": [
+        "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9uCt23BafaPWnII.woff2",
+        "product/app/design/vendor/fonts/UPSTREAM-PROVENANCE.json",
+        "product/app/design/vendor/fonts/spectral.OFL.txt"
+      ],
+      "sha256": "1125ec621f11c8669efc3a86cc05d9e9e221853d2b1c9658d9e30de9d3b90bba",
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "A — exact SHA256 match to official fonts.gstatic.com artifact; no font transformation",
+      "provenance_classification": "A",
+      "upstream_sha256": "1125ec621f11c8669efc3a86cc05d9e9e221853d2b1c9658d9e30de9d3b90bba"
+    },
+    {
+      "resource": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9uCt23FafaPWnIIMrY.woff2",
+      "origin": "https://fonts.gstatic.com/s/spectral/v15/rnCs-xNNww_2s0amA9uCt23FafaPWnIIMrY.woff2",
+      "version_commit": "Google Fonts serving v15; internal font version 2.005005",
+      "license": "OFL-1.1",
+      "required_notice": "product/app/design/vendor/fonts/spectral.OFL.txt",
+      "local_evidence": [
+        "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9uCt23FafaPWnIIMrY.woff2",
+        "product/app/design/vendor/fonts/UPSTREAM-PROVENANCE.json",
+        "product/app/design/vendor/fonts/spectral.OFL.txt"
+      ],
+      "sha256": "4ee603d108f6a84bf0159922ab06d474159e54cdce53adb546996ea2dc4c573d",
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "A — exact SHA256 match to official fonts.gstatic.com artifact; no font transformation",
+      "provenance_classification": "A",
+      "upstream_sha256": "4ee603d108f6a84bf0159922ab06d474159e54cdce53adb546996ea2dc4c573d"
+    },
+    {
+      "resource": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9uCt23MafaPWnIIMrY.woff2",
+      "origin": "https://fonts.gstatic.com/s/spectral/v15/rnCs-xNNww_2s0amA9uCt23MafaPWnIIMrY.woff2",
+      "version_commit": "Google Fonts serving v15; internal font version 2.005005",
+      "license": "OFL-1.1",
+      "required_notice": "product/app/design/vendor/fonts/spectral.OFL.txt",
+      "local_evidence": [
+        "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9uCt23MafaPWnIIMrY.woff2",
+        "product/app/design/vendor/fonts/UPSTREAM-PROVENANCE.json",
+        "product/app/design/vendor/fonts/spectral.OFL.txt"
+      ],
+      "sha256": "8fac3805a2c1e55db72cf8b4ec7ed1e16471f96880398a1b663a36e7910d0cd2",
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "A — exact SHA256 match to official fonts.gstatic.com artifact; no font transformation",
+      "provenance_classification": "A",
+      "upstream_sha256": "8fac3805a2c1e55db72cf8b4ec7ed1e16471f96880398a1b663a36e7910d0cd2"
+    },
+    {
+      "resource": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9uCt23OafaPWnIIMrY.woff2",
+      "origin": "https://fonts.gstatic.com/s/spectral/v15/rnCs-xNNww_2s0amA9uCt23OafaPWnIIMrY.woff2",
+      "version_commit": "Google Fonts serving v15; internal font version 2.005005",
+      "license": "OFL-1.1",
+      "required_notice": "product/app/design/vendor/fonts/spectral.OFL.txt",
+      "local_evidence": [
+        "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9uCt23OafaPWnIIMrY.woff2",
+        "product/app/design/vendor/fonts/UPSTREAM-PROVENANCE.json",
+        "product/app/design/vendor/fonts/spectral.OFL.txt"
+      ],
+      "sha256": "2a39c85474451d160b3a1fa083ec77678bcfd88f4519d39f4cf181e8a52b1bdb",
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "A — exact SHA256 match to official fonts.gstatic.com artifact; no font transformation",
+      "provenance_classification": "A",
+      "upstream_sha256": "2a39c85474451d160b3a1fa083ec77678bcfd88f4519d39f4cf181e8a52b1bdb"
+    },
+    {
+      "resource": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9uCt23PafaPWnIIMrY.woff2",
+      "origin": "https://fonts.gstatic.com/s/spectral/v15/rnCs-xNNww_2s0amA9uCt23PafaPWnIIMrY.woff2",
+      "version_commit": "Google Fonts serving v15; internal font version 2.005005",
+      "license": "OFL-1.1",
+      "required_notice": "product/app/design/vendor/fonts/spectral.OFL.txt",
+      "local_evidence": [
+        "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9uCt23PafaPWnIIMrY.woff2",
+        "product/app/design/vendor/fonts/UPSTREAM-PROVENANCE.json",
+        "product/app/design/vendor/fonts/spectral.OFL.txt"
+      ],
+      "sha256": "e06de276e6b69b3501de2ff0e45a7f159ba71bcca576f401098e09c0355e1ced",
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "A — exact SHA256 match to official fonts.gstatic.com artifact; no font transformation",
+      "provenance_classification": "A",
+      "upstream_sha256": "e06de276e6b69b3501de2ff0e45a7f159ba71bcca576f401098e09c0355e1ced"
+    },
+    {
+      "resource": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9vKsW3BafaPWnII.woff2",
+      "origin": "https://fonts.gstatic.com/s/spectral/v15/rnCs-xNNww_2s0amA9vKsW3BafaPWnII.woff2",
+      "version_commit": "Google Fonts serving v15; internal font version 2.005005",
+      "license": "OFL-1.1",
+      "required_notice": "product/app/design/vendor/fonts/spectral.OFL.txt",
+      "local_evidence": [
+        "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9vKsW3BafaPWnII.woff2",
+        "product/app/design/vendor/fonts/UPSTREAM-PROVENANCE.json",
+        "product/app/design/vendor/fonts/spectral.OFL.txt"
+      ],
+      "sha256": "79ce505722da87b9a2fa21a16cd0d7f426f1624fd16413e11be377bc9e922a3b",
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "A — exact SHA256 match to official fonts.gstatic.com artifact; no font transformation",
+      "provenance_classification": "A",
+      "upstream_sha256": "79ce505722da87b9a2fa21a16cd0d7f426f1624fd16413e11be377bc9e922a3b"
+    },
+    {
+      "resource": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9vKsW3FafaPWnIIMrY.woff2",
+      "origin": "https://fonts.gstatic.com/s/spectral/v15/rnCs-xNNww_2s0amA9vKsW3FafaPWnIIMrY.woff2",
+      "version_commit": "Google Fonts serving v15; internal font version 2.005005",
+      "license": "OFL-1.1",
+      "required_notice": "product/app/design/vendor/fonts/spectral.OFL.txt",
+      "local_evidence": [
+        "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9vKsW3FafaPWnIIMrY.woff2",
+        "product/app/design/vendor/fonts/UPSTREAM-PROVENANCE.json",
+        "product/app/design/vendor/fonts/spectral.OFL.txt"
+      ],
+      "sha256": "874d49c9c14d00047a53ddd496de773d56215f85582262a2aeeab2ab41d41ae9",
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "A — exact SHA256 match to official fonts.gstatic.com artifact; no font transformation",
+      "provenance_classification": "A",
+      "upstream_sha256": "874d49c9c14d00047a53ddd496de773d56215f85582262a2aeeab2ab41d41ae9"
+    },
+    {
+      "resource": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9vKsW3MafaPWnIIMrY.woff2",
+      "origin": "https://fonts.gstatic.com/s/spectral/v15/rnCs-xNNww_2s0amA9vKsW3MafaPWnIIMrY.woff2",
+      "version_commit": "Google Fonts serving v15; internal font version 2.005005",
+      "license": "OFL-1.1",
+      "required_notice": "product/app/design/vendor/fonts/spectral.OFL.txt",
+      "local_evidence": [
+        "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9vKsW3MafaPWnIIMrY.woff2",
+        "product/app/design/vendor/fonts/UPSTREAM-PROVENANCE.json",
+        "product/app/design/vendor/fonts/spectral.OFL.txt"
+      ],
+      "sha256": "aff97997277cce4f2798af35dff14fd4b9cb88fac5a8310924b7eb678489e3a4",
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "A — exact SHA256 match to official fonts.gstatic.com artifact; no font transformation",
+      "provenance_classification": "A",
+      "upstream_sha256": "aff97997277cce4f2798af35dff14fd4b9cb88fac5a8310924b7eb678489e3a4"
+    },
+    {
+      "resource": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9vKsW3OafaPWnIIMrY.woff2",
+      "origin": "https://fonts.gstatic.com/s/spectral/v15/rnCs-xNNww_2s0amA9vKsW3OafaPWnIIMrY.woff2",
+      "version_commit": "Google Fonts serving v15; internal font version 2.005005",
+      "license": "OFL-1.1",
+      "required_notice": "product/app/design/vendor/fonts/spectral.OFL.txt",
+      "local_evidence": [
+        "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9vKsW3OafaPWnIIMrY.woff2",
+        "product/app/design/vendor/fonts/UPSTREAM-PROVENANCE.json",
+        "product/app/design/vendor/fonts/spectral.OFL.txt"
+      ],
+      "sha256": "217390471a430a687e52e33c3d694d1d814e6c3de0c8e37906dcc2f8a073e175",
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "A — exact SHA256 match to official fonts.gstatic.com artifact; no font transformation",
+      "provenance_classification": "A",
+      "upstream_sha256": "217390471a430a687e52e33c3d694d1d814e6c3de0c8e37906dcc2f8a073e175"
+    },
+    {
+      "resource": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9vKsW3PafaPWnIIMrY.woff2",
+      "origin": "https://fonts.gstatic.com/s/spectral/v15/rnCs-xNNww_2s0amA9vKsW3PafaPWnIIMrY.woff2",
+      "version_commit": "Google Fonts serving v15; internal font version 2.005005",
+      "license": "OFL-1.1",
+      "required_notice": "product/app/design/vendor/fonts/spectral.OFL.txt",
+      "local_evidence": [
+        "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9vKsW3PafaPWnIIMrY.woff2",
+        "product/app/design/vendor/fonts/UPSTREAM-PROVENANCE.json",
+        "product/app/design/vendor/fonts/spectral.OFL.txt"
+      ],
+      "sha256": "38331492f5916e46a39699c66a1d76294b6f7b56f8a702f09cfb35fd9fd3043c",
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "A — exact SHA256 match to official fonts.gstatic.com artifact; no font transformation",
+      "provenance_classification": "A",
+      "upstream_sha256": "38331492f5916e46a39699c66a1d76294b6f7b56f8a702f09cfb35fd9fd3043c"
+    },
+    {
+      "resource": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9vmtm3BafaPWnII.woff2",
+      "origin": "https://fonts.gstatic.com/s/spectral/v15/rnCs-xNNww_2s0amA9vmtm3BafaPWnII.woff2",
+      "version_commit": "Google Fonts serving v15; internal font version 2.005005",
+      "license": "OFL-1.1",
+      "required_notice": "product/app/design/vendor/fonts/spectral.OFL.txt",
+      "local_evidence": [
+        "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9vmtm3BafaPWnII.woff2",
+        "product/app/design/vendor/fonts/UPSTREAM-PROVENANCE.json",
+        "product/app/design/vendor/fonts/spectral.OFL.txt"
+      ],
+      "sha256": "1fb6ca29fc243e8bfdfce12d8d6806f322bcc62d38036986812be28fb1f41f0a",
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "A — exact SHA256 match to official fonts.gstatic.com artifact; no font transformation",
+      "provenance_classification": "A",
+      "upstream_sha256": "1fb6ca29fc243e8bfdfce12d8d6806f322bcc62d38036986812be28fb1f41f0a"
+    },
+    {
+      "resource": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9vmtm3FafaPWnIIMrY.woff2",
+      "origin": "https://fonts.gstatic.com/s/spectral/v15/rnCs-xNNww_2s0amA9vmtm3FafaPWnIIMrY.woff2",
+      "version_commit": "Google Fonts serving v15; internal font version 2.005005",
+      "license": "OFL-1.1",
+      "required_notice": "product/app/design/vendor/fonts/spectral.OFL.txt",
+      "local_evidence": [
+        "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9vmtm3FafaPWnIIMrY.woff2",
+        "product/app/design/vendor/fonts/UPSTREAM-PROVENANCE.json",
+        "product/app/design/vendor/fonts/spectral.OFL.txt"
+      ],
+      "sha256": "9a6738241702381e65e80d1ee5f172ce12be2049dfedeb33016a5096444bc03b",
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "A — exact SHA256 match to official fonts.gstatic.com artifact; no font transformation",
+      "provenance_classification": "A",
+      "upstream_sha256": "9a6738241702381e65e80d1ee5f172ce12be2049dfedeb33016a5096444bc03b"
+    },
+    {
+      "resource": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9vmtm3MafaPWnIIMrY.woff2",
+      "origin": "https://fonts.gstatic.com/s/spectral/v15/rnCs-xNNww_2s0amA9vmtm3MafaPWnIIMrY.woff2",
+      "version_commit": "Google Fonts serving v15; internal font version 2.005005",
+      "license": "OFL-1.1",
+      "required_notice": "product/app/design/vendor/fonts/spectral.OFL.txt",
+      "local_evidence": [
+        "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9vmtm3MafaPWnIIMrY.woff2",
+        "product/app/design/vendor/fonts/UPSTREAM-PROVENANCE.json",
+        "product/app/design/vendor/fonts/spectral.OFL.txt"
+      ],
+      "sha256": "3f8d833b64a1e7e1b8be07cd73513004cc680a466b84d6459fdcd2f1c1fcf0b3",
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "A — exact SHA256 match to official fonts.gstatic.com artifact; no font transformation",
+      "provenance_classification": "A",
+      "upstream_sha256": "3f8d833b64a1e7e1b8be07cd73513004cc680a466b84d6459fdcd2f1c1fcf0b3"
+    },
+    {
+      "resource": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9vmtm3OafaPWnIIMrY.woff2",
+      "origin": "https://fonts.gstatic.com/s/spectral/v15/rnCs-xNNww_2s0amA9vmtm3OafaPWnIIMrY.woff2",
+      "version_commit": "Google Fonts serving v15; internal font version 2.005005",
+      "license": "OFL-1.1",
+      "required_notice": "product/app/design/vendor/fonts/spectral.OFL.txt",
+      "local_evidence": [
+        "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9vmtm3OafaPWnIIMrY.woff2",
+        "product/app/design/vendor/fonts/UPSTREAM-PROVENANCE.json",
+        "product/app/design/vendor/fonts/spectral.OFL.txt"
+      ],
+      "sha256": "74dc7e33abf296a6a7129a327d7b9c5bc02b11eb9ffb47447a0887997c863102",
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "A — exact SHA256 match to official fonts.gstatic.com artifact; no font transformation",
+      "provenance_classification": "A",
+      "upstream_sha256": "74dc7e33abf296a6a7129a327d7b9c5bc02b11eb9ffb47447a0887997c863102"
+    },
+    {
+      "resource": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9vmtm3PafaPWnIIMrY.woff2",
+      "origin": "https://fonts.gstatic.com/s/spectral/v15/rnCs-xNNww_2s0amA9vmtm3PafaPWnIIMrY.woff2",
+      "version_commit": "Google Fonts serving v15; internal font version 2.005005",
+      "license": "OFL-1.1",
+      "required_notice": "product/app/design/vendor/fonts/spectral.OFL.txt",
+      "local_evidence": [
+        "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9vmtm3PafaPWnIIMrY.woff2",
+        "product/app/design/vendor/fonts/UPSTREAM-PROVENANCE.json",
+        "product/app/design/vendor/fonts/spectral.OFL.txt"
+      ],
+      "sha256": "ccb889e04368c402021b9b73196f26fc903d6cb269028138fefb68bd56cc5c19",
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "A — exact SHA256 match to official fonts.gstatic.com artifact; no font transformation",
+      "provenance_classification": "A",
+      "upstream_sha256": "ccb889e04368c402021b9b73196f26fc903d6cb269028138fefb68bd56cc5c19"
+    },
+    {
+      "resource": "product/app/design/cuarto/vendor/pixi.min.js",
+      "origin": "https://github.com/pixijs/pixijs/tree/v8.19.0",
+      "version_commit": "v8.19.0 as bundle header",
+      "license": "MIT",
+      "required_notice": "product/app/design/cuarto/vendor/pixi.LICENSE",
+      "local_evidence": [
+        "bundle header",
+        "pixi.LICENSE"
+      ],
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "License fetched at version; bundle rebuild equivalence not measured"
+    },
+    {
+      "resource": "SearXNG generated process + transitive dependencies",
+      "origin": "see deploy/fase6/producir_busqueda.sh and third_party/vane/PROCESO-SEARXNG.md",
+      "version_commit": "Build resolution not performed",
+      "license": "AGPL-3.0 and dependency-specific licenses",
+      "required_notice": "Verify generated distribution boundaries/source-offer requirements before distribution",
+      "local_evidence": [
+        "third_party/vane/PROCESO-SEARXNG.md"
+      ],
+      "planned_in_package": true,
+      "constructed_package": false,
+      "verification": "Pending actual built payload; no claim that process separation alone discharges obligations"
+    }
+  ],
+  "scope": "Planned package/source mapping. No package constructed: all constructed_package=false. Direct vendors and font files enumerated; generated transitive dependency inventory must be obtained from build locks/resolution.",
+  "date": "2026-09-13"
+}

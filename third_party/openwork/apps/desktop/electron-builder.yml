@@ -1,0 +1,10 @@
+extends: ./electron-builder.base.yml
+appId: com.differentai.openwork
+productName: OpenWork
+protocols:
+  - name: OpenWork
+    schemes:
+      - openwork
+linux:
+  executableName: openwork
+artifactName: openwork-${os}-${arch}-${version}.${ext}

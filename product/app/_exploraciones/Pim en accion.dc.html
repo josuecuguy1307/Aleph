@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:#DED6C7;font-family:'Hanken Grotesk',system-ui,-apple-system,sans-serif;color:#2B2925;-webkit-font-smoothing:antialiased}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+  .orbit{transform-origin:110px 44px}
+</style>
+</helmet>
+
+<div style="min-height:100vh;padding:42px 40px 72px">
+  <div style="max-width:1180px;margin:0 auto">
+
+    <div style="font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#9A9082">Mascota · Pim en acción</div>
+    <h1 style="font-family:'Spectral',Georgia,serif;font-weight:600;font-size:31px;margin:8px 0 6px;letter-spacing:-.015em">Sus electrones hacen la tarea</h1>
+    <p style="margin:0 0 36px;color:#6F6A60;font-size:14.5px;max-width:74ch;line-height:1.6">Sin brazos: los electrones bajan de la órbita y trabajan — teclean, levantan el gráfico, suben la vela, escriben. La órbita es su mano. Acá en sus cuatro oficios.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:20px">
+
+      <!-- ===== PROGRAMANDO ===== -->
+      <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+        <div style="background:#16172A;display:flex;align-items:center;justify-content:center;padding:6px">
+          <svg width="300" height="200" viewBox="0 0 220 150" fill="none">
+            <rect x="62" y="100" width="96" height="24" rx="6" fill="#1E2030" stroke="#2E3048" stroke-width="1.4"></rect>
+            <g fill="#3A3C58">
+              <rect x="68" y="104" width="11" height="6" rx="2"><animate attributeName="fill" values="#3A3C58;#8E8BF5;#3A3C58" dur="1.3s" repeatCount="indefinite"></animate></rect>
+              <rect x="82" y="104" width="11" height="6" rx="2"></rect><rect x="96" y="104" width="11" height="6" rx="2"></rect><rect x="110" y="104" width="11" height="6" rx="2"></rect>
+              <rect x="124" y="104" width="11" height="6" rx="2"><animate attributeName="fill" values="#3A3C58;#8E8BF5;#3A3C58" dur="1.3s" begin="0.65s" repeatCount="indefinite"></animate></rect>
+              <rect x="138" y="104" width="14" height="6" rx="2"></rect>
+              <rect x="72" y="113" width="11" height="6" rx="2"></rect><rect x="86" y="113" width="11" height="6" rx="2"></rect><rect x="100" y="113" width="22" height="6" rx="2"></rect><rect x="126" y="113" width="20" height="6" rx="2"></rect>
+            </g>
+            <g class="orbit" style="animation:spin 12s linear infinite">
+              <g transform="rotate(0 110 44)"><ellipse cx="110" cy="44" rx="18" ry="6.5" stroke="#6E6BD0" stroke-width="1.5"></ellipse><circle cx="128" cy="44" r="2.4" fill="#C9C6FF"></circle></g>
+              <g transform="rotate(120 110 44)"><ellipse cx="110" cy="44" rx="18" ry="6.5" stroke="#6E6BD0" stroke-width="1.5"></ellipse><circle cx="128" cy="44" r="2.4" fill="#C9C6FF"></circle></g>
+            </g>
+            <circle r="3" fill="#C9C6FF"><animateMotion dur="1.3s" repeatCount="indefinite" path="M96,56 L96,101 L96,56"></animateMotion></circle>
+            <circle r="2.7" fill="#E2DEFF"><animateMotion dur="1.3s" begin="0.65s" repeatCount="indefinite" path="M124,56 L124,101 L124,56"></animateMotion></circle>
+            <g style="animation:bob 3s ease-in-out infinite">
+              <path d="M110 34 L120 40 L120 50 L110 56 L100 50 L100 40 Z" fill="#8E8BF5" stroke="#8E8BF5" stroke-width="4" stroke-linejoin="round"></path>
+              <path d="M105.6 44 q1.7 -2.3 3.4 0" stroke="#211E3A" stroke-width="2" fill="none" stroke-linecap="round"></path>
+              <path d="M111 44 q1.7 -2.3 3.4 0" stroke="#211E3A" stroke-width="2" fill="none" stroke-linecap="round"></path>
+            </g>
+          </svg>
+        </div>
+        <div style="padding:14px 16px;border-top:1px solid #F0E8D8"><div style="font-family:'Spectral',serif;font-weight:600;font-size:16px">Programando</div><div style="font-size:12.5px;color:#7C766B;line-height:1.5;margin-top:3px">Dos electrones bajan a teclear; las teclas se encienden.</div></div>
+      </div>
+
+      <!-- ===== FINANZAS ===== -->
+      <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+        <div style="background:#16172A;display:flex;align-items:center;justify-content:center;padding:6px">
+          <svg width="300" height="200" viewBox="0 0 220 150" fill="none">
+            <line x1="64" y1="124" x2="156" y2="124" stroke="#3A3C58" stroke-width="1.4"></line>
+            <rect x="70" y="100" width="15" height="24" rx="3" fill="#5A57A8"></rect>
+            <rect x="92" y="88" width="15" height="36" rx="3" fill="#7A77D0"></rect>
+            <rect x="114" y="72" width="15" height="52" rx="3" fill="#8E8BF5"></rect>
+            <rect x="136" y="56" width="15" height="68" rx="3" fill="#C9C6FF"></rect>
+            <g class="orbit" style="animation:spin 12s linear infinite">
+              <g transform="rotate(0 110 44)"><ellipse cx="110" cy="44" rx="18" ry="6.5" stroke="#6E6BD0" stroke-width="1.5"></ellipse><circle cx="128" cy="44" r="2.4" fill="#C9C6FF"></circle></g>
+              <g transform="rotate(120 110 44)"><ellipse cx="110" cy="44" rx="18" ry="6.5" stroke="#6E6BD0" stroke-width="1.5"></ellipse><circle cx="128" cy="44" r="2.4" fill="#C9C6FF"></circle></g>
+            </g>
+            <circle r="3" fill="#E2DEFF"><animateMotion dur="3.4s" repeatCount="indefinite" path="M110,56 L77,99 L99,87 L121,71 L143,55 L110,56"></animateMotion></circle>
+            <g style="animation:bob 3s ease-in-out infinite">
+              <path d="M110 34 L120 40 L120 50 L110 56 L100 50 L100 40 Z" fill="#8E8BF5" stroke="#8E8BF5" stroke-width="4" stroke-linejoin="round"></path>
+              <path d="M105.6 44 q1.7 -2.3 3.4 0" stroke="#211E3A" stroke-width="2" fill="none" stroke-linecap="round"></path>
+              <path d="M111 44 q1.7 -2.3 3.4 0" stroke="#211E3A" stroke-width="2" fill="none" stroke-linecap="round"></path>
+            </g>
+          </svg>
+        </div>
+        <div style="padding:14px 16px;border-top:1px solid #F0E8D8"><div style="font-family:'Spectral',serif;font-weight:600;font-size:16px">Finanzas</div><div style="font-size:12.5px;color:#7C766B;line-height:1.5;margin-top:3px">Un electrón sube por las barras, armando el gráfico.</div></div>
+      </div>
+
+      <!-- ===== TRADING ===== -->
+      <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+        <div style="background:#16172A;display:flex;align-items:center;justify-content:center;padding:6px">
+          <svg width="300" height="200" viewBox="0 0 220 150" fill="none">
+            <g stroke-linecap="round">
+              <line x1="72" y1="96" x2="72" y2="122" stroke="#5FB487" stroke-width="1.2"></line><rect x="67" y="104" width="10" height="14" rx="2" fill="#5FB487"></rect>
+              <line x1="92" y1="88" x2="92" y2="116" stroke="#E0676A" stroke-width="1.2"></line><rect x="87" y="96" width="10" height="16" rx="2" fill="#E0676A"></rect>
+              <line x1="112" y1="76" x2="112" y2="104" stroke="#5FB487" stroke-width="1.2"></line><rect x="107" y="82" width="10" height="18" rx="2" fill="#5FB487"></rect>
+              <line x1="132" y1="62" x2="132" y2="92" stroke="#5FB487" stroke-width="1.2"></line><rect x="127" y="68" width="10" height="20" rx="2" fill="#5FB487"></rect>
+            </g>
+            <path d="M72 112 L92 102 L112 88 L132 72 L150 56" stroke="#5FB487" stroke-width="1.4" fill="none" stroke-dasharray="2 3" opacity="0.65"></path>
+            <g class="orbit" style="animation:spin 12s linear infinite">
+              <g transform="rotate(0 110 44)"><ellipse cx="110" cy="44" rx="18" ry="6.5" stroke="#6E6BD0" stroke-width="1.5"></ellipse><circle cx="128" cy="44" r="2.4" fill="#C9C6FF"></circle></g>
+              <g transform="rotate(120 110 44)"><ellipse cx="110" cy="44" rx="18" ry="6.5" stroke="#6E6BD0" stroke-width="1.5"></ellipse><circle cx="128" cy="44" r="2.4" fill="#C9C6FF"></circle></g>
+            </g>
+            <circle r="3" fill="#9FE8C0"><animateMotion dur="3s" repeatCount="indefinite" path="M110,56 L72,112 L92,102 L112,88 L132,72 L150,56 L110,56"></animateMotion></circle>
+            <g style="animation:bob 3s ease-in-out infinite">
+              <path d="M110 34 L120 40 L120 50 L110 56 L100 50 L100 40 Z" fill="#8E8BF5" stroke="#8E8BF5" stroke-width="4" stroke-linejoin="round"></path>
+              <path d="M105.6 44 q1.7 -2.3 3.4 0" stroke="#211E3A" stroke-width="2" fill="none" stroke-linecap="round"></path>
+              <path d="M111 44 q1.7 -2.3 3.4 0" stroke="#211E3A" stroke-width="2" fill="none" stroke-linecap="round"></path>
+            </g>
+          </svg>
+        </div>
+        <div style="padding:14px 16px;border-top:1px solid #F0E8D8"><div style="font-family:'Spectral',serif;font-weight:600;font-size:16px">Trading</div><div style="font-size:12.5px;color:#7C766B;line-height:1.5;margin-top:3px">El electrón sube por la tendencia siguiendo el mercado.</div></div>
+      </div>
+
+      <!-- ===== ENSEÑANDO ===== -->
+      <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+        <div style="background:#16172A;display:flex;align-items:center;justify-content:center;padding:6px">
+          <svg width="300" height="200" viewBox="0 0 220 150" fill="none">
+            <rect x="54" y="84" width="112" height="46" rx="8" fill="#ECEAF6" stroke="#3A3C58" stroke-width="1.4"></rect>
+            <g stroke="#8E8BF5" stroke-width="2.2" fill="none" stroke-linecap="round">
+              <path d="M64 96 q7 -7 14 0 q7 7 14 0"></path>
+              <line x1="64" y1="112" x2="120" y2="112"></line>
+              <line x1="64" y1="121" x2="100" y2="121"></line>
+            </g>
+            <text x="124" y="102" font-family="Spectral, serif" font-weight="700" font-size="15" fill="#6A57DC">∑</text>
+            <g class="orbit" style="animation:spin 12s linear infinite">
+              <g transform="rotate(0 110 44)"><ellipse cx="110" cy="44" rx="18" ry="6.5" stroke="#6E6BD0" stroke-width="1.5"></ellipse><circle cx="128" cy="44" r="2.4" fill="#C9C6FF"></circle></g>
+              <g transform="rotate(120 110 44)"><ellipse cx="110" cy="44" rx="18" ry="6.5" stroke="#6E6BD0" stroke-width="1.5"></ellipse><circle cx="128" cy="44" r="2.4" fill="#C9C6FF"></circle></g>
+            </g>
+            <circle r="2.8" fill="#E2DEFF"><animateMotion dur="2.6s" repeatCount="indefinite" path="M110,56 L64,112 L120,112 L110,56"></animateMotion></circle>
+            <g style="animation:bob 3s ease-in-out infinite">
+              <path d="M110 34 L120 40 L120 50 L110 56 L100 50 L100 40 Z" fill="#8E8BF5" stroke="#8E8BF5" stroke-width="4" stroke-linejoin="round"></path>
+              <path d="M105.6 44 q1.7 -2.3 3.4 0" stroke="#211E3A" stroke-width="2" fill="none" stroke-linecap="round"></path>
+              <path d="M111 44 q1.7 -2.3 3.4 0" stroke="#211E3A" stroke-width="2" fill="none" stroke-linecap="round"></path>
+            </g>
+          </svg>
+        </div>
+        <div style="padding:14px 16px;border-top:1px solid #F0E8D8"><div style="font-family:'Spectral',serif;font-weight:600;font-size:16px">Enseñando</div><div style="font-size:12.5px;color:#7C766B;line-height:1.5;margin-top:3px">El electrón recorre el pizarrón dejando lo escrito.</div></div>
+      </div>
+
+    </div>
+
+    <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:38px;padding-top:24px;border-top:1px solid #CFC6B5">
+      <span style="font-size:13.5px;color:#6F6A60">Pim, listo. ¿Lo fijamos como mascota oficial y armo el lockup «Puppet AI» + favicon?</span>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

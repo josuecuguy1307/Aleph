@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title data-i18n="salav2.title">La Sala · Aleph</title>
+
+<!-- La piel sale de los tokens del sistema, igual que las otras pantallas. Acá NO se
+     redeclara ni un color: `aleph-tokens.css` es la única hoja que da vuelta claro/oscuro. -->
+<link rel="stylesheet" href="../vendor/fonts.css">
+<link rel="stylesheet" href="../aleph-tokens.css">
+<!-- El chip de modelo es COMPARTIDO con los seis workspaces: su hoja vive con el
+     componente, no acá. [un solo picker en las siete · 2026-08-22] -->
+<link rel="stylesheet" href="../ui/model-chip.core.css?v=sala-te">
+<script src="../ui/model-chip.core.js?v=sala-te"></script>
+<link rel="stylesheet" href="./sala-v2.css?v=sala-te">
+
+<!-- El mismo soporte que cargan las 9 pantallas de producto. Sin novedades: sesión, config,
+     i18n y tema son transversales y esta pantalla no inventa los suyos. -->
+<script>window.ALEPH_THEME_NOFLOAT=true;</script>
+<script src="../auth.js"></script>
+<script src="../aleph-config.js"></script>
+<script src="../vendor/supabase.min.js"></script>
+<script src="../supabase-auth.js"></script>
+<script src="../i18n.js?v=salav2-1"></script>
+<script src="../theme.js"></script>
+<script src="../brain-status.js"></script>
+<!-- LA CARA DE CADA SERVICIO (ticket 8). Mismo módulo clásico que ya cargan Conectar,
+     Conectores, Modelos, Settings y el Cuarto: `window.AlephBrand`. No depende de ninguno
+     de los de arriba — sólo pide GET /v1/icons y cachea el manifest. Sin red o con
+     takedown (404) degrada al fallback determinista de iniciales+color, así que montarlo
+     no puede romper la pantalla. Va acá para que los widgets del turno tengan logo. -->
+<script src="../brandface.js?v=salav2-1"></script>
+
+<!--
+  EL REGISTRO DE FORMAS, COMPARTIDO. [Gate 4 · Fase 3 · obra 3.0]
+  `render/sala-render.js` es EL registro que 2.3 cableó al vocabulario único y 2.4 dotó de
+  `unmount`/`onTeardown`/`isDead`. Se carga como script clásico —su IIFE se protege de la
+  doble carga— y no como módulo, porque su contrato es `window.SalaRender` y está
+  CONGELADO (`render/README.md`). El canvas de esta pantalla usa ESE, no uno propio:
+  un segundo registro habría sido la quinta lista de tipos justo después de que 2.3
+  matara las cuatro que había.
+-->
+<script src="../render/sala-render.js"></script>
+<!-- [Convergencia · superficie 7 · paso 4] EL PUENTE DE CONTINUIDAD Cuarto→Sala.
+     `bridge.js` es agnóstico de Sala: el Cuarto le pasa el destino y la Sala lo recibe.
+     La vieja lo recibía desde siempre (`sala.html:739`); ésta no, así que al mandar el
+     Cuarto acá (paso 3) el morph se cortaba a la mitad — la convergencia corría en el
+     Cuarto y esta pantalla abría de golpe. Cargarlo ANTES del <body> es lo que permite
+     pintar el frame retenido sin un flash. -->
+<script src="../bridge.js"></script>
+</head>
+<body>
+<!-- Si venimos del Cuarto (token fresco, TTL 8s), pinta el MISMO frame que quedó allá y
+     LO SOSTIENE. No revela solo: el arranque lo suelta con `.ready()` cuando la Sala está
+     de verdad lista, o con `.fail()` si no pudo. Sin token devuelve null y esto no existe. -->
+<script>window.__alephBridge = (window.AlephBridge && AlephBridge.receive({ timeout: 12000 })) || null;</script>
+
+<!--
+  LA SALA (v2) — el chat base sobre el que van a vivir todos los workspaces.
+
+  QUÉ ES: la superficie de assistant-ui (MIT, `third_party/assistant-ui/`) con la piel de
+  Aleph, hablando con el backend de Gate 1-3 a través del adaptador AG-UI
+  (`agui/aleph-agent.js`). El backend NO cambió: esta pantalla consume los mismos dos
+  streams que la Sala vieja.
+
+  DÓNDE ESTÁ LA VIEJA: sigue viva y entera en `../sala/sala.html`. Esto NO la reemplaza por
+  borrado — el swap es reversible y está documentado en `README.md` de esta carpeta.
+
+  POR QUÉ UN SOLO <script type="module">: el frontend de Aleph no tiene bundler (el sidecar
+  sirve `product/app/design` como estáticos). Los ESM se resuelven en el navegador, tal cual
+  se escribieron. El único archivo construido es `vendor/assistant-ui.bundle.js`, que trae
+  el árbol de terceros y su React 19; se verifica por integridad como el resto del vendor.
+-->
+<div id="sv-root"></div>
+
+<noscript>
+  <p style="padding:24px;font-family:system-ui">La Sala necesita JavaScript para funcionar.</p>
+</noscript>
+
+<script type="module" src="./sala-v2.js?v=sala-te"></script>
+</body>
+</html>

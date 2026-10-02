@@ -1,0 +1,61 @@
+{
+  "plugin": ["./plugin/legal.ts"],
+  "skills": {
+    "paths": ["{env:WORKSPACE_ROOT}/.playbooks", "{env:WORKSPACE_ROOT}/.skills"]
+  },
+  "instructions": [
+    "{env:WORKSPACE_ROOT}/.preferences/drafting.md",
+    "./instructions/language.md"
+  ],
+  "disabled_providers": ["opencode"],
+  "permission": {
+    "read": "allow",
+    "glob": "allow",
+    "grep": "allow",
+    "list": "allow",
+    "task": "allow",
+    "skill": { "*": "allow" },
+    "search-document": "allow",
+    "cite": "allow",
+    "case-law": "allow",
+    "list-templates": "allow",
+    "get-template": "allow",
+    "update-template": "ask",
+    "delete-template": "ask",
+    "list-playbooks": "allow",
+    "update-playbook": "ask",
+    "delete-playbook": "ask",
+    "list-workflows": "allow",
+    "create-workflow": "ask",
+    "update-workflow": "ask",
+    "delete-workflow": "ask",
+    "list-skills": "allow",
+    "create-skill": "ask",
+    "update-skill": "ask",
+    "delete-skill": "ask",
+    "list-agents": "allow",
+    "create-agent": "ask",
+    "update-agent": "ask",
+    "delete-agent": "ask",
+    "read-document": "allow",
+    "draft-document": "ask",
+    "create-template": "ask",
+    "create-playbook": "ask",
+    "word-integration": "ask",
+    "tracked-changes": "ask",
+    "redline": "ask",
+    "redact": "ask",
+    "redaction-log": "allow",
+    "edit": "deny",
+    "bash": "deny",
+    "webfetch": "allow",
+    "web-search": "allow",
+    "websearch": "deny"
+  },
+  "agent": {
+    "explore": { "disable": true },
+    "general": { "disable": true },
+    "build": { "disable": true },
+    "plan": { "disable": true }
+  }
+}

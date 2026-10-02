@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:#DED6C7;font-family:'Hanken Grotesk',system-ui,-apple-system,sans-serif;color:#2B2925;-webkit-font-smoothing:antialiased}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+  .orbit{transform-origin:32px 32px}
+</style>
+</helmet>
+
+<div style="min-height:100vh;padding:42px 40px 72px">
+  <div style="max-width:1180px;margin:0 auto">
+
+    <div style="font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#9A9082">Mascota · los tres finalistas</div>
+    <h1 style="font-family:'Spectral',Georgia,serif;font-weight:600;font-size:31px;margin:8px 0 6px;letter-spacing:-.015em">Plano · Vidrio · Sticker, afinados</h1>
+    <p style="margin:0 0 36px;color:#6F6A60;font-size:14.5px;max-width:74ch;line-height:1.6">Tres tomas de cada estilo que te gustó, para elegir el matiz exacto. Misma carita siempre. Decime el número ganador y lo dejo como la mascota definitiva.</p>
+
+    <!-- ===== PLANO ===== -->
+    <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:14px"><h2 style="font-family:'Spectral',serif;font-weight:600;font-size:20px;margin:0">Plano</h2><span style="font-size:13px;color:#8A8378">sólido, escalable</span></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin-bottom:44px">
+
+      <!-- P1 -->
+      <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+        <div style="display:flex;align-items:center;justify-content:center;height:178px;background:#16172A">
+          <svg width="104" height="104" viewBox="0 0 64 64" fill="none" style="animation:bob 4s ease-in-out infinite">
+            <g class="orbit" style="animation:spin 13s linear infinite">
+              <g transform="rotate(0 32 32)"><ellipse cx="32" cy="32" rx="22" ry="8.5" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="54" cy="32" r="2.7" fill="#C9C6FF"></circle></g>
+              <g transform="rotate(60 32 32)"><ellipse cx="32" cy="32" rx="22" ry="8.5" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="54" cy="32" r="2.7" fill="#C9C6FF"></circle></g>
+              <g transform="rotate(120 32 32)"><ellipse cx="32" cy="32" rx="22" ry="8.5" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="54" cy="32" r="2.7" fill="#C9C6FF"></circle></g>
+            </g>
+            <path d="M32 20 L42.4 26 L42.4 38 L32 44 L21.6 38 L21.6 26 Z" fill="#8E8BF5" stroke="#8E8BF5" stroke-width="4" stroke-linejoin="round"></path>
+            <path d="M26.6 33 q2.4 -3 4.8 0" stroke="#211E3A" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+            <path d="M33.6 33 q2.4 -3 4.8 0" stroke="#211E3A" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+          </svg>
+        </div>
+        <div style="padding:13px 16px;border-top:1px solid #F0E8D8"><div style="font-family:'Spectral',serif;font-weight:600;font-size:15.5px">P1 · Clásico</div><div style="font-size:12px;color:#7C766B;line-height:1.5;margin-top:3px">Un solo tono, todo parejo.</div></div>
+      </div>
+
+      <!-- P2 cachetitos -->
+      <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+        <div style="display:flex;align-items:center;justify-content:center;height:178px;background:#16172A">
+          <svg width="104" height="104" viewBox="0 0 64 64" fill="none" style="animation:bob 4s ease-in-out infinite">
+            <g class="orbit" style="animation:spin 13s linear infinite">
+              <g transform="rotate(0 32 32)"><ellipse cx="32" cy="32" rx="22" ry="8.5" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="54" cy="32" r="2.7" fill="#C9C6FF"></circle></g>
+              <g transform="rotate(60 32 32)"><ellipse cx="32" cy="32" rx="22" ry="8.5" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="54" cy="32" r="2.7" fill="#C9C6FF"></circle></g>
+              <g transform="rotate(120 32 32)"><ellipse cx="32" cy="32" rx="22" ry="8.5" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="54" cy="32" r="2.7" fill="#C9C6FF"></circle></g>
+            </g>
+            <path d="M32 20 L42.4 26 L42.4 38 L32 44 L21.6 38 L21.6 26 Z" fill="#8E8BF5" stroke="#8E8BF5" stroke-width="4" stroke-linejoin="round"></path>
+            <ellipse cx="25.5" cy="36.5" rx="2.2" ry="1.5" fill="#C7A7F0" opacity="0.75"></ellipse>
+            <ellipse cx="38.5" cy="36.5" rx="2.2" ry="1.5" fill="#C7A7F0" opacity="0.75"></ellipse>
+            <path d="M26.6 32.5 q2.4 -3 4.8 0" stroke="#211E3A" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+            <path d="M33.6 32.5 q2.4 -3 4.8 0" stroke="#211E3A" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+          </svg>
+        </div>
+        <div style="padding:13px 16px;border-top:1px solid #F0E8D8"><div style="font-family:'Spectral',serif;font-weight:600;font-size:15.5px">P2 · Con cachetitos</div><div style="font-size:12px;color:#7C766B;line-height:1.5;margin-top:3px">Dos rubores rosados — más tierno.</div></div>
+      </div>
+
+      <!-- P3 borde marcado -->
+      <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+        <div style="display:flex;align-items:center;justify-content:center;height:178px;background:#16172A">
+          <svg width="104" height="104" viewBox="0 0 64 64" fill="none" style="animation:bob 4s ease-in-out infinite">
+            <g class="orbit" style="animation:spin 13s linear infinite">
+              <g transform="rotate(0 32 32)"><ellipse cx="32" cy="32" rx="22" ry="8.5" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="54" cy="32" r="2.7" fill="#C9C6FF"></circle></g>
+              <g transform="rotate(60 32 32)"><ellipse cx="32" cy="32" rx="22" ry="8.5" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="54" cy="32" r="2.7" fill="#C9C6FF"></circle></g>
+              <g transform="rotate(120 32 32)"><ellipse cx="32" cy="32" rx="22" ry="8.5" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="54" cy="32" r="2.7" fill="#C9C6FF"></circle></g>
+            </g>
+            <path d="M32 20 L42.4 26 L42.4 38 L32 44 L21.6 38 L21.6 26 Z" fill="#8E8BF5" stroke="#8E8BF5" stroke-width="4" stroke-linejoin="round"></path>
+            <path d="M32 20 L42.4 26 L42.4 38 L32 44 L21.6 38 L21.6 26 Z" fill="none" stroke="#5750B8" stroke-width="1.6" stroke-linejoin="round"></path>
+            <path d="M26.6 33 q2.4 -3 4.8 0" stroke="#211E3A" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+            <path d="M33.6 33 q2.4 -3 4.8 0" stroke="#211E3A" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+          </svg>
+        </div>
+        <div style="padding:13px 16px;border-top:1px solid #F0E8D8"><div style="font-family:'Spectral',serif;font-weight:600;font-size:15.5px">P3 · Borde marcado</div><div style="font-size:12px;color:#7C766B;line-height:1.5;margin-top:3px">Contorno más oscuro — más definido.</div></div>
+      </div>
+
+    </div>
+
+    <!-- ===== VIDRIO ===== -->
+    <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:14px"><h2 style="font-family:'Spectral',serif;font-weight:600;font-size:20px;margin:0">Vidrio</h2><span style="font-size:13px;color:#8A8378">lustroso, con volumen</span></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin-bottom:44px">
+
+      <!-- V1 -->
+      <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+        <div style="display:flex;align-items:center;justify-content:center;height:178px;background:#16172A">
+          <svg width="104" height="104" viewBox="0 0 64 64" fill="none" style="animation:bob 4s ease-in-out infinite">
+            <defs><radialGradient id="v1" cx="40%" cy="30%" r="75%"><stop offset="0" stop-color="#D2CCFF"></stop><stop offset="55%" stop-color="#8E8BF5"></stop><stop offset="100%" stop-color="#6257C4"></stop></radialGradient><filter id="v1d" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="0" dy="2.2" stdDeviation="2" flood-color="#000" flood-opacity="0.4"></feDropShadow></filter></defs>
+            <g class="orbit" style="animation:spin 13s linear infinite">
+              <g transform="rotate(0 32 32)"><ellipse cx="32" cy="32" rx="22" ry="8.5" stroke="#7E7BD8" stroke-width="1.6"></ellipse><circle cx="54" cy="32" r="2.7" fill="#E2DEFF"></circle></g>
+              <g transform="rotate(60 32 32)"><ellipse cx="32" cy="32" rx="22" ry="8.5" stroke="#7E7BD8" stroke-width="1.6"></ellipse><circle cx="54" cy="32" r="2.7" fill="#E2DEFF"></circle></g>
+              <g transform="rotate(120 32 32)"><ellipse cx="32" cy="32" rx="22" ry="8.5" stroke="#7E7BD8" stroke-width="1.6"></ellipse><circle cx="54" cy="32" r="2.7" fill="#E2DEFF"></circle></g>
+            </g>
+            <path d="M32 20 L42.4 26 L42.4 38 L32 44 L21.6 38 L21.6 26 Z" fill="url(#v1)" stroke="url(#v1)" stroke-width="4" stroke-linejoin="round" filter="url(#v1d)"></path>
+            <path d="M24 25 q8 -4 15 -1 q-7 2 -15 1 Z" fill="#fff" opacity="0.42"></path>
+            <path d="M26.6 33 q2.4 -3 4.8 0" stroke="#241F45" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+            <path d="M33.6 33 q2.4 -3 4.8 0" stroke="#241F45" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+          </svg>
+        </div>
+        <div style="padding:13px 16px;border-top:1px solid #F0E8D8"><div style="font-family:'Spectral',serif;font-weight:600;font-size:15.5px">V1 · Pulido</div><div style="font-size:12px;color:#7C766B;line-height:1.5;margin-top:3px">Brillo redondo arriba, suave.</div></div>
+      </div>
+
+      <!-- V2 diagonal -->
+      <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+        <div style="display:flex;align-items:center;justify-content:center;height:178px;background:#16172A">
+          <svg width="104" height="104" viewBox="0 0 64 64" fill="none" style="animation:bob 4s ease-in-out infinite">
+            <defs><linearGradient id="v2" x1="0.15" y1="0" x2="0.85" y2="1"><stop offset="0" stop-color="#CFC6FF"></stop><stop offset="50%" stop-color="#8E8BF5"></stop><stop offset="100%" stop-color="#5B4FC0"></stop></linearGradient><filter id="v2d" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="0" dy="2.2" stdDeviation="2" flood-color="#000" flood-opacity="0.4"></feDropShadow></filter></defs>
+            <g class="orbit" style="animation:spin 13s linear infinite">
+              <g transform="rotate(0 32 32)"><ellipse cx="32" cy="32" rx="22" ry="8.5" stroke="#7E7BD8" stroke-width="1.6"></ellipse><circle cx="54" cy="32" r="2.7" fill="#E2DEFF"></circle></g>
+              <g transform="rotate(60 32 32)"><ellipse cx="32" cy="32" rx="22" ry="8.5" stroke="#7E7BD8" stroke-width="1.6"></ellipse><circle cx="54" cy="32" r="2.7" fill="#E2DEFF"></circle></g>
+              <g transform="rotate(120 32 32)"><ellipse cx="32" cy="32" rx="22" ry="8.5" stroke="#7E7BD8" stroke-width="1.6"></ellipse><circle cx="54" cy="32" r="2.7" fill="#E2DEFF"></circle></g>
+            </g>
+            <path d="M32 20 L42.4 26 L42.4 38 L32 44 L21.6 38 L21.6 26 Z" fill="url(#v2)" stroke="url(#v2)" stroke-width="4" stroke-linejoin="round" filter="url(#v2d)"></path>
+            <path d="M22.5 27 L38 23 L33 31 Z" fill="#fff" opacity="0.5"></path>
+            <path d="M26.6 33 q2.4 -3 4.8 0" stroke="#241F45" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+            <path d="M33.6 33 q2.4 -3 4.8 0" stroke="#241F45" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+          </svg>
+        </div>
+        <div style="padding:13px 16px;border-top:1px solid #F0E8D8"><div style="font-family:'Spectral',serif;font-weight:600;font-size:15.5px">V2 · Diagonal</div><div style="font-size:12px;color:#7C766B;line-height:1.5;margin-top:3px">Degradé inclinado + reflejo filoso.</div></div>
+      </div>
+
+      <!-- V3 gema -->
+      <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+        <div style="display:flex;align-items:center;justify-content:center;height:178px;background:#16172A">
+          <svg width="104" height="104" viewBox="0 0 64 64" fill="none" style="animation:bob 4s ease-in-out infinite">
+            <defs><linearGradient id="v3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C4BBFF"></stop><stop offset="1" stop-color="#6051C2"></stop></linearGradient><filter id="v3d" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="0" dy="2.2" stdDeviation="2" flood-color="#000" flood-opacity="0.4"></feDropShadow></filter></defs>
+            <g class="orbit" style="animation:spin 13s linear infinite">
+              <g transform="rotate(0 32 32)"><ellipse cx="32" cy="32" rx="22" ry="8.5" stroke="#7E7BD8" stroke-width="1.6"></ellipse><circle cx="54" cy="32" r="2.7" fill="#E2DEFF"></circle></g>
+              <g transform="rotate(60 32 32)"><ellipse cx="32" cy="32" rx="22" ry="8.5" stroke="#7E7BD8" stroke-width="1.6"></ellipse><circle cx="54" cy="32" r="2.7" fill="#E2DEFF"></circle></g>
+              <g transform="rotate(120 32 32)"><ellipse cx="32" cy="32" rx="22" ry="8.5" stroke="#7E7BD8" stroke-width="1.6"></ellipse><circle cx="54" cy="32" r="2.7" fill="#E2DEFF"></circle></g>
+            </g>
+            <path d="M32 20 L42.4 26 L42.4 38 L32 44 L21.6 38 L21.6 26 Z" fill="url(#v3)" stroke="url(#v3)" stroke-width="4" stroke-linejoin="round" filter="url(#v3d)"></path>
+            <path d="M21.6 26 L32 20 L42.4 26 L32 30 Z" fill="#fff" opacity="0.3"></path>
+            <path d="M32 20 L32 44 M21.6 26 L42.4 38 M42.4 26 L21.6 38" stroke="#fff" stroke-width="0.7" opacity="0.28"></path>
+            <path d="M26.6 33.5 q2.4 -3 4.8 0" stroke="#241F45" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+            <path d="M33.6 33.5 q2.4 -3 4.8 0" stroke="#241F45" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+          </svg>
+        </div>
+        <div style="padding:13px 16px;border-top:1px solid #F0E8D8"><div style="font-family:'Spectral',serif;font-weight:600;font-size:15.5px">V3 · Gema facetada</div><div style="font-size:12px;color:#7C766B;line-height:1.5;margin-top:3px">Caritas de cristal, joya pulida.</div></div>
+      </div>
+
+    </div>
+
+    <!-- ===== STICKER ===== -->
+    <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:14px"><h2 style="font-family:'Spectral',serif;font-weight:600;font-size:20px;margin:0">Sticker</h2><span style="font-size:13px;color:#8A8378">pop, recortado</span></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px">
+
+      <!-- S1 blanco -->
+      <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+        <div style="display:flex;align-items:center;justify-content:center;height:178px;background:#16172A">
+          <svg width="104" height="104" viewBox="0 0 64 64" fill="none" style="animation:bob 4s ease-in-out infinite">
+            <g class="orbit" style="animation:spin 13s linear infinite">
+              <g transform="rotate(0 32 32)"><ellipse cx="32" cy="32" rx="22" ry="8.5" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="54" cy="32" r="3.4" fill="#fff"></circle><circle cx="54" cy="32" r="2.2" fill="#8E8BF5"></circle></g>
+              <g transform="rotate(60 32 32)"><ellipse cx="32" cy="32" rx="22" ry="8.5" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="54" cy="32" r="3.4" fill="#fff"></circle><circle cx="54" cy="32" r="2.2" fill="#8E8BF5"></circle></g>
+              <g transform="rotate(120 32 32)"><ellipse cx="32" cy="32" rx="22" ry="8.5" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="54" cy="32" r="3.4" fill="#fff"></circle><circle cx="54" cy="32" r="2.2" fill="#8E8BF5"></circle></g>
+            </g>
+            <path d="M32 20 L42.4 26 L42.4 38 L32 44 L21.6 38 L21.6 26 Z" fill="#fff" stroke="#fff" stroke-width="9" stroke-linejoin="round"></path>
+            <path d="M32 20 L42.4 26 L42.4 38 L32 44 L21.6 38 L21.6 26 Z" fill="#8E8BF5" stroke="#8E8BF5" stroke-width="3" stroke-linejoin="round"></path>
+            <path d="M26.6 33 q2.4 -3 4.8 0" stroke="#241F45" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+            <path d="M33.6 33 q2.4 -3 4.8 0" stroke="#241F45" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+          </svg>
+        </div>
+        <div style="padding:13px 16px;border-top:1px solid #F0E8D8"><div style="font-family:'Spectral',serif;font-weight:600;font-size:15.5px">S1 · Borde blanco</div><div style="font-size:12px;color:#7C766B;line-height:1.5;margin-top:3px">El calco clásico, contorno blanco.</div></div>
+      </div>
+
+      <!-- S2 sombra -->
+      <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+        <div style="display:flex;align-items:center;justify-content:center;height:178px;background:#16172A">
+          <svg width="104" height="104" viewBox="0 0 64 64" fill="none" style="animation:bob 4s ease-in-out infinite">
+            <defs><filter id="s2d" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="1.5" dy="3" stdDeviation="2.2" flood-color="#000" flood-opacity="0.45"></feDropShadow></filter></defs>
+            <g class="orbit" style="animation:spin 13s linear infinite">
+              <g transform="rotate(0 32 32)"><ellipse cx="32" cy="32" rx="22" ry="8.5" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="54" cy="32" r="3.4" fill="#fff"></circle><circle cx="54" cy="32" r="2.2" fill="#8E8BF5"></circle></g>
+              <g transform="rotate(60 32 32)"><ellipse cx="32" cy="32" rx="22" ry="8.5" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="54" cy="32" r="3.4" fill="#fff"></circle><circle cx="54" cy="32" r="2.2" fill="#8E8BF5"></circle></g>
+              <g transform="rotate(120 32 32)"><ellipse cx="32" cy="32" rx="22" ry="8.5" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="54" cy="32" r="3.4" fill="#fff"></circle><circle cx="54" cy="32" r="2.2" fill="#8E8BF5"></circle></g>
+            </g>
+            <g filter="url(#s2d)">
+              <path d="M32 20 L42.4 26 L42.4 38 L32 44 L21.6 38 L21.6 26 Z" fill="#fff" stroke="#fff" stroke-width="9" stroke-linejoin="round"></path>
+              <path d="M32 20 L42.4 26 L42.4 38 L32 44 L21.6 38 L21.6 26 Z" fill="#8E8BF5" stroke="#8E8BF5" stroke-width="3" stroke-linejoin="round"></path>
+            </g>
+            <path d="M26.6 33 q2.4 -3 4.8 0" stroke="#241F45" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+            <path d="M33.6 33 q2.4 -3 4.8 0" stroke="#241F45" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+          </svg>
+        </div>
+        <div style="padding:13px 16px;border-top:1px solid #F0E8D8"><div style="font-family:'Spectral',serif;font-weight:600;font-size:15.5px">S2 · Con sombra</div><div style="font-size:12px;color:#7C766B;line-height:1.5;margin-top:3px">Sticker despegado, sombra detrás.</div></div>
+      </div>
+
+      <!-- S3 borde color -->
+      <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+        <div style="display:flex;align-items:center;justify-content:center;height:178px;background:#16172A">
+          <svg width="104" height="104" viewBox="0 0 64 64" fill="none" style="animation:bob 4s ease-in-out infinite">
+            <g class="orbit" style="animation:spin 13s linear infinite">
+              <g transform="rotate(0 32 32)"><ellipse cx="32" cy="32" rx="22" ry="8.5" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="54" cy="32" r="3.4" fill="#C9C6FF"></circle><circle cx="54" cy="32" r="2.1" fill="#5750B8"></circle></g>
+              <g transform="rotate(60 32 32)"><ellipse cx="32" cy="32" rx="22" ry="8.5" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="54" cy="32" r="3.4" fill="#C9C6FF"></circle><circle cx="54" cy="32" r="2.1" fill="#5750B8"></circle></g>
+              <g transform="rotate(120 32 32)"><ellipse cx="32" cy="32" rx="22" ry="8.5" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="54" cy="32" r="3.4" fill="#C9C6FF"></circle><circle cx="54" cy="32" r="2.1" fill="#5750B8"></circle></g>
+            </g>
+            <path d="M32 20 L42.4 26 L42.4 38 L32 44 L21.6 38 L21.6 26 Z" fill="#C9C6FF" stroke="#C9C6FF" stroke-width="9" stroke-linejoin="round"></path>
+            <path d="M32 20 L42.4 26 L42.4 38 L32 44 L21.6 38 L21.6 26 Z" fill="#8E8BF5" stroke="#8E8BF5" stroke-width="3" stroke-linejoin="round"></path>
+            <path d="M26.6 33 q2.4 -3 4.8 0" stroke="#241F45" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+            <path d="M33.6 33 q2.4 -3 4.8 0" stroke="#241F45" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+          </svg>
+        </div>
+        <div style="padding:13px 16px;border-top:1px solid #F0E8D8"><div style="font-family:'Spectral',serif;font-weight:600;font-size:15.5px">S3 · Borde claro</div><div style="font-size:12px;color:#7C766B;line-height:1.5;margin-top:3px">Contorno lila en vez de blanco — más sutil.</div></div>
+      </div>
+
+    </div>
+
+    <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:38px;padding-top:24px;border-top:1px solid #CFC6B5">
+      <span style="font-size:13.5px;color:#6F6A60">¿El ganador? Decime el código (P2, V1, S2…) y lo fijo como la mascota definitiva + lockup.</span>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "calc": {
+      "command": "python3",
+      "args": ["${PUPPET_BELTS}/generalistas/calc_server.py"],
+      "description": "Calculadora MCP real (add/sub/mul/div/pow/mod) con base_matrix que marca la aritmética como auto-ejecuta, para el caso feliz del agente anidado."
+    }
+  },
+  "_meta": {
+    "slug": "calc-deleg",
+    "base_matrix": "platform/assembler/deleg_fixtures/calc_base_matrix.json"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "schema_version": "v1",
+  "meta": { "name": "mid_plain", "nicho": "general", "descripcion": "capa media BENIGNA: sólo re-delega al cajero (para probar el hoist transitivo del held de dinero)" },
+  "model": { "primary": "stub", "base_url": "stub://local", "temperature": 0, "max_tokens": 256, "max_turns": 6 },
+  "belt": {
+    "belt_ref": "platform/assembler/deleg_fixtures/belt-deleg.mcp.json",
+    "agent_refs": ["platform/assembler/deleg_fixtures/child_money.json"],
+    "tool_filters": { "deleg": ["read_data"] }
+  },
+  "rag": { "enabled": false },
+  "gates": { "money_touch": "needs_ok", "send": "needs_ok" }
+}

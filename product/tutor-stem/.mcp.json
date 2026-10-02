@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "sympy": {
+      "command": "${PUPPET_REPO}/product/tutor-stem/.venv/bin/mcp-sympy",
+      "args": [],
+      "description": "Cómputo simbólico + LaTeX. Tools: sympy_diff, sympy_integrate, sympy_latex, sympy_solve, sympy_simplify, sympy_factor, sympy_limit, sympy_series. Cero credenciales, 100% local."
+    },
+    "chart": {
+      "command": "npx",
+      "args": ["-y", "@antv/mcp-server-chart"],
+      "description": "Graficación vía AntV (27 tipos de chart). Requiere red. Env opcional: VIS_REQUEST_SERVER para deployment privado. Alternativa sin re-cableado: npx @gongrzhe/quickchart-mcp-server."
+    },
+    "units": {
+      "command": "${PUPPET_REPO}/product/tutor-stem/.venv/bin/python",
+      "args": ["${PUPPET_REPO}/product/tutor-stem/tools/units_mcp.py"],
+      "description": "Verificación y conversión de unidades físicas (Pint). Tools: units_convert, units_check. Rechaza sumas dimensionalmente incoherentes (DimensionalityError). Cero credenciales, 100% local."
+    }
+  }
+}

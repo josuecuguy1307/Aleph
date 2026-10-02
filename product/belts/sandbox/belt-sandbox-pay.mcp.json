@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "sandboxpay": {
+      "command": "python3",
+      "args": ["${PUPPET_BELTS}/sandbox/sandbox_pay_server.py"],
+      "description": "Sandbox de pagos (stdio, test). Tools: get_balance (lectura), send_payment (money_touch - piso duro HELD)."
+    }
+  },
+  "_meta": {"slug": "sandbox-pay",
+    "cards": [{"id":"sandboxpay","connector":"sandboxpay","label":"Pagos Sandbox","sub":"transferencias de prueba","auth":"keyless","backed_by":"sandboxpay","tools":["get_balance","send_payment"]}]}
+}

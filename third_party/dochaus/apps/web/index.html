@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f7f7f5" />
+    <title>Aleph Legal</title>
+    <!-- El esquema de la casa se aplica antes del bundle para que no parpadee claro sobre
+         una casa oscura. Ver public/aleph-theme-preload.js. -->
+    <script src="/aleph-theme-preload.js"></script>
+    <!-- [convergencia · s3 · fase 5] La puerta de credencial de este stack redirige al vault
+         de la casa en vez de guardar una llave que quedaría fuera del ledger. La entrada NO
+         se saca: se vuelve puerta. Ver public/aleph-credencial-redirige.js. -->
+    <script src="/aleph-credencial-redirige.js"></script>
+
+    <!-- [un solo picker en las siete · 2026-08-22] El chip de modelo de Aleph, en el
+         composer. Este stack NO tiene picker de modelo —su ModelSelector elige AGENTE— así
+         que no se le esconde nada: el chip se cuelga al lado de su fila de herramientas.
+         Fuera de Aleph el archivo es un no-op (LEY 0). Ver public/aleph-picker-unico.js. -->
+    <script src="/aleph-picker-unico.js"></script>
+    <!-- [Aleph · rediseño fase 1 · cable (b)] EL INTERRUPTOR DE LA PIEL. La hoja viaja
+         siempre; sólo se aplica con `?aleph_piel=v2` en la URL del iframe. Apagar el
+         rediseño no cuesta un build. Fuera de Aleph es un no-op (LEY 0).
+         Ver public/aleph-piel.js. -->
+    <script src="/aleph-piel.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

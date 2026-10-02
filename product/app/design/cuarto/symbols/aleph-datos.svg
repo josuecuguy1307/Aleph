@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96" role="img" aria-label="datos">
+  <g transform="translate(48 48) scale(2.4558) translate(0.00 5.36)" stroke-linecap="round">
+    <path d="M-11.169264,-3.04 L-11.169264,0 A11.169264,6.448752 0 0 0 11.169264,0 L11.169264,-3.04 A11.169264,6.448752 0 0 1 -11.169264,-3.04 Z" fill="#8C6EE6" stroke="#8C6EE6" stroke-width="0.47" stroke-linejoin="round"></path>
+    <ellipse cx="0.00" cy="-3.04" rx="11.17" ry="6.45" fill="#A48AF2" stroke="#A48AF2" stroke-width="0.47" stroke-linejoin="round"></ellipse>
+    <path d="M-11.169264,-6.88 L-11.169264,-3.84 A11.169264,6.448752 0 0 0 11.169264,-3.84 L11.169264,-6.88 A11.169264,6.448752 0 0 1 -11.169264,-6.88 Z" fill="#9B7FEF" stroke="#9B7FEF" stroke-width="0.47" stroke-linejoin="round"></path>
+    <ellipse cx="0.00" cy="-6.88" rx="11.17" ry="6.45" fill="#B7A4F8" stroke="#B7A4F8" stroke-width="0.47" stroke-linejoin="round"></ellipse>
+    <path d="M-11.169264,-10.719999999999999 L-11.169264,-7.68 A11.169264,6.448752 0 0 0 11.169264,-7.68 L11.169264,-10.719999999999999 A11.169264,6.448752 0 0 1 -11.169264,-10.719999999999999 Z" fill="#9B7FEF" stroke="#9B7FEF" stroke-width="0.47" stroke-linejoin="round"></path>
+    <ellipse cx="0.00" cy="-10.72" rx="11.17" ry="6.45" fill="#F5F2FF" stroke="#F5F2FF" stroke-width="0.47" stroke-linejoin="round"></ellipse>
+    <ellipse cx="0.00" cy="-10.75" rx="4.51" ry="2.60" fill="#7C5CF0"></ellipse>
+  </g>
+</svg>

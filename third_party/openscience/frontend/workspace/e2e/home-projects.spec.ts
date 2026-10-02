@@ -1,0 +1,39 @@
+import { test, expect } from "./fixtures"
+import { createSdk, promptSelector } from "./utils"
+
+test("home project search filters the recent list and clears back to it", async ({ page, directory }) => {
+  const current = await createSdk(directory)
+    .project.current()
+    .then((result) => result.data)
+  if (!current?.id) throw new Error("Failed to resolve the current project id")
+
+  await page.goto("/")
+  const card = page.locator(`[data-project="${current.id}"]`)
+  await expect(card).toBeVisible()
+
+  const search = page.getByRole("searchbox", { name: "Search projects" })
+  await search.fill("definitely-not-a-project")
+  await expect(page.getByText("No matching projects", { exact: true })).toBeVisible()
+  await expect(card).toHaveCount(0)
+
+  // Two "Clear search" affordances exist while the empty state shows (the
+  // search-bar icon and the empty-state button); either restores the list.
+  await page.getByRole("button", { name: "Clear search", exact: true }).first().click()
+  await expect(card).toBeVisible()
+})
+
+test("existing folder import remains available through the in-app picker", async ({ page, directory, slug }) => {
+  await page.goto("/")
+  await page.getByRole("button", { name: "Import existing folder", exact: true }).first().click()
+
+  // The picker renders in "lite" mode (plain divs, no role=dialog), so target
+  // its controls at the page level.
+  const location = page.getByPlaceholder(/paste any absolute path/)
+  await expect(location).toBeVisible()
+  await location.fill(directory)
+  await location.press("Enter")
+  await page.getByRole("button", { name: "use this folder", exact: true }).click()
+
+  await expect(page).toHaveURL(new RegExp(`/${slug}/session`))
+  await expect(page.locator(promptSelector)).toBeVisible()
+})

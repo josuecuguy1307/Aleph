@@ -1,0 +1,26 @@
+{
+  "schema_version": "v1",
+  "meta": {
+    "name": "Agente Research (E2E Fase 2)",
+    "nicho": "research",
+    "descripcion": "Asistente cuantitativo que descompone un cálculo en pasos y usa herramientas para cada uno (subset distinto al de cowork: prueba la parametrización)."
+  },
+  "model": {
+    "primary": "openai/gpt-oss-120b",
+    "fallback": "llama-3.3-70b-versatile",
+    "base_url": "https://api.groq.com/openai/v1",
+    "temperature": 0,
+    "max_tokens": 1024,
+    "max_turns": 8
+  },
+  "belt": {
+    "belt_ref": "platform/assembler/fixtures/belt-calc.mcp.json",
+    "tool_filters": { "calc": ["add", "sub", "mul"] }
+  },
+  "framing": {
+    "inline": "Sos un asistente de research cuantitativo. Descomponé el problema en pasos y para CADA operación aritmética usá las herramientas (add, sub, mul). No calcules de cabeza. Reportá los resultados claramente."
+  },
+  "rag": { "enabled": false },
+  "keys": {},
+  "gates": {}
+}

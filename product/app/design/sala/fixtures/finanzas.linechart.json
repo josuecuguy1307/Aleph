@@ -1,0 +1,28 @@
+{
+ "type": "linechart",
+ "title": "PIB (US$ a precios actuales) — Ecuador (fixture)",
+ "labels": [
+  "2017",
+  "2018",
+  "2019",
+  "2020",
+  "2021",
+  "2022",
+  "2023"
+ ],
+ "series": [
+  {
+   "name": "PIB (US$ a precios actuales)",
+   "data": [
+    104295862352,
+    107562008367,
+    108108429407,
+    99291223662,
+    106165866471,
+    115049476370,
+    118844928707
+   ]
+  }
+ ],
+ "source": "World Bank Open Data — NY.GDP.MKTP.CD, Ecuador (fixture)"
+}

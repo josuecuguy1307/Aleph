@@ -1,0 +1,613 @@
+"""Tests for PDF Storage Manager."""
+
+from unittest.mock import MagicMock, patch
+
+import pytest
+
+from local_deep_research.constants import (
+    FILE_PATH_METADATA_ONLY,
+)
+from local_deep_research.database.models.library import DocumentBlob
+from local_deep_research.research_library.services.pdf_storage_manager import (
+    PDFStorageManager,
+)
+
+
+class TestPDFStorageManagerInit:
+    """Tests for PDFStorageManager initialization."""
+
+    def test_initializes_with_defaults(self, tmp_path):
+        """Should initialize with default settings (3 GB)."""
+        manager = PDFStorageManager(tmp_path, "database")
+        assert manager.library_root == tmp_path.resolve()
+        assert manager.storage_mode == "database"
+        assert manager.max_pdf_size_bytes == 3072 * 1024 * 1024
+
+    def test_initializes_with_custom_max_size(self, tmp_path):
+        """Should use custom max PDF size."""
+        manager = PDFStorageManager(tmp_path, "database", max_pdf_size_mb=50)
+        assert manager.max_pdf_size_bytes == 50 * 1024 * 1024
+
+    def test_accepts_valid_storage_modes(self, tmp_path):
+        """Should accept all valid storage modes."""
+        for mode in ("none", "filesystem", "database"):
+            manager = PDFStorageManager(tmp_path, mode)
+            assert manager.storage_mode == mode
+
+    def test_defaults_to_none_for_invalid_mode(self, tmp_path):
+        """Should default to 'none' for invalid storage mode."""
+        manager = PDFStorageManager(tmp_path, "invalid_mode")
+        assert manager.storage_mode == "none"
+
+
+class TestPDFStorageManagerSavePdf:
+    """Tests for save_pdf method."""
+
+    def test_returns_none_for_none_mode(self, tmp_path, mock_pdf_content):
+        """Should return None when storage mode is 'none'."""
+        manager = PDFStorageManager(tmp_path, "none")
+        mock_doc = MagicMock()
+        mock_session = MagicMock()
+
+        result, size = manager.save_pdf(
+            mock_pdf_content, mock_doc, mock_session, "test.pdf"
+        )
+
+        assert result is None
+        assert size == len(mock_pdf_content)
+
+    def test_saves_to_database(self, tmp_path, mock_pdf_content):
+        """Should save PDF to database when mode is 'database'."""
+        manager = PDFStorageManager(tmp_path, "database")
+        mock_doc = MagicMock()
+        mock_doc.id = "doc-123"
+        mock_session = MagicMock()
+        mock_session.query.return_value.filter_by.return_value.first.return_value = None
+
+        result, size = manager.save_pdf(
+            mock_pdf_content, mock_doc, mock_session, "test.pdf"
+        )
+
+        assert result == "database"
+        assert mock_doc.storage_mode == "database"
+        assert mock_session.add.called
+
+    def test_saves_to_filesystem(self, tmp_path, mock_pdf_content):
+        """Should save PDF to filesystem when mode is 'filesystem'."""
+        manager = PDFStorageManager(tmp_path, "filesystem")
+        mock_doc = MagicMock()
+        mock_doc.id = "doc-123"
+        mock_session = MagicMock()
+
+        # Mock the internal method to avoid file system operations
+        with patch.object(
+            manager,
+            "_save_to_filesystem",
+            return_value=tmp_path / "pdfs" / "test.pdf",
+        ):
+            result, size = manager.save_pdf(
+                mock_pdf_content, mock_doc, mock_session, "test.pdf"
+            )
+
+        assert result is not None
+        assert mock_doc.storage_mode == "filesystem"
+
+    def test_rejects_oversized_pdf(self, tmp_path):
+        """Should reject PDF that exceeds size limit."""
+        manager = PDFStorageManager(tmp_path, "database", max_pdf_size_mb=1)
+        mock_doc = MagicMock()
+        mock_session = MagicMock()
+
+        # Create content larger than 1MB
+        large_content = b"x" * (2 * 1024 * 1024)
+
+        result, size = manager.save_pdf(
+            large_content, mock_doc, mock_session, "test.pdf"
+        )
+
+        assert result is None
+        assert size == len(large_content)
+
+
+class TestPDFStorageManagerLoadPdf:
+    """Tests for load_pdf method."""
+
+    def test_loads_from_database_first(self, tmp_path, mock_pdf_content):
+        """Should try database first when loading."""
+        manager = PDFStorageManager(tmp_path, "database")
+        mock_doc = MagicMock()
+        mock_doc.id = "doc-123"
+        mock_session = MagicMock()
+
+        # Mock database blob
+        mock_blob = MagicMock()
+        mock_blob.pdf_binary = mock_pdf_content
+        mock_session.query.return_value.filter_by.return_value.first.return_value = mock_blob
+
+        result = manager.load_pdf(mock_doc, mock_session)
+
+        assert result == mock_pdf_content
+
+    def test_falls_back_to_filesystem(self, tmp_path, mock_pdf_content):
+        """Should fall back to filesystem if not in database."""
+        manager = PDFStorageManager(tmp_path, "filesystem")
+        mock_doc = MagicMock()
+        mock_doc.id = "doc-123"
+        mock_doc.file_path = "pdfs/test.pdf"
+        mock_session = MagicMock()
+
+        # No blob in database
+        mock_session.query.return_value.filter_by.return_value.first.return_value = None
+
+        # Create file on disk
+        pdf_path = tmp_path / "pdfs"
+        pdf_path.mkdir(parents=True, exist_ok=True)
+        (pdf_path / "test.pdf").write_bytes(mock_pdf_content)
+
+        result = manager.load_pdf(mock_doc, mock_session)
+
+        assert result == mock_pdf_content
+
+    def test_returns_none_when_not_found(self, tmp_path):
+        """Should return None when PDF not found anywhere."""
+        manager = PDFStorageManager(tmp_path, "database")
+        mock_doc = MagicMock()
+        mock_doc.id = "doc-123"
+        mock_doc.file_path = None
+        mock_session = MagicMock()
+
+        mock_session.query.return_value.filter_by.return_value.first.return_value = None
+
+        result = manager.load_pdf(mock_doc, mock_session)
+
+        assert result is None
+
+
+class TestPDFStorageManagerHasPdf:
+    """Tests for has_pdf method."""
+
+    def test_returns_false_for_non_pdf_file_type(self, tmp_path):
+        """Should return False for non-PDF documents."""
+        manager = PDFStorageManager(tmp_path, "database")
+        mock_doc = MagicMock()
+        mock_doc.file_type = "txt"
+        mock_session = MagicMock()
+
+        result = manager.has_pdf(mock_doc, mock_session)
+
+        assert result is False
+
+    def test_has_pdf_checks_database_first(self, tmp_path):
+        """Should check database for blob existence."""
+        manager = PDFStorageManager(tmp_path, "database")
+        mock_doc = MagicMock()
+        mock_doc.id = "doc-123"
+        mock_doc.file_type = "pdf"
+        mock_doc.file_path = None
+        mock_session = MagicMock()
+
+        # Mock session returns a truthy row, so the DB path should succeed
+        # and the filesystem fallback should never be reached.
+        mock_first = mock_session.query.return_value.filter_by.return_value
+        mock_first.first.return_value = MagicMock()
+
+        with patch.object(manager, "_get_safe_file_path") as mock_get_path:
+            assert manager.has_pdf(mock_doc, mock_session) is True
+            mock_session.query.assert_called_once_with(DocumentBlob.document_id)
+            mock_session.query.return_value.filter_by.assert_called_once_with(
+                document_id="doc-123"
+            )
+            mock_get_path.assert_not_called()
+
+    def test_has_pdf_falls_back_to_filesystem_when_not_in_db(self, tmp_path):
+        """Should fall back to checking filesystem if not found in database."""
+        manager = PDFStorageManager(tmp_path, "database")
+        mock_doc = MagicMock()
+        mock_doc.id = "doc-123"
+        mock_doc.file_type = "pdf"
+        mock_doc.file_path = "pdfs/test.pdf"
+        mock_session = MagicMock()
+
+        mock_first = mock_session.query.return_value.filter_by.return_value
+        mock_first.first.return_value = None
+
+        with patch.object(manager, "_get_safe_file_path") as mock_get_path:
+            mock_file_path = MagicMock()
+            mock_file_path.is_file.return_value = True
+            mock_get_path.return_value = mock_file_path
+
+            assert manager.has_pdf(mock_doc, mock_session) is True
+            mock_session.query.assert_called_once_with(DocumentBlob.document_id)
+            mock_session.query.return_value.filter_by.assert_called_once_with(
+                document_id="doc-123"
+            )
+            mock_get_path.assert_called_once_with("pdfs/test.pdf")
+
+    def test_has_pdf_returns_false_when_not_in_db_and_not_on_filesystem(
+        self, tmp_path
+    ):
+        """Should return False when PDF is in neither database nor filesystem."""
+        manager = PDFStorageManager(tmp_path, "database")
+        mock_doc = MagicMock()
+        mock_doc.id = "doc-123"
+        mock_doc.file_type = "pdf"
+        mock_doc.file_path = "pdfs/missing.pdf"
+        mock_session = MagicMock()
+
+        mock_first = mock_session.query.return_value.filter_by.return_value
+        mock_first.first.return_value = None
+
+        with patch.object(manager, "_get_safe_file_path") as mock_get_path:
+            mock_file_path = MagicMock()
+            mock_file_path.is_file.return_value = False
+            mock_get_path.return_value = mock_file_path
+
+            assert manager.has_pdf(mock_doc, mock_session) is False
+            mock_session.query.assert_called_once_with(DocumentBlob.document_id)
+            mock_session.query.return_value.filter_by.assert_called_once_with(
+                document_id="doc-123"
+            )
+            mock_get_path.assert_called_once_with("pdfs/missing.pdf")
+
+    def test_has_pdf_returns_false_when_no_blob_and_file_path_none(
+        self, tmp_path
+    ):
+        """Should return False when PDF is not in DB and document.file_path is None."""
+        manager = PDFStorageManager(tmp_path, "database")
+        mock_doc = MagicMock()
+        mock_doc.id = "doc-123"
+        mock_doc.file_type = "pdf"
+        mock_doc.file_path = None
+        mock_session = MagicMock()
+
+        mock_first = mock_session.query.return_value.filter_by.return_value
+        mock_first.first.return_value = None
+
+        assert manager.has_pdf(mock_doc, mock_session) is False
+        mock_session.query.assert_called_once_with(DocumentBlob.document_id)
+        mock_session.query.return_value.filter_by.assert_called_once_with(
+            document_id="doc-123"
+        )
+
+    def test_has_pdf_returns_false_when_path_traversal_blocked(self, tmp_path):
+        """Should return False when path traversal protection rejects the file path."""
+        manager = PDFStorageManager(tmp_path, "database")
+        mock_doc = MagicMock()
+        mock_doc.id = "doc-123"
+        mock_doc.file_type = "pdf"
+        mock_doc.file_path = "../../etc/passwd"
+        mock_session = MagicMock()
+
+        mock_first = mock_session.query.return_value.filter_by.return_value
+        mock_first.first.return_value = None
+
+        # Explicitly tie the False result to the traversal guard firing:
+        # patch _get_safe_file_path so we can assert it was consulted with
+        # the traversal string and returned None (the reject signal), rather
+        # than merely inferring rejection from the boolean result.
+        with patch.object(
+            manager, "_get_safe_file_path", return_value=None
+        ) as mock_get_path:
+            assert manager.has_pdf(mock_doc, mock_session) is False
+            mock_get_path.assert_called_once_with("../../etc/passwd")
+
+        mock_session.query.assert_called_once_with(DocumentBlob.document_id)
+        mock_session.query.return_value.filter_by.assert_called_once_with(
+            document_id="doc-123"
+        )
+
+
+class TestPDFStorageManagerPdfExists:
+    """Tests for pdf_exists classmethod."""
+
+    def test_returns_false_for_non_pdf(self, tmp_path):
+        """Should return False for non-PDF documents without requiring a storage mode."""
+        mock_doc = MagicMock()
+        mock_doc.file_type = "txt"
+        mock_session = MagicMock()
+
+        result = PDFStorageManager.pdf_exists(tmp_path, mock_doc, mock_session)
+
+        assert result is False
+
+    def test_returns_true_when_blob_exists(self, tmp_path):
+        """Should find PDF in database via classmethod."""
+        mock_doc = MagicMock()
+        mock_doc.id = "doc-123"
+        mock_doc.file_type = "pdf"
+        mock_doc.file_path = None
+        mock_session = MagicMock()
+
+        # Simulate DocumentBlob found in database
+        mock_session.query.return_value.filter_by.return_value.first.return_value = MagicMock()
+
+        result = PDFStorageManager.pdf_exists(tmp_path, mock_doc, mock_session)
+
+        assert result is True
+        mock_session.query.assert_called_once_with(DocumentBlob.document_id)
+        mock_session.query.return_value.filter_by.assert_called_once_with(
+            document_id="doc-123"
+        )
+
+    def test_returns_true_when_file_exists(self, tmp_path):
+        """Should find PDF on filesystem via classmethod."""
+        pdf_dir = tmp_path / "pdfs"
+        pdf_dir.mkdir()
+        (pdf_dir / "test.pdf").write_bytes(b"%PDF-1.4 test")
+
+        mock_doc = MagicMock()
+        mock_doc.id = "doc-456"
+        mock_doc.file_type = "pdf"
+        mock_doc.file_path = "pdfs/test.pdf"
+        mock_session = MagicMock()
+
+        # No blob in database
+        mock_session.query.return_value.filter_by.return_value.first.return_value = None
+
+        result = PDFStorageManager.pdf_exists(tmp_path, mock_doc, mock_session)
+
+        assert result is True
+        mock_session.query.assert_called_once_with(DocumentBlob.document_id)
+        mock_session.query.return_value.filter_by.assert_called_once_with(
+            document_id="doc-456"
+        )
+
+    def test_returns_false_on_db_miss_and_filesystem_miss(self, tmp_path):
+        """Direct negative case: no blob in the DB AND no file on disk must
+        yield False. Pins the both-backends-miss path end-to-end through the
+        classmethod (not just the non-PDF short-circuit)."""
+        mock_doc = MagicMock()
+        mock_doc.id = "doc-789"
+        mock_doc.file_type = "pdf"
+        # Points at a file that does not exist under library_root.
+        mock_doc.file_path = "pdfs/missing.pdf"
+        mock_session = MagicMock()
+
+        # No blob in database.
+        mock_session.query.return_value.filter_by.return_value.first.return_value = None
+
+        result = PDFStorageManager.pdf_exists(tmp_path, mock_doc, mock_session)
+
+        assert result is False
+        mock_session.query.assert_called_once_with(DocumentBlob.document_id)
+        mock_session.query.return_value.filter_by.assert_called_once_with(
+            document_id="doc-789"
+        )
+
+    def test_propagates_query_failure(self, tmp_path):
+        """A DB error while probing for the blob must NOT be swallowed and
+        misreported as "no PDF": ``has_pdf``/``pdf_exists`` deliberately have
+        no try/except around ``session.query(...)``, so a genuine backend
+        failure surfaces to the caller instead of masquerading as absence.
+        This locks that contract so a future refactor can't quietly turn DB
+        outages into false "PDF missing" results."""
+        mock_doc = MagicMock()
+        mock_doc.id = "doc-err"
+        mock_doc.file_type = "pdf"
+        mock_doc.file_path = None
+        mock_session = MagicMock()
+        mock_session.query.side_effect = RuntimeError("db connection lost")
+
+        with pytest.raises(RuntimeError, match="db connection lost"):
+            PDFStorageManager.pdf_exists(tmp_path, mock_doc, mock_session)
+
+
+class TestPDFStorageManagerDeletePdf:
+    """Tests for delete_pdf method."""
+
+    def test_deletes_database_blob(self, tmp_path):
+        """Should delete blob from database."""
+        manager = PDFStorageManager(tmp_path, "database")
+        mock_doc = MagicMock()
+        mock_doc.id = "doc-123"
+        mock_doc.storage_mode = "database"
+        mock_session = MagicMock()
+
+        mock_blob = MagicMock()
+        mock_session.query.return_value.filter_by.return_value.first.return_value = mock_blob
+
+        result = manager.delete_pdf(mock_doc, mock_session)
+
+        assert result is True
+        mock_session.delete.assert_called_with(mock_blob)
+        assert mock_doc.storage_mode == "none"
+
+    def test_deletes_filesystem_file(self, tmp_path, mock_pdf_content):
+        """Should delete file from filesystem."""
+        manager = PDFStorageManager(tmp_path, "filesystem")
+        mock_doc = MagicMock()
+        mock_doc.id = "doc-123"
+        mock_doc.storage_mode = "filesystem"
+        mock_doc.file_path = "pdfs/test.pdf"
+        mock_session = MagicMock()
+
+        # Create file on disk
+        pdf_path = tmp_path / "pdfs"
+        pdf_path.mkdir(parents=True, exist_ok=True)
+        file_path = pdf_path / "test.pdf"
+        file_path.write_bytes(mock_pdf_content)
+
+        result = manager.delete_pdf(mock_doc, mock_session)
+
+        assert result is True
+        assert not file_path.exists()
+        assert mock_doc.storage_mode == "none"
+
+    def test_returns_true_for_none_mode(self, tmp_path):
+        """Should return True when nothing to delete."""
+        manager = PDFStorageManager(tmp_path, "none")
+        mock_doc = MagicMock()
+        mock_doc.storage_mode = "none"
+        mock_session = MagicMock()
+
+        result = manager.delete_pdf(mock_doc, mock_session)
+
+        assert result is True
+
+
+class TestPDFStorageManagerUpgradeToPdf:
+    """Tests for upgrade_to_pdf method."""
+
+    def test_upgrades_text_only_document(self, tmp_path, mock_pdf_content):
+        """Should add PDF to text-only document."""
+        manager = PDFStorageManager(tmp_path, "database")
+        mock_doc = MagicMock()
+        mock_doc.id = "doc-123"
+        mock_doc.storage_mode = "none"
+        mock_session = MagicMock()
+
+        mock_session.query.return_value.filter_by.return_value.first.return_value = None
+
+        result = manager.upgrade_to_pdf(
+            mock_doc, mock_pdf_content, mock_session
+        )
+
+        assert result is True
+        assert mock_doc.storage_mode == "database"
+        mock_session.add.assert_called()
+
+    def test_skips_if_already_has_pdf(self, tmp_path, mock_pdf_content):
+        """Should skip if document already has PDF storage."""
+        manager = PDFStorageManager(tmp_path, "database")
+        mock_doc = MagicMock()
+        mock_doc.id = "doc-123"
+        mock_doc.storage_mode = "database"
+        mock_session = MagicMock()
+
+        result = manager.upgrade_to_pdf(
+            mock_doc, mock_pdf_content, mock_session
+        )
+
+        assert result is False
+
+    def test_rejects_oversized_pdf(self, tmp_path):
+        """Should reject PDF that exceeds size limit."""
+        manager = PDFStorageManager(tmp_path, "database", max_pdf_size_mb=1)
+        mock_doc = MagicMock()
+        mock_doc.id = "doc-123"
+        mock_doc.storage_mode = "none"
+        mock_session = MagicMock()
+
+        mock_session.query.return_value.filter_by.return_value.first.return_value = None
+
+        large_content = b"x" * (2 * 1024 * 1024)
+
+        result = manager.upgrade_to_pdf(mock_doc, large_content, mock_session)
+
+        assert result is False
+
+
+class TestPDFStorageManagerFilesystemWrite:
+    """Tests for actual filesystem write operations."""
+
+    def test_saves_to_filesystem_without_encoding_error(
+        self, tmp_path, mock_pdf_content
+    ):
+        """Should save binary PDF to filesystem without encoding errors.
+
+        Regression test for bug where write_file_verified passed encoding
+        argument to binary mode open(), causing ValueError.
+        """
+        manager = PDFStorageManager(tmp_path, "filesystem")
+
+        # Actually call _save_to_filesystem (not mocked)
+        result_path = manager._save_to_filesystem(
+            mock_pdf_content,
+            "test_document.pdf",
+            url="https://example.com/paper.pdf",
+            resource_id=123,
+        )
+
+        # Verify file was created
+        assert result_path.exists()
+        assert result_path.suffix == ".pdf"
+
+        # Verify content matches
+        saved_content = result_path.read_bytes()
+        assert saved_content == mock_pdf_content
+
+    def test_filesystem_write_uses_settings_snapshot(
+        self, tmp_path, mock_pdf_content
+    ):
+        """Should pass settings_snapshot to write_file_verified.
+
+        Regression test for bug where settings couldn't be found because
+        no settings_snapshot was passed to write_file_verified.
+        """
+        # Create manager with filesystem mode
+        manager = PDFStorageManager(tmp_path, "filesystem")
+
+        # This should work without raising FileWriteSecurityError
+        # because the settings_snapshot is now passed correctly
+        result_path = manager._save_to_filesystem(
+            mock_pdf_content,
+            "snapshot_test.pdf",
+        )
+
+        assert result_path.exists()
+
+
+class TestPDFStorageManagerGenerateFilename:
+    """Tests for _generate_filename method."""
+
+    def test_generates_arxiv_filename(self, tmp_path):
+        """Should generate proper filename for arXiv URLs."""
+        manager = PDFStorageManager(tmp_path, "filesystem")
+        filename = manager._generate_filename(
+            "https://arxiv.org/pdf/2401.12345.pdf", None, "fallback.pdf"
+        )
+        assert "arxiv" in filename.lower()
+        assert "2401.12345" in filename
+
+    def test_generates_pmc_filename(self, tmp_path):
+        """Should generate proper filename for PMC URLs."""
+        manager = PDFStorageManager(tmp_path, "filesystem")
+        filename = manager._generate_filename(
+            "https://ncbi.nlm.nih.gov/pmc/articles/PMC1234567/pdf/",
+            None,
+            "fallback.pdf",
+        )
+        assert "pmc" in filename.lower() or "pubmed" in filename.lower()
+
+    def test_uses_fallback_for_unknown_urls(self, tmp_path):
+        """Should use fallback filename for unknown URLs."""
+        manager = PDFStorageManager(tmp_path, "filesystem")
+        filename = manager._generate_filename(
+            "https://example.com/paper.pdf", None, "my_paper.pdf"
+        )
+        assert filename == "my_paper.pdf"
+
+
+class TestPDFStorageManagerInferStorageMode:
+    """Tests for _infer_storage_mode method."""
+
+    def test_infers_database_from_blob(self, tmp_path):
+        """Should infer database mode when blob exists."""
+        manager = PDFStorageManager(tmp_path, "database")
+        mock_doc = MagicMock()
+        mock_doc.blob = MagicMock()
+        mock_doc.file_path = None
+
+        result = manager._infer_storage_mode(mock_doc)
+
+        assert result == "database"
+
+    def test_infers_filesystem_from_file_path(self, tmp_path):
+        """Should infer filesystem mode when file_path exists."""
+        manager = PDFStorageManager(tmp_path, "filesystem")
+        mock_doc = MagicMock(spec=["file_path"])
+        mock_doc.file_path = "pdfs/test.pdf"
+
+        result = manager._infer_storage_mode(mock_doc)
+
+        assert result == "filesystem"
+
+    def test_infers_none_for_metadata_only(self, tmp_path):
+        """Should infer none mode for metadata_only documents."""
+        manager = PDFStorageManager(tmp_path, "database")
+        mock_doc = MagicMock(spec=["file_path"])
+        mock_doc.file_path = FILE_PATH_METADATA_ONLY
+
+        result = manager._infer_storage_mode(mock_doc)
+
+        assert result == "none"

@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./aleph-config.js"></script>
+<script src="./vendor/supabase.min.js"></script>
+<script src="./supabase-auth.js"></script>
+<script src="./support.js"></script>
+<script src="./auth.js"></script>
+<script src="./paywall.js"></script>
+<script src="./i18n.js"></script>
+<script src="./theme.js"></script>
+<script src="./nav.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="vendor/fonts.css"><!-- [Casa 2 · F1.b] fuentes locales: antes 2 preconnect + css2 de Google -->
+<link rel="stylesheet" href="aleph-tokens.css"><!-- [identidad visual] la piel: tokens, forma y tipografía en un solo lugar -->
+<style>
+  /* [sistema 2026-07-31] Estados entra al sistema "Híbrido Spatial + Soft futurism".
+     Las primitivas (.ds-plane/.ds-well/.ds-track/.ds-card/.ds-item/.ds-title/…) llegan solas
+     por aleph-tokens.css → @import aleph-ds.css; acá NO se redeclara ningún token.
+     Cero bordes, cero relieves, cero hundidos: la jerarquía es sombra + radio. Color 90/8/2 —
+     y en ESTA pantalla eso importa el doble, porque es la que exhibe verde/ámbar/rojo: el tono
+     queda en el PUNTO de estado (ícono, dot, chip) y el texto vuelve a la tinta del sistema,
+     que es la única que cumple contraste en los DOS temas (los salmones #E8B0A6/#C99 estaban
+     escritos para el tema oscuro y en claro caían sobre fondo casi blanco).
+     Lo que NO cambia: ni un binding, ni un <sc-for>, ni un <sc-if>, ni una acción, ni un texto. */
+  *{box-sizing:border-box}
+  html,body{margin:0}
+
+  body{background:var(--page-bg);font-family:var(--font-ui);color:var(--ink);-webkit-font-smoothing:antialiased}
+  a{text-decoration:none;color:inherit}
+  ::-webkit-scrollbar{width:9px;height:9px}::-webkit-scrollbar-thumb{background:var(--paper2);border-radius:var(--r-full)}
+  @keyframes livePulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+  @keyframes nodePulse{0%,100%{box-shadow:0 0 0 0 rgba(224,162,60,.5)}50%{box-shadow:0 0 0 6px rgba(224,162,60,0)}}
+  .es-sec{font:300 21px var(--font-ui);color:var(--ink)}
+  .es-num{font:400 12px var(--font-ui);color:var(--muted);background:var(--paper2);width:26px;height:26px;
+          border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;flex:none}
+  .es-kicker{font:400 10.5px var(--font-ui);letter-spacing:.06em;text-transform:uppercase;color:var(--faint)}
+  .es-shotbar{display:flex;align-items:center;gap:7px;padding:10px 14px;background:var(--paper2)}
+  .es-dot3{width:7px;height:7px;border-radius:50%;background:var(--faint);opacity:.4}
+</style>
+
+<style id="aleph-theme-style">
+
+body{background:var(--page-bg)}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+<!-- tema: ahora vía theme.js compartido (en <head>) — soporta light·dark·auto. El bloque inline duplicado quedó deprecado. -->
+
+</helmet>
+
+<div style="min-height:100vh;padding:28px 34px 90px">
+  <div style="max-width:1240px;margin:0 auto">
+
+    <div class="ds-plane" style="margin-bottom:20px">
+      <h1 class="ds-title">Los momentos en que el producto se juzga</h1>
+      <p class="ds-sub" style="margin:12px 0 0;font-size:14px;max-width:74ch;line-height:1.6">Cuando algo falta, algo se rompe, o algo pasa mientras no estás mirando. Tres patrones, una sola voz: <b style="color:var(--ink);font-weight:400">calmo, on-brand, orientado a la acción</b> — nunca muerto, nunca culpando al usuario, nunca alarmista.</p>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 1 — EMPTY STATES -->
+    <!-- ============================================================ -->
+    <div class="ds-plane" style="margin-bottom:20px">
+      <div style="display:flex;align-items:center;gap:13px;margin-bottom:8px">
+        <span class="es-num">1</span>
+        <span class="es-sec">Estados vacíos</span>
+      </div>
+      <p class="ds-sub" style="margin:0 0 20px;max-width:70ch;line-height:1.55">Un vacío no es un callejón — es una invitación. Siempre: <b style="color:var(--ink);font-weight:400">(a)</b> di qué va a vivir aquí, <b style="color:var(--ink);font-weight:400">(b)</b> empuja a la acción que lo llena. Ícono calmo + una línea + un CTA. Misma voz en todos.</p>
+
+      <div class="ds-well" style="display:grid;grid-template-columns:1fr 1fr;gap:18px;padding:20px">
+        <sc-for list="{{ empties }}" as="e" hint-placeholder-count="5">
+          <div>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:9px"><span class="es-kicker">{{ e.screen }}</span><span class="ds-meta">— {{ e.when }}</span></div>
+            <div class="ds-card" style="padding:0;overflow:hidden">
+              <div class="es-shotbar">
+                <span style="display:flex;gap:5px"><span class="es-dot3"></span><span class="es-dot3"></span><span class="es-dot3"></span></span>
+                <span class="ds-meta" style="margin-left:6px">{{ e.tab }}</span>
+              </div>
+              <div style="min-height:230px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:34px 28px">
+                <div style="{{ e.iconWrap }}">{{ e.icon }}</div>
+                <div style="font:400 17px var(--font-ui);color:var(--ink);margin-top:17px">{{ e.title }}</div>
+                <div class="ds-sub" style="margin-top:7px;line-height:1.55;max-width:38ch">{{ e.body }}</div>
+                <button style="{{ e.ctaStyle }}">{{ e.cta }}</button>
+              </div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 2 — ERRORS -->
+    <!-- ============================================================ -->
+    <div class="ds-plane" style="margin-bottom:20px">
+      <div style="display:flex;align-items:center;gap:13px;margin-bottom:8px">
+        <span class="es-num">2</span>
+        <span class="es-sec">Errores</span>
+      </div>
+      <p class="ds-sub" style="margin:0 0 20px;max-width:70ch;line-height:1.55">Cara humana, <b style="color:var(--ink);font-weight:400">nunca un stack trace crudo</b>. Lenguaje plano + una acción de recuperación; el detalle técnico, solo al expandir. Y lo más importante: <b style="color:var(--ink);font-weight:400">nunca se pierde el trabajo hecho.</b></p>
+
+      <!-- 2a. CRITICAL: BYOK key fails mid-task, in the Sala bitácora -->
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:9px"><span class="es-kicker">EN LA SALA · bitácora</span><span class="ds-meta">— el caso crítico: tu key falla a mitad de tarea</span><!-- el rojo como TEXTO daba 3.6:1 a 11px (medido) y el sistema lo reserva al punto de estado: el tono vive en el badge "!" de la bitácora --></div>
+      <div class="ds-card" style="padding:0;overflow:hidden;margin-bottom:20px">
+        <div style="display:flex;align-items:center;gap:11px;padding:14px 18px;background:var(--paper2)">
+          <div style="width:34px;height:34px;border-radius:var(--r-sm);background:var(--paper);display:flex;align-items:center;justify-content:center;color:var(--muted);font:400 14px var(--font-brand);flex:none">Rp</div>
+          <div style="flex:1"><div class="ds-name">Reportero</div><div class="ds-meta" style="margin-top:2px">cierra los números de la semana</div></div>
+          <span style="display:inline-flex;align-items:center;gap:6px;font:400 10.5px var(--font-ui);color:var(--amber);background:var(--amber-bg);border-radius:var(--r-full);padding:4px 11px"><span class="ds-dot ds-dot-warn"></span>PAUSADO</span>
+        </div>
+        <div style="padding:20px 22px;max-width:580px">
+          <div style="position:relative">
+            <div style="position:absolute;left:13px;top:6px;bottom:8px;width:2px;background:var(--paper2)"></div>
+            <!-- done steps -->
+            <div style="display:flex;gap:12px;margin-bottom:16px;position:relative"><span style="width:28px;height:28px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-size:11px;background:var(--green-bg);color:var(--green);z-index:1">▦</span><div><div class="ds-name">Leyó 3 hojas de cálculo</div><div class="ds-meta" style="margin-top:3px">ventas · gastos · caja</div></div></div>
+            <div style="display:flex;gap:12px;margin-bottom:16px;position:relative"><span style="width:28px;height:28px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-size:11px;background:var(--accent-soft);color:var(--accent-deep);z-index:1">▦</span><div><div class="ds-name">Escribió la hoja de cálculo del cierre</div><div class="ds-meta" style="margin-top:3px">guardado · no se pierde</div></div></div>
+            <!-- error step -->
+            <div style="display:flex;gap:12px;position:relative">
+              <span style="width:28px;height:28px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font:400 13px var(--font-ui);background:var(--red-bg);color:var(--red);z-index:1">!</span>
+              <div style="flex:1">
+                <div class="ds-name">Se cortó al generar el gráfico</div>
+                <div style="margin-top:10px;background:var(--red-bg);border-radius:var(--r-md);padding:14px 16px">
+                  <div style="font:400 13px var(--font-ui);color:var(--ink);line-height:1.45">Tu key de OpenAI se quedó sin saldo — el Aleph paró aquí.</div>
+                  <div class="ds-sub" style="margin-top:6px;line-height:1.5">Tranquilo: <b style="color:var(--ink);font-weight:400">todo lo que hizo hasta ahora quedó guardado.</b> La sesión está en tu Historial, lista para retomar cuando lo resuelvas.</div>
+                  <div style="display:flex;gap:8px;margin-top:13px;flex-wrap:wrap;align-items:center">
+                    <button class="ds-btn" style-hover="filter:brightness(1.12)">↻ Reintentar</button>
+                    <button class="ds-btn-ghost" style-hover="color:var(--ink)">Revisar mi key</button>
+                    <button onClick="{{ toggleTrace }}" style="border:0;background:none;color:var(--faint);font:400 11.5px var(--font-ui);cursor:pointer;text-decoration:underline;margin-left:auto">{{ traceLabel }}</button>
+                  </div>
+                  <sc-if value="{{ traceOpen }}" hint-placeholder-val="{{ false }}"><div style="margin-top:11px;font-family:var(--font-mono);font-size:11px;color:var(--muted);background:var(--paper2);border-radius:var(--r-sm);padding:10px 12px;white-space:pre-wrap;line-height:1.6">[auth] 429 insufficient_quota
+  provider: openai · key ••••7f2a
+  at run_step(generate_chart) · 14:32:08</div></sc-if>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2b. inline tool error + 2c model + 2d connection + 2e limit (as a row of compact cards) -->
+      <div class="ds-well" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:20px">
+        <sc-for list="{{ errs }}" as="e" hint-placeholder-count="4">
+          <div>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:9px"><span class="es-kicker">{{ e.where }}</span><span class="ds-meta">— {{ e.case }}</span></div>
+            <div style="{{ e.cardStyle }}">
+              <div style="display:flex;align-items:flex-start;gap:12px">
+                <span style="{{ e.iconStyle }}">{{ e.icon }}</span>
+                <div style="flex:1">
+                  <div style="font:400 13.5px var(--font-ui);color:{{ e.titleCol }};line-height:1.4">{{ e.title }}</div>
+                  <div class="ds-sub" style="margin-top:5px;line-height:1.5">{{ e.body }}</div>
+                  <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+                    <sc-for list="{{ e.actions }}" as="a" hint-placeholder-count="2"><button style="{{ a.style }}">{{ a.label }}</button></sc-for>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 3 — NOTIFICATIONS -->
+    <!-- ============================================================ -->
+    <div class="ds-plane">
+      <div style="display:flex;align-items:center;gap:13px;margin-bottom:8px">
+        <span class="es-num">3</span>
+        <span class="es-sec">Notificaciones</span>
+      </div>
+      <p class="ds-sub" style="margin:0 0 20px;max-width:70ch;line-height:1.55">El puente del trabajo autónomo: lo que te llega cuando <b style="color:var(--ink);font-weight:400">no estás mirando</b>. Te dejan dejar un Aleph corriendo y te jalan de vuelta cuando importa. Formato: qué Aleph · qué pasó · cuándo · una acción directa.</p>
+
+      <div style="display:grid;grid-template-columns:1.15fr .85fr;gap:18px;align-items:start">
+        <!-- notification center open -->
+        <div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:9px"><span class="es-kicker">CENTRO DE NOTIFICACIONES</span><span class="ds-meta">— campanita en la barra, abierta</span></div>
+          <div class="ds-card" style="padding:0;overflow:hidden">
+            <!-- topbar with bell -->
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--paper2)">
+              <span class="ds-sub">Home · tus Aleph</span>
+              <div style="position:relative;width:34px;height:34px;border-radius:var(--r-sm);background:var(--accent-soft);display:flex;align-items:center;justify-content:center;color:var(--accent-deep);font-size:15px">⌁<span style="position:absolute;top:-3px;right:-3px;min-width:16px;height:16px;padding:0 4px;border-radius:var(--r-full);background:var(--accent);color:var(--on-accent);font:400 9.5px var(--font-ui);display:flex;align-items:center;justify-content:center">3</span></div>
+            </div>
+            <!-- panel -->
+            <div style="padding:14px 16px">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><span style="font:400 15px var(--font-ui);color:var(--ink)">Novedades</span><button style="border:0;background:none;color:var(--accent-deep);font:400 11.5px var(--font-ui);cursor:pointer">marcar todo leído</button></div>
+              <div class="es-kicker" style="margin-bottom:10px">Hace un rato</div>
+              <!-- la PISTA: exactamente una novedad en foco, con su acción alcanzable; el resto
+                   retrocede conservando quién · qué · cuándo legibles (Vertical Sliding Focus). -->
+              <div class="ds-well ds-track" data-ds-track style="padding:14px 16px">
+                <sc-for list="{{ notifs }}" as="n" hint-placeholder-count="3">
+                  <div class="ds-card ds-item" style="{{ n.rowStyle }}">
+                    <sc-if value="{{ n.unread }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;left:9px;top:50%;width:6px;height:6px;border-radius:50%;background:var(--accent);transform:translateY(-50%)"></span></sc-if>
+                    <div style="{{ n.monoStyle }}">{{ n.mono }}</div>
+                    <div style="flex:1;min-width:0">
+                      <div style="font:300 13px var(--font-ui);color:var(--muted);line-height:1.4"><b style="font-weight:400;color:var(--ink)">{{ n.who }}</b> <span style="color:var(--muted)">{{ n.what }}</span></div>
+                      <div style="display:flex;align-items:center;gap:9px;margin-top:7px">
+                        <span style="{{ n.tagStyle }}">{{ n.tag }}</span>
+                        <span class="ds-meta">{{ n.when }}</span>
+                        <div class="ds-actions" style="margin-left:auto">
+                          <button style="{{ n.actStyle }}">{{ n.action }}</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- right: toast + anatomy + bell states -->
+        <div style="display:flex;flex-direction:column;gap:18px">
+          <!-- live toast -->
+          <div>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:9px"><span class="es-kicker">TOAST · live</span><span class="ds-meta">— aparece arriba a la derecha</span></div>
+            <div class="ds-card" style="display:flex;align-items:center;gap:12px;padding:14px 16px">
+              <div style="width:34px;height:34px;border-radius:var(--r-sm);background:var(--paper2);display:flex;align-items:center;justify-content:center;color:var(--muted);font:400 14px var(--font-brand);flex:none">Pg</div>
+              <div style="flex:1;min-width:0"><div style="font:300 13px var(--font-ui);color:var(--muted);line-height:1.4"><b style="font-weight:400;color:var(--ink)">Programador</b> <span style="color:var(--muted)">terminó la sección de precios</span></div><div class="ds-meta" style="margin-top:4px">apenas · mientras estabas en otra</div></div>
+              <a href="Biblioteca.dc.html" class="ds-btn" style="flex:none" style-hover="filter:brightness(1.12)">Ver</a>
+            </div>
+          </div>
+
+          <!-- anatomy -->
+          <div>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:9px"><span class="es-kicker">ANATOMÍA</span><span class="ds-meta">— cada notificación</span></div>
+            <div class="ds-well" style="padding:18px">
+              <div style="display:flex;align-items:flex-start;gap:12px">
+                <div style="width:34px;height:34px;border-radius:var(--r-sm);background:var(--paper);display:flex;align-items:center;justify-content:center;color:var(--muted);font:400 14px var(--font-brand);flex:none">Rp</div>
+                <div style="flex:1"><div style="font:300 13px var(--font-ui);color:var(--muted);line-height:1.4"><b style="font-weight:400;color:var(--ink)">qué Aleph</b> <span style="color:var(--muted)">qué pasó</span></div><div style="display:flex;align-items:center;gap:9px;margin-top:7px"><span class="ds-meta" style="background:var(--paper);border-radius:var(--r-full);padding:3px 9px">estado</span><span class="ds-meta">cuándo</span><span style="font:400 11.5px var(--font-ui);color:var(--accent-deep)">→ acción</span></div></div>
+              </div>
+              <div style="display:flex;gap:18px;margin-top:18px;flex-wrap:wrap">
+                <div class="ds-sub" style="display:flex;align-items:center;gap:7px"><span class="ds-dot ds-dot-ok" style="width:9px;height:9px"></span>terminó</div>
+                <div class="ds-sub" style="display:flex;align-items:center;gap:7px"><span class="ds-dot ds-dot-warn" style="width:9px;height:9px;animation:livePulse 1.6s ease-in-out infinite"></span>necesita tu OK</div>
+                <div class="ds-sub" style="display:flex;align-items:center;gap:7px"><span class="ds-dot ds-dot-err" style="width:9px;height:9px"></span>se detuvo</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- footer voice card -->
+      <div class="ds-well" style="margin-top:24px;background:linear-gradient(110deg,var(--accent-soft),var(--paper2) 62%);padding:22px 24px;display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+        <svg width="40" height="48" viewBox="0 0 128 128" fill="none"><g style="transform-origin:64px 64px;animation:spin 13s linear infinite"><g transform="rotate(0 64 64)"><ellipse cx="64" cy="64" rx="46" ry="17" stroke="var(--accent)" stroke-width="2.6" opacity="0.55"></ellipse><circle cx="110" cy="64" r="5" fill="var(--accent)"></circle></g><g transform="rotate(60 64 64)"><ellipse cx="64" cy="64" rx="46" ry="17" stroke="var(--accent)" stroke-width="2.6" opacity="0.55"></ellipse><circle cx="110" cy="64" r="5" fill="var(--accent)"></circle></g><g transform="rotate(120 64 64)"><ellipse cx="64" cy="64" rx="46" ry="17" stroke="var(--accent)" stroke-width="2.6" opacity="0.55"></ellipse><circle cx="110" cy="64" r="5" fill="var(--accent)"></circle></g></g><path d="M64 40 L85 52 L85 76 L64 88 L43 76 L43 52 Z" fill="var(--accent)" stroke="var(--accent)" stroke-width="7" stroke-linejoin="round"></path><path d="M53 65 q4.5 -5.5 9 0" stroke="#211E3A" stroke-width="3.6" fill="none" stroke-linecap="round"></path><path d="M66 65 q4.5 -5.5 9 0" stroke="#211E3A" stroke-width="3.6" fill="none" stroke-linecap="round"></path></svg>
+        <div style="flex:1;min-width:240px">
+          <div style="font:400 17px var(--font-ui);color:var(--ink)">Una sola voz en los tres</div>
+          <div class="ds-sub" style="margin-top:6px;line-height:1.55;max-width:72ch">Calmo, on-brand, orientado a la acción. El vacío invita, el error tranquiliza y guarda tu trabajo, la notificación te trae de vuelta. Nunca muerto, nunca culpando al usuario, nunca alarmista.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#8E8BF5&quot;}}">
+class Component extends DCLogic {
+  state = { trace:false };
+  componentDidMount(){ const a=this.props.accent; if(a) document.documentElement.style.setProperty('--accent',a); this.dsKeepFocus(); }
+  componentDidUpdate(p){ const a=this.props.accent; if(p&&p.accent!==a&&a) document.documentElement.style.setProperty('--accent',a); this.dsKeepFocus(); }
+  componentWillUnmount(){ (this._dsT||[]).forEach(clearTimeout); }
+  rgba(hex,a){ const h=hex.replace('#',''); const n=parseInt(h,16); return 'rgba('+((n>>16)&255)+','+((n>>8)&255)+','+(n&255)+','+a+')'; }
+
+  /* [sistema · Vertical Sliding Focus] REACT SE COME EL data-focus (mismo caso medido en
+     Historial): react-dom llama removeAttribute('data-focus') en el commit que sigue al primer
+     apply() de aleph-ds.js, y aleph-ds.js sólo re-aplica cuando cambia la CANTIDAD de filas —
+     así la pista quedaba sin foco, o sea todas las novedades a tamaño real con todas sus
+     acciones, exactamente lo contrario del patrón. Usa la API pública (AlephDS.focus) y sólo
+     entra si el atributo falta: no roba scroll ni mueve el foco que el usuario eligió. */
+  dsKeepFocus(){
+    (this._dsT||[]).forEach(clearTimeout);
+    this._dsT=[0,120,400].map(ms=>setTimeout(()=>{
+      try{
+        const t=document.querySelector('[data-ds-track]');
+        if(!t || !window.AlephDS || !t.querySelector('.ds-item')) return;
+        if(!t.querySelector('.ds-item[data-focus]')) window.AlephDS.focus(t, t._dsIndex||0);
+      }catch(e){}
+    },ms));
+  }
+
+  renderVals(){
+    /* la acción primaria INVIERTE el campo (--ink sobre --paper): tinta clara en oscuro y
+       oscura en claro, sin gastar el acento. La suave es un pozo neutro. */
+    const ctaPrimary='margin-top:18px;border:0;background:var(--ink);color:var(--paper);border-radius:var(--r-md);padding:11px 20px;font:400 12.5px var(--font-ui);cursor:pointer';
+    const ctaSoft='margin-top:18px;border:0;background:var(--paper2);color:var(--muted);border-radius:var(--r-md);padding:11px 20px;font:400 12.5px var(--font-ui);cursor:pointer';
+
+    // ---- empty states ----
+    const empties=[
+      {screen:'Home', when:'sin Aleph', tab:'Home', icon:'＋', iconC:'#8E8BF5',
+        title:'Todavía no tienes Aleph', body:'Aquí viven tus agentes. Arma el primero y aparecerá listo para trabajar.', cta:'＋ Crear mi primer Aleph', ctaStyle:ctaPrimary},
+      {screen:'Sala', when:'sin tarea aún', tab:'Sala de uso', icon:'aleph-ready', iconC:'#8E8BF5',
+        title:'El Reportero está listo', body:'Dile qué hacer y lo verás trabajar aquí —paso a paso.', cta:'Escribir una instrucción', ctaStyle:ctaSoft},
+      {screen:'Biblioteca', when:'sin outputs', tab:'Biblioteca', icon:'aleph-sleep', iconC:'#8E8BF5',
+        title:'Aquí van a vivir las cosas que produzcan', body:'Cada hoja de cálculo, informe o pieza que arme un Aleph aterriza aquí. Todavía nada.', cta:'Ir a la Sala', ctaStyle:ctaSoft},
+      {screen:'Historial', when:'sin sesiones', tab:'Historial', icon:'aleph-sleep', iconC:'#8E8BF5',
+        title:'Aquí van tus sesiones de trabajo', body:'Cada tarea que le des a un Aleph queda guardada y retomable. Todavía ninguna.', cta:'Empezar una sesión', ctaStyle:ctaSoft},
+      {screen:'Página del Aleph', when:'no produjo nada', tab:'Reportero', icon:'aleph-sleep', iconC:'#8E8BF5',
+        title:'Este Aleph todavía no hizo nada', body:'Cuando le des una tarea, su obra va a empezar a llenarse aquí.', cta:'Darle una tarea', ctaStyle:ctaSoft},
+    ].map(e=>{
+      /* el halo de la mascota, sin marco: el ícono vive sobre --accent-soft (el 8%), no dentro
+         de un cuadrito con borde teñido de un hexadecimal del tema oscuro. */
+      let icon=e.icon, iconWrap='width:60px;height:60px;border-radius:var(--r-lg);display:flex;align-items:center;justify-content:center;font:300 26px var(--font-ui);color:var(--accent-deep);background:var(--accent-soft)';
+      if(typeof e.icon==='string' && e.icon.startsWith('aleph')){
+        const sleeping=e.icon==='aleph-sleep';
+        /* la mascota por TOKEN: antes traía cinco hexadecimales del tema oscuro y en claro
+           quedaba lila sobre lila. --accent gira con el tema. */
+        const hex='var(--accent)';
+        const ringC='var(--accent)';
+        const eyes=sleeping
+          ? [React.createElement('path',{key:'a',d:'M9.4 13 q1.6 1.4 3.2 0',stroke:'#211E3A',strokeWidth:1.5,fill:'none',strokeLinecap:'round'}),
+             React.createElement('path',{key:'b',d:'M14.6 13 q1.6 1.4 3.2 0',stroke:'#211E3A',strokeWidth:1.5,fill:'none',strokeLinecap:'round'}),
+             React.createElement('text',{key:'z',x:21,y:8,fontFamily:'var(--font-ui)',fontWeight:400,fontSize:6,fill:'var(--accent-deep)'},'z')]
+          : [React.createElement('path',{key:'a',d:'M9.4 13.4 q1.6 -2 3.2 0',stroke:'#211E3A',strokeWidth:1.6,fill:'none',strokeLinecap:'round'}),
+             React.createElement('path',{key:'b',d:'M14.6 13.4 q1.6 -2 3.2 0',stroke:'#211E3A',strokeWidth:1.6,fill:'none',strokeLinecap:'round'})];
+        icon=React.createElement('svg',{width:42,height:42,viewBox:'0 0 28 28',fill:'none',style:{animation:'floaty 4.5s ease-in-out infinite'}},
+          React.createElement('g',{style:{transformOrigin:'14px 14px',animation:'spin '+(sleeping?'24s':'12s')+' linear infinite'}},
+            React.createElement('g',{transform:'rotate(0 14 14)'}, React.createElement('ellipse',{cx:14,cy:14,rx:11.5,ry:4.4,stroke:ringC,strokeWidth:1.2,strokeOpacity:sleeping?0.4:0.55}), React.createElement('circle',{cx:25.5,cy:14,r:1.6,fill:ringC,fillOpacity:sleeping?0.5:1})),
+            React.createElement('g',{transform:'rotate(60 14 14)'}, React.createElement('ellipse',{cx:14,cy:14,rx:11.5,ry:4.4,stroke:ringC,strokeWidth:1.2,strokeOpacity:sleeping?0.4:0.55}), React.createElement('circle',{cx:25.5,cy:14,r:1.6,fill:ringC,fillOpacity:sleeping?0.5:1})),
+            React.createElement('g',{transform:'rotate(120 14 14)'}, React.createElement('ellipse',{cx:14,cy:14,rx:11.5,ry:4.4,stroke:ringC,strokeWidth:1.2,strokeOpacity:sleeping?0.4:0.55}), React.createElement('circle',{cx:25.5,cy:14,r:1.6,fill:ringC,fillOpacity:sleeping?0.5:1})),
+          ),
+          React.createElement('path',{d:'M14 7.2 L19.6 10.4 L19.6 16.8 L14 20 L8.4 16.8 L8.4 10.4 Z',fill:hex,stroke:hex,strokeWidth:2.2,strokeLinejoin:'round'}),
+          ...eyes
+        );
+      }
+      return {...e, icon, iconWrap};
+    });
+
+    // ---- secondary errors ----
+    /* 90/8/2 en su prueba más dura: la tarjeta vuelve a ser un plano neutro con su sombra, el
+       TONO queda en el punto de estado (el ícono) y el titular vuelve a --ink. Antes el titular
+       tomaba el color del tono sobre un fondo del mismo tono — legible en oscuro por casualidad
+       y flojo en claro. Los botones son campo invertido (primaria) o fantasma. */
+    const btnPrimary='border:0;background:var(--ink);color:var(--paper);border-radius:var(--r-md);padding:9px 16px;font:400 12px var(--font-ui);cursor:pointer';
+    const btnGhost='border:0;background:transparent;color:var(--muted);border-radius:var(--r-md);padding:9px 15px;font:400 12px var(--font-ui);cursor:pointer';
+    const errs=[
+      {where:'EN LA SALA · bitácora', case:'falló una herramienta', icon:'↻', tone:'amber',
+        title:'Algo falló al crear el archivo, reintentando…', body:'Reintento solo un par de veces. Si sigue, te aviso —tu trabajo no se toca.',
+        actions:[{label:'Reintentar ahora',primary:true},{label:'Ver detalle',ghost:true}]},
+      {where:'GLOBAL · banner', case:'el modelo no responde', icon:'◴', tone:'amber',
+        title:'El modelo no contesta — probando con otro', body:'Cambié a un modelo de respaldo para no frenar la tarea. Si prefieres, reintenta en un momento.',
+        actions:[{label:'Reintentar',primary:true}]},
+      {where:'GLOBAL · toast', case:'se perdió la conexión', icon:'⚡', tone:'red',
+        title:'Se perdió la conexión', body:'Estamos reintentando reconectar. Lo que hizo el Aleph quedó guardado —no pierdes nada.',
+        actions:[{label:'Reintentar',primary:true}]},
+      {where:'GLOBAL · banner', case:'límite del plan', icon:'⊘', tone:'muted',
+        title:'Llegaste al límite de tu plan', body:'Tus Aleph pausaron por ahora. Tu trabajo está guardado y vuelve cuando se renueve.',
+        actions:[{label:'Entendido',ghost:true}]},
+    ].map(e=>{
+      const T={amber:['var(--amber)','var(--amber-bg)'],red:['var(--red)','var(--red-bg)'],muted:['var(--muted)','var(--paper2)']}[e.tone];
+      return {...e,
+        cardStyle:'background:var(--paper);border-radius:var(--r-lg);box-shadow:var(--sh-1);padding:16px 18px',
+        iconStyle:'width:30px;height:30px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-size:14px;flex:none;color:'+T[0]+';background:'+T[1],
+        titleCol:'var(--ink)',
+        actions:e.actions.map(a=>({label:a.label, style: a.primary?btnPrimary:btnGhost})),
+      };
+    });
+
+    // ---- notifications ----
+    const TAG={done:['terminó','var(--green)','var(--green-bg)'],gate:['tu OK','var(--amber)','var(--amber-bg)'],stop:['se detuvo','var(--red)','var(--red-bg)']};
+    const notifs=[
+      {who:'Reportero', what:'terminó el cierre semanal', mono:'Rp', col:'#8E8BF5', kind:'done', when:'hace 4 min', action:'Ver', unread:true},
+      {who:'Reportero', what:'quiere enviar el informe por correo — necesita tu OK', mono:'Rp', col:'#8E8BF5', kind:'gate', when:'hace 6 min', action:'Aprobar', unread:true},
+      {who:'Investigador', what:'tu key falló — se quedó sin saldo y se detuvo', mono:'Iv', col:'#8E8BF5', kind:'stop', when:'hace 20 min', action:'Revisar', unread:true},
+    ].map(n=>{ const t=TAG[n.kind];
+      return { who:n.who, what:n.what, mono:n.mono, when:n.when, action:n.action, unread:n.unread, tag:t[0],
+        /* rowStyle NO declara fondo: el inline le ganaría al tinte de --accent-soft con que la
+           pista marca el elemento en foco. Lo no leído lo sigue diciendo el punto de acento. */
+        rowStyle:'position:relative;display:flex;align-items:flex-start;gap:11px;padding:13px 14px 13px 22px;margin-bottom:10px',
+        monoStyle:'width:34px;height:34px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;color:var(--muted);font:400 14px var(--font-brand);flex:none;background:var(--paper2)',
+        tagStyle:'font:400 10px var(--font-ui);color:'+t[1]+';background:'+t[2]+';border-radius:var(--r-full);padding:3px 9px',
+        actStyle:'border:0;background:var(--ink);color:var(--paper);border-radius:var(--r-md);padding:7px 15px;font:400 12px var(--font-ui);cursor:pointer',
+      };
+    });
+
+    return {
+      empties, errs, notifs,
+      traceOpen:this.state.trace, traceLabel:this.state.trace?'ocultar detalle técnico':'ver detalle técnico',
+      toggleTrace:()=>this.setState(s=>({trace:!s.trace})),
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+{
+  "_comment": "Matriz de gates como CONFIG — la §4 del threat-model P010 (VINCULANTE) entra como datos, NUNCA hardcodeada en el código. Cambiar de nicho = cambiar este archivo, no el motor. Reglas: el primer patrón que matchea (server + tool + arg-constraint) gana; si nada matchea => default_level.",
+
+  "levels": {
+    "auto-ejecuta": {
+      "copy": "Tu agente lo hace solo.",
+      "requires_ok": false,
+      "blocked": false
+    },
+    "confirma-una-vez": {
+      "copy": "Tu agente te avisa la primera vez y después sigue solo.",
+      "requires_ok": true,
+      "once_per_session": true,
+      "blocked": false
+    },
+    "confirma-siempre": {
+      "copy": "Tu agente te pregunta cada vez, antes de hacerlo.",
+      "requires_ok": true,
+      "once_per_session": false,
+      "blocked": false
+    },
+    "prohibido-en-tier-average": {
+      "copy": "Tu cuenta básica no puede hacer esto.",
+      "requires_ok": false,
+      "blocked": true
+    }
+  },
+
+  "default_level": "auto-ejecuta",
+
+  "tier": "average",
+
+  "rules": [
+    {
+      "id": "sheets-live-write",
+      "match": { "server": "sheets", "tools": ["batch_update_cells", "update_cells", "add_rows", "create_sheet"] },
+      "level": "confirma-siempre",
+      "what": "escribir en tu hoja de Google compartida en vivo",
+      "where": "tu Google Sheet (lo ve tu equipo y el CFO al instante)",
+      "preview_kind": "celdas",
+      "bind_arg": { "arg": "spreadsheet_id", "to": "spreadsheet_id" }
+    },
+    {
+      "id": "external-send",
+      "match": { "server": "*", "tool_name_contains": ["send", "email", "whatsapp", "sms", "post_message"] },
+      "level": "confirma-siempre",
+      "what": "mandar algo afuera",
+      "where": "el destinatario que figura en el mensaje",
+      "preview_kind": "mensaje",
+      "tier_block": { "when_no_preview": true, "reason": "auto-enviar sin vista previa = prohibido-en-tier-average" }
+    },
+    {
+      "id": "code-exec",
+      "match": { "server": "*", "tools": ["execute_code", "stata_run", "run_code", "execute_cell"] },
+      "level": "confirma-una-vez",
+      "what": "ejecutar código de análisis",
+      "where": "un cuaderno aislado de Puppet (caja de seguridad)",
+      "preview_kind": "codigo",
+      "requires_sandbox": true,
+      "tier_block": { "when_no_sandbox": true, "reason": "ejecutar código sin sandbox = prohibido-en-tier-average" }
+    },
+    {
+      "id": "local-file-write",
+      "match": { "server": "excel", "tools": ["write_data_to_excel", "create_workbook", "apply_formula", "write_data", "copy_worksheet", "save_workbook"] },
+      "level": "confirma-una-vez",
+      "what": "guardar el resultado en un archivo de tu carpeta",
+      "where": "un archivo nuevo en tu carpeta de trabajo",
+      "preview_kind": "archivo"
+    },
+    {
+      "id": "connect-credential",
+      "match": { "server": "*", "tool_name_contains": ["oauth", "connect_credential", "authorize"] },
+      "level": "confirma-una-vez",
+      "what": "conectar una credencial tuya",
+      "where": "el servicio que vas a conectar (queda guardada cifrada, nunca la ve el modelo)",
+      "preview_kind": "conexion"
+    }
+  ]
+}

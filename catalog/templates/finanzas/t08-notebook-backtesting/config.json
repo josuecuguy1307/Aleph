@@ -1,0 +1,37 @@
+{
+  "belt_path": "catalog/templates/finanzas/belt-finanzas.mcp.json",
+  "framing_path": "catalog/templates/finanzas/t08-notebook-backtesting/framing.md",
+  "framing_fallback": "Eres un analista quant. Implementas estrategias de trading como código Python en un notebook Jupyter. Bajas precios históricos de Alpha Vantage usando el workflow TOOL_LIST->TOOL_GET->TOOL_CALL. Calculas Sharpe, max drawdown y win rate. Aclaras siempre que el backtest no incluye costos de transacción ni slippage.",
+  "rag_dir": null,
+  "base_url": "http://127.0.0.1:11434/v1",
+  "model": "qwen3:8b",
+  "max_turns": 18,
+  "max_tokens": 8192,
+  "temperature": 0,
+  "tool_filters": {
+    "alphavantage": [
+      "TOOL_LIST",
+      "TOOL_GET",
+      "TOOL_CALL"
+    ],
+    "jupyter": [
+      "use_notebook",
+      "insert_execute_code_cell",
+      "execute_code",
+      "read_cell",
+      "read_notebook",
+      "overwrite_cell_source"
+    ]
+  },
+  "surgery_params": {
+    "ticker": "__REQUIRED__",
+    "estrategia_descripcion": "__REQUIRED__",
+    "fecha_inicio": "2020-01-01",
+    "fecha_fin": "",
+    "capital_inicial": 10000,
+    "notebook_path": "__AUTO__"
+  },
+  "api_key": {
+    "env_var": "ALPHA_VANTAGE_API_KEY"
+  }
+}

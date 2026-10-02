@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aleph · render() — DONE-BAR</title>
+<link rel="stylesheet" href="../aleph-tokens.css"><!-- [identidad visual] la piel: tokens, forma y tipografía en un solo lugar -->
+<style>
+  :root{ --bg:#0a0c12; --panel:#0e1118; --line:#222838; --fg:#e6eaf4; --mut:#8b95ac; --acc:#6c8cff; }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+  header{padding:22px 26px;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(10,12,18,.92);backdrop-filter:blur(8px);z-index:5}
+  header h1{margin:0;font-size:18px;letter-spacing:.2px}
+  header p{margin:6px 0 0;color:var(--mut);font-size:13px}
+  header code{background:#11151f;border:1px solid var(--line);border-radius:var(--r-xs);padding:1px 6px;color:#a9b6ff;font-size:12px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(420px,1fr));gap:18px;padding:22px 26px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden;display:flex;flex-direction:column}
+  .card-h{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--line);background:#11141c}
+  .badge{font:500 11px var(--font-mono);color:#0a0c12;background:var(--acc);border-radius:var(--r-xs);padding:3px 8px;letter-spacing:.3px}
+  .card-h .ttl{color:var(--mut);font-size:12px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .status{font:500 11px var(--font-mono);padding:3px 8px;border-radius:var(--r-xl);border:1px solid var(--line);color:var(--mut)}
+  .status.ok{color:#57e08a;border-color:#1f5e3a;background:#0f2419}
+  .status.err{color:#e88;border-color:#5e1f1f;background:#241010}
+  .stage{height:440px;overflow:auto;background:#0a0c12}
+  footer{padding:16px 26px;color:var(--mut);font-size:12px;border-top:1px solid var(--line)}
+  #summary{font-weight:500}
+</style>
+</head>
+<body>
+<header>
+  <h1>Aleph · <code>render(artifactType, payload) → DOMNode</code></h1>
+  <p>DONE-BAR de T3 — los <span id="ntypes">…</span> tipos del contrato, cada uno con un payload de ejemplo REAL · <span id="summary">…</span></p>
+</header>
+
+<div class="grid" id="grid"></div>
+
+<footer>
+  Módulo: <code>product/app/design/render/render.js</code> · self-contained (inyecta su propio CSS) ·
+  Tier 0–1 · las libs 3D/SVG corren en iframe sandbox o canvas. Estado por tarjeta arriba a la derecha.
+</footer>
+
+<!-- i18n ANTES del módulo: render.js resuelve claves vía window.t — sin esto el
+     done-bar screenshotea claves crudas (p.ej. render.convergence.verdict_pass). -->
+<script src="../i18n.js"></script>
+<script type="module">
+  import { render, ready, TYPES } from "./render.js";
+  import { SAMPLES } from "./samples.js";
+
+  const grid = document.getElementById("grid");
+  const summary = document.getElementById("summary");
+  document.getElementById("ntypes").textContent = TYPES.length;
+  document.title = "Aleph · render() — DONE-BAR (" + TYPES.length + " tipos)";
+  let ok = 0, done = 0;
+
+  for (const type of TYPES) {
+    const payload = SAMPLES[type];
+
+    const card = document.createElement("div");
+    card.className = "card";
+    const head = document.createElement("div");
+    head.className = "card-h";
+    head.innerHTML =
+      `<span class="badge">${type}</span>` +
+      `<span class="ttl">${(payload && payload.title) || ""}</span>` +
+      `<span class="status" id="st-${type}">render…</span>`;
+    const stage = document.createElement("div");
+    stage.className = "stage";
+    card.appendChild(head); card.appendChild(stage);
+    grid.appendChild(card);
+
+    const st = head.querySelector(".status");
+    try {
+      const node = render(type, payload);        // ← interfaz congelada
+      stage.appendChild(node);                    // DOMNode colgado de inmediato
+      ready(node).then(() => {
+        st.textContent = "✓ listo"; st.className = "status ok"; ok++; tick();
+      }).catch((e) => {
+        st.textContent = "✗ " + (e.message || e); st.className = "status err"; tick();
+      });
+    } catch (e) {
+      st.textContent = "✗ throw"; st.className = "status err"; tick();
+      console.error(type, e);
+    }
+  }
+
+  function tick() {
+    done++;
+    summary.textContent = `${ok}/${TYPES.length} hidratados`;
+    if (done === TYPES.length) {
+      summary.textContent = `${ok}/${TYPES.length} hidratados` + (ok === TYPES.length ? " — DONE-BAR ✓" : "");
+      window.__AR_DEMO_DONE = { ok, total: TYPES.length };
+    }
+  }
+  summary.textContent = `0/${TYPES.length} hidratados`;
+</script>
+</body>
+</html>

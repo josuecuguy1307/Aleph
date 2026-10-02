@@ -1,0 +1,445 @@
+<!doctype html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conectores · Aleph</title>
+<link rel="stylesheet" href="vendor/fonts.css">
+<link rel="stylesheet" href="aleph-tokens.css">
+<script src="./aleph-config.js"></script>
+<script src="./vendor/supabase.min.js"></script>
+<script src="./supabase-auth.js"></script>
+<script src="./auth.js"></script>
+<script src="./paywall.js"></script>
+<script src="./i18n.js"></script>
+<script src="./brandface.js"></script>
+<style>
+  /* [adaptador 2026-08-04] ESTA PANTALLA YA NO TIENE LÓGICA.
+   *
+   * Antes acá vivía una capa que le agregaba clases a las filas que escribía
+   * `conectores.ui.js`, y un comentario que decía «no se toca ni un id ni una clase que lea
+   * conectores.ui.js». Ese archivo ya no existe: la pantalla es HTML + una llamada a
+   * `conectores/montaje.js`, y todo lo que se ve sale del adaptador.
+   *
+   * Lo que queda acá es PIEL: el sistema "Híbrido Spatial + Soft futurism". Las primitivas
+   * (.ds-plane/.ds-well/.ds-track/.ds-card/.ds-item) llegan por aleph-tokens.css →
+   * @import aleph-ds.css; acá NO se redeclara ningún token. Cero bordes, cero relieves: la
+   * jerarquía es sombra + radio. Color 90/8/2 — neutros casi todo, el violeta sólo en foco,
+   * y verde/ámbar/rojo sólo como estado.
+   *
+   * LOS LOGOS DE MARCA NO SE TOCAN: la cara de cada servicio la sigue pintando Brandface. */
+  *{box-sizing:border-box}
+  [hidden]{display:none!important}
+  body{margin:0;min-height:100vh;background:var(--page-bg);color:var(--ink);
+       font-family:var(--font-ui);-webkit-font-smoothing:antialiased}
+  button,input{font:inherit}
+  .cx-wrap{max-width:1040px;margin:0 auto;padding:30px 20px 96px}
+  .cx-head{display:flex;align-items:flex-start;gap:20px;justify-content:space-between;margin-bottom:20px}
+  .cx-head-actions{display:flex;align-items:center;gap:8px;flex:none}
+  .cx-lede{margin:9px 0 0;max-width:65ch;line-height:1.55}
+  #cxSearch{width:330px;max-width:100%;border:0;background:var(--paper2);
+            color:var(--ink);border-radius:var(--r-md);padding:11px 16px;outline:none;
+            font:300 13px var(--font-ui)}
+  #cxSearch:focus{background:var(--accent-soft)}
+  .cx-tabs{display:flex;gap:6px;margin:0 0 18px;border:0}
+  .cx-tab{border:0;background:var(--paper2);color:var(--muted);border-radius:var(--r-full);
+          padding:7px 15px;cursor:pointer;font:400 var(--fs-sm) var(--font-ui)}
+  .cx-tab:hover{color:var(--ink)}
+  .cx-tab[aria-selected="true"]{background:var(--accent-soft);color:var(--accent-deep)}
+  /* EL RÓTULO DE ÁMBITO — dice si lo que toco vale acá o en toda la casa. */
+  .cx-ambito{margin-left:auto;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--muted);border:1px solid var(--line);border-radius:var(--r-full);
+    padding:3px 10px;white-space:nowrap}
+  .cx-ambito--casa{color:var(--accent-deep);border-color:var(--accent-soft);
+    background:var(--accent-soft)}
+  .cx-ws-label{display:flex;align-items:center;gap:10px;margin:12px 0 14px;
+    font-size:13px;color:var(--muted)}
+  .cx-ws-select{background:var(--paper2);color:var(--ink);border:1px solid var(--line);
+    border-radius:var(--r-sm,8px);padding:6px 10px;font:inherit}
+  /* Lista A: un párrafo, no filas. Son informativas y no se administran; darles fila
+     sugiere que hay algo que tocar. */
+  .cx-lista-a{margin:0;color:var(--muted);font-size:13px;line-height:1.7}
+  .cx-reco-cruza{font-size:11px;color:var(--muted)}
+  .cx-reco-estado{font-size:12px;margin-left:8px}
+  .cx-reco-estado[data-listo="si"]{color:var(--accent-deep)}
+  .cx-reco-btn{align-self:center;white-space:nowrap}
+  .cx-reco-form{margin-top:10px}
+  .cx-rows>li{display:flex;gap:14px;justify-content:space-between;align-items:flex-start}
+  /* el resumen es un pozo, no una franja cosida con una línea */
+  .cx-summary{display:flex;align-items:center;justify-content:space-between;gap:16px;
+              border:0;background:var(--paper2);border-radius:var(--r-md);
+              padding:13px 16px;margin-bottom:16px}
+  .cx-summary:empty{display:none}
+  .cx-summary-main{display:flex;align-items:baseline;gap:7px;white-space:nowrap}
+  .cx-summary-main strong{font:400 var(--fs-2xl) var(--font-ui);
+                          letter-spacing:var(--tracking-title);color:var(--green)}
+  .cx-summary-main span{font:300 var(--fs-md) var(--font-ui);color:var(--muted)}
+  .cx-summary-attention{display:flex;align-items:center;gap:9px;color:var(--muted);
+                        font:300 var(--fs-md) var(--font-ui)}
+  .cx-summary-attention b{color:var(--ink);font-weight:400}
+  .cx-section{margin-top:22px}
+  .cx-section-head{display:flex;align-items:baseline;gap:9px;margin:0 0 4px}
+  .cx-section h2{font:400 var(--fs-lg) var(--font-ui);margin:0;letter-spacing:-.01em}
+  .cx-number{font:300 var(--fs-xs) var(--font-ui);color:var(--faint);border:0;
+             background:var(--paper2);border-radius:var(--r-full);padding:3px 10px}
+  .cx-section-copy{margin:0 0 12px;color:var(--faint);font:300 12.5px/1.45 var(--font-ui)}
+  .cx-rows{list-style:none;margin:0;padding:0;border:0;
+           display:flex;flex-direction:column;gap:10px}
+  /* ══ LA FILA ES UN GRID FIJO ══════════════════════════════════════════════════════
+     Seis columnas, SIEMPRE las mismas, y el adaptador emite las seis celdas aunque estén
+     vacías. Es una regla de layout, no un ajuste card por card:
+
+       [cara] [nombre] ─────────── [estado] [fecha] [acción] [?]
+
+     · TODOS los estados arrancan en la misma x (columna 3, ancho fijo).
+     · TODAS las fechas arrancan en la misma x (columna 4, ancho fijo).
+     · TODOS los [?] caen en la misma x (columna 6), tenga botón la fila o no.
+
+     Antes las columnas eran `auto` y cada fila negociaba su ancho con su contenido: una
+     pieza con «Falta instalarlo en tu equipo» corría la fecha de esa fila y de ninguna
+     otra, y la lista se leía como una escalera. */
+  .cx-card{display:grid;
+           grid-template-columns:34px minmax(0,1fr) 190px 104px 148px 30px;
+           grid-template-areas:"face copy metric when actions help"
+                               "panel panel panel panel panel panel";
+           align-items:center;gap:0 13px;padding:0 16px;border:0;
+           /* ALTO UNIFORME CON LA FILA CERRADA. `min-height` y no `height`: la fila
+              expandida tiene que poder crecer, y es la ÚNICA que crece. */
+           min-height:60px;
+           background:var(--paper);border-radius:var(--r-md);box-shadow:var(--sh-1)}
+  .cx-face{grid-area:face;display:flex;align-items:center;justify-content:center}
+  .cx-face .bface{border-radius:var(--r-xs)}
+  .cx-logo-fallback{width:34px;height:34px;border-radius:var(--r-xs);background:var(--accent-soft);
+                    display:flex;align-items:center;justify-content:center;color:var(--accent-deep);
+                    font:400 11px var(--font-ui)}
+  /* el nombre no puede empujar a nadie: una pieza de nombre largo se recorta, no descuadra
+     la fila ni la hace más alta que sus vecinas */
+  .cx-nombre{grid-area:copy;min-width:0;font:400 var(--fs-md) var(--font-ui);
+             white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .cx-estado{grid-area:metric;display:flex;align-items:center;gap:8px;min-width:0}
+  .cx-estado b{font:400 12.5px var(--font-ui);white-space:nowrap;
+               overflow:hidden;text-overflow:ellipsis}
+  /* LA FECHA, EN SU PROPIA COLUMNA Y SIEMPRE PRESENTE. Un veredicto sin fecha es afirmar
+     de memoria: cuando no hay medición la celda dice «sin medir», nunca queda vacía. */
+  .cx-cuando{grid-area:when;font:300 10.5px var(--font-ui);color:var(--faint);
+             white-space:nowrap;text-align:right}
+  .cx-luz{font-size:11px;flex:none}
+  .cx-actions{grid-area:actions;display:flex;align-items:center;justify-content:flex-end;gap:6px}
+  .cx-btn{border:0;background:var(--paper2);color:var(--ink);border-radius:var(--r-md);
+          padding:9px 14px;font:400 12px var(--font-ui);cursor:pointer;white-space:nowrap;
+          text-align:center;text-decoration:none}
+  .cx-btn:hover{filter:brightness(1.18)}
+  .cx-btn:disabled{opacity:.55;cursor:wait}
+  .cx-accion,.cx-reconectar{background:var(--ink);color:var(--paper)}
+  .cx-accion:hover,.cx-reconectar:hover{filter:brightness(1.12);color:var(--paper)}
+  .cx-btn-danger{background:var(--red-bg);color:var(--red)}
+  /* ABRIR LA FILA · el affordance uniforme. Discreto pero SIEMPRE presente: uno que aparece
+     a veces enseña que a veces no se puede abrir. */
+  .cx-abrir{padding:6px 10px;line-height:1;color:var(--muted);background:transparent}
+  .cx-abrir:hover{color:var(--ink);background:var(--paper2)}
+  .cx-abrir[aria-expanded="true"] span{display:inline-block;transform:rotate(180deg)}
+  /* LAS ACCIONES OPERATIVAS · visibles al abrir la fila, no enterradas */
+  .cx-operativas{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:12px 14px;
+                 background:var(--paper2);border-radius:var(--r-md)}
+  .cx-operativas small{flex:1 1 100%;color:var(--faint);font:300 11px var(--font-ui)}
+  .cx-checklist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+  .cx-verbo{display:grid;grid-template-columns:18px 1fr;gap:8px;align-items:baseline;
+            font:300 12.5px var(--font-ui);color:var(--muted)}
+  .cx-verbo[data-estado="hecho"]{color:var(--green)}
+  .cx-verbo[data-estado="roto"]{color:var(--red)}
+  .cx-verbo[data-estado="probando"]{color:var(--ink)}
+  .cx-verbo-causa{grid-column:2;color:var(--red);font:300 11px var(--font-ui)}
+  .cx-detalle{grid-area:help;border:0;background:transparent;color:var(--muted);
+              border-radius:var(--r-sm);cursor:pointer;font:400 12px var(--font-ui);
+              width:26px;height:26px;justify-self:end}
+  .cx-detalle:hover{color:var(--ink);background:var(--paper2)}
+  /* EL PANEL · el trámite ocurre DONDE EL USUARIO ESTÁ. No hay modal que tape la lista ni
+     pantalla a la que navegar y de la que volver: eso era el wizard, y por eso murió. */
+  /* plegado NO aporta alto (de eso depende que todas las filas cerradas midan igual);
+     desplegado es lo único que crece */
+  .cx-panel-host{grid-area:panel;margin:0 0 14px}
+  .cx-panel-host[hidden]{display:none!important}
+  .cx-panel{display:flex;flex-direction:column;gap:12px}
+  .cx-paso{display:flex;flex-wrap:wrap;align-items:center;gap:9px;padding:12px 14px;
+           background:var(--paper2);border-radius:var(--r-md)}
+  .cx-paso p{margin:0;flex:1 1 100%;font:400 13px var(--font-ui)}
+  .cx-paso label{display:flex;flex-direction:column;gap:4px;flex:1 1 220px;
+                 font:300 11px var(--font-ui);color:var(--muted)}
+  .cx-paso input{border:0;background:var(--paper);color:var(--ink);border-radius:var(--r-sm);
+                 padding:10px 12px;outline:none;font:300 13px var(--font-ui)}
+  .cx-paso input:focus{background:var(--accent-soft)}
+  .cx-link{color:var(--accent-deep);font:400 12px var(--font-ui);text-decoration:none}
+  .cx-link:hover{text-decoration:underline}
+  .cx-scopes{margin:0;padding-left:18px;flex:1 1 100%;
+             font:300 12px var(--font-ui);color:var(--muted)}
+  .cx-lapida{background:transparent;padding:2px 0}
+  .cx-lapida small{font:300 11px var(--font-ui);color:var(--faint)}
+  /* EL [?] · toda la verdad técnica, y sólo acá */
+  .cx-detalle-panel{display:grid;grid-template-columns:minmax(120px,auto) 1fr;gap:4px 14px;
+                    margin:0;padding:12px 14px;background:var(--paper2);
+                    border-radius:var(--r-md);font:300 11.5px/1.5 var(--font-ui)}
+  .cx-detalle-panel dt{color:var(--faint)}
+  .cx-detalle-panel dd{margin:0;color:var(--ink);word-break:break-word}
+  .cx-key-preview{padding:12px 14px;border:0;background:var(--red-bg);
+                  color:var(--ink);border-radius:var(--r-md);line-height:1.8;
+                  font:300 12.5px var(--font-ui)}
+  /* LA ADUANA · sus filas llevan el trámite ABIERTO, así que no tienen alto uniforme: el
+     usuario entró a esta sección justamente a hacerlo, y esconderlo detrás de un click más
+     sería pedirle que adivine dónde está lo que vino a hacer. */
+  .cx-grupo{margin-bottom:20px}
+  .cx-grupo:last-child{margin-bottom:0}
+  .cx-grupo h3{font:400 var(--fs-md) var(--font-ui);margin:0;letter-spacing:-.01em}
+  .cx-card.cx-aduana{min-height:0;padding:13px 16px;align-items:start}
+  .cx-card.cx-aduana .cx-face,.cx-card.cx-aduana .cx-nombre,
+  .cx-card.cx-aduana .cx-estado,.cx-card.cx-aduana .cx-cuando{align-self:center}
+  .cx-aduana-vacia{margin:0;color:var(--faint);font:300 13px var(--font-ui)}
+  .cx-empty{padding:22px;color:var(--faint);text-align:center;border:0;
+            background:var(--paper2);border-radius:var(--r-md);font:300 13px var(--font-ui)}
+  .cx-empty.cx-error{color:var(--red);background:var(--red-bg)}
+  /* LA SECCIÓN · sólo su cabecera vive acá; el resto de su piel viaja con
+     `superficie-catalogo.js`, porque la sección se abre desde más de una pantalla. */
+  .cx-back{display:inline-block;margin-bottom:14px;color:var(--muted);text-decoration:none;
+           font:300 var(--fs-sm) var(--font-ui)}
+  .cx-back:hover{color:var(--ink)}
+  .cat-title{margin:0 0 6px}
+  #catalogView .cx-lede{margin:0 0 18px}
+  @media(max-width:720px){
+    .cx-head{align-items:stretch;flex-direction:column}
+    .cx-head-actions{align-items:stretch}
+    #cxSearch{width:100%}
+    .cx-summary{align-items:flex-start;flex-direction:column}
+    .cx-card{grid-template-columns:34px minmax(0,1fr) 104px 30px;
+             grid-template-areas:"face copy when help" "face metric metric metric"
+                                 "face actions actions actions" "panel panel panel panel";
+             min-height:0;padding:12px 16px;gap:6px 13px}
+    .cx-actions{justify-content:flex-start}
+    .cx-cuando{text-align:right}
+  }
+  @media(max-width:480px){
+    .cx-wrap{padding-left:12px;padding-right:12px}
+    .cx-card{grid-template-columns:34px minmax(0,1fr) 30px;
+             grid-template-areas:"face copy help" "face metric metric" "face when when"
+                                 "face actions actions" "panel panel panel"}
+    .cx-cuando{text-align:left}
+  }
+</style>
+<script>window.ALEPH_THEME_NOFLOAT=true;</script>
+<script src="./theme.js"></script>
+<script src="./nav.js"></script>
+</head>
+<body>
+<main class="cx-wrap">
+  <div class="ds-plane">
+    <header class="cx-head" id="cxHead">
+      <div>
+        <h1 class="ds-title">Conectores</h1>
+        <p class="cx-lede ds-sub">Descubre qué tienes, equipa algo nuevo y repara cada pieza desde el mismo estado que ve el Cuarto.</p>
+      </div>
+      <div class="cx-head-actions">
+        <label>
+          <span class="sr-only" style="position:absolute;clip:rect(0 0 0 0)">Buscar conectores</span>
+          <input id="cxSearch" type="search" autocomplete="off" placeholder="Buscar en tus servicios…">
+        </label>
+        <!-- LA ENTRADA A LA SECCIÓN. Ya no navega a otra pantalla: cambia de vista, así
+             volver no pierde ni la búsqueda ni una pieza que esté viajando. Antes esto
+             apuntaba a `Conectar.dc.html?catalogo=publico`, que era la puerta vieja. -->
+        <button class="cx-btn" id="cxCatalogEntry" type="button">Catálogo público</button>
+      </div>
+    </header>
+
+    <nav class="cx-tabs" id="cxTabs" role="tablist" aria-label="Vistas de Conectores">
+      <button id="cxTabConnectors" class="cx-tab" type="button" role="tab" aria-selected="true">Conectores</button>
+      <button id="cxTabReco" class="cx-tab" type="button" role="tab" aria-selected="false">Recomendados</button>
+      <button id="cxTabKeyring" class="cx-tab" type="button" role="tab" aria-selected="false">Llavero</button>
+    </nav>
+
+    <div id="connectorsView" role="tabpanel">
+      <section id="cxSummary" class="cx-summary" aria-label="Resumen de conectores"></section>
+
+      <section class="cx-section" id="localPopulation">
+        <div class="cx-section-head">
+          <h2>Tus servicios</h2><span class="cx-number" id="localCount">0</span>
+        </div>
+        <p class="cx-section-copy">Todo lo de aquí está listo para usar ahora mismo. Abre uno sólo cuando necesite atención.</p>
+        <!-- el POZO (r22, plano) es la PISTA: exactamente un servicio en foco. -->
+        <div class="ds-well ds-track" data-ds-track style="padding:18px 20px">
+          <ul class="cx-rows" id="localRows" aria-live="polite"></ul>
+        </div>
+      </section>
+      <!-- ══ EL PASO 2.5 · LA ADUANA ═══════════════════════════════════════════════
+           Entre el [Traer] del catálogo público y el local. Acá se resuelve TODO lo previo
+           —instalar, pegar la llave, autorizar— y la verificación real. Nada entra al local
+           a medias, y nada sale de acá por un botón: cuando el trámite se completa, el
+           clasificador la promueve sola.
+           Se oculta cuando está vacía: una sección que dice «no hay nada» en cada carga es
+           ruido permanente por un caso que es el bueno. -->
+      <section class="cx-section" id="aduanaSection" hidden>
+        <div class="cx-section-head">
+          <h2>En preparación</h2><span class="cx-number" id="aduanaCount">0</span>
+        </div>
+        <p class="cx-section-copy">Lo que trajiste y todavía no está listo para usar. Cuando termines aquí, pasa solo a tus servicios.</p>
+        <div class="ds-well" style="padding:18px 20px">
+          <div id="aduanaRows" aria-live="polite"></div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ══ LA SECCIÓN · EL CATÁLOGO PÚBLICO ═══════════════════════════════════════════
+         La cara del registro entero, adentro de esta misma pantalla. No es una página
+         paralela: es la tercera vista, y por eso el «←» vuelve sin perder nada.
+
+         Entierra dos puertas viejas que mostraban un flujo que ya no es el real:
+         `Conectar.dc.html?catalogo=publico` y el `registryPanel` del Cuarto. -->
+    <section id="catalogView" role="tabpanel" hidden>
+      <a class="cx-back" href="#" data-volver-conectores="1">← Tus conectores</a>
+      <h2 class="ds-title cat-title">Catálogo público</h2>
+      <p class="cx-lede ds-sub">Busca en el registro entero. Primero te decimos qué es cada pieza; el pedido de llave viene después, si ella lo pide.</p>
+      <label>
+        <span class="sr-only" style="position:absolute;clip:rect(0 0 0 0)">Buscar en el catálogo público</span>
+        <input class="cat-buscador" id="cxCatalogSearch" type="search" autocomplete="off"
+               placeholder="Buscar en el catálogo público…">
+      </label>
+      <div id="cxCatalogArrival" hidden></div>
+      <div class="cat-vista" id="cxCatalogPane" data-con-ficha="false">
+        <div id="cxCatalogList" aria-live="polite"></div>
+        <div id="cxCatalogCard" hidden></div>
+      </div>
+    </section>
+
+    <!-- ══ LA CUARTA VISTA · RECOMENDADOS POR WORKSPACE ══════════════════════════════
+         Las otras tres contestan qué tenés, con qué se autentica y qué existe. Ésta
+         contesta la que faltaba: **qué le sirve a ESTE workspace**. Sale de la tabla del
+         catálogo (`catalog/connectors/workspace-recommendations.json`), servida por
+         `GET /v1/connectors?workspace=`.
+
+         ⚠️ LA RECOMENDACIÓN NO ES EXCLUSIVA, y esta vista existe en parte para que eso se
+         VEA. Seis conectores cruzan workspaces; configurar `github` en Ciencia tiene que
+         mostrarse configurado en Diseño y en Oficina, porque el destino es uno. Por eso el
+         estado y la lista salen del MISMO endpoint que va a leer la vista del canvas: dos
+         superficies que resuelven su propia lista se contradicen tarde o temprano. -->
+    <section id="recoView" role="tabpanel" hidden>
+      <div class="cx-section-head">
+        <h2>Recomendados</h2><span class="cx-number" id="recoCount">0</span>
+        <!-- EL RÓTULO DE ÁMBITO. Dos strings, y resuelven sin navegación la pregunta de si
+             lo que toco vale para todo Aleph o sólo para acá. Es el mecanismo de Oficina. -->
+        <span class="cx-ambito" id="recoAmbito" aria-live="polite"></span>
+      </div>
+      <!-- LA DIFERENCIA ENTRE LAS DOS LISTAS, DICHA. La primera versión de esta pantalla no
+           la decía y las dos se leían igual —«Listo — ya puedo…» en las dos— así que la
+           pregunta «¿cuál es la diferencia?» fue la prueba del defecto. Ahora cada sección
+           abre diciendo qué te pide, y cada fila lo repite en su etiqueta. -->
+      <p class="cx-section-copy" id="recoLede"><strong>Estos te piden algo una vez:</strong> tu llave o autorizar tu cuenta. Después quedan listos, y la llave vale para todos los espacios que lo recomienden.</p>
+      <label class="cx-ws-label">
+        <span>Espacio</span>
+        <select id="recoWorkspace" class="cx-ws-select"></select>
+      </label>
+      <!-- EL ÁMBAR. `connected_unverified` no es «listo» ni es «falló»: la llave se guardó
+           y el proveedor no permite confirmarla acá. Va afuera de la fila porque la fila se
+           repinta al guardar y el mensaje tiene que sobrevivir a ese repintado. -->
+      <p class="cx-section-copy" id="recoAviso" aria-live="polite" style="color:var(--accent-deep)"></p>
+      <div class="ds-well ds-track" data-ds-track style="padding:18px 20px">
+        <ul class="cx-rows" id="recoRows" aria-live="polite"></ul>
+      </div>
+
+      <!-- ══ LISTA A · LO QUE YA FUNCIONA ════════════════════════════════════════════
+           Informativo y nada más: sin botones, sin administrar, sin estado que tocar. Y
+           SIN ROTULAR DE DÓNDE VIENE — nada de «fuente de Ciencia» ni «provisto por
+           OpenScience». Para el usuario es de Aleph. Es plomería que ya funciona y lo
+           único que hace falta es que sepa que la tiene. -->
+      <div class="cx-section-head" style="margin-top:26px">
+        <h2>Ya funcionan</h2><span class="cx-number" id="listaACount">0</span>
+      </div>
+      <p class="cx-section-copy"><strong>Estas no te piden nada:</strong> no hay llave que poner ni cuenta que autorizar. Ya están andando en este espacio.</p>
+      <div class="ds-well" style="padding:14px 20px">
+        <p class="cx-lista-a" id="listaARows" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <section id="keyringView" class="cx-section" role="tabpanel" hidden>
+      <div class="cx-section-head">
+        <h2>Llavero</h2><span class="cx-number" id="keyringCount">0</span>
+        <span class="cx-ambito cx-ambito--casa">GENERAL</span>
+      </div>
+      <p class="cx-section-copy">Las credenciales que ya entregaste, y qué piezas dependen de cada una. Aleph muestra el impacto antes de confirmar.</p>
+      <div class="ds-well ds-track" data-ds-track style="padding:18px 20px">
+        <ul class="cx-rows" id="keyringRows" aria-live="polite"></ul>
+      </div>
+    </section>
+  </div>
+</main>
+
+<script type="module">
+/* LA PANTALLA, ENTERA. Qué nodos hay, y montar el adaptador encima.
+ *
+ * Antes esto eran 248 líneas de HTML + 1076 de `conectores.ui.js` + 2873 del wizard, y
+ * cambiar un texto obligaba a entender los tres. La razón de que ahora sea esto es que la
+ * pantalla dejó de decidir nada: llama a `montaje.js`, que pinta `superficie.js`, que
+ * muestra lo que `widget.js` derivó de las fuentes reales. */
+import { montar } from "./conectores/montaje.js?v=adaptador-1";
+
+montar({
+  lista: document.getElementById("localRows"),
+  resumen: document.getElementById("cxSummary"),
+  conteo: document.getElementById("localCount"),
+  aduana: document.getElementById("aduanaRows"),
+  conteoAduana: document.getElementById("aduanaCount"),
+  seccionAduana: document.getElementById("aduanaSection"),
+  llavero: document.getElementById("keyringRows"),
+  conteoLlavero: document.getElementById("keyringCount"),
+  buscador: document.getElementById("cxSearch"),
+  panelConectores: document.getElementById("connectorsView"),
+  panelLlavero: document.getElementById("keyringView"),
+  tabConectores: document.getElementById("cxTabConnectors"),
+  tabLlavero: document.getElementById("cxTabKeyring"),
+  // la sección: un host más, no una pantalla más
+  cabecera: document.getElementById("cxHead"),
+  tabs: document.getElementById("cxTabs"),
+  entradaCatalogo: document.getElementById("cxCatalogEntry"),
+  panelCatalogo: document.getElementById("catalogView"),
+  catalogoBuscador: document.getElementById("cxCatalogSearch"),
+  catalogoLista: document.getElementById("cxCatalogList"),
+  catalogoFicha: document.getElementById("cxCatalogCard"),
+  catalogoLlegada: document.getElementById("cxCatalogArrival"),
+  catalogoVista: document.getElementById("cxCatalogPane"),
+  panelReco: document.getElementById("recoView"),
+  tabReco: document.getElementById("cxTabReco"),
+  // LA CUARTA VISTA ENTREGA SUS NODOS ACÁ, con los de las otras tres. La pantalla da nodos;
+  // el adaptador los ata. Antes esta vista se montaba aparte y se ataba sus propios clicks.
+  recoSelector: document.getElementById("recoWorkspace"),
+  recoFilas: document.getElementById("recoRows"),
+  recoConteo: document.getElementById("recoCount"),
+  recoAmbito: document.getElementById("recoAmbito"),
+  listaAFilas: document.getElementById("listaARows"),
+  listaAConteo: document.getElementById("listaACount"),
+  recoAviso: document.getElementById("recoAviso"),
+});
+
+/* LA CUARTA VISTA YA NO SE MONTA ACÁ.
+ *
+ * ⚠️ ACÁ HABÍA UN `montarRecomendados(...)` PROPIO, con su bloque de sesión y su listener de
+ * pestaña, y un comentario mío justificando la excepción: «se alimenta de otra cosa, meterla
+ * adentro del adaptador la ataría a un estado que no necesita». La primera mitad es cierta.
+ * La conclusión no se seguía —`ESTADO.catalogo` ya demuestra que una vista vive adentro con
+ * SU estado y sólo el suyo— y lo que la excepción produjo fue una vista que leía por su
+ * cuenta, se ataba sus clicks y guardaba por una puerta distinta a la de la casa. Eso último
+ * le costó al dueño un rojo falso sobre una llave buena.
+ *
+ * Ahora la pantalla hace lo que le toca: entregar nodos. Montar, atar, pedir la sesión y
+ * pintar es de `montaje.js`, para las cuatro vistas por igual. */
+
+
+/* LOS DEEP-LINKS QUE LA PUERTA VIEJA ATENDÍA, ahora atendidos acá.
+ *
+ * `?catalogo=publico` (y su `?q=`) abrían `Conectar.dc.html`. Esa puerta murió, pero los
+ * enlaces sobreviven en marcadores, en pantallas viejas y en la memoria de la gente — y un
+ * enlace que llevaba a algo y ahora no lleva a nada es un dead-end. Se atienden acá. */
+try {
+  const qs = new URLSearchParams(location.search);
+  if (qs.get("catalogo") === "publico") {
+    const q = qs.get("q") || "";
+    if (window.__conectores) window.__conectores.catalogo(q);
+  }
+} catch (e) { /* un deep-link ilegible no puede tumbar la pantalla */ }
+</script>
+</body>
+</html>

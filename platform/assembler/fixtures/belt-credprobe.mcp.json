@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "credprobe": {
+      "command": "python3",
+      "args": ["${PUPPET_REPO}/platform/assembler/fixtures/cred_probe_server.py"],
+      "env": {
+        "PROBE_CRED": "${PROBE_CRED}"
+      },
+      "description": "Fixture F4-B4: prueba la inyección de la credencial BYOK por usuario al child_env. Lee ${PROBE_CRED} (que el broker cablea desde la key cifrada del usuario) y expone cred_status() con metadatos (present/length/fingerprint), NUNCA el valor. Tool de LECTURA: el enforcer la deja EXECUTE."
+    }
+  }
+}

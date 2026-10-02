@@ -1,0 +1,16 @@
+PackageIdentifier: OpenCoworkAI.OpenCoDesign
+PackageVersion: 0.1.3
+InstallerType: nullsoft
+Scope: user
+UpgradeBehavior: install
+# electron-builder emits per-arch NSIS installers; winget gets separate
+# entries so ARM Windows users install the native build instead of emulating.
+Installers:
+  - Architecture: x64
+    InstallerUrl: https://github.com/OpenCoworkAI/open-codesign/releases/download/v0.1.3/open-codesign-0.1.3-x64-setup.exe
+    InstallerSha256: 5CE878DA5F78F884FA4140E8D85CF16679B76ACE392FBACEA785A3F8F7081DEC
+  - Architecture: arm64
+    InstallerUrl: https://github.com/OpenCoworkAI/open-codesign/releases/download/v0.1.3/open-codesign-0.1.3-arm64-setup.exe
+    InstallerSha256: 4277578C6B29899D386A8C59C991FD03BD92342CB7C20E46F4BAE1EA11C21E99
+ManifestType: installer
+ManifestVersion: 1.6.0

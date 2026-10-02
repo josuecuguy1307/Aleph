@@ -1,0 +1,44 @@
+{
+  "_meta": {
+    "que_es": "base_matrix del belt INGENIERIA. Declara las tools CAD locales de FreeCAD (crear/editar/leer/computar geometria) y create_draft de Gmail como auto-ejecuta, para que el agente no quede paralizado pidiendo OK por cada operacion local. delete_object = confirma-una-vez (borra geometria, recuperable pero merece aviso). El enforcer (recipe_enforcer) planta SIEMPRE y PRIMERO la regla mandatoria send: esta base NO puede aflojarla. send_email seguira cayendo a needs_ok (HELD).",
+    "consumido_por": "assemble_and_run(recipe, base_matrix=<este json>) o auto-carga via _meta.base_matrix del belt-ingenieria.mcp.json.",
+    "principio": "seguro pero no paralizado — modelar y computar en FreeCAD fluye (local, baja consecuencia); borrar avisa una vez; mandar correo pregunta cada vez.",
+    "fuente": "platform/gates/recipe_enforcer.py + platform/gates/approval_gate.py + base-matrix-cowork-gmail.json (patron)."
+  },
+  "tier": "average",
+  "default_level": "auto-ejecuta",
+  "rules": [
+    {
+      "id": "ing-freecad-cad-seguro",
+      "match": { "server": "freecad", "tools": ["create_document", "create_object", "edit_object", "get_object", "get_objects", "get_parts_list", "insert_part_from_library", "list_documents", "reload_document", "execute_code", "run_fem_analysis"] },
+      "level": "auto-ejecuta",
+      "what": "modelar o computar geometria en FreeCAD (local)",
+      "where": "tu instancia local de FreeCAD (nada sale de tu maquina)",
+      "preview_kind": "accion"
+    },
+    {
+      "id": "ing-fem-headless",
+      "match": { "server": "fem", "tools": ["run_fem_analysis"] },
+      "level": "auto-ejecuta",
+      "what": "correr un analisis FEM real con CalculiX sobre una viga parametrica (local, headless)",
+      "where": "tu maquina (freecadcmd + ccx; nada sale ni toca plata)",
+      "preview_kind": "accion"
+    },
+    {
+      "id": "ing-freecad-delete",
+      "match": { "server": "freecad", "tools": ["delete_object"] },
+      "level": "confirma-una-vez",
+      "what": "borrar un objeto del modelo en FreeCAD",
+      "where": "tu documento de FreeCAD (recuperable, pero te aviso la primera vez)",
+      "preview_kind": "accion"
+    },
+    {
+      "id": "ing-gmail-draft",
+      "match": { "server": "gmail", "tools": ["create_draft"] },
+      "level": "auto-ejecuta",
+      "what": "preparar un borrador de correo (no lo manda)",
+      "where": "tu Gmail (queda en Borradores; no sale)",
+      "preview_kind": "mensaje"
+    }
+  ]
+}

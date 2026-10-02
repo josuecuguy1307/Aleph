@@ -1,0 +1,1182 @@
+"""LLM factory."""
+
+from __future__ import annotations
+
+import logging
+import math
+import os
+from urllib.parse import urlparse
+import re
+from collections.abc import Mapping, Sequence
+from importlib import import_module
+from importlib.metadata import PackageNotFoundError, version
+from pathlib import Path
+from typing import Any, Optional
+from urllib.parse import urlsplit
+
+from pydantic import PrivateAttr
+
+from src.config.accessor import get_env_config, reset_env_config
+from src.providers.capabilities import (
+    get_llm_credentials,
+    get_provider_capabilities,
+)
+
+try:
+    from dotenv import load_dotenv
+except ImportError:
+    load_dotenv = None  # type: ignore
+
+try:
+    from langchain_openai import ChatOpenAI
+except ImportError:
+    ChatOpenAI = None  # type: ignore
+
+try:
+    from openai import Omit as OpenAIOmit
+except ImportError:
+    OpenAIOmit = None  # type: ignore
+
+try:
+    import httpx
+except ImportError:
+    httpx = None  # type: ignore
+
+
+def _build_proxy_free_http_clients() -> tuple[Any, Any]:
+    """Build sync and async HTTPX clients that ignore proxy environment vars.
+
+    Supplying an explicit transport prevents ``httpx.Client`` from installing
+    proxy mounts discovered from HTTP(S)_PROXY.  ``trust_env`` remains enabled
+    on the transports so SSL_CERT_FILE and SSL_CERT_DIR still work for private
+    certificate authorities.
+
+    Returns:
+        A ``(sync_client, async_client)`` pair for the OpenAI SDK.
+
+    Raises:
+        RuntimeError: If HTTPX is unavailable while proxy disabling is enabled.
+    """
+    if httpx is None:
+        raise RuntimeError(
+            "VIBE_TRADING_DISABLE_HTTP_PROXY requires the httpx package"
+        )
+    sync_transport = httpx.HTTPTransport(proxy=None, trust_env=True)
+    async_transport = httpx.AsyncHTTPTransport(proxy=None, trust_env=True)
+    return (
+        httpx.Client(transport=sync_transport),
+        httpx.AsyncClient(transport=async_transport),
+    )
+
+
+_AMBIENT_OPENAI_HEADER_ENV_VARS = (
+    "OPENAI_CUSTOM_HEADERS",
+    "OPENAI_ORG_ID",
+    "OPENAI_ORGANIZATION",
+    "OPENAI_PROJECT_ID",
+)
+
+
+def _openai_custom_header_names(raw: str | None) -> tuple[str, ...]:
+    """Return header names parsed by the OpenAI SDK environment format."""
+    names: list[str] = []
+    for line in (raw or "").split("\n"):
+        colon = line.find(":")
+        if colon >= 0:
+            names.append(line[:colon].strip())
+    return tuple(dict.fromkeys(names))
+
+
+if ChatOpenAI is not None:
+
+    class ChatOpenAIWithReasoning(ChatOpenAI):  # type: ignore[misc,valid-type]
+        """ChatOpenAI that preserves provider reasoning across invoke + stream.
+
+        langchain-openai 0.3.x drops non-standard fields in three paths:
+          * _convert_dict_to_message — invoke / ainvoke (inbound)
+          * _convert_delta_to_message_chunk — stream / astream (inbound)
+          * _convert_message_to_dict — request serialization (outbound)
+        Moonshot/DeepSeek emit `reasoning_content`; OpenRouter relays as
+        `reasoning`. Inbound paths normalize to additional_kwargs["reasoning_content"];
+        outbound path re-injects it so strict providers (kimi-k2.6) accept
+        multi-turn continuations.
+        """
+
+        _vibe_provider: Optional[str] = PrivateAttr(default=None)
+        _vibe_api_key: str = PrivateAttr(default="")
+        _vibe_ambient_header_names: tuple[str, ...] = PrivateAttr(default=())
+        _vibe_has_explicit_authorization: bool = PrivateAttr(default=False)
+
+        def __init__(
+            self,
+            *args: Any,
+            vibe_provider: str | None = None,
+            vibe_api_key: str | None = None,
+            **kwargs: Any,
+        ) -> None:
+            """Initialize while retaining the resolved provider name."""
+            explicit_headers = kwargs.get("default_headers")
+            explicit_names = (
+                {str(name) for name in explicit_headers}
+                if isinstance(explicit_headers, Mapping)
+                else set()
+            )
+            explicit_names_lower = {name.lower() for name in explicit_names}
+            ambient_names = _openai_custom_header_names(
+                os.getenv("OPENAI_CUSTOM_HEADERS")  # noqa: env-gate — SDK header isolation
+            )
+            super().__init__(*args, **kwargs)
+            self._vibe_provider = vibe_provider
+            self._vibe_api_key = vibe_api_key or ""
+            self._vibe_ambient_header_names = tuple(
+                name for name in ambient_names if name not in explicit_names
+            )
+            self._vibe_has_explicit_authorization = (
+                "authorization" in explicit_names_lower
+            )
+
+        def _provider_scoped_extra_headers(self) -> dict[str, Any]:
+            """Remove ambient OpenAI-only headers from named relay requests."""
+            provider = (self._vibe_provider or "").strip().lower()
+            if not provider or provider == "openai" or OpenAIOmit is None:
+                return {}
+
+            overrides: dict[str, Any] = {
+                "OpenAI-Organization": OpenAIOmit(),
+                "OpenAI-Project": OpenAIOmit(),
+            }
+            ambient_authorization = False
+            for name in self._vibe_ambient_header_names:
+                overrides[name] = OpenAIOmit()
+                ambient_authorization = (
+                    ambient_authorization or name.lower() == "authorization"
+                )
+
+            # OPENAI_CUSTOM_HEADERS can override the SDK's normal Bearer header.
+            # Remove every captured spelling, then restore the selected provider
+            # credential under one canonical name so casing variants cannot
+            # produce duplicate Authorization values.
+            if (
+                ambient_authorization
+                and not self._vibe_has_explicit_authorization
+                and self._vibe_api_key
+            ):
+                overrides["Authorization"] = f"Bearer {self._vibe_api_key}"
+            return overrides
+
+        def _capabilities(self):
+            model = (
+                getattr(self, "model_name", None)
+                or getattr(self, "model", None)
+                or getattr(self, "model_name_", None)
+                or ""
+            )
+            return get_provider_capabilities(self._vibe_provider, str(model))
+
+        @staticmethod
+        def _extract_tool_call_thought_signature(tool_call: Any) -> Optional[str]:
+            if not isinstance(tool_call, dict):
+                return None
+
+            extra_content = tool_call.get("extra_content")
+            if isinstance(extra_content, dict):
+                google = extra_content.get("google")
+                if isinstance(google, dict):
+                    value = google.get("thought_signature") or google.get(
+                        "thoughtSignature"
+                    )
+                    if value:
+                        return value
+
+            function = tool_call.get("function")
+            containers = [tool_call]
+            if isinstance(function, dict):
+                containers.append(function)
+            for container in containers:
+                value = container.get("thought_signature") or container.get(
+                    "thoughtSignature"
+                )
+                if value:
+                    return value
+            return None
+
+        @classmethod
+        def _collect_tool_call_thought_signatures(
+            cls, tool_calls: Any
+        ) -> list[dict[str, Any]]:
+            if not isinstance(tool_calls, list):
+                return []
+
+            signatures = []
+            for fallback_index, tool_call in enumerate(tool_calls):
+                signature = cls._extract_tool_call_thought_signature(tool_call)
+                if not signature or not isinstance(tool_call, dict):
+                    continue
+
+                index = tool_call.get("index")
+                entry: dict[str, Any] = {
+                    "index": index if isinstance(index, int) else fallback_index,
+                    "thought_signature": signature,
+                }
+                if tool_call.get("id"):
+                    entry["id"] = tool_call["id"]
+                signatures.append(entry)
+            return signatures
+
+        def _capture(self, src: Any, msg: Any) -> None:
+            if not isinstance(src, dict):
+                return
+            caps = self._capabilities()
+            if caps.capture_reasoning and (
+                value := src.get("reasoning_content") or src.get("reasoning")
+            ):
+                msg.additional_kwargs["reasoning_content"] = value
+            if caps.gemini_thought_signatures and (
+                signatures := self._collect_tool_call_thought_signatures(
+                    src.get("tool_calls")
+                )
+            ):
+                msg.additional_kwargs["tool_call_thought_signatures"] = signatures
+
+        def _convert_input(self, input: Any) -> Any:  # type: ignore[override]
+            """Re-attach Gemini thought signatures dropped by dict->message conversion.
+
+            The AgentLoop replays history as OpenAI-format dicts, stamping the
+            signature into ``tool_calls[i].extra_content.google.thought_signature``
+            (loop.py ``_attach_tool_call_thought_signatures``). LangChain's
+            ``_convert_dict_to_message`` discards ``extra_content`` entirely, so by
+            the time ``_get_request_payload`` runs the signature is gone and Gemini
+            rejects the next turn with a ``missing thought_signature`` 400.
+
+            ``_convert_input`` is the single chokepoint both ``invoke`` and
+            ``stream`` call once at entry, while ``input`` is still raw dicts. Here
+            we lift the signatures back onto the converted ``AIMessage`` in the
+            same ``additional_kwargs["tool_call_thought_signatures"]`` shape the
+            in-memory (#176) path produces, so the existing ``_signature_maps`` /
+            ``_inject_tool_call_thought_signatures`` machinery handles both paths
+            identically. The ``isinstance(raw, dict)`` guard makes it a no-op when
+            re-invoked on already-converted ``BaseMessage`` objects (idempotent).
+            """
+            prompt_value = super()._convert_input(input)
+            if not self._capabilities().gemini_thought_signatures:
+                return prompt_value
+            if isinstance(input, Sequence) and not isinstance(input, (str, bytes)):
+                messages = prompt_value.to_messages()
+                if len(messages) == len(input):
+                    for raw, msg in zip(input, messages):
+                        if (
+                            isinstance(raw, dict)
+                            and getattr(msg, "type", None) == "ai"
+                            and not getattr(msg, "additional_kwargs", {}).get(
+                                "tool_call_thought_signatures"
+                            )
+                        ):
+                            sigs = self._collect_tool_call_thought_signatures(
+                                raw.get("tool_calls")
+                            )
+                            if sigs:
+                                msg.additional_kwargs[
+                                    "tool_call_thought_signatures"
+                                ] = sigs
+            return prompt_value
+
+        @classmethod
+        def _signature_maps(cls, message: Any) -> tuple[dict[str, str], dict[int, str]]:
+            by_id: dict[str, str] = {}
+            by_index: dict[int, str] = {}
+            additional_kwargs = getattr(message, "additional_kwargs", {})
+
+            entries = additional_kwargs.get("tool_call_thought_signatures", [])
+            if isinstance(entries, dict):
+                entries = [entries]
+            if isinstance(entries, list):
+                for entry in entries:
+                    if not isinstance(entry, dict):
+                        continue
+                    signature = entry.get("thought_signature")
+                    if not signature:
+                        continue
+                    if entry.get("id"):
+                        by_id[str(entry["id"])] = signature
+                    index = entry.get("index")
+                    if isinstance(index, int):
+                        by_index[index] = signature
+
+            raw_tool_calls = additional_kwargs.get("tool_calls")
+            if isinstance(raw_tool_calls, list):
+                for index, tool_call in enumerate(raw_tool_calls):
+                    signature = cls._extract_tool_call_thought_signature(tool_call)
+                    if not signature or not isinstance(tool_call, dict):
+                        continue
+                    if tool_call.get("id"):
+                        by_id[str(tool_call["id"])] = signature
+                    by_index[index] = signature
+
+            return by_id, by_index
+
+        @staticmethod
+        def _set_tool_call_thought_signature(tool_call: Any, signature: str) -> None:
+            if not isinstance(tool_call, dict):
+                return
+            extra_content = tool_call.get("extra_content")
+            if not isinstance(extra_content, dict):
+                extra_content = {}
+                tool_call["extra_content"] = extra_content
+            google = extra_content.get("google")
+            if not isinstance(google, dict):
+                google = {}
+                extra_content["google"] = google
+            google["thought_signature"] = signature
+
+        @classmethod
+        def _inject_tool_call_thought_signatures(
+            cls, outbound: Any, source_message: Any
+        ) -> None:
+            if not isinstance(outbound, list):
+                return
+
+            by_id, by_index = cls._signature_maps(source_message)
+            if not by_id and not by_index:
+                return
+
+            for index, tool_call in enumerate(outbound):
+                signature = None
+                if isinstance(tool_call, dict) and tool_call.get("id"):
+                    signature = by_id.get(str(tool_call["id"]))
+                signature = signature or by_index.get(index)
+                if signature:
+                    cls._set_tool_call_thought_signature(tool_call, signature)
+
+        @staticmethod
+        def _strip_tool_call_extra_content(outbound: Any) -> None:
+            if not isinstance(outbound, list):
+                return
+            for tool_call in outbound:
+                if isinstance(tool_call, dict):
+                    tool_call.pop("extra_content", None)
+
+        def _create_chat_result(self, response, generation_info=None):  # type: ignore[override]
+            result = super()._create_chat_result(response, generation_info)
+            raw = response if isinstance(response, dict) else response.model_dump()
+            for gen, choice in zip(result.generations, raw["choices"]):
+                self._capture(choice["message"], gen.message)
+            return result
+
+        def _convert_chunk_to_generation_chunk(  # type: ignore[override]
+            self,
+            chunk: dict,
+            default_chunk_class: type,
+            base_generation_info: Optional[dict],
+        ):
+            gen = super()._convert_chunk_to_generation_chunk(
+                chunk, default_chunk_class, base_generation_info
+            )
+            if gen is None:
+                return None
+            choices = chunk.get("choices") or chunk.get("chunk", {}).get("choices")
+            if choices:
+                self._capture(choices[0]["delta"], gen.message)
+            return gen
+
+        def _get_request_payload(  # type: ignore[override]
+            self,
+            input_: Any,
+            *,
+            stop: Optional[list[str]] = None,
+            **kwargs: Any,
+        ) -> dict:
+            """Re-inject reasoning_content and normalize assistant content.
+
+            LangChain strips ``reasoning_content`` when serializing AIMessages
+            back to OpenAI wire format. Moonshot kimi-k2.6 also rejects
+            assistant turns where ``content`` is null or ``reasoning_content``
+            is absent, breaking ReAct continuations after a tool call (#39).
+            """
+            payload = super()._get_request_payload(input_, stop=stop, **kwargs)
+            messages = super()._convert_input(input_).to_messages()
+            caps = self._capabilities()
+            for i, m in enumerate(payload["messages"]):
+                if m.get("role") != "assistant":
+                    continue
+                source_message = messages[i]
+                if caps.normalize_assistant_content and m.get("content") is None:
+                    m["content"] = ""
+                if caps.send_reasoning_content:
+                    m["reasoning_content"] = source_message.additional_kwargs.get(
+                        "reasoning_content", ""
+                    )
+                else:
+                    m.pop("reasoning_content", None)
+                if caps.gemini_thought_signatures:
+                    self._inject_tool_call_thought_signatures(
+                        m.get("tool_calls"), source_message
+                    )
+                else:
+                    self._strip_tool_call_extra_content(m.get("tool_calls"))
+
+            scoped_headers = self._provider_scoped_extra_headers()
+            if scoped_headers:
+                existing_headers = payload.get("extra_headers")
+                if isinstance(existing_headers, Mapping):
+                    scoped_headers.update(existing_headers)
+                payload["extra_headers"] = scoped_headers
+            return payload
+
+else:
+    ChatOpenAIWithReasoning = None  # type: ignore
+
+AGENT_DIR = Path(__file__).resolve().parents[2]
+
+# .env search order: ~/.vibe-trading/.env → agent/.env → $CWD/.env
+_ENV_CANDIDATES = [
+    Path.home() / ".vibe-trading" / ".env",
+    AGENT_DIR / ".env",
+    Path.cwd() / ".env",
+]
+
+# Index-aligned with _ENV_CANDIDATES. CWE-209: never log the absolute
+# .env path (it leaks the OS username / home / CWD). The label names
+# which slot won - the entire P08 R1 signal - using compile-time
+# constants only.
+_ENV_LABELS = ("~/.vibe-trading/.env", "<AGENT_DIR>/.env", "<CWD>/.env")
+
+# Kimi reasoning models (K-series: kimi-k2*, kimi-k3, …, and the
+# kimi-for-coding alias) reject any temperature other than 1 with
+# "invalid temperature: only 1 is allowed for this model".
+_KIMI_FORCED_TEMPERATURE_RE = re.compile(r"kimi-(k\d+|for-coding)", re.IGNORECASE)
+
+logger = logging.getLogger(__name__)
+
+_dotenv_loaded: bool = False
+
+
+def _redact_env_source(loaded: Path | None) -> str:
+    """Map a resolved `.env` candidate to a stable, leak-free label.
+
+    Returns a symbolic slot label (never the absolute path) so a stale
+    or shadowed `.env` stays diagnosable without exposing the OS
+    username, home, or CWD (CWE-209). A candidate outside the fixed
+    list (e.g. one injected by a test) collapses to a generic
+    placeholder rather than echoing a real path.
+    """
+    if loaded is None:
+        return "none (no .env file found)"
+    for label, candidate in zip(_ENV_LABELS, _ENV_CANDIDATES):
+        if loaded == candidate:
+            return label
+    return "<.env>"
+
+
+def _redact_base_url_for_log(raw: str | None) -> str:
+    """Return a diagnostic-safe base URL label for logs."""
+    if not raw or not raw.strip():
+        return "(unset)"
+
+    try:
+        parsed = urlsplit(raw.strip())
+    except ValueError:
+        return "<base-url>"
+
+    if not parsed.scheme or not parsed.hostname:
+        return "<base-url>"
+
+    host = parsed.hostname
+    if ":" in host and not host.startswith("["):
+        host = f"[{host}]"
+
+    try:
+        port = parsed.port
+    except ValueError:
+        port = None
+    if port is not None:
+        host = f"{host}:{port}"
+
+    return f"{parsed.scheme}://{host}"
+
+
+def _package_version(package: str) -> str:
+    """Return an installed package version or a stable missing label."""
+    try:
+        return version(package)
+    except PackageNotFoundError:
+        return "not_installed"
+
+
+def _redact_env_flag(name: str) -> str:
+    """Report whether an env var is set without exposing its value."""
+    value = os.getenv(name, "")  # noqa: env-gate — diagnostic redaction helper
+    return "set" if value else "unset"
+
+
+def _header_value_diagnostic(value: str) -> dict[str, Any]:
+    """Describe a possible HTTP header value without exposing its contents."""
+    return {
+        "set": bool(value),
+        "length": len(value),
+        "ascii_only": value.isascii(),
+    }
+
+
+def _credential_env_source(api_key_env: str | None) -> str:
+    """Return the env name supplying the selected provider credential."""
+    if api_key_env and os.getenv(api_key_env):  # noqa: env-gate — dynamic key source
+        return api_key_env
+    if os.getenv("OPENAI_API_KEY"):  # noqa: env-gate — compatibility fallback
+        return "OPENAI_API_KEY"
+    return api_key_env or "built_in"
+
+
+def _validate_authorization_credential(value: str, *, source: str) -> None:
+    """Reject credentials that cannot form a legal ASCII Bearer header."""
+    if not value:
+        return
+    if not value.isascii():
+        raise RuntimeError(
+            f"{source} contains non-ASCII characters and cannot be sent in an "
+            "HTTP Authorization header. Replace it with the raw provider API key "
+            "instead of pasted JSON, HTML, or formatted text."
+        )
+    if any(ord(char) < 33 or ord(char) > 126 for char in value):
+        raise RuntimeError(
+            f"{source} contains whitespace or control characters and cannot be "
+            "sent in an HTTP Authorization header. Replace it with the raw "
+            "provider API key."
+        )
+
+
+def _validate_explicit_headers(headers: Mapping[str, str], *, source: str) -> None:
+    """Reject explicit provider headers that HTTPX cannot encode safely."""
+    for name, value in headers.items():
+        if not name.isascii() or not value.isascii():
+            raise RuntimeError(
+                f"{source} produces a non-ASCII HTTP header ({name!r}). "
+                "Use an ASCII-only header value."
+            )
+        if "\r" in value or "\n" in value:
+            raise RuntimeError(
+                f"{source} produces an invalid multiline HTTP header ({name!r})."
+            )
+
+
+def _redact_proxy_url(name: str, raw: str | None) -> str:
+    """Return a credential-free proxy URL label."""
+    if not raw:
+        return "unset"
+    if name.upper().endswith("NO_PROXY"):
+        return "set"
+    return _redact_base_url_for_log(raw)
+
+
+def _deepseek_adapter_mode() -> str:
+    """Return the configured DeepSeek adapter mode."""
+    mode = get_env_config().llm.vibe_trading_deepseek_adapter.strip().lower()
+    aliases = {
+        "compat": "openai-compatible",
+        "compatible": "openai-compatible",
+        "openai": "openai-compatible",
+        "openai_compatible": "openai-compatible",
+    }
+    return aliases.get(mode, mode or "auto")
+
+
+def _build_native_deepseek(
+    *,
+    model: str,
+    temperature: float,
+    callbacks: Any = None,
+) -> Any | None:
+    """Build the optional native DeepSeek adapter when installed.
+
+    Returns:
+        A ChatDeepSeek instance, or ``None`` when the optional package is not
+        available.
+    """
+    try:
+        module = import_module("langchain_deepseek")
+        chat_deepseek = getattr(module, "ChatDeepSeek")
+    except Exception as exc:  # noqa: BLE001 - optional adapter fallback
+        logger.info(
+            "DeepSeek native adapter unavailable; using OpenAI-compatible path: %s", exc
+        )
+        return None
+
+    creds = get_llm_credentials("deepseek", model)
+    api_key = creds["api_key"]
+    base_url = creds["base_url"]
+    return chat_deepseek(
+        model=model,
+        temperature=temperature,
+        timeout=get_env_config().llm.timeout_seconds,
+        max_retries=get_env_config().llm.max_retries,
+        callbacks=callbacks,
+        api_key=api_key or None,
+        base_url=base_url or None,
+    )
+
+
+# Anthropic model names discovered at runtime to reject the `temperature`
+# request field. Next-gen Claude models (e.g. claude-opus-5, claude-opus-4-8,
+# claude-sonnet-5) return HTTP 400 "`temperature` is deprecated for this model."
+# for ANY temperature value, while older models (claude-opus-4-5,
+# claude-sonnet-4-5, …) still honor it. Model names are not reliably
+# predictable, so membership is populated on first failure and then reused
+# process-wide to skip the redundant failed request on subsequent calls.
+_ANTHROPIC_TEMPERATURE_UNSUPPORTED: set[str] = set()
+
+# Cache of base ChatAnthropic class -> temperature-safe subclass, so the dynamic
+# subclass is built once per resolved base class (keyed to support test doubles).
+_TEMPERATURE_SAFE_ANTHROPIC_CACHE: dict[type, type] = {}
+
+
+def _is_anthropic_temperature_unsupported_error(exc: BaseException) -> bool:
+    """Return True when an Anthropic error reports `temperature` as unsupported.
+
+    Matches the model-level deprecation ("`temperature` is deprecated for this
+    model.") regardless of the SDK exception type or the temperature value sent.
+    """
+    message = str(getattr(exc, "message", "") or exc).lower()
+    if "temperature" not in message:
+        return False
+    return (
+        "deprecated" in message
+        or "not supported" in message
+        or "unsupported" in message
+        or "not allowed" in message
+    )
+
+
+def _make_temperature_safe_anthropic(base_cls: type) -> type:
+    """Build (and cache) a ChatAnthropic subclass that self-heals temperature.
+
+    Certain Claude models reject the `temperature` field entirely. This subclass
+    transparently drops `temperature` from the request and retries once when the
+    API reports it as unsupported, remembering the model in
+    ``_ANTHROPIC_TEMPERATURE_UNSUPPORTED`` so later requests omit it up front.
+    Models that accept `temperature` are unaffected — their configured value
+    (e.g. the deterministic 0.0 default) is preserved.
+
+    Built from the class resolved at call time so the optional
+    ``langchain-anthropic`` dependency stays lazily imported and test doubles
+    still work.
+    """
+    cached = _TEMPERATURE_SAFE_ANTHROPIC_CACHE.get(base_cls)
+    if cached is not None:
+        return cached
+
+    def _get_request_payload(self: Any, *args: Any, **kwargs: Any) -> dict:
+        payload = base_cls._get_request_payload(self, *args, **kwargs)
+        if isinstance(payload, dict) and self.model in _ANTHROPIC_TEMPERATURE_UNSUPPORTED:
+            payload.pop("temperature", None)
+        return payload
+
+    def _remember_and_should_retry(self: Any, exc: BaseException) -> bool:
+        if _is_anthropic_temperature_unsupported_error(exc):
+            if self.model not in _ANTHROPIC_TEMPERATURE_UNSUPPORTED:
+                logger.info(
+                    "Anthropic model %s rejects `temperature`; retrying without it "
+                    "and omitting it for subsequent calls.",
+                    self.model,
+                )
+                _ANTHROPIC_TEMPERATURE_UNSUPPORTED.add(self.model)
+                return True
+        return False
+
+    def _generate(self: Any, *args: Any, **kwargs: Any) -> Any:
+        try:
+            return base_cls._generate(self, *args, **kwargs)
+        except Exception as exc:  # noqa: BLE001 - retried or re-raised below
+            if _remember_and_should_retry(self, exc):
+                return base_cls._generate(self, *args, **kwargs)
+            raise
+
+    async def _agenerate(self: Any, *args: Any, **kwargs: Any) -> Any:
+        try:
+            return await base_cls._agenerate(self, *args, **kwargs)
+        except Exception as exc:  # noqa: BLE001 - retried or re-raised below
+            if _remember_and_should_retry(self, exc):
+                return await base_cls._agenerate(self, *args, **kwargs)
+            raise
+
+    def _stream(self: Any, *args: Any, **kwargs: Any) -> Any:
+        # The temperature-unsupported error is raised before the first chunk is
+        # produced, so retrying the whole stream cannot duplicate output.
+        try:
+            yield from base_cls._stream(self, *args, **kwargs)
+        except Exception as exc:  # noqa: BLE001 - retried or re-raised below
+            if _remember_and_should_retry(self, exc):
+                yield from base_cls._stream(self, *args, **kwargs)
+            else:
+                raise
+
+    async def _astream(self: Any, *args: Any, **kwargs: Any) -> Any:
+        try:
+            async for chunk in base_cls._astream(self, *args, **kwargs):
+                yield chunk
+        except Exception as exc:  # noqa: BLE001 - retried or re-raised below
+            if _remember_and_should_retry(self, exc):
+                async for chunk in base_cls._astream(self, *args, **kwargs):
+                    yield chunk
+            else:
+                raise
+
+    safe_cls = type(
+        "ChatAnthropicTemperatureSafe",
+        (base_cls,),
+        {
+            "_get_request_payload": _get_request_payload,
+            "_generate": _generate,
+            "_agenerate": _agenerate,
+            "_stream": _stream,
+            "_astream": _astream,
+        },
+    )
+    _TEMPERATURE_SAFE_ANTHROPIC_CACHE[base_cls] = safe_cls
+    return safe_cls
+
+
+def _build_anthropic(
+    *,
+    model: str,
+    temperature: float,
+    callbacks: Any = None,
+) -> Any:
+    """Build the native Anthropic Messages API adapter.
+
+    Uses a temperature-safe subclass so models that deprecate the `temperature`
+    field (e.g. claude-opus-5 / claude-sonnet-5) work transparently while models
+    that still accept it keep the configured deterministic value.
+    """
+    try:
+        module = import_module("langchain_anthropic")
+        chat_anthropic = getattr(module, "ChatAnthropic")
+    except Exception as exc:  # noqa: BLE001 - dependency error with install hint
+        raise RuntimeError(
+            "Anthropic provider requires langchain-anthropic. Install the optional "
+            'extra: pip install "vibe-trading-ai[anthropic]" (or pip install langchain-anthropic).'
+        ) from exc
+
+    safe_anthropic = _make_temperature_safe_anthropic(chat_anthropic)
+    return safe_anthropic(
+        model=model,
+        max_tokens=get_env_config().llm.anthropic_max_tokens,
+        temperature=temperature,
+        timeout=get_env_config().llm.timeout_seconds,
+        max_retries=get_env_config().llm.max_retries,
+        callbacks=callbacks,
+        api_key=os.getenv("ANTHROPIC_API_KEY") or None,  # noqa: env-gate — native provider credential
+        base_url=(
+            os.getenv("ANTHROPIC_BASE_URL")  # noqa: env-gate — native provider endpoint
+            or os.getenv("ANTHROPIC_API_URL")  # noqa: env-gate — SDK-compatible alias
+            or None
+        ),
+    )
+
+
+def _load_env_file(path: Path) -> None:
+    """Load a single .env file into os.environ (setdefault, no override)."""
+    if load_dotenv is not None:
+        load_dotenv(dotenv_path=path, override=False)
+    else:
+        for raw in path.read_text(encoding="utf-8").splitlines():
+            line = raw.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, value = line.split("=", 1)
+            key = key.strip()
+            if key:
+                os.environ.setdefault(key, value.strip().strip('"').strip("'"))
+
+
+def _ensure_dotenv() -> None:
+    """Load `.env` from the first found candidate path."""
+    global _dotenv_loaded
+    if _dotenv_loaded:
+        return
+    loaded = None
+    for candidate in _ENV_CANDIDATES:
+        if candidate.exists():
+            _load_env_file(candidate)
+            loaded = candidate
+            break
+    if loaded is not None:
+        reset_env_config()
+    _dotenv_loaded = True
+    # P08 R1: one-time, behavior-preserving diagnostic so a stale or
+    # shadowed .env is observable instead of costing hours. The path is
+    # redacted to a symbolic slot label and the API key is never logged.
+    logger.info(
+        "dotenv resolved from %s | provider=%s model=%s base=%s",
+        _redact_env_source(loaded),
+        get_env_config().llm.langchain_provider,
+        get_env_config().llm.langchain_model_name or "(unset)",
+        _redact_base_url_for_log(
+            os.getenv("OPENAI_BASE_URL")  # noqa: env-gate — diagnostic display
+            or os.getenv("OPENAI_API_BASE")  # noqa: env-gate — diagnostic display
+        ),
+    )
+
+
+def _normalize_ollama_base_url(base_url: str) -> str:
+    """Append ``/v1`` when missing so ChatOpenAI hits Ollama's OpenAI-compatible API."""
+    url = base_url.strip().rstrip("/")
+    if not url:
+        return url
+    if url.endswith("/v1"):
+        return url
+    return f"{url}/v1"
+
+
+def _sync_provider_env() -> None:
+    """Map provider-specific env vars to OPENAI_* for ChatOpenAI.
+
+    Each entry: provider_name -> (api_key_env, base_url_env).
+    Base URLs come from .env; when unset, ``get_llm_credentials`` falls back to
+    the provider catalog's ``default_base_url`` (see ``capabilities.py``).
+    api_key_env=None means no key required (e.g. Ollama local).
+    """
+    _ensure_dotenv()
+    reset_env_config()
+    provider = get_env_config().llm.langchain_provider.lower()
+
+    if provider in {"openai-codex", "openai_codex"}:
+        codex_url = get_env_config().llm.openai_codex_base_url
+        # SDK-side env setup, not Vibe-Trading config reads
+        os.environ["OPENAI_API_BASE"] = codex_url
+        os.environ["OPENAI_BASE_URL"] = codex_url
+        os.environ.pop("OPENAI_API_KEY", None)
+        return
+
+    creds = get_llm_credentials(provider, get_env_config().llm.langchain_model_name)
+    api_key = creds["api_key"]
+    base_url = creds["base_url"]
+
+    if provider == "ollama" and base_url:
+        base_url = _normalize_ollama_base_url(base_url)
+
+    # SDK-side env setup, not Vibe-Trading config reads
+    if api_key:
+        os.environ["OPENAI_API_KEY"] = api_key
+    if base_url:
+        os.environ["OPENAI_API_BASE"] = base_url
+        os.environ["OPENAI_BASE_URL"] = base_url
+
+
+def _supports_top_level_reasoning_effort(provider: str, caps_name: str) -> bool:
+    """Report whether a provider accepts a top-level ``reasoning_effort`` field.
+
+    Direct OpenAI is the only verified consumer: its ``gpt-5.6-*`` models reject
+    function tools on ``/v1/chat/completions`` unless the request carries an
+    explicit ``reasoning_effort`` — including the literal ``"none"``. Every other
+    OpenAI-compatible provider (DeepSeek, Gemini, Groq, DashScope/Qwen, Zhipu,
+    NVIDIA, Spark, MiniMax, …) may reject the unknown field, so this is a
+    positive allowlist, never "everything without ``openrouter_reasoning_body``".
+    Relays that take the field inside ``extra_body.reasoning`` (OpenRouter,
+    Requesty) keep that path and are excluded here.
+
+    Args:
+        provider: Configured ``LANGCHAIN_PROVIDER`` value.
+        caps_name: Canonical capability name resolved for the provider/model.
+
+    Returns:
+        True only for direct OpenAI. The configured name is checked alongside the
+        resolved capability because unknown provider names fall back to OpenAI
+        capabilities — an unverified gateway must not inherit the field — while
+        the capability name check drops model-inferred providers (e.g. provider
+        ``openai`` with a ``deepseek-*`` model resolves to DeepSeek).
+    """
+    if caps_name != "openai" or provider.strip().lower() not in {"", "openai"}:
+        return False
+    # A base-URL override points the OpenAI client at some other gateway
+    # (Ollama, LiteLLM, a corporate proxy). Those speak the OpenAI wire format
+    # but need not accept this field, so the label alone is not enough.
+    try:
+        base_url = (
+            get_llm_credentials("openai", get_env_config().llm.langchain_model_name)
+            .get("base_url")
+            or ""
+        ).strip()
+    except Exception:  # noqa: BLE001 - a credential lookup must not break the check
+        return False
+    if not base_url:
+        return True
+    host = urlparse(base_url if "//" in base_url else f"https://{base_url}").hostname or ""
+    return host.lower() in {"api.openai.com", "openai.com"}
+
+
+def provider_diagnostics() -> dict[str, Any]:
+    """Build a redacted provider diagnostic snapshot.
+
+    Returns:
+        Redacted provider/model/package/env/proxy/capability details.
+    """
+    _sync_provider_env()
+    provider = get_env_config().llm.langchain_provider.strip().lower()
+    model = get_env_config().llm.langchain_model_name.strip()
+    caps = get_provider_capabilities(provider, model)
+    key_env = caps.api_key_env
+    creds = get_llm_credentials(provider, model)
+    base_url = creds["base_url"]
+    credential_source = _credential_env_source(key_env)
+    proxy_names = [
+        "HTTP_PROXY",
+        "HTTPS_PROXY",
+        "ALL_PROXY",
+        "NO_PROXY",
+        "http_proxy",
+        "https_proxy",
+        "all_proxy",
+        "no_proxy",
+    ]
+    package_names = [
+        "langchain-openai",
+        "langchain-anthropic",
+        "langchain-core",
+        "langchain",
+        "openai",
+        "langchain-deepseek",
+    ]
+    native_package_version = (
+        _package_version(caps.native_adapter_package)
+        if caps.native_adapter_package
+        else None
+    )
+    adapter_mode = (
+        _deepseek_adapter_mode()
+        if caps.name == "deepseek"
+        else "native"
+        if caps.name == "anthropic"
+        else "openai-compatible"
+    )
+    adapter_type = (
+        "native"
+        if (
+            caps.name == "anthropic"
+            or (
+                caps.name == "deepseek"
+                and adapter_mode != "openai-compatible"
+                and native_package_version not in {None, "not_installed"}
+            )
+        )
+        else "openai-compatible"
+    )
+    return {
+        "provider": caps.name if provider in {"kimi", "openai_codex"} else provider,
+        "model": model,
+        "base_url": _redact_base_url_for_log(base_url),
+        "api_key": {key_env: _redact_env_flag(key_env)} if key_env else {},
+        "http_header_env": {
+            "authorization": {
+                "source": credential_source,
+                **_header_value_diagnostic(creds["api_key"]),
+            },
+            "ambient_openai": {
+                name: _header_value_diagnostic(
+                    os.getenv(name, "")  # noqa: env-gate — redacted header diagnostic
+                )
+                for name in _AMBIENT_OPENAI_HEADER_ENV_VARS
+            },
+        },
+        "env": {
+            "LANGCHAIN_PROVIDER": _redact_env_flag("LANGCHAIN_PROVIDER"),
+            "LANGCHAIN_MODEL_NAME": _redact_env_flag("LANGCHAIN_MODEL_NAME"),
+            "OPENAI_API_KEY": _redact_env_flag("OPENAI_API_KEY"),
+            "OPENAI_BASE_URL": _redact_base_url_for_log(
+                os.getenv("OPENAI_BASE_URL")  # noqa: env-gate — diagnostic snapshot
+            ),
+            "OPENAI_API_BASE": _redact_base_url_for_log(
+                os.getenv("OPENAI_API_BASE")  # noqa: env-gate — diagnostic snapshot
+            ),
+        },
+        "proxy": {
+            name: _redact_proxy_url(
+                name, os.getenv(name)  # noqa: env-gate — proxy env iteration
+            )
+            for name in proxy_names
+            if os.getenv(name)  # noqa: env-gate — proxy env filter
+        },
+        "packages": {name: _package_version(name) for name in package_names},
+        "timeout_seconds": get_env_config().llm.timeout_seconds,
+        "max_retries": get_env_config().llm.max_retries,
+        "reasoning_effort": get_env_config()
+        .llm.langchain_reasoning_effort.strip()
+        .lower(),
+        "adapter": {
+            "type": adapter_type,
+            "mode": adapter_mode,
+            "native_package": caps.native_adapter_package,
+            "native_package_version": native_package_version,
+        },
+        "capabilities": {
+            "capture_reasoning": caps.capture_reasoning,
+            "send_reasoning_content": caps.send_reasoning_content,
+            "gemini_thought_signatures": caps.gemini_thought_signatures,
+            "openrouter_reasoning_body": caps.openrouter_reasoning_body,
+            "top_level_reasoning_effort": _supports_top_level_reasoning_effort(
+                provider, caps.name
+            ),
+        },
+    }
+
+
+def build_llm(
+    *,
+    model_name: Optional[str] = None,
+    callbacks: Any = None,
+    turno_id: Optional[str] = None,
+    deadline_epoch: Optional[float] = None,
+    sesion_id: Optional[str] = None,
+) -> Any:
+    """Construct the configured LangChain chat model.
+
+    Args:
+        model_name: Model name; defaults to LANGCHAIN_MODEL_NAME.
+        callbacks: Optional LangChain callbacks.
+        turno_id: Stable attempt identifier for the local Aleph CLI edge.
+        deadline_epoch: Stable absolute deadline shared by every request/retry.
+        sesion_id: Conversation key for Aleph's CLI edge (the CHAT, not the attempt).
+
+    Returns:
+        Provider-specific LangChain chat model.
+
+    Raises:
+        RuntimeError: If langchain-openai is missing or LANGCHAIN_MODEL_NAME is unset.
+    """
+    _sync_provider_env()
+    name = model_name or get_env_config().llm.langchain_model_name.strip()
+    if not name:
+        raise RuntimeError("LANGCHAIN_MODEL_NAME is not set")
+    temperature = get_env_config().llm.langchain_temperature
+    provider = get_env_config().llm.langchain_provider.lower()
+    caps = get_provider_capabilities(provider, name)
+    if provider in {"openai-codex", "openai_codex"}:
+        from src.providers.openai_codex import OpenAICodexLLM
+
+        effort = get_env_config().llm.langchain_reasoning_effort.strip().lower()
+        return OpenAICodexLLM(
+            model=name,
+            temperature=temperature,
+            timeout=get_env_config().llm.timeout_seconds,
+            reasoning_effort=effort or None,
+        )
+
+    if provider == "anthropic":
+        return _build_anthropic(
+            model=name,
+            temperature=temperature,
+            callbacks=callbacks,
+        )
+
+    if provider == "deepseek":
+        adapter_mode = _deepseek_adapter_mode()
+        if adapter_mode != "openai-compatible":
+            native_llm = _build_native_deepseek(
+                model=name,
+                temperature=temperature,
+                callbacks=callbacks,
+            )
+            if native_llm is not None:
+                return native_llm
+            if adapter_mode == "native":
+                raise RuntimeError(
+                    "VIBE_TRADING_DEEPSEEK_ADAPTER=native requires langchain-deepseek"
+                )
+
+    if ChatOpenAI is None:
+        raise RuntimeError("langchain-openai is not installed")
+    # MiniMax requires temperature in (0.0, 1.0] — clamp to 0.01 when the
+    # default 0.0 is used to avoid an API validation error.
+    if provider == "minimax" and temperature <= 0.0:
+        temperature = 0.01
+    # Kimi reasoning models reject any temperature other than 1
+    # ("invalid temperature: only 1 is allowed for this model").
+    if (
+        caps.name in {"moonshot", "kimi-coding"}
+        and _KIMI_FORCED_TEMPERATURE_RE.match(name)
+        and temperature != 1.0
+    ):
+        logger.info("Forcing temperature=1.0 for %s (provider requirement)", name)
+        temperature = 1.0
+    # Optional reasoning activation for relays requiring opt-in (e.g. OpenRouter).
+    # Moonshot/DeepSeek official APIs emit reasoning by default and ignore this field.
+    effort = get_env_config().llm.langchain_reasoning_effort.strip().lower()
+    creds = get_llm_credentials(provider, name)
+    api_key = creds["api_key"]
+    _validate_authorization_credential(
+        api_key,
+        source=_credential_env_source(caps.api_key_env),
+    )
+    kwargs: dict[str, Any] = {
+        "model": name,
+        "api_key": api_key or None,
+        "base_url": creds["base_url"] or None,
+        "temperature": temperature,
+        "timeout": get_env_config().llm.timeout_seconds,
+        "max_retries": get_env_config().llm.max_retries,
+        "callbacks": callbacks,
+        "extra_body": (
+            {"reasoning": {"effort": effort}}
+            if effort and caps.openrouter_reasoning_body
+            else None
+        ),
+        # Direct OpenAI takes the effort as a top-level request field instead
+        # (gpt-5.6-* require it, even "none", to accept function tools).
+        # None is dropped by langchain-openai, so unsupported providers keep a
+        # payload without the field.
+        "reasoning_effort": (
+            effort
+            if effort and _supports_top_level_reasoning_effort(provider, caps.name)
+            else None
+        ),
+        "vibe_provider": provider,
+        "vibe_api_key": api_key,
+    }
+    headers = dict(caps.default_headers or {})
+    # These headers are an internal edge contract, never provider metadata. Only attach
+    # them when both destination and model prove that this is the loopback CLI sidecar;
+    # a remote OpenAI-compatible provider must never receive Aleph's local attempt id.
+    # MEASURED 2026-08-15 (Aleph): gating on the model NAME made this dead code in
+    # production. Aleph's pack writes `LANGCHAIN_MODEL_NAME=Cerebro de Aleph` (a label, not
+    # a CLI id) and points the base URL at Aleph's own loopback edge, so `name in
+    # {codex-cli, claude-code-cli}` was False on every real turn and the envelope was never
+    # attached. Both arms in one run, with the real production values:
+    #     production (`Cerebro de Aleph`) → headers ABSENT
+    #     the old test (`codex-cli`)      → headers present
+    # What the guard actually has to prove is the DESTINATION, not the label: loopback host
+    # AND either Aleph's brain edge path or a direct CLI-sidecar model id. A remote
+    # OpenAI-compatible provider still never sees the attempt id.
+    _edge_url = urlsplit(str(creds.get("base_url") or ""))
+    _edge_path = (_edge_url.path or "").rstrip("/").lower()
+    _edge_local = (
+        (_edge_url.hostname or "").lower() in {"127.0.0.1", "localhost", "::1"}
+        and (name in {"codex-cli", "claude-code-cli"}
+             or _edge_path.endswith("/workspaces/brain/openai"))
+    )
+    if _edge_local and turno_id:
+        _tid = str(turno_id)
+        if "\r" not in _tid and "\n" not in _tid:
+            headers["X-Aleph-Turno-Id"] = _tid
+    # The CONVERSATION, so the edge can resume it instead of re-sending the whole prompt.
+    # Same destination guard as the rest of the envelope: never to a remote provider.
+    if _edge_local and sesion_id:
+        _sid = str(sesion_id)
+        if "\r" not in _sid and "\n" not in _sid:
+            headers["X-Aleph-Sesion"] = _sid
+    if _edge_local and deadline_epoch is not None:
+        try:
+            _deadline = float(deadline_epoch)
+        except (TypeError, ValueError, OverflowError):
+            _deadline = float("nan")
+        if math.isfinite(_deadline):
+            headers["X-Aleph-Deadline-Epoch"] = f"{_deadline:.6f}"
+    if headers:
+        if caps.name in {"moonshot", "kimi-coding"}:
+            custom_ua = get_env_config().llm.moonshot_user_agent.strip()
+            if custom_ua:
+                headers["User-Agent"] = custom_ua
+        _validate_explicit_headers(headers, source=f"{caps.name} provider configuration")
+        kwargs["default_headers"] = headers
+    if get_env_config().llm.vibe_trading_disable_http_proxy:
+        sync_client, async_client = _build_proxy_free_http_clients()
+        kwargs["http_client"] = sync_client
+        kwargs["http_async_client"] = async_client
+    return ChatOpenAIWithReasoning(**kwargs)

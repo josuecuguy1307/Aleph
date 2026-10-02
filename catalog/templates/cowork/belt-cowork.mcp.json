@@ -1,0 +1,78 @@
+{
+  "_meta": {
+    "belt": "cowork",
+    "slug": "cowork",
+    "que_es": "Cinturon MCP del agente cowork (productividad/oficina). Lee Drive/Calendar/correo, prepara borrador y agenda, y NUNCA manda ni invita sin OK explicito. Backbone keyless filesystem + 4 connectors OAuth.",
+    "fuente": "catalog/belts/cowork.md + org/artifacts/FASE0-tabla-tool-caso-bucket.md (seccion 7).",
+    "consumido_por": "product/recipes/cowork.config.json (belt_ref: catalog/belts/cowork.md -> slug cowork)",
+    "verificado": "JSON-RPC init+tools/list real el 2026-06-15 sobre filesystem (backbone keyless). Los 4 connectors requieren OAuth/credencial y NO se cablearon con cuenta real (guardrail #6/send-gate).",
+    "REGLA_SEND_GATE": "gmail y slack se cablean SOLO en lectura + create_draft. NUNCA send/post hasta que el send-gate (B3, Security) apruebe. La receta fija gates.send=needs_ok. WhatsApp/mensajeria NO se cabla sin send-gate (gap B4).",
+    "gates_credencial_oauth": "google_drive/google_calendar/gmail requieren OAuth Google; slack requiere SLACK_BOT_TOKEN+SLACK_TEAM_ID. Conectados como connectors hosted en este entorno; el runtime inyecta credenciales via byok_ref. Sheets (GCP service account) GATED al operador."
+  },
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "${PUPPET_WORKDIR}"],
+      "caso": 1,
+      "bucket": "B1",
+      "nichos": ["cowork", "research", "programacion", "educacion", "finanzas"],
+      "credenciales": "ninguna (allow-list = ${PUPPET_WORKDIR})",
+      "atomica": true,
+      "description": "Backbone keyless: el agente arma localmente el borrador/agenda antes de tocar Drive/Calendar. Siempre disponible (degradacion del belt cowork)."
+    },
+    "google_drive": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-gdrive"],
+      "env": {
+        "GDRIVE_CREDENTIALS_PATH": "${GDRIVE_CREDENTIALS_PATH}",
+        "GDRIVE_OAUTH_PATH": "${GDRIVE_OAUTH_PATH}"
+      },
+      "caso": 1,
+      "bucket": "B1",
+      "nichos": ["cowork"],
+      "credenciales": "OAuth Google (BYOK — el usuario conecta su cuenta).",
+      "description": "Buscar/leer/crear docs (search_files, read_file_content, create_file). Lectura+creacion as-is; crear no es send."
+    },
+    "google_calendar": {
+      "command": "npx",
+      "args": ["-y", "@cocal/google-calendar-mcp"],
+      "env": {
+        "GOOGLE_OAUTH_CREDENTIALS": "${GOOGLE_OAUTH_CREDENTIALS}"
+      },
+      "caso": 1,
+      "bucket": "B1",
+      "nichos": ["cowork"],
+      "credenciales": "OAuth Google (BYOK).",
+      "ajuste": "create_event = baja consecuencia per FASE0; pero INVITAR a terceros pasa por send-gate (la receta fija gates.send=needs_ok).",
+      "description": "Eventos y disponibilidad (list_events, find_free_time, create_event)."
+    },
+    "gmail": {
+      "command": "npx",
+      "args": ["-y", "@gongrzhe/server-gmail-autoauth-mcp"],
+      "env": {
+        "GMAIL_OAUTH_PATH": "${GMAIL_OAUTH_PATH}",
+        "GMAIL_CREDENTIALS_PATH": "${GMAIL_CREDENTIALS_PATH}"
+      },
+      "caso": 1,
+      "bucket": "B1-lectura/draft · B3-gate(send)",
+      "nichos": ["cowork"],
+      "credenciales": "OAuth Google (BYOK).",
+      "REGLA": "Cablear SOLO search_messages/read_message/create_draft. send_email NUNCA se expone hasta send-gate. tool_filters de la receta NO incluye envio.",
+      "description": "Buscar/leer/draft de correo. Envio bloqueado por send-gate."
+    },
+    "slack": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-slack"],
+      "env": {
+        "SLACK_BOT_TOKEN": "${SLACK_BOT_TOKEN}",
+        "SLACK_TEAM_ID": "${SLACK_TEAM_ID}"
+      },
+      "caso": 1,
+      "bucket": "B1-lectura · B3-gate(send)",
+      "nichos": ["cowork"],
+      "credenciales": "SLACK_BOT_TOKEN + SLACK_TEAM_ID (BYOK).",
+      "REGLA": "ALINEADO A SURFACE VIVO (F4-B1, 2026-06-16): @modelcontextprotocol/server-slack expone slack_list_channels/slack_get_channel_history/slack_get_thread_replies (lectura, prefijo slack_) y slack_post_message/slack_reply_to_thread (SEND). La receta cabla SOLO las 3 de lectura. NO existe create_draft en este server: antes la receta pedia search_messages/read_thread/create_draft -> los 3 eran fantasmas (dropeados en silencio). slack_post_message/reply NO se cablean: postear pasa por send-gate (B3).",
+      "description": "Leer Slack (canales/historial/hilos, prefijo slack_). Post/reply existen en el server pero NO se cablean hasta el send-gate."
+    }
+  }
+}

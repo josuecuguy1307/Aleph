@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:#DED6C7;font-family:'Hanken Grotesk',system-ui,-apple-system,sans-serif;color:#2B2925;-webkit-font-smoothing:antialiased}
+</style>
+</helmet>
+
+<div style="min-height:100vh;padding:42px 40px 72px">
+  <div style="max-width:1240px;margin:0 auto">
+
+    <div style="font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#9A9082">Logo · exploración de color</div>
+    <h1 style="font-family:'Spectral',Georgia,serif;font-weight:600;font-size:31px;margin:8px 0 6px;letter-spacing:-.015em">El mismo títere, otros climas</h1>
+    <p style="margin:0 0 36px;color:#6F6A60;font-size:14.5px;max-width:70ch;line-height:1.6">La marioneta refinada + «Puppet AI» en distintas paletas. Arriba, las que ya venías explorando; abajo, un set nuevo para abrir la cancha. Decime cuál te cierra y la fijo como oficial con sus tokens.</p>
+
+    <!-- ===== LAS TUYAS ===== -->
+    <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:16px">
+      <h2 style="font-family:'Spectral',serif;font-weight:600;font-size:20px;margin:0">Las que ya tenías</h2>
+      <span style="font-size:13px;color:#8A8378">de tu tablero de paletas</span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(306px,1fr));gap:18px;margin-bottom:46px">
+      <sc-for list="{{ mine }}" as="p" hint-placeholder-count="6">
+        <div style="border-radius:16px;overflow:hidden;border:1px solid rgba(0,0,0,.08);box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+          <div style="display:flex;align-items:center;justify-content:center;gap:13px;height:134px;background:{{ p.bg }}">
+            <svg width="40" height="50" viewBox="0 0 64 80" fill="none">
+              <rect x="16" y="6" width="32" height="5.5" rx="2.75" fill="{{ p.bar }}"></rect>
+              <line x1="24" y1="11.5" x2="24" y2="27" stroke="{{ p.str }}" stroke-width="1.4"></line>
+              <line x1="40" y1="11.5" x2="40" y2="27" stroke="{{ p.str }}" stroke-width="1.4"></line>
+              <path d="M20 70c0-12 5-19 12-19s12 7 12 19z" fill="{{ p.acc }}"></path>
+              <circle cx="32" cy="36" r="13" fill="{{ p.skin }}"></circle>
+              <circle cx="32" cy="24" r="2.4" fill="{{ p.acc }}"></circle>
+              <circle cx="27.5" cy="36" r="1.7" fill="#3A2E22"></circle>
+              <circle cx="36.5" cy="36" r="1.7" fill="#3A2E22"></circle>
+              <path d="M28 41q4 3.5 8 0" stroke="#3A2E22" stroke-width="1.6" fill="none" stroke-linecap="round"></path>
+            </svg>
+            <span style="font-family:'Spectral',Georgia,serif;font-weight:700;font-size:24px;color:{{ p.ink }}">Puppet AI</span>
+          </div>
+          <div style="padding:12px 15px;background:#fff;border-top:1px solid #EFE7D7;display:flex;align-items:center;justify-content:space-between;gap:10px">
+            <div>
+              <div style="font-weight:600;font-size:13.5px;color:#2B2925">{{ p.name }}</div>
+              <div style="font-size:11.5px;color:#9A9082">{{ p.note }}</div>
+            </div>
+            <div style="display:flex;gap:5px">
+              <span style="width:15px;height:15px;border-radius:50%;border:1px solid rgba(0,0,0,.12);background:{{ p.bg }}"></span>
+              <span style="width:15px;height:15px;border-radius:50%;border:1px solid rgba(0,0,0,.12);background:{{ p.acc }}"></span>
+              <span style="width:15px;height:15px;border-radius:50%;border:1px solid rgba(0,0,0,.12);background:{{ p.ink }}"></span>
+            </div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+
+    <!-- ===== NUEVAS ===== -->
+    <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:16px">
+      <h2 style="font-family:'Spectral',serif;font-weight:600;font-size:20px;margin:0">Otras para probar</h2>
+      <span style="font-size:13px;color:#8A8378">acentos nuevos, mismo ADN cálido</span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(306px,1fr));gap:18px">
+      <sc-for list="{{ others }}" as="p" hint-placeholder-count="6">
+        <div style="border-radius:16px;overflow:hidden;border:1px solid rgba(0,0,0,.08);box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+          <div style="display:flex;align-items:center;justify-content:center;gap:13px;height:134px;background:{{ p.bg }}">
+            <svg width="40" height="50" viewBox="0 0 64 80" fill="none">
+              <rect x="16" y="6" width="32" height="5.5" rx="2.75" fill="{{ p.bar }}"></rect>
+              <line x1="24" y1="11.5" x2="24" y2="27" stroke="{{ p.str }}" stroke-width="1.4"></line>
+              <line x1="40" y1="11.5" x2="40" y2="27" stroke="{{ p.str }}" stroke-width="1.4"></line>
+              <path d="M20 70c0-12 5-19 12-19s12 7 12 19z" fill="{{ p.acc }}"></path>
+              <circle cx="32" cy="36" r="13" fill="{{ p.skin }}"></circle>
+              <circle cx="32" cy="24" r="2.4" fill="{{ p.acc }}"></circle>
+              <circle cx="27.5" cy="36" r="1.7" fill="#3A2E22"></circle>
+              <circle cx="36.5" cy="36" r="1.7" fill="#3A2E22"></circle>
+              <path d="M28 41q4 3.5 8 0" stroke="#3A2E22" stroke-width="1.6" fill="none" stroke-linecap="round"></path>
+            </svg>
+            <span style="font-family:'Spectral',Georgia,serif;font-weight:700;font-size:24px;color:{{ p.ink }}">Puppet AI</span>
+          </div>
+          <div style="padding:12px 15px;background:#fff;border-top:1px solid #EFE7D7;display:flex;align-items:center;justify-content:space-between;gap:10px">
+            <div>
+              <div style="font-weight:600;font-size:13.5px;color:#2B2925">{{ p.name }}</div>
+              <div style="font-size:11.5px;color:#9A9082">{{ p.note }}</div>
+            </div>
+            <div style="display:flex;gap:5px">
+              <span style="width:15px;height:15px;border-radius:50%;border:1px solid rgba(0,0,0,.12);background:{{ p.bg }}"></span>
+              <span style="width:15px;height:15px;border-radius:50%;border:1px solid rgba(0,0,0,.12);background:{{ p.acc }}"></span>
+              <span style="width:15px;height:15px;border-radius:50%;border:1px solid rgba(0,0,0,.12);background:{{ p.ink }}"></span>
+            </div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:38px;padding-top:24px;border-top:1px solid #CFC6B5">
+      <span style="font-size:13.5px;color:#6F6A60">¿Cuál fijamos? Decime el nombre y lo dejo como paleta oficial con sus tokens.</span>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  mine = [
+    {name:'Noche cálida', note:'el actual', bg:'#211E1A', ink:'#F3ECE0', acc:'#B98BFF', bar:'#6E6557', str:'#7E7464', skin:'#F2D7B0'},
+    {name:'Violeta crema', note:'editorial, confiable', bg:'#F4EEE2', ink:'#2B2925', acc:'#6A37C4', bar:'#8B7E6B', str:'#B0A48F', skin:'#F2D7B0'},
+    {name:'Terracota', note:'terroso, artesanal', bg:'#F4EBE0', ink:'#2E2620', acc:'#C05A3A', bar:'#9A8A75', str:'#C6B7A2', skin:'#F2D7B0'},
+    {name:'Salvia', note:'natural, sereno', bg:'#EEF0E6', ink:'#25281F', acc:'#3F7A53', bar:'#8C8E78', str:'#C2C5AE', skin:'#F2D7B0'},
+    {name:'Tinta editorial', note:'papel + tinta', bg:'#F1EFE8', ink:'#20242B', acc:'#2F5AA8', bar:'#8E8A7E', str:'#C1BDB0', skin:'#F2D7B0'},
+    {name:'Durazno', note:'amable, jugable', bg:'#FBEEE4', ink:'#3A2B33', acc:'#7A4DD0', bar:'#B79A86', str:'#E2C8B4', skin:'#F7D9B8'},
+  ];
+  others = [
+    {name:'Bosque profundo', note:'verde oscuro, foco', bg:'#16241D', ink:'#E9F0E4', acc:'#6FC291', bar:'#4A5B4E', str:'#5E7065', skin:'#F2D7B0'},
+    {name:'Azul medianoche', note:'sobrio, tech', bg:'#141A26', ink:'#E6ECF6', acc:'#7B97F2', bar:'#48505E', str:'#5A6373', skin:'#F2D7B0'},
+    {name:'Coral carbón', note:'cálido y vivo', bg:'#221A18', ink:'#F4E9E3', acc:'#FF7E63', bar:'#5E4E46', str:'#7A675C', skin:'#F2D7B0'},
+    {name:'Ocre dorado', note:'sol, papel viejo', bg:'#F4ECDA', ink:'#2A2418', acc:'#C9881E', bar:'#A2906B', str:'#D8C5A0', skin:'#F2D7B0'},
+    {name:'Magenta noche', note:'expresivo, creativo', bg:'#1E1722', ink:'#F2E7F0', acc:'#E86BB0', bar:'#574A57', str:'#6E5E6C', skin:'#F2D7B0'},
+    {name:'Teal profundo', note:'fresco, claro', bg:'#0F221F', ink:'#E2F0EC', acc:'#2FBBA2', bar:'#3F5650', str:'#4F6862', skin:'#F2D7B0'},
+  ];
+  renderVals(){ return { mine:this.mine, others:this.others }; }
+}
+</script>
+</body>
+</html>

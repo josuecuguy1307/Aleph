@@ -1,0 +1,20 @@
+{
+  "schema_version": "v1",
+  "meta": {
+    "name": "F1 · Eslabón roto",
+    "nicho": "general",
+    "descripcion": "Fixture de CALIBRACIÓN EN ROJO de la vara MULTIAGENTE-F1: su belt_ref apunta a un .mcp.json que NO EXISTE, así que su run falla SIEMPRE y sin red (nada que cascadear, nada que dependa de un proveedor). Puesto en el medio de una cadena, prueba que un eslabón roto la CORTA y que el siguiente NUNCA corre."
+  },
+  "model": {
+    "primary": "openai/gpt-oss-120b",
+    "base_url": "https://api.groq.com/openai/v1",
+    "temperature": 0,
+    "max_tokens": 128,
+    "max_turns": 2
+  },
+  "belt": {
+    "belt_ref": "platform/assembler/fixtures/belt-ESTE-BELT-NO-EXISTE.mcp.json",
+    "tool_filters": { "calc": ["add"] }
+  },
+  "rag": { "enabled": false }
+}

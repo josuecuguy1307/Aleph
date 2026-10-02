@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "results": [
+    {
+      "name": "gate",
+      "pass": true,
+      "fails": []
+    },
+    {
+      "name": "compute",
+      "pass": true,
+      "fails": []
+    },
+    {
+      "name": "anti-grift",
+      "pass": true,
+      "fails": []
+    }
+  ]
+}

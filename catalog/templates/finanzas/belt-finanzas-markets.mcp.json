@@ -1,0 +1,213 @@
+{
+  "_meta": {
+    "belt": "finanzas-markets",
+    "slug": "finanzas-markets",
+    "que_es": "Cinturon MCP del agente de FINANZAS (mercados + macro): estados financieros reales de la SEC (SEC EDGAR, sin llave salvo User-Agent), cotizaciones y fundamentals en vivo (yfinance, Yahoo Finance, sin llave) y macro de la Fed (FRED via feedoracle MacroOracle, free tier). Todo dato sale de un lookup REAL, nunca de memoria.",
+    "fuente": "INSTALL+smoke 2026-06-19 (sec-edgar-mcp v1.28 / yfmcp / feedoracle MacroOracle). Patron de cards/mcpServers tomado de catalog/templates/ingenieria/belt-ingenieria.mcp.json (FreeCAD).",
+    "verificado": "secedgar: get_cik_by_ticker AAPL->0000320193 + get_xbrl_concepts 10-K FY2025 (revenue real) por mcp_smoke (mismo stdio que :8080). yfinance: yfinance_get_ticker_info AAPL precio en vivo. fred: fed_rates/macro_dashboard (Fed funds 3.63%, CPI YoY 2.8%) via mcp-remote+X-API-Key. feedoracle NO es keyless: usa una API key FREE (kya_register, sin pago/PII) inyectada por byok_ref keys:feedoracle -> ${FEEDORACLE_API_KEY}. backtest: backtest_portfolio (yfinance real) Sharpe 0.81 (60%NVDA/40%QQQ) -> 1.371 (diversificada) por MCPServer stdio el 2026-06-26. [batch a2 2026-07-04] ccxt: fetchTicker BTC/USDT binance -> ticker REAL (last/bid/ask/vwap) via assembler.MCPServer, PASS-gate verify_catalog_batch. coingecko: boot+tools/list (execute, search_docs) verificados con key placeholder -> SKIP(BYOK), dato real pendiente de Demo key. massive: boot+tools/list (search_endpoints/call_api/query_data) con placeholder; search_endpoints (indice local) confirma snapshots de opciones con greeks; call_api con placeholder -> 401 honesto -> SKIP(BYOK).",
+    "base_matrix": "catalog/templates/finanzas/base-matrix-finanzas.json",
+    "base_matrix_nota": "Declara las lecturas keyless (SEC EDGAR / yfinance / FRED) y backtest_portfolio (computo local sobre precios publicos) como auto-ejecuta, patron del FEM (ing-fem-headless). El enforcer (recipe_enforcer) sigue forzando money/send por encima: no hay tools de ese tipo en este belt.",
+    "cards": [
+      {
+        "id": "sec-edgar",
+        "label": "Estados financieros SEC (EDGAR)",
+        "sub": "10-K/10-Q reales con XBRL · revenue/net income/accession · sin llave",
+        "auth": "keyless",
+        "armario": "mundo",
+        "backed_by": "secedgar",
+        "tools": [
+          "get_cik_by_ticker",
+          "get_recent_filings",
+          "get_financials",
+          "get_xbrl_concepts",
+          "get_company_facts",
+          "get_key_metrics"
+        ]
+      },
+      {
+        "id": "yfinance",
+        "label": "Cotizaciones y fundamentals (Yahoo Finance)",
+        "sub": "precio en vivo, market cap, P/E, fundamentals · sin llave",
+        "auth": "keyless",
+        "armario": "mundo",
+        "backed_by": "yfinance",
+        "tools": [
+          "yfinance_get_ticker_info",
+          "yfinance_get_financials",
+          "yfinance_get_price_history"
+        ]
+      },
+      {
+        "id": "fred-macro",
+        "label": "Macro de la Fed (FRED)",
+        "sub": "tasa Fed, inflacion/CPI, dashboard macro · free tier",
+        "auth": "token",
+        "armario": "mundo",
+        "connector": "feedoracle",
+        "credential_provider": "fred",
+        "service": "fred",
+        "backed_by": "fred",
+        "tools": [
+          "fed_rates",
+          "macro_dashboard",
+          "inflation",
+          "yield_curve",
+          "gdp_growth"
+        ]
+      },
+      {
+        "id": "backtest",
+        "label": "Backtest de cartera (Sharpe)",
+        "sub": "optimiza pesos con precios reales · Sharpe/retorno/vol/drawdown · loop hasta converger",
+        "auth": "keyless",
+        "armario": "datos",
+        "backed_by": "backtest",
+        "criticality": "high",
+        "tools": [
+          "backtest_portfolio"
+        ]
+      },
+      {
+        "id": "ccxt-cripto",
+        "label": "Mercados cripto (CCXT)",
+        "sub": "precio spot, OHLCV, order book y trades en vivo de 100+ exchanges (binance, kraken...) · sin llave para data publica",
+        "auth": "keyless",
+        "armario": "mundo",
+        "backed_by": "ccxt",
+        "tools": [
+          "fetchMarkets",
+          "fetchTicker",
+          "fetchTickers",
+          "fetchOHLCV",
+          "fetchOrderBook"
+        ]
+      },
+      {
+        "id": "coingecko",
+        "label": "Precios cripto (CoinGecko)",
+        "sub": "precio, market cap e historico de 10k+ monedas via Code Mode (el agente escribe codigo contra el SDK) · Demo API key gratis",
+        "auth": "token",
+        "armario": "mundo",
+        "connector": "coingecko",
+        "backed_by": "coingecko",
+        "tools": [
+          "execute",
+          "search_docs"
+        ]
+      },
+      {
+        "id": "massive",
+        "label": "Datos de mercado (Massive, ex-Polygon)",
+        "sub": "acciones/opciones/forex/cripto: snapshots con greeks e IV, OHLC historico, ratios y SQL en memoria (cierra el hueco de indicadores del CASO F) · API key propia",
+        "auth": "token",
+        "armario": "mundo",
+        "connector": "massive",
+        "backed_by": "massive",
+        "tools": [
+          "search_endpoints",
+          "call_api",
+          "query_data"
+        ]
+      }
+    ]
+  },
+  "mcpServers": {
+    "secedgar": {
+      "command": "uvx",
+      "args": [
+        "--with",
+        "mcp==1.29.0",
+        "sec-edgar-mcp"
+      ],
+      "env": {
+        "SEC_EDGAR_USER_AGENT": "Aleph (contact@aleph.app)"
+      },
+      "transport": "stdio",
+      "credenciales": "ninguna (SEC_EDGAR_USER_AGENT = identidad de cortesia, no es secreto).",
+      "description": "Fundamentals US GAAP / filings desde SEC EDGAR (api.sec.gov). XBRL real: revenue, net income, balance, filings con accession. Sin API key.",
+      "pin_sdk": {
+        "mcp": "1.29.0",
+        "por_que": "El SDK `mcp` publicó 2.0.0 (major = ruptura) y este server está escrito contra la serie 1.x. Su metadata declara `mcp>=…` —rango abierto—, así que `uvx` resolvía 2.0.0 y el proceso moría en el import. MEDIDO: pinear el PAQUETE no alcanza (tres versiones distintas de mcp-server-git, las tres rotas): el pin tiene que ir en el SDK. `==` exacto, jamás un rango: el rango es el bug con otro nombre."
+      }
+    },
+    "yfinance": {
+      "command": "uvx",
+      "args": [
+        "yfmcp@latest"
+      ],
+      "transport": "stdio",
+      "credenciales": "ninguna (Yahoo Finance publico).",
+      "description": "Yahoo Finance: ticker info (precio en vivo, market cap, P/E, sector), estados financieros, historico OHLCV. Sin API key."
+    },
+    "fred": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://feedoracle.io/mcp/macro/sse",
+        "--header",
+        "X-API-Key:${FEEDORACLE_API_KEY}"
+      ],
+      "env": {
+        "FEEDORACLE_API_KEY": "${FEEDORACLE_API_KEY}"
+      },
+      "transport": "stdio (bridge SSE via mcp-remote)",
+      "credenciales": "feedoracle API key FREE (kya_register, 500 units/mes, sin pago/PII). Inyectada por byok_ref keys:feedoracle -> ${FEEDORACLE_API_KEY}.",
+      "REGLA": "El plano 'inflation' devuelve null en free tier; usar 'fed_rates' / 'macro_dashboard' que SI traen dato real (Fed funds, CPI YoY, CPI index).",
+      "description": "Macro de la Fed via feedoracle MacroOracle (datos FRED/BLS): tasa de fondos federales, inflacion/CPI, curva de rendimientos, dashboard macro. Bridge SSE->stdio con mcp-remote + X-API-Key."
+    },
+    "backtest": {
+      "command": "uv",
+      "args": [
+        "run",
+        "--no-project",
+        "--with",
+        "yfinance",
+        "--with",
+        "numpy",
+        "python3",
+        "${PUPPET_BELTS}/finanzas/backtest_server.py"
+      ],
+      "transport": "stdio",
+      "credenciales": "ninguna (precios publicos de Yahoo Finance via yfinance).",
+      "REGLA": "backtest_portfolio corre un backtest local de baja consecuencia (no toca plata ni manda nada) -> auto-ejecuta. Datos REALES de yfinance; el Sharpe sale del backtest, nunca de memoria. Acumula cada iteracion (mismo task_id) en convergence.json -> La Sala lo rinde como convergencia 1D (Sharpe subiendo, curva redibujandose). Headless y determinista (no usa el bridge GUI de freecad): pocos tool-calls -> Opus limpio.",
+      "description": "Backtest REAL de cartera: descarga cierres ajustados via yfinance, computa Sharpe ratio anualizado, retorno, volatilidad, max drawdown y curva de equity. Para optimizar pesos en loop (corre->lee Sharpe->reasigna->re-corre). Spawned con uv run --with yfinance --with numpy (no toca el venv del backend)."
+    },
+    "ccxt": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@lazydino/ccxt-mcp"
+      ],
+      "transport": "stdio",
+      "credenciales": "ninguna para data publica de mercado (fetchTicker/fetchTickers/fetchOHLCV/fetchOrderBook/fetchTrades/fetchMarkets). El server tambien expone tools de cuenta/trading (createOrder, cancelOrder, fetchBalance...) que exigen API keys del exchange configuradas via listAccounts — NO cableadas aca; keyless fallan honesto y el recipe_enforcer fuerza el gate money sobre createOrder/cancelOrder de todos modos.",
+      "REGLA": "La card del catalogo lleva SOLO el subset read/public (5 tools). fetchTrades (tape publico) queda FUERA de la card a proposito: MONEY_TOUCH_HINTS del enforcer matchea 'trade' por substring y clasificaria el atomo entero como entrega+gate money — falso positivo sobre una lectura; la tool sigue viva en el server. Si un exchange geo-bloquea (p.ej. binance en US), pedir el mismo simbolo en kraken u otro exchangeId: la tool recibe exchangeId por llamada, no por config.",
+      "description": "Mercados cripto via CCXT (100+ exchanges): ticker en vivo, OHLCV historico, order book, trades publicos. Data REAL del exchange (verificado: fetchTicker BTC/USDT binance -> last con precio vivo), nunca de memoria. npm @lazydino/ccxt-mcp (CCXT MCP 4.0.0), handshake stdio limpio con el cliente de PROD."
+    },
+    "coingecko": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@coingecko/coingecko-mcp"
+      ],
+      "env": {
+        "COINGECKO_DEMO_API_KEY": "${COINGECKO_DEMO_API_KEY}"
+      },
+      "transport": "stdio",
+      "credenciales": "CoinGecko Demo API key (gratis, dashboard de developers). Inyectada por byok_ref keys:coingecko -> ${COINGECKO_DEMO_API_KEY}. Onboarding: catalog/connectors/onboarding/coingecko.json.",
+      "REGLA": "Server OFICIAL v6 en modo Code Mode: 2 tools (search_docs + execute). El agente busca el metodo del SDK con search_docs (search_docs EXIGE el campo language, p.ej. 'typescript') y luego ejecuta codigo con un top-level `async function run(client) {...}` en un sandbox sin red/fs propio. Boot+tools/list verificados con key placeholder (el listado es estatico); el dato real exige key valida.",
+      "description": "Precios cripto CoinGecko (server oficial @coingecko/coingecko-mcp 6.0.0, Stainless Code Mode): precio/market cap/historico de 10k+ monedas escribiendo codigo contra el SDK TypeScript. BYOK Demo key free tier."
+    },
+    "massive": {
+      "command": "mcp_massive",
+      "args": [],
+      "env": {
+        "MASSIVE_API_KEY": "${MASSIVE_API_KEY}"
+      },
+      "transport": "stdio",
+      "credenciales": "Massive.com API key (ex Polygon.io; hay tier free). Inyectada por byok_ref keys:massive -> ${MASSIVE_API_KEY}. Onboarding: catalog/connectors/onboarding/massive.json.",
+      "REGLA": "Binario instalado con: uv tool install git+https://github.com/massive-com/mcp_massive (queda en ~/.local/bin/mcp_massive; mcp-massive 0.10.0). Workflow: search_endpoints (indice LOCAL, funciona sin key) -> call_api con el path encontrado (exige key: con placeholder devuelve 401 'Unknown API Key' honesto) -> query_data para SQL sobre tablas store_as (expiran a la hora). Snapshots de opciones traen greeks (delta/gamma/theta/vega) e IV -> cierra el hueco de indicadores del eval CASO F.",
+      "description": "Datos de mercado Massive.com (ex Polygon): acciones, opciones (greeks/IV), forex, cripto; agregados OHLC, ratios financieros TTM y funciones de finanzas built-in, con SQL en memoria sobre resultados. BYOK MASSIVE_API_KEY."
+    }
+  }
+}

@@ -1,0 +1,1493 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./aleph-config.js"></script>
+<script src="./vendor/supabase.min.js"></script>
+<script src="./supabase-auth.js"></script>
+<script src="./support.js"></script>
+<script src="./auth.js"></script>
+<script src="./paywall.js"></script>
+<script src="./i18n.js"></script>
+<script src="./brandface.js"></script><!-- [caminata2] CARA de servicio congruente con Conectar/Cuarto (mismos logos /v1/icons) -->
+<script src="./nav.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="vendor/fonts.css"><!-- [Casa 2 · F1.b] fuentes locales: antes 2 preconnect + css2 de Google -->
+<link rel="stylesheet" href="aleph-tokens.css"><!-- [identidad visual] la piel: tokens, forma y tipografía en un solo lugar -->
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0}
+
+  body{background:var(--page-bg);min-height:100vh;font-family:var(--font-ui);color:var(--ink);-webkit-font-smoothing:antialiased}
+  a{text-decoration:none;color:inherit}
+  input{font-family:inherit}
+  /* [sistema 2026-07-31] el placeholder lo pinta aleph-tokens.css (var(--faint), medido AA en los
+     dos temas). Acá vivía un #6E6557 cálido del sistema viejo, que en tema claro era 3.9:1. */
+  ::-webkit-scrollbar{width:9px;height:9px}::-webkit-scrollbar-thumb{background:var(--paper2);border-radius:var(--r-sm)}
+  @keyframes livePulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
+  @keyframes fadeUp{0%{transform:translateY(7px)}100%{transform:translateY(0)}}
+
+  /* ══ AJUSTES · la lista agrupada ═══════════════════════════════════════════════════
+     Las medidas son las del artboard 06: cápsula de búsqueda de radio 999 y 420 de ancho,
+     rótulo de grupo en mono 11/.13em, tarjeta de radio 18 con las filas separadas por
+     hairline —una sola tarjeta por grupo, no una tarjeta por fila—. */
+  .st-buscar{display:flex;align-items:center;gap:12px;max-width:420px;background:var(--paper);
+    border:1px solid var(--hairline);border-radius:var(--r-full);padding:12px 18px;margin-bottom:26px;
+    transition:border-color .14s}
+  .st-buscar:focus-within{border-color:var(--accent)}
+  .st-buscar .lupa{color:var(--faint);flex:none;font-size:14px}
+  .st-buscar input{flex:1;min-width:0;background:none;border:0;outline:none;
+    font:300 14px var(--font-ui);color:var(--ink)}
+  .st-buscar kbd{font:400 11.5px var(--font-mono);color:var(--faint);flex:none;
+    background:none;border:0;padding:0}
+
+  .st-salud{display:flex;align-items:center;gap:22px;flex-wrap:wrap;margin:-12px 0 26px}
+  .st-salud > span{display:flex;align-items:center;gap:9px}
+  .st-salud b{font:500 13px var(--font-ui);color:var(--ink)}
+  .st-salud i{font:300 13px var(--font-ui);color:var(--muted);font-style:normal}
+
+  .st-grupo{display:flex;align-items:baseline;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+  .st-grupo > span:first-child{font:500 11px var(--font-mono);letter-spacing:.13em;color:var(--faint)}
+  .st-grupo-nota{font:300 12.5px var(--font-ui);color:var(--muted)}
+
+  .st-lista{background:var(--paper);border:1px solid var(--hairline);border-radius:var(--r-md);overflow:hidden}
+  .st-fila{display:block}
+  .st-fila + .st-fila, .st-lista > sc-if + sc-if .st-fila{border-top:1px solid var(--page-bg)}
+  .st-cab{width:100%;display:flex;align-items:center;gap:14px;padding:16px 20px;border:0;
+    background:none;cursor:pointer;text-align:left;font:400 15px var(--font-ui);color:var(--ink);
+    transition:background .12s}
+  .st-cab:hover{background:var(--page-solid)}
+  .st-ico{width:20px;display:flex;justify-content:center;flex:none;font-size:14px;color:var(--muted)}
+  .st-nom{flex:1;min-width:0}
+  .st-chev{flex:none;color:var(--faint);font-size:16px;transition:transform .16s}
+  .st-fila-link{display:flex;align-items:center;gap:14px;padding:16px 20px;
+    font:400 15px var(--font-ui);color:var(--ink);cursor:pointer;transition:background .12s}
+  .st-fila-link:hover{background:var(--page-solid)}
+  /* El panel entra ENTERO; lo único que pierde es su fondo propio —ahora el plano es la
+     tarjeta del grupo— y el tamaño de su título, que baja para no competir con el rótulo
+     de la fila que acabás de abrir. */
+  .st-panel{padding:2px 20px 22px;animation:fadeUp .16s ease both}
+  .st-panel .ds-title{font-size:20px}
+  .st-vacio{font:300 13.5px var(--font-ui);color:var(--muted);padding:22px 2px}
+  /* La tarjeta del grupo sin ajustes propios: borde punteado, como el artboard. No es un
+     error ni un placeholder — es la forma honesta de decir «acá no hay nada, todavía». */
+  .st-sin-ajustes{background:var(--paper);border:1px dashed var(--quiet);border-radius:var(--r-md);
+    padding:20px 24px;display:flex;flex-direction:column;gap:5px}
+  .st-sin-ajustes-tit{font:400 14.5px var(--font-ui);color:var(--ink)}
+  .st-sin-ajustes-sub{font:300 13.5px/1.55 var(--font-ui);color:var(--muted);text-wrap:pretty}
+  .st-salir{align-self:flex-start;display:flex;align-items:center;gap:11px;border:0;background:none;
+    color:var(--muted);border-radius:var(--r-md);padding:10px 12px;font:400 13px var(--font-ui);
+    cursor:pointer}
+  .st-salir:hover{color:var(--ink)}
+  @media (max-width:720px){ .st-panel{padding:2px 14px 18px} .st-cab{padding:14px 16px} }
+</style>
+
+<style id="aleph-theme-style">
+
+</style>
+<script>
+  window.ALEPH_THEME_NOFLOAT=true;
+  // Esta ES la configuración principal: el panel rápido no puede cubrirla ni convertirse
+  // en un segundo destino de Settings.
+  window.ALEPH_AJUSTES_OFF=true;
+</script>
+<script src="./theme.js"></script>
+</helmet>
+
+<!-- [sistema 2026-07-31] Settings pasa al sistema "Híbrido Spatial + Soft futurism".
+     Cada sección es un PLANO de contenido (.ds-plane, r30 + sombra ambiental); dentro, las
+     filas son tarjetas en un POZO (.ds-well, plano, sin sombra propia). Cero bordes, cero
+     relieves: la jerarquía la hace la sombra + el radio. La lista de CLAVES pasa a Vertical
+     Sliding Focus (.ds-track). Ningún binding cambió: los mismos bindings y los mismos
+     sc-for / sc-if de antes, en el mismo orden. -->
+<div style="min-height:100vh;padding:22px 30px 80px">
+  <div style="max-width:1080px;margin:0 auto">
+
+
+    <!-- ═══ AJUSTES · la pantalla 06 del diseño ═══════════════════════════════════════
+         «Un solo Settings para todo Aleph. Arriba el grupo GENERAL, que lo impone nuestra
+         interfaz y va igual en todos los espacios. Debajo, el grupo del espacio con su
+         propio nombre. Los mini-ajustes de cada sección se anidan DENTRO de su fila en
+         lugar de mandarte a otra pantalla, y arriba hay buscador.»
+
+         QUÉ CAMBIA Y QUÉ NO. Cambia la FORMA: la barra lateral de 208 px y la pila de
+         paneles siempre abiertos se convierten en dos grupos rotulados de filas que se
+         abren en el lugar. NO cambia una sola línea del interior de ningún panel: Perfil,
+         API keys, Preferencias, Conexiones, Plan, Memoria y Zona de peligro entran enteros,
+         con sus mismos `ref` —así el `?seccion=` con el que entran los seis workspaces
+         sigue aterrizando donde aterrizaba, y ahora además ABRE la fila a la que llega—.
+         `Models` sigue siendo un enlace a su pantalla: la excepción ya estaba declarada
+         acá abajo y no la toca esta obra. -->
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:22px">
+      <h1 style="margin:0;font:200 44px/1.04 var(--font-ui);color:var(--ink);letter-spacing:-.028em">{{ tituloPantalla }}</h1>
+      <div class="ds-sub">{{ subPantalla }}</div>
+    </div>
+
+    <label class="st-buscar">
+      <span class="lupa" aria-hidden="true">⌕</span>
+      <input ref="{{ ref_q }}" value="{{ q }}" onInput="{{ setQ }}" placeholder="{{ buscarPh }}" aria-label="{{ buscarPh }}">
+      <!-- El ⌘K NO es un adorno: esta pantalla le pone manejador y enfoca ESTE campo. Es el
+           único ⌘K del producto por ahora, y hace exactamente lo que dice al lado. -->
+      <kbd>⌘K</kbd>
+    </label>
+
+    <!-- LA LÍNEA DE SALUD, con datos REALES de `GET /health`. El artboard dice
+         «Memory 151 MB · 1% of 16.0 GB»; lo que la casa mide de verdad ahí es el DISCO
+         (`disco.libre_gb`, y el 16.0 GB del mock coincide con él). Se dice disco, porque es
+         disco: ponerle «Memory» al número del disco sería un dato inventado con forma de
+         dato real. Si el backend no contesta, la línea lo dice en vez de esconderlo. -->
+    <div class="st-salud">
+      <span><span class="ds-dot" style="{{ saludPunto }}"></span><b>{{ backendLabel }}</b><i>{{ backendEstado }}</i></span>
+      <sc-if value="{{ hayDisco }}" hint-placeholder-val="{{ true }}">
+        <span><span class="ds-dot" style="{{ discoPunto }}"></span><b>{{ discoLabel }}</b><i>{{ discoTexto }}</i></span>
+      </sc-if>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:26px">
+
+      <div>
+        <div class="st-grupo"><span>GENERAL</span><span class="st-grupo-nota">{{ generalNota }}</span></div>
+        <div class="st-lista">
+        <sc-if value="{{ ver_perfil }}" hint-placeholder-val="{{ true }}">
+        <div class="st-fila">
+          <button class="st-cab" onClick="{{ tog_perfil }}" aria-expanded="{{ abre_perfil }}">
+            <span class="st-ico" aria-hidden="true">◍</span>
+            <span class="st-nom">{{ nom_perfil }}</span>
+            <span class="st-chev" style="{{ chev_perfil }}" aria-hidden="true">›</span>
+          </button>
+          <sc-if value="{{ abre_perfil }}" hint-placeholder-val="{{ false }}">
+        <!-- ===== 1. PERFIL ===== -->
+        <div ref="{{ ref_perfil }}" class="st-panel">
+          <!-- El título de esta sección lo dice ahora el rótulo de su fila, que es la que
+               acabás de abrir. Repetirlo acá era decir «Perfil» dos veces seguidas. -->
+          <div class="ds-sub" style="margin:9px 0 22px">Tu identidad en Aleph.</div>
+          <!-- login suave: sesión local sin cuenta → el login se OFRECE con copy honesto -->
+          <sc-if value="{{ anonLocal }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;align-items:center;gap:14px;justify-content:space-between;flex-wrap:wrap;background:var(--accent-soft);border-radius:var(--r-lg);padding:14px 18px;margin-bottom:20px">
+              <div style="font:300 12.5px/1.5 var(--font-ui);color:var(--ink);max-width:52ch">{{ anonLine }}</div>
+              <a href="Auth.dc.html?motivo=sync" class="ds-btn" style="flex:none;display:inline-flex;align-items:center" style-hover="opacity:.86">{{ anonCta }}</a>
+            </div>
+          </sc-if>
+          <div style="display:flex;align-items:center;gap:18px;margin-bottom:24px">
+            <div style="position:relative;flex:none">
+              <!-- [90/8/2] el avatar deja de ser un degradé violeta: neutro, y la INICIAL en la
+                   serif de marca (Newsreader) — el único lugar donde la marca toca el cuerpo. -->
+              <div style="width:64px;height:64px;border-radius:var(--r-lg);background:var(--paper2);display:flex;align-items:center;justify-content:center;color:var(--muted);font-family:var(--font-brand);font-weight:400;font-size:26px">{{ avatarInitial }}</div>
+            </div>
+            <div style="min-width:0">
+              <div style="font:300 22px/1.2 var(--font-ui);letter-spacing:-.02em;color:var(--ink)" data-no-tm>{{ userName }}</div>
+              <div class="ds-sub" style="display:block;margin-top:5px">{{ userEmail }}</div>
+              <div class="ds-meta" style="display:block;margin-top:5px">{{ memberSince }}</div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+            <div><label class="ds-meta" style="display:block;margin-bottom:7px">Nombre</label><input value="{{ userName }}" style="{{ field }}" style-focus="background:var(--accent-soft)"></div>
+            <div><label class="ds-meta" style="display:block;margin-bottom:7px">Email</label><input value="{{ userEmail }}" style="{{ field }}" style-focus="background:var(--accent-soft)"></div>
+          </div>
+          <div style="margin-top:22px">
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+              <sc-if value="{{ hasAccount }}" hint-placeholder-val="{{ true }}">
+                <button onClick="{{ togglePw }}" style="border:0;background:var(--paper2);color:var(--ink);border-radius:var(--r-md);padding:10px 18px;font:400 12px var(--font-ui);cursor:pointer" style-hover="background:var(--accent-soft)">{{ changePassLabel }}</button>
+              </sc-if>
+              <button onClick="{{ exportData }}" style="border:0;background:var(--paper2);color:var(--ink);border-radius:var(--r-md);padding:10px 18px;font:400 12px var(--font-ui);cursor:pointer" style-hover="background:var(--accent-soft)">{{ exportLabel }}</button>
+            </div>
+            <sc-if value="{{ pwOpen }}" hint-placeholder-val="{{ false }}">
+              <div class="ds-card" style="margin-top:16px;padding:18px 20px;max-width:440px;animation:fadeUp .18s ease both">
+                <div style="display:flex;flex-direction:column;gap:10px">
+                  <input value="{{ pwCur }}" onInput="{{ setPwCur }}" type="password" placeholder="{{ pwCurPh }}" style="{{ field }}" style-focus="background:var(--accent-soft)">
+                  <input value="{{ pwNew }}" onInput="{{ setPwNew }}" type="password" placeholder="{{ pwNewPh }}" style="{{ field }}" style-focus="background:var(--accent-soft)">
+                </div>
+                <sc-if value="{{ pwHasMsg }}" hint-placeholder-val="{{ false }}"><div style="{{ pwMsgStyle }}">{{ pwMsg }}</div></sc-if>
+                <div style="display:flex;gap:9px;margin-top:14px">
+                  <button onClick="{{ savePw }}" class="ds-btn" style-hover="opacity:.86">{{ savePassLabel }}</button>
+                  <button onClick="{{ togglePw }}" class="ds-btn-ghost" style-hover="color:var(--ink)">{{ cancelLabel }}</button>
+                </div>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+          </sc-if>
+        </div>
+        </sc-if>
+        <sc-if value="{{ ver_keys }}" hint-placeholder-val="{{ true }}">
+        <div class="st-fila">
+          <button class="st-cab" onClick="{{ tog_keys }}" aria-expanded="{{ abre_keys }}">
+            <span class="st-ico" aria-hidden="true">⚿</span>
+            <span class="st-nom">{{ nom_keys }}</span>
+            <span class="st-chev" style="{{ chev_keys }}" aria-hidden="true">›</span>
+          </button>
+          <sc-if value="{{ abre_keys }}" hint-placeholder-val="{{ false }}">
+        <!-- ===== 2. API KEYS ===== -->
+        <div ref="{{ ref_keys }}" class="st-panel">
+          <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:20px">
+            <div style="min-width:0">
+              <h2 class="ds-title">API keys · trae tu propia cognición</h2>
+              <div class="ds-sub" style="margin-top:9px;max-width:60ch;line-height:1.55">Suma tu propia key para correr modelos propios. Lo básico corre sobre la lane incluida —sin key—; los modelos premium o privados usan la tuya.</div>
+            </div>
+            <button onClick="{{ addKey }}" class="ds-btn" style="flex:none;display:inline-flex;align-items:center;gap:7px" style-hover="opacity:.86"><span style="font-size:14px">＋</span>Agregar key</button>
+          </div>
+
+          <!-- [Vertical Sliding Focus] Las lanes de cognición viven en una PISTA: exactamente una
+               en foco a tamaño real con sus acciones alcanzables, el resto retrocedida conservando
+               nombre y metadato legibles. El control ^ˇ lo inyecta aleph-ds.js. Las acciones son
+               EXACTAMENTE las de antes (Revisar bajo su sc-if · Quitar): no se agrega ni se quita. -->
+          <div class="ds-well ds-track" data-ds-track style="padding:18px 20px">
+
+            <!-- included lane -->
+            <div class="ds-card ds-item" style="display:flex;align-items:center;gap:13px;margin-bottom:10px">
+              <span style="width:34px;height:34px;border-radius:var(--r-sm);background:var(--paper2);display:flex;align-items:center;justify-content:center;color:var(--accent-deep);font-size:15px;flex:none">✦</span>
+              <div style="flex:1;min-width:0"><div class="ds-name">Lane incluida</div><div class="ds-meta" style="margin-top:3px">El modelo base de Aleph — funciona sin configurar nada.</div></div>
+              <span class="ds-meta" style="flex:none;background:var(--paper2);border-radius:var(--r-full);padding:4px 11px;letter-spacing:.05em">SIEMPRE ACTIVA</span>
+            </div>
+
+            <!-- key rows -->
+            <sc-for list="{{ keys }}" as="k" hint-placeholder-count="3">
+              <div class="ds-card ds-item" style="display:flex;align-items:center;gap:13px;margin-bottom:10px">
+                <span style="{{ k.logoStyle }}">{{ k.logo }}</span>
+                <div style="flex:1;min-width:0">
+                  <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap"><span class="ds-name">{{ k.provider }}</span><span style="{{ k.statusStyle }}"><span style="{{ k.statusDot }}"></span>{{ k.statusText }}</span></div>
+                  <div style="display:flex;align-items:center;gap:10px;margin-top:4px"><span class="ds-meta" style="font-family:var(--font-mono)">{{ k.masked }}</span><span class="ds-meta">· {{ k.models }}</span></div>
+                </div>
+                <div class="ds-actions" style="display:flex;align-items:center;gap:8px;flex:none">
+                  <sc-if value="{{ k.failed }}" hint-placeholder-val="{{ false }}"><button style="border:0;background:var(--red-bg);color:var(--red);border-radius:var(--r-md);padding:8px 14px;font:400 12px var(--font-ui);cursor:pointer">Revisar</button></sc-if>
+                  <button onClick="{{ k.remove }}" class="ds-btn-ghost" style="padding:8px 12px" style-hover="color:var(--red)">Quitar</button>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+          </sc-if>
+        </div>
+        </sc-if>
+        <sc-if value="{{ ver_pref }}" hint-placeholder-val="{{ true }}">
+        <div class="st-fila">
+          <button class="st-cab" onClick="{{ tog_pref }}" aria-expanded="{{ abre_pref }}">
+            <span class="st-ico" aria-hidden="true">⚙</span>
+            <span class="st-nom">{{ nom_pref }}</span>
+            <span class="st-chev" style="{{ chev_pref }}" aria-hidden="true">›</span>
+          </button>
+          <sc-if value="{{ abre_pref }}" hint-placeholder-val="{{ false }}">
+        <!-- ===== 3. PREFERENCIAS ===== -->
+        <div ref="{{ ref_pref }}" class="st-panel">
+          <!-- El título de esta sección lo dice ahora el rótulo de su fila, que es la que
+               acabás de abrir. Repetirlo acá era decir «Preferencias» dos veces seguidas. -->
+
+          <!-- [identidad visual 6/6] acá vivía "Modo por defecto · Guiado | Técnico". Se fue: era
+               una preferencia que no gobernaba nada (no persistía ni la leía ninguna pantalla) y,
+               peor, prometía que había una versión del producto con "detalle crudo a la vista" que
+               había que ir a habilitar. No la hay: el detalle está SIEMPRE, detrás de "más", del
+               "?" y de la evidencia. No queda un modo que elegir. -->
+
+          <!-- [sistema] las filas de ajuste son tarjetas en un pozo, SIN pista: son dos controles
+               que se leen de un vistazo, no una lista que se recorre. Las separaciones ya no son
+               líneas (el sistema prohíbe el borde): las hace el hueco entre tarjetas. -->
+          <div class="ds-well" style="margin-top:20px;padding:14px;display:flex;flex-direction:column;gap:10px">
+            <!-- language -->
+            <div class="ds-card" style="display:flex;align-items:center;justify-content:space-between;gap:16px">
+              <div style="min-width:0"><div class="ds-name">Idioma</div><div class="ds-meta" style="margin-top:3px">El idioma de la interfaz.</div></div>
+              <div style="display:flex;gap:4px;background:var(--paper2);border-radius:var(--r-md);padding:4px;flex:none">
+                <sc-for list="{{ langs }}" as="l" hint-placeholder-count="2"><button onClick="{{ l.pick }}" style="{{ l.style }}">{{ l.label }}</button></sc-for>
+              </div>
+            </div>
+
+            <!-- theme -->
+            <div class="ds-card" style="display:flex;align-items:center;justify-content:space-between;gap:16px">
+              <div style="min-width:0"><div class="ds-name">{{ themeLabel }}</div><div class="ds-meta" style="margin-top:3px">{{ themeDesc }}</div></div>
+              <div style="display:flex;gap:4px;background:var(--paper2);border-radius:var(--r-md);padding:4px;flex:none">
+                <sc-for list="{{ themes }}" as="t" hint-placeholder-count="3"><button onClick="{{ t.pick }}" style="{{ t.style }}">{{ t.label }}</button></sc-for>
+              </div>
+            </div>
+
+            <!-- [ajustes · un solo destino] TAMAÑO DEL TEXTO. No es un control nuevo: vivía en
+                 el overlay que se retiró, y ahí SÍ gobernaba —escala la raíz, y todo lo que
+                 esté en `rem` sigue—. Traerlo acá es lo que hace que retirar el overlay no
+                 pierda función. Se guarda por `/v1/preferencias`, ámbito casa: es de la
+                 instalación entera, como el tema. -->
+            <div class="ds-card" style="display:flex;align-items:center;justify-content:space-between;gap:16px">
+              <div style="min-width:0"><div class="ds-name">{{ sizeLabel }}</div><div class="ds-meta" style="margin-top:3px">{{ sizeDesc }}</div></div>
+              <div style="display:flex;gap:4px;background:var(--paper2);border-radius:var(--r-md);padding:4px;flex:none">
+                <sc-for list="{{ sizes }}" as="z" hint-placeholder-count="3"><button onClick="{{ z.pick }}" style="{{ z.style }}">{{ z.label }}</button></sc-for>
+              </div>
+            </div>
+          </div>
+
+          <!-- [convergencia · superficie 3 · fase 0] acá vivía "Notificaciones" con tres
+               switches: «Cuando un Aleph termina», «Cuando algo necesita tu OK», «Cuando algo
+               se frena». Se fueron por el mismo motivo que "Modo por defecto" cuatro
+               comentarios más arriba, y por uno peor.
+
+               El motivo repetido: no gobernaban nada. El toggle sólo hacía `setState` — sin
+               endpoint, sin clave en localStorage, sin tabla. Se movían, cambiaban de color, y
+               a la siguiente carga los tres volvían a ON.
+
+               El motivo peor: no prometían una PREFERENCIA, prometían una CAPACIDAD. "te
+               avisamos cuando un Aleph trabaja sin que mires" describe avisos que esta casa no
+               manda por ningún camino — medido: cero Web Push, cero Notification(), cero
+               osascript en todo el árbol. Apagar un aviso que no existe no es un ajuste
+               inofensivo: es decirle al usuario que hay algo trabajando para él que no está.
+
+               Vuelven el día que exista qué gobernar, y ese día entran cableadas. La vara que
+               lo cuida: `qa/verify_perillas_gobiernan.py`. -->
+        </div>
+          </sc-if>
+        </div>
+        </sc-if>
+        <sc-if value="{{ ver_modelos }}" hint-placeholder-val="{{ true }}">
+        <a class="st-fila st-fila-link" href="Modelos.dc.html">
+          <span class="st-ico" aria-hidden="true">▤</span>
+          <span class="st-nom">{{ nom_modelos }}</span>
+          <span class="st-chev" aria-hidden="true">→</span>
+        </a>
+        </sc-if>
+        <sc-if value="{{ ver_conex }}" hint-placeholder-val="{{ true }}">
+        <div class="st-fila">
+          <button class="st-cab" onClick="{{ tog_conex }}" aria-expanded="{{ abre_conex }}">
+            <span class="st-ico" aria-hidden="true">⇄</span>
+            <span class="st-nom">{{ nom_conex }}</span>
+            <span class="st-chev" style="{{ chev_conex }}" aria-hidden="true">›</span>
+          </button>
+          <sc-if value="{{ abre_conex }}" hint-placeholder-val="{{ false }}">
+        <!-- ===== 4. CONEXIONES ===== -->
+        <div ref="{{ ref_conex }}" class="st-panel">
+          <h2 class="ds-title">Conexiones · herramientas</h2>
+          <!-- ══ [F3] ESTE CENSO DEJÓ DE SER UNA SEGUNDA SUPERFICIE DE GESTIÓN ═══════════
+               Acá vivían las 29 tarjetas del catálogo curado con sus botones [Conectar] y
+               [Revocar]: 2.353 px de una página de ~13.800, y la MISMA gestión que ahora
+               vive en Conectores. Dos lugares donde configurar lo mismo es dos lugares que
+               pueden mostrar estados distintos — y el día que discrepen, el usuario no tiene
+               forma de saber cuál miente.
+               Se queda el punto de entrada (es un marcador de navegación de Ajustes y hay
+               enlaces que apuntan acá) y se va la gestión. El conteo sale del MISMO endpoint
+               que pinta Conectores, así que no puede haber dos números.
+
+               ⚠️ CORRECCIÓN DE UNA AFIRMACIÓN MÍA: dije que este censo usaba la puerta que
+               no valida. Falso — `connectTool` usa `/v1/connectors/{name}/connect`, la misma
+               que Conectores. La que no valida es `POST /v1/keys`, y la usa `addKey`, que es
+               la sección de BYOK de MODELOS, otra cosa. El motivo para sacar esto de acá es
+               el original: duplica la superficie, no que use la puerta equivocada. -->
+          <div class="ds-sub" style="margin:9px 0 16px;max-width:62ch;line-height:1.55">Las apps conectadas a tu cuenta que tus Aleph reutilizan. Se configuran en <strong>Conectores</strong>, que además te dice cuáles le sirven a cada espacio. Los permisos viven ahí —y enviar/gastar siempre te pide OK en la Sala.</div>
+          <div class="ds-well" style="padding:16px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
+            <div style="min-width:0">
+              <div class="ds-name" id="setConnCount">—</div>
+              <div class="ds-meta" style="display:block;margin-top:4px" id="setConnLine">Contando lo que tienes conectado…</div>
+            </div>
+            <a class="ds-btn" style="flex:none;padding:9px 17px;text-decoration:none" href="Conectores.dc.html">Ir a Conectores</a>
+          </div>
+        </div>
+          </sc-if>
+        </div>
+        </sc-if>
+        <sc-if value="{{ ver_memoria }}" hint-placeholder-val="{{ true }}">
+        <div class="st-fila">
+          <button class="st-cab" onClick="{{ tog_memoria }}" aria-expanded="{{ abre_memoria }}">
+            <span class="st-ico" aria-hidden="true">◈</span>
+            <span class="st-nom">{{ nom_memoria }}</span>
+            <span class="st-chev" style="{{ chev_memoria }}" aria-hidden="true">›</span>
+          </button>
+          <sc-if value="{{ abre_memoria }}" hint-placeholder-val="{{ false }}">
+        <!-- ===== MEMORIA · lo que Aleph se acuerda de vos ===== -->
+        <!-- POR QUÉ ACÁ Y NO EN UNA PANTALLA NUEVA: es control sobre lo propio, que es de
+             lo que trata Ajustes, y vive al lado de «Zona de peligro» por la misma razón.
+             La memoria funcionaba desde hace rato —el executor la inyecta en el system
+             prompt de CADA turno— y `executor.py:811` ya mandaba al usuario a «tu panel de
+             memoria». Este es ese panel: hasta hoy Aleph se acordaba de cosas del usuario
+             y el usuario no podía ni verlas ni sacarlas. -->
+        <div ref="{{ ref_memoria }}" class="st-panel">
+          <h2 class="ds-title">Memoria · lo que Aleph se acuerda de ti</h2>
+          <div class="ds-sub" style="margin:9px 0 16px;max-width:64ch;line-height:1.55">{{ memLede }}</div>
+
+          <sc-if value="{{ memVacio }}" hint-placeholder-val="{{ false }}">
+            <div class="ds-well" style="padding:14px 18px">
+              <div class="ds-meta" style="display:block">Todavía no guardó nada. Lo que aprenda de ti en las conversaciones va a aparecer aquí.</div>
+            </div>
+          </sc-if>
+
+          <sc-for list="{{ mems }}" as="m" hint-placeholder-count="3">
+            <div class="ds-well" style="padding:13px 16px;margin-bottom:8px;display:flex;gap:14px;align-items:flex-start">
+              <div style="flex:1;min-width:0">
+                <div style="font:400 13.5px var(--font-ui);color:var(--ink);line-height:1.5;word-break:break-word">{{ m.content }}</div>
+                <div class="ds-meta" style="display:block;margin-top:6px">{{ m.pie }}</div>
+              </div>
+              <button onClick="{{ m.olvidar }}" class="ds-btn-ghost" style="flex:none" style-hover="color:var(--red)">{{ m.btn }}</button>
+            </div>
+          </sc-for>
+
+          <sc-if value="{{ memHayMas }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ memVerMas }}" class="ds-btn-ghost" style-hover="color:var(--ink)">{{ memVerMasTxt }}</button>
+          </sc-if>
+
+          <sc-if value="{{ memMsg }}" hint-placeholder-val="{{ '' }}">
+            <div class="ds-meta" style="display:block;margin-top:12px">{{ memMsg }}</div>
+          </sc-if>
+        </div>
+          </sc-if>
+        </div>
+        </sc-if>
+        <sc-if value="{{ ver_plan }}" hint-placeholder-val="{{ true }}">
+        <div class="st-fila">
+          <button class="st-cab" onClick="{{ tog_plan }}" aria-expanded="{{ abre_plan }}">
+            <span class="st-ico" aria-hidden="true">◇</span>
+            <span class="st-nom">{{ nom_plan }}</span>
+            <span class="st-chev" style="{{ chev_plan }}" aria-hidden="true">›</span>
+          </button>
+          <sc-if value="{{ abre_plan }}" hint-placeholder-val="{{ false }}">
+        <!-- ===== 5. PLAN (placeholder) ===== -->
+        <!-- el borde punteado era la única forma de decir "esto todavía no existe". El sistema no
+             tiene bordes: lo dice el título en gris de apoyo + la cápsula PRÓXIMAMENTE. -->
+        <div ref="{{ ref_plan }}" class="st-panel">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:16px">
+            <div style="min-width:0">
+              <h2 class="ds-title" style="color:var(--muted)">Plan y facturación</h2>
+              <div class="ds-sub" style="margin-top:9px">Lo estamos definiendo. Aquí vas a manejar tu plan más adelante.</div>
+            </div>
+            <span class="ds-meta" style="flex:none;letter-spacing:.06em;background:var(--paper2);border-radius:var(--r-full);padding:6px 13px">PRÓXIMAMENTE</span>
+          </div>
+          <!-- login suave · momento PREMIUM: el muro exige cuenta+suscripción; acá solo se OFRECE -->
+          <sc-if value="{{ anonLocal }}" hint-placeholder-val="{{ false }}">
+            <div class="ds-sub" style="display:block;margin-top:18px;line-height:1.55">{{ anonPremium }} <a href="Auth.dc.html?motivo=premium" style="color:var(--accent-deep)" style-hover="text-decoration:underline">{{ anonPremiumCta }}</a></div>
+          </sc-if>
+        </div>
+          </sc-if>
+        </div>
+        </sc-if>
+        <sc-if value="{{ ver_peligro }}" hint-placeholder-val="{{ true }}">
+        <div class="st-fila">
+          <button class="st-cab" onClick="{{ tog_peligro }}" aria-expanded="{{ abre_peligro }}">
+            <span class="st-ico" aria-hidden="true">⚠</span>
+            <span class="st-nom">{{ nom_peligro }}</span>
+            <span class="st-chev" style="{{ chev_peligro }}" aria-hidden="true">›</span>
+          </button>
+          <sc-if value="{{ abre_peligro }}" hint-placeholder-val="{{ false }}">
+        <!-- ===== 6. ZONA DE PELIGRO ===== -->
+        <!-- [90/8/2] el rojo deja de ser el fondo de un panel entero y vuelve a ser lo que el
+             sistema dice que es: un PUNTO de estado (y la tinta del botón que de verdad borra). -->
+
+        <div ref="{{ ref_peligro }}" class="st-panel">
+          <!-- ===== [F4b · obra 4] LO QUE TU CLI GUARDA EN TU DISCO ===== -->
+          <!-- Sin drama: es el CLI oficial guardando su historia, igual que cuando lo usás
+               en tu terminal. Lo que Aleph agrega es que se vea y se pueda sacar. -->
+          <h2 class="ds-title">Conversaciones guardadas por tu CLI</h2>
+          <div class="ds-sub" style="margin:9px 0 16px;max-width:64ch;line-height:1.55">{{ txLede }}</div>
+          <sc-if value="{{ txHay }}" hint-placeholder-val="{{ true }}">
+            <div class="ds-well" style="padding:14px 18px;margin-bottom:14px">
+              <div class="ds-meta" style="display:block">{{ txDonde }}</div>
+              <div class="ds-meta" style="display:block;margin-top:6px">{{ txAleph }}</div>
+              <!-- LA LÍNEA QUE NO PUEDE FALTAR: en esa misma carpeta viven las
+                   conversaciones propias del usuario, y Aleph no las toca. -->
+              <div style="display:block;margin-top:6px;font:400 11.5px var(--font-ui);color:var(--green)">{{ txTuyas }}</div>
+            </div>
+          </sc-if>
+          <sc-if value="{{ txCerrado }}" hint-placeholder-val="{{ true }}">
+            <button onClick="{{ askTx }}" class="ds-btn-ghost" style-hover="color:var(--ink)">Borrar transcripciones CLI generadas por Aleph</button>
+          </sc-if>
+          <sc-if value="{{ txAbierto }}" hint-placeholder-val="{{ false }}">
+            <div class="ds-well" style="padding:18px 20px;animation:fadeUp .25s ease both">
+              <div style="font:400 13.5px var(--font-ui);color:var(--ink)">{{ txConfirmar }}</div>
+              <div style="margin-top:6px;font:400 11.5px var(--font-ui);color:var(--green)">{{ txTuyas }}</div>
+              <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
+                <button onClick="{{ doTx }}" style="border:0;background:var(--red-bg);color:var(--red);border-radius:var(--r-md);padding:11px 20px;font:400 12px var(--font-ui);cursor:pointer" style-hover="filter:brightness(1.18)">Sí, borrar</button>
+                <button onClick="{{ cancelTx }}" class="ds-btn-ghost" style-hover="color:var(--ink)">Cancelar</button>
+              </div>
+            </div>
+          </sc-if>
+          <sc-if value="{{ txMsg }}" hint-placeholder-val="{{ '' }}">
+            <div class="ds-meta" style="display:block;margin-top:12px">{{ txMsg }}</div>
+          </sc-if>
+
+          <h2 class="ds-title" style="display:flex;align-items:center;gap:13px;margin-top:34px">Zona de peligro <span class="ds-dot ds-dot-err" style="width:9px;height:9px"></span></h2>
+          <div class="ds-sub" style="margin:9px 0 16px;max-width:60ch;line-height:1.55">La eliminación de cuenta y de sus datos todavía no está disponible en esta versión. Consulta la especificación para conocer el alcance previsto.</div>
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+            <button type="button" disabled aria-disabled="true" style="border:0;background:var(--paper2);color:var(--muted);border-radius:var(--r-md);padding:11px 20px;font:400 12px var(--font-ui);cursor:not-allowed;opacity:.65">Eliminar cuenta</button>
+            <span class="ds-meta">Próximamente</span>
+          </div>
+        </div>
+          </sc-if>
+        </div>
+        </sc-if>
+        </div>
+      </div>
+
+      <sc-if value="{{ hasEspacio }}" hint-placeholder-val="{{ false }}">
+      <div>
+        <div class="st-grupo"><span>{{ espGrupo }}</span></div>
+        <div class="st-lista">
+        <sc-if value="{{ ver_espacio }}" hint-placeholder-val="{{ true }}">
+        <div class="st-fila">
+          <button class="st-cab" onClick="{{ tog_espacio }}" aria-expanded="{{ abre_espacio }}">
+            <span class="st-ico" aria-hidden="true">▣</span>
+            <span class="st-nom">{{ nom_espacio }}</span>
+            <span class="st-chev" style="{{ chev_espacio }}" aria-hidden="true">›</span>
+          </button>
+          <sc-if value="{{ abre_espacio }}" hint-placeholder-val="{{ false }}">
+        <!-- ===== 3.bis. EL ESPACIO DEL QUE VENÍS =====
+             Sólo existe si llegaste desde un workspace (`?espacio=<id>`). No es una copia del
+             Settings ajeno: acá va ÚNICAMENTE lo que es del oficio de ese espacio y que Aleph
+             no tenía ya. Proveedores, apariencia, cuenta, conexiones y memoria NO se repiten
+             — son de la casa y viven en las otras secciones de esta misma página. -->
+        <sc-if value="{{ hasEspacio }}" hint-placeholder-val="{{ false }}">
+        <div ref="{{ ref_espacio }}" class="st-panel">
+          <!-- El nombre del espacio lo dice el rótulo de su fila y el del grupo. -->
+          <p class="ds-meta" style="margin-top:8px">{{ espSub }}</p>
+
+          <div class="ds-well" style="margin-top:20px;padding:14px;display:flex;flex-direction:column;gap:10px">
+            <sc-if value="{{ verCompact }}" hint-placeholder-val="{{ false }}">
+            <div class="ds-card" style="display:flex;align-items:center;justify-content:space-between;gap:16px">
+              <div style="min-width:0">
+                <div class="ds-name">{{ compactLabel }}</div>
+                <div class="ds-meta" style="margin-top:3px">{{ compactDesc }}</div>
+                <!-- LA CAUSA, EN LA CARA. El motor no relee su config en caliente —lo dice el
+                     propio OpenWork: «Reload the engine after changing it»— así que el cambio
+                     agarra al abrir el espacio. Decirlo acá es más barato que un usuario
+                     creyendo que ya cambió. -->
+                <div class="ds-meta" style="margin-top:6px;color:var(--muted)">{{ compactAviso }}</div>
+              </div>
+              <div style="display:flex;gap:4px;background:var(--paper2);border-radius:var(--r-md);padding:4px;flex:none">
+                <sc-for list="{{ compactOpts }}" as="c" hint-placeholder-count="2"><button onClick="{{ c.pick }}" style="{{ c.style }}">{{ c.label }}</button></sc-for>
+              </div>
+            </div>
+            </sc-if>
+
+            <!-- [fase 4] Las filas del oficio de este espacio. Mismo formato que la de
+                 compactación, pero construidas desde el vocabulario del backend. Acá salen
+                 las que NO declaran grupo; las que sí, abajo, anidadas en su fila madre. -->
+            <sc-for list="{{ filasEspacio }}" as="f" hint-placeholder-count="2">
+            <div class="ds-card" style="display:flex;align-items:center;justify-content:space-between;gap:16px">
+              <div style="min-width:0">
+                <div class="ds-name">{{ f.titulo }}</div>
+                <div class="ds-meta" style="margin-top:3px">{{ f.sub }}</div>
+              </div>
+              <div style="display:flex;gap:4px;background:var(--paper2);border-radius:var(--r-md);padding:4px;flex:none;flex-wrap:wrap">
+                <sc-for list="{{ f.opciones }}" as="o" hint-placeholder-count="3"><button onClick="{{ o.pick }}" style="{{ o.style }}">{{ o.label }}</button></sc-for>
+              </div>
+            </div>
+            </sc-for>
+
+            <!-- ═══ LOS AJUSTES ANIDADOS EN SU FILA · mockup 38b ═════════════════════════
+                 «Los mini-ajustes de cada sección se anidan DENTRO DE SU FILA en lugar de
+                 mandarte a otra pantalla» (hoja del estándar). En Legal eso es `Drafting`
+                 con sus perillas adentro y `Research` como otra fila del mismo grupo.
+                 El rótulo de la madre sale del vocabulario (`grupo`), no de una lista acá:
+                 sumar un grupo cuesta una palabra en `memoria.AJUSTES` y cero líneas de
+                 pantalla. El resumen de la derecha son los valores ACTUALES de sus hijos,
+                 derivados — no un texto inventado. -->
+            <sc-for list="{{ gruposEspacio }}" as="g" hint-placeholder-count="2">
+            <div class="ds-card" style="padding:0;overflow:hidden">
+              <button class="st-cab" onClick="{{ g.tog }}" aria-expanded="{{ g.abierto }}" style="{{ g.estiloCab }}">
+                <span class="st-nom" style="font-weight:500">{{ g.titulo }}</span>
+                <span class="ds-meta" style="flex:none">{{ g.resumen }}</span>
+                <span class="st-chev" style="{{ g.chev }}" aria-hidden="true">›</span>
+              </button>
+              <div style="{{ g.estiloCuerpo }}">
+                <sc-for list="{{ g.filas }}" as="f" hint-placeholder-count="3">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 20px 12px 40px;border-top:1px solid var(--page-bg)">
+                  <div style="min-width:0">
+                    <div class="ds-name" style="font-size:13.5px">{{ f.titulo }}</div>
+                    <div class="ds-meta" style="margin-top:3px">{{ f.sub }}</div>
+                  </div>
+                  <div style="display:flex;gap:4px;background:var(--paper2);border-radius:var(--r-md);padding:4px;flex:none;flex-wrap:wrap">
+                    <sc-for list="{{ f.opciones }}" as="o" hint-placeholder-count="3"><button onClick="{{ o.pick }}" style="{{ o.style }}">{{ o.label }}</button></sc-for>
+                  </div>
+                </div>
+                </sc-for>
+              </div>
+            </div>
+            </sc-for>
+
+            <!-- EL PARTE DEL PUENTE, EN LA CARA. Si el pack está apagado el ajuste queda
+                 guardado y NO llegó al motor todavía: decirlo es más barato que un usuario
+                 creyendo que ya cambió. -->
+            <sc-if value="{{ verPuenteAviso }}" hint-placeholder-val="{{ false }}">
+              <div class="ds-meta" style="color:var(--amber)">{{ puenteAviso }}</div>
+            </sc-if>
+          </div>
+        </div>
+        </sc-if>
+          </sc-if>
+        </div>
+        </sc-if>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ⚠️ [rediseño · Legal · 38b] EL GRUPO DEL ESPACIO DEL QUE VENÍS VA PRIMERO. Estaba
+           DESPUÉS de los seis, así que entre GENERAL y lo que fuiste a buscar había cinco
+           tarjetas punteadas de espacios que no son el tuyo. El artboard 38b lo dibuja
+           pegado a GENERAL («GENERAL arriba; abajo lo de Legal»). No se toca la decisión de
+           Finanzas de pintar los seis SIEMPRE —esa sale del artboard 13a y sigue entera—:
+           sólo se ordena, que es lo que los dos dibujos piden a la vez. -->
+      <!-- [Finanzas · Ajustes] LOS SEIS ESPACIOS, SIEMPRE, Y ESTO CORRIGE LO QUE HICE ANTES.
+           El artboard 13a los pone a todos uno debajo del otro —CIENCIA, EDUCACIÓN, OFICINA,
+           FINANZAS— y no sólo el espacio del que venís, que es lo que yo había hecho. Y para
+           el que no tiene ajustes propios el diseño NO omite la sección: dibuja una tarjeta
+           de borde punteado que lo dice, con su razón escrita al lado — «la sección existe
+           igual para que la página no cambie de forma». O sea que mi «hueco declarado, no lo
+           pinto» estaba mal acá: el hueco se pinta, y se pinta diciendo la verdad. -->
+      <sc-for list="{{ grupos }}" as="g" hint-placeholder-count="6">
+      <div>
+        <div class="st-grupo"><span>{{ g.titulo }}</span></div>
+        <sc-if value="{{ g.vacio }}" hint-placeholder-val="{{ false }}">
+          <div class="st-sin-ajustes">
+            <span class="st-sin-ajustes-tit">{{ g.vacioTit }}</span>
+            <span class="st-sin-ajustes-sub">{{ g.vacioSub }}</span>
+          </div>
+        </sc-if>
+        <!-- ⚠️ [integración] LAS FILAS DE LA SECCIÓN, QUE ANTES NO EXISTÍAN. El artboard 13a
+             dibuja cada espacio con sus filas —Skills, Agent, Knowledge Base…— y acá había
+             una tarjeta «Sin ajustes propios» para los cinco espacios de los que no venías,
+             incluidos Legal y Oficina, que SÍ tienen ajustes: mentira en pantalla.
+             Son `<a href>` y no botones a propósito: la fila TE LLEVA al espacio parado en
+             esa superficie, usando el ruteo que el stack ya tiene. El destino lo arma
+             `espacios-tabla.js`; acá sólo se pinta. -->
+        <sc-if value="{{ g.hayFilas }}" hint-placeholder-val="{{ true }}">
+          <div class="st-lista">
+          <sc-for list="{{ g.filas }}" as="f" hint-placeholder-count="4">
+            <a class="st-fila st-fila-link" href="{{ f.href }}">
+              <span class="st-ico" aria-hidden="true">{{ f.ico }}</span>
+              <span class="st-nom">{{ f.rotulo }}</span>
+              <span class="st-chev" aria-hidden="true">→</span>
+            </a>
+          </sc-for>
+          </div>
+        </sc-if>
+      </div>
+      </sc-for>
+
+
+      <sc-if value="{{ nadaEncontrado }}" hint-placeholder-val="{{ false }}">
+        <div class="st-vacio">{{ nadaTexto }}</div>
+      </sc-if>
+
+      <sc-if value="{{ hasAccount }}" hint-placeholder-val="{{ true }}">
+        <button onClick="{{ logout }}" class="st-salir"><span aria-hidden="true">⏻</span>{{ salirLabel }}</button>
+      </sc-if>
+
+    </div>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#8B6CF0&quot;}}">
+class Component extends DCLogic {
+  state = {
+    /* `abiertas` es la lista de secciones desplegadas. Arranca VACÍA porque el artboard
+       muestra la lista cerrada: Ajustes es primero un índice y después un panel. La
+       excepción es el `?seccion=` con el que entran los seis workspaces — ese abre la suya,
+       que es justo lo que esa puerta promete. */
+    abiertas:[], q:'', salud:null,
+    active:'perfil', lang:'es',
+    // EL ESPACIO DEL QUE VENÍS (`?espacio=<id>`) y su ajuste propio. `esp` null = llegaste
+    // por la puerta de la casa y esta sección no existe: no se dibuja una sección de espacio
+    // cuando no hay espacio.
+    esp:null, espLabel:'', compact:null, compactBusy:false, aplican:null,
+    // [fase 4] El vocabulario y los valores RESUELTOS del ámbito, tal como los manda
+    // `/v1/preferencias`. La cara no reimplementa ni las opciones ni el copy: si los
+    // tuviera, se desincronizarían el día que el almacén agregue un valor.
+    declarados:null, valores:null, puenteAviso:'', gruposCerrados:{}, secciones:{},
+    // tamaño del texto: se LEE del documento, que es donde lo aplica quien lo adopta.
+    texto:'estandar',
+    // [F4b · obra 4] lo que el CLI escribe en tu disco: se ve y se puede sacar.
+    tx:null, txOpen:false, txBusy:false, txMsg:'',
+    // MEMORIA · lo que Aleph recuerda del usuario, y el botón para sacarlo.
+    mems:null, memsCuenta:[], memsVer:12, memsMsg:'', memsBorrando:null,
+    user:null, keys:[], conns:[],
+    pwOpen:false, pwCur:'', pwNew:'', pwMsg:'', pwOk:false, pwBusy:false,   // cambio de contraseña (real, /v1/users/{id}/password)
+  };
+
+  componentDidMount(){
+    const a=this.props.accent; if(a) document.documentElement.style.setProperty('--accent',a);
+    // login suave + relaunch: leer por AlephSession.get() (rehidrata desde localStorage; leer
+    // sessionStorage directo dejaba Settings deslogueado tras relanzar la .app, con la sesión viva
+    // en localStorage). NO se minta en mount: sólo mirar Settings no crea identidad — el minteo va
+    // en las ACCIONES (guardar key / conectar / exportar) vía ensureUid().
+    let u=(window.AlephSession&&window.AlephSession.get)?window.AlephSession.get():null;
+    this.setState({user:u});
+    this.loadKeys(); this.loadConns(); this.loadTx(); this.loadMems(); this.loadEspacio();
+    try{ this.setState({texto:document.documentElement.getAttribute('data-aleph-texto')||'estandar'}); }catch(e){}
+    // Destino de las pantallas ajenas que Aleph absorbió. Se conserva la página existente
+    // y se aterriza en la sección propia, sin duplicar proveedores ni apariencia.
+    try {
+      const seccion=new URLSearchParams(window.location.search).get('seccion');
+      if(['perfil','keys','pref','espacio','conex','plan','memoria','peligro'].includes(seccion)) {
+        setTimeout(()=>this.goto(seccion),0);
+      }
+    } catch(e) {}
+    // [caminata2] re-render cuando el manifiesto de logos aterriza (AlephBrand.has() recién es true
+    // ahí) → los conectores muestran su CARA curada, congruente con Conectar/Cuarto.
+    try{ if(window.AlephBrand && window.AlephBrand.ready) window.AlephBrand.ready.then(()=>this.setState(st=>({_brandTick:(st._brandTick||0)+1}))); }catch(e){}
+    /* La línea de salud: un GET a `/health`, que es el que la casa ya tiene. Si falla, la
+       línea dice «sin respuesta» — no se esconde, porque un backend caído es exactamente lo
+       que esta línea existe para contar. */
+    fetch('/health').then(r=>r.ok?r.json():Promise.reject())
+      .then(d=>this.setState({salud:d})).catch(()=>this.setState({salud:{status:'caido'}}));
+
+    /* ⌘K enfoca el buscador de ESTA pantalla. El atajo se dibuja al lado del campo, así que
+       tiene que existir; se saca en `componentWillUnmount`. */
+    this._onKey=(e)=>{ if((e.metaKey||e.ctrlKey) && (e.key==='k'||e.key==='K')){
+      e.preventDefault(); if(this._q && this._q.focus) this._q.focus(); } };
+    try{ window.addEventListener('keydown', this._onKey); }catch(e){}
+
+    this.syncTrack();
+  }
+  componentWillUnmount(){ try{ window.removeEventListener('keydown', this._onKey); }catch(e){} }
+  componentDidUpdate(p){ const a=this.props.accent; if(p&&p.accent!==a&&a) document.documentElement.style.setProperty('--accent',a); this.syncTrack(); }
+
+  // ── EL ESPACIO DEL QUE VENÍS ────────────────────────────────────────────────────────
+  // El id llega por query desde el workspace (`oficina.html` lo agrega al redirigir) o desde
+  // el ⚙ (`ajustes.js:destinoAjustes`). El ROTULO sale de `espacios-tabla.js`, la misma tabla
+  // que usan Historial y Biblioteca: el id crudo no es un rótulo —se leía `DISENO`, sin ñ—.
+  // Si la tabla no llega, se muestra el id: peor rótulo, nunca sección rota.
+  loadEspacio(){
+    let ws=null;
+    try{ ws=new URLSearchParams(window.location.search).get('espacio'); }catch(e){}
+
+    /* ⚠️ [integración] LAS SECCIONES SE PIDEN SIEMPRE, VENGAS DE UN ESPACIO O NO. Esta carga
+       estaba colgada del `if` de abajo, así que abriendo Ajustes desde el riel —sin
+       `?espacio=`— la página no tenía la tabla y los seis grupos salían con la tarjeta
+       «Sin ajustes propios». Es lo que el dueño vio: un Settings vacío. La tabla vive en
+       `espacios-tabla.js`, la misma que ya daba los rótulos, y el destino de cada fila lo
+       arma ella —no esta pantalla— para que no haya dos formas de escribirlo. */
+    try {
+      import('./espacios-tabla.js').then(m => {
+        if (!m || !m.secciones) return;
+        const tabla = {};
+        ['ciencia','oficina','legal','educacion','diseno','finanzas'].forEach(id => {
+          /* El `href` lo arma la tabla, no esta pantalla: hay dos formas —salir al workspace o
+             quedarse acá cambiando de ámbito, que es el caso de Legal— y una segunda copia de
+             esa regla acá se desincronizaría con la de allá el primer día. */
+          tabla[id] = m.secciones(id).map(sec => Object.assign({}, sec, {
+            href: m.hrefDeSeccion ? m.hrefDeSeccion(id, sec) : '',
+          }));
+        });
+        this.setState({secciones: tabla});
+      }).catch(()=>{});
+    } catch(e) {}
+
+    if(!ws || !/^[a-z0-9_-]+$/i.test(ws)) return;
+    this.setState({esp:ws, espLabel:ws});
+    try{ import('./espacios-tabla.js').then(m=>{ if(m&&m.etiqueta) this.setState({espLabel:m.etiqueta(ws)||ws}); }).catch(()=>{}); }catch(e){}
+    // El valor RESUELTO para este ámbito (precedencia espacio > casa > default) lo da el
+    // backend. La cara no tiene una copia del default: si la tuviera, se desincronizaría el
+    // día que el almacén cambie el suyo.
+    fetch('/v1/preferencias?ambito='+encodeURIComponent(ws), {headers:{Accept:'application/json'}})
+      .then(r=>r.ok?r.json():null)
+      .then(d=>{
+        const a=d&&d.ajustes;
+        // `aplican` lo dice el backend: qué ajustes tienen un LECTOR en este espacio. Sin
+        // esto, la sección dibujaba «compactación» en los seis y sólo Oficina la lee — el
+        // motor que la consume corre nada más para la forma `openwork_server`.
+        this.setState({aplican:(d&&d.aplican)||[], declarados:(d&&d.declarados)||{}, valores:a||{}});
+        if(a&&a.compactacion) this.setState({compact:a.compactacion});
+      })
+      .catch(()=>{});
+  }
+
+  // Guardar es OPTIMISTA en la cara y real en el almacén: el botón se pinta ya, y si el PUT
+  // falla se vuelve al valor anterior. Sin sesión el backend contesta 401 con su copy — por
+  // eso el revert, y no un "guardado" que no ocurrió.
+  setCompact(v){
+    const s=this.state; if(s.compactBusy || !s.esp || v===s.compact) return;
+    const antes=s.compact;
+    this.setState({compact:v, compactBusy:true});
+    fetch('/v1/preferencias', {method:'PUT', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({ambito:s.esp, cambios:{compactacion:v}})})
+      .then(r=>{ if(!r.ok) throw new Error('no'); })
+      .catch(()=>this.setState({compact:antes}))
+      .then(()=>this.setState({compactBusy:false}));
+  }
+
+  /* [fase 4] EL SETTER GENÉRICO DE UN AJUSTE DE ESPACIO. Mismo par que `setCompact`
+     —optimista en la cara, real en el almacén, revert si el PUT falla— pero para cualquier
+     clave del vocabulario. Y con una diferencia que importa: LEE EL PARTE DEL PUENTE.
+     Guardar en la casa no es que gobierne; el que obedece es el motor del stack. Si el pack
+     está apagado el backend lo dice (`puente.causa === "pack_apagado"`) y la pantalla lo
+     REPITE en vez de mostrar un tilde. Un puente que falla en silencio es indistinguible de
+     uno que no existe. */
+  setAjuste(clave, v){
+    const s=this.state; if(!s.esp) return;
+    const valores=Object.assign({}, s.valores||{});
+    const antes=valores[clave];
+    if(v===antes) return;
+    valores[clave]=v;
+    this.setState({valores, puenteAviso:''});
+    const cambios={}; cambios[clave]=v;
+    fetch('/v1/preferencias', {method:'PUT', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({ambito:s.esp, cambios})})
+      .then(r=>r.ok?r.json():Promise.reject(new Error('no')))
+      .then(d=>{
+        const pu=d&&d.puente;
+        if(pu && pu.campos && Object.keys(pu.campos).length && !pu.ok){
+          const T=window.t||(k=>k), tr=(k,fb)=>{const x=T(k);return (x&&x!==k)?x:fb;};
+          this.setState({puenteAviso: pu.causa==='pack_apagado'
+            ? tr('set.puente.apagado','Guardado. Se aplica cuando entres al espacio: ahora no está corriendo.')
+            : tr('set.puente.error','Guardado, pero no pude avisarle al espacio. Se aplica al volver a entrar.')});
+        }
+      })
+      .catch(()=>{ const vs=Object.assign({}, this.state.valores||{}); vs[clave]=antes; this.setState({valores:vs}); });
+  }
+
+  // TAMAÑO DEL TEXTO. `aplicar` primero —se ve en el acto, sin esperar la red— y después se
+  // persiste. Es el mismo par que hacía el overlay; lo que cambia es dónde vive el control.
+  setTexto(v){
+    const esc={compacto:'93.75%',estandar:'100%',grande:'112.5%'}[v]||'100%';
+    try{ document.documentElement.style.fontSize=esc; document.documentElement.setAttribute('data-aleph-texto',v); }catch(e){}
+    this.setState({texto:v});
+    fetch('/v1/preferencias', {method:'PUT', headers:{'Content-Type':'application/json'},
+      keepalive:true, body:JSON.stringify({cambios:{tamano_texto:v}})}).catch(()=>{});
+  }
+
+  // ── [sistema 2026-07-31] Re-sincronizar el foco de la PISTA de claves ──────────────────
+  // La pista la gobierna aleph-ds.js, pero su MutationObserver sólo vuelve a aplicar el foco
+  // cuando CAMBIA la cantidad de elementos. Acá la cantidad casi nunca cambia y el runtime de
+  // la plantilla igual repinta las filas en cada setState (loadKeys, loadConns, el tick de
+  // AlephBrand): las filas nuevas quedan SIN data-focus, o sea ni en foco ni retrocedidas —
+  // todas a tamaño completo, que es exactamente lo contrario del patrón. Esto no decide nada:
+  // le pide a la primitiva que reaplique el foco que ella misma ya calculó (mismo índice, misma
+  // API pública). Reintenta unos ms porque aleph-ds.js entra `defer` por nav.js.
+  syncTrack(){
+    const go=()=>{ try{
+      const t=document.querySelector('[data-ds-track]');
+      if(!t || !window.AlephDS || !window.AlephDS.refresh) return;
+      const its=t.querySelectorAll('.ds-item'); if(!its.length) return;
+      let falta=false;
+      Array.prototype.forEach.call(its,el=>{ if(el.getAttribute('data-focus')===null) falta=true; });
+      if(falta) window.AlephDS.refresh(t);
+    }catch(e){} };
+    go();
+    try{ requestAnimationFrame(go); }catch(e){}
+    setTimeout(go,60); setTimeout(go,400); setTimeout(go,1200);
+  }
+
+  uid(){ const u=this.state.user; return u&&u.id ? u.id : null; }
+  // login suave: garantiza un id usable para las ACCIONES — reusa la sesión (rehidratando de
+  // localStorage) o minta la LOCAL anónima (device user) y sincroniza state.user. Devuelve null sólo
+  // si NO hay auth local (control plane web) → el caller cae a su aviso honesto.
+  async ensureUid(){
+    let u=(window.AlephSession&&window.AlephSession.get)?window.AlephSession.get():this.state.user;
+    if(!u||!u.id){ const A=window.AlephSession; u=await ((A&&A.ensureLocal)?A.ensureLocal():Promise.resolve(null)); }
+    if(u&&u.id && u!==this.state.user) this.setState({user:u});
+    return u&&u.id ? u.id : null;
+  }
+
+  async loadKeys(){
+    const id=this.uid(); if(!id) return;
+    try{ const r=await fetch('/v1/users/'+id+'/keys'); if(!r.ok) return;
+      this.setState({keys:(await r.json()).keys||[]}); }catch(e){}
+  }
+  /* [F3] EL CONTEO, DEL MISMO ENDPOINT QUE PINTA CONECTORES.
+   *
+   * Se le pasa `user_id` para que el servidor devuelva `tiene_llave` — así el número de acá
+   * y el de allá salen del mismo lugar y no pueden discrepar. Y se respetan los TRES valores:
+   * `null` (sin sesión, o no se pudo leer el vault) no se cuenta como 0 configurados, porque
+   * «no sé» no es «ninguno». */
+  async loadConnResumen(){
+    const cnt=document.getElementById('setConnCount');
+    const line=document.getElementById('setConnLine');
+    if(!cnt||!line) return;
+    const id=this.uid ? this.uid() : null;
+    try{
+      const u='/v1/connectors'+(id?('?user_id='+encodeURIComponent(id)):'');
+      const r=await fetch(u);
+      if(!r.ok){ cnt.textContent='—'; line.textContent='No pude leer tus conexiones ahora.'; return; }
+      const d=await r.json();
+      const cs=d.connectors||[];
+      const sabemos=cs.filter(c=>c.tiene_llave!==null && c.tiene_llave!==undefined);
+      const puestas=sabemos.filter(c=>c.tiene_llave===true).length;
+      if(!sabemos.length){
+        cnt.textContent=String(cs.length)+' disponibles';
+        line.textContent='Inicia sesión para ver cuáles ya tienes configuradas.';
+        return;
+      }
+      cnt.textContent=puestas+' de '+cs.length+' configuradas';
+      line.textContent=puestas
+        ? 'Una llave vale para todos los espacios que la recomiendan.'
+        : 'Todavía no configuraste ninguna. Conectores te dice cuáles le sirven a cada espacio.';
+    }catch(e){ cnt.textContent='—'; line.textContent='No pude leer tus conexiones ahora.'; }
+  }
+
+  async loadConns(){
+    this.loadConnResumen();
+    try{ const r=await fetch('/v1/connectors'); if(!r.ok) return;
+      this.setState({conns:(await r.json()).connectors||[]}); }catch(e){}
+  }
+
+  // ── [F4b · obra 4] LOS TRANSCRIPTS DEL CLI ────────────────────────────────────────
+  // F2e prendió las sesiones del BYO-CLI y eso dejó las conversaciones en texto plano en
+  // `~/.claude/projects/`. No hay dónde moverlas (medido: `CLAUDE_CONFIG_DIR` las mueve
+  // pero pierde el auth), así que lo honesto es decirlo y poder borrarlo.
+  async loadTx(){
+    try{ const r=await fetch('/v1/cli/transcripts'); if(!r.ok) return;
+      this.setState({tx:await r.json()}); }catch(e){}
+  }
+  // NO BORRA: pide el dry-run y ABRE la confirmación con lo que se llevaría por delante.
+  // El servidor sin `confirmar=true` devuelve exactamente eso, así que lo que se muestra
+  // es lo MEDIDO por quien va a borrar — no una cuenta que hizo el front por su lado.
+  // ── MEMORIA ────────────────────────────────────────────────────────────────────────
+  // El GET es el agregado por DUEÑO (`/v1/users/{id}/memories`): la memoria real de esta
+  // máquina está repartida en decenas de agentes —el `puppet_id` de la Sala sale de
+  // `?puppet=` y por defecto es null, así que cada corrida acuñó el suyo— y preguntar
+  // agente por agente serían 190 pedidos para pintar una lista.
+  async loadMems(){
+    const u=(window.AlephSession&&window.AlephSession.get)?window.AlephSession.get():null;
+    const id=u&&u.id; if(!id){ this.setState({mems:[]}); return; }
+    try{
+      const r=await fetch('/v1/users/'+encodeURIComponent(id)+'/memories');
+      if(!r.ok){ this.setState({mems:[], memsMsg:'No se pudo leer la memoria.'}); return; }
+      const d=await r.json();
+      this.setState({mems:(d&&d.memories)||[], memsCuenta:(d&&d.account&&d.account.memories)||[]});
+    }catch(e){ this.setState({mems:[], memsMsg:'No se pudo leer la memoria.'}); }
+  }
+  // BORRA POR EL ENDPOINT QUE YA EXISTÍA, el de por-agente, que ya trae su `_mem_gate`.
+  // No se agregó un DELETE nuevo: una segunda vía de borrar es una segunda vía de
+  // equivocarse. Por eso cada fila viaja con su `puppet_id`.
+  async olvidar(m){
+    if(!m||!m.id||!m.puppet_id) return;
+    this.setState({memsBorrando:m.id, memsMsg:''});
+    try{
+      const r=await fetch('/v1/puppets/'+encodeURIComponent(m.puppet_id)
+                          +'/memories/'+encodeURIComponent(m.id),{method:'DELETE'});
+      if(!r.ok){ this.setState({memsBorrando:null, memsMsg:'No se pudo borrar ese recuerdo.'}); return; }
+      // Se saca de la lista en el acto: el usuario apretó «Olvidar» y tiene que VER que
+      // se fue. Y se recarga después, para que lo que muestra sea lo que hay y no lo que
+      // creemos que quedó.
+      this.setState(st=>({mems:(st.mems||[]).filter(x=>x.id!==m.id), memsBorrando:null,
+                          memsMsg:'Listo, lo olvidó.'}));
+      this.loadMems();
+    }catch(e){ this.setState({memsBorrando:null, memsMsg:'No se pudo borrar ese recuerdo.'}); }
+  }
+
+  async askTx(){
+    this.setState({txBusy:true, txMsg:''});
+    try{
+      const r=await fetch('/v1/cli/transcripts/borrar',{method:'POST'});
+      const d=await r.json();
+      this.setState({txOpen:true, txBusy:false, tx:Object.assign({}, this.state.tx, {previo:d})});
+    }catch(e){ this.setState({txBusy:false, txMsg:'No se pudo consultar.'}); }
+  }
+  async doTx(){
+    this.setState({txBusy:true});
+    try{
+      const r=await fetch('/v1/cli/transcripts/borrar?confirmar=true',{method:'POST'});
+      const d=await r.json();
+      this.setState({txOpen:false, txBusy:false,
+        txMsg: d && d.ok ? ('Listo: '+(d.borradas||0)+' conversación(es) de Aleph borradas. '
+                            +'Las tuyas de la terminal quedaron intactas ('+(d.intactas_tuyas||0)+').')
+                         : 'No se pudo borrar todo.'});
+      this.loadTx();
+    }catch(e){ this.setState({txBusy:false, txMsg:'No se pudo borrar.'}); }
+  }
+
+  async addKey(){
+    const id=await this.ensureUid(); if(!id){ alert('Inicia sesión primero.'); return; }
+    const provider=(prompt('Proveedor de la key (ej: groq, openai, anthropic):')||'').trim();
+    if(!provider) return;
+    const secret=(prompt('Pega tu API key para '+provider+' (se guarda cifrada, nunca en claro):')||'').trim();
+    if(!secret) return;
+    try{
+      const r=await fetch('/v1/keys',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({user_id:id,provider,secret})});
+      if(!r.ok){ alert('No se pudo guardar la key ('+r.status+').'); return; }
+      this.loadKeys();
+    }catch(e){ alert('Error de red al guardar la key.'); }
+  }
+
+  async removeKey(provider){
+    const id=this.uid(); if(!id) return;
+    if(!confirm('¿Quitar la key de "'+provider+'"?')) return;
+    try{ await fetch('/v1/users/'+id+'/keys/'+encodeURIComponent(provider),{method:'DELETE'}); }catch(e){}
+    this.loadKeys();
+  }
+
+  async connectTool(name){
+    const id=await this.ensureUid(); if(!id){ alert('Inicia sesión primero.'); return; }
+    let obj=null;
+    try{ const r=await fetch('/v1/connectors/'+encodeURIComponent(name)); if(r.ok) obj=await r.json(); }catch(e){}
+    if(!obj){ alert('No pude cargar el conector.'); return; }
+    const creds={};
+    for(const f of (obj.credential_fields||[{id:'key',label:'Credencial'}])){
+      const v=(prompt('Conectar '+name+' — '+(f.label||f.id)+(f.shape?(' ('+f.shape+')'):'')+':')||'').trim();
+      if(!v) return; creds[f.id]=v;
+    }
+    let base_url=null;
+    if(obj.needs_base_url){ base_url=(prompt('Tu dominio para '+name+' (ej: https://tu-org.instructure.com):')||'').trim(); if(!base_url) return; }
+    try{
+      const r=await fetch('/v1/connectors/'+encodeURIComponent(name)+'/connect',{method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({user_id:id,creds,base_url})});
+      const out=await r.json();
+      if(out.state==='connected'){ this.loadKeys(); }
+      // 'connected_unverified' (ámbar): el proveedor no permite confirmar la llave acá (ej. Alpha
+      // Vantage sirve data hasta con una key inexistente). La llave SÍ se guardó — refrescamos para
+      // que aparezca — pero le decimos al usuario la verdad: se confirma en el primer uso. NO "No conectó".
+      else if(out.state==='connected_unverified'){ this.loadKeys(); alert(out.message||'Guardé tu llave, pero no la pude confirmar aquí — la pruebo en el primer uso y, si no funciona, te aviso.'); }
+      else { alert('No conectó: '+(out.message||out.state||'revisa la credencial')); }
+    }catch(e){ alert('Error de red al conectar.'); }
+  }
+
+  // ── Cambiar contraseña (REAL: POST /v1/users/{id}/password, owner-gated; auth.js liga el Bearer) ──
+  togglePw(){ this.setState(s=>({pwOpen:!s.pwOpen, pwCur:'', pwNew:'', pwMsg:'', pwOk:false})); }
+  setPwCur(e){ this.setState({pwCur:e.target.value}); }
+  setPwNew(e){ this.setState({pwNew:e.target.value}); }
+  async savePw(){
+    const id=this.uid();
+    const en=!!(window.AlephI18n&&window.AlephI18n.lang&&window.AlephI18n.lang()==='en');
+    const cur=this.state.pwCur, nw=this.state.pwNew;
+    if(!id){ this.setState({pwMsg:en?'Log in first.':'Inicia sesión primero.', pwOk:false}); return; }
+    if(!cur||!nw){ this.setState({pwMsg:en?'Fill in both fields.':'Completa los dos campos.', pwOk:false}); return; }
+    if(nw.length<6){ this.setState({pwMsg:en?'The new password needs at least 6 characters.':'La nueva necesita al menos 6 caracteres.', pwOk:false}); return; }
+    this.setState({pwBusy:true, pwMsg:''});
+    try{
+      const r=await fetch('/v1/users/'+id+'/password',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({current_password:cur, new_password:nw})});
+      if(r.ok){
+        let out={}; try{ out=await r.json(); }catch(e){}
+        if(out.session_token && window.AlephSession){
+          const u=window.AlephSession.get&&window.AlephSession.get();
+          if(u) window.AlephSession.set(Object.assign({},u,{session_token:out.session_token}));
+        }
+        this.setState({pwOk:true, pwBusy:false, pwCur:'', pwNew:'', pwMsg:en?'Password changed.':'Contraseña cambiada.'}); return;
+      }
+      let code=''; try{ code=((await r.json()).detail||{}).error||''; }catch(e){}
+      const M={ bad_current:['La contraseña actual no es correcta.','The current password is incorrect.'],
+                password_too_short:['La contraseña nueva necesita al menos 6 caracteres.','The new password needs at least 6 characters.'],
+                no_password_set:['Esta cuenta no tiene contraseña para cambiar.','This account has no password to change.'] };
+      const m=M[code]||['No pude cambiar la contraseña.',"Couldn't change the password."];
+      this.setState({pwOk:false, pwBusy:false, pwMsg:en?m[1]:m[0]});
+    }catch(e){ this.setState({pwOk:false, pwBusy:false, pwMsg:en?'Network error.':'Error de red.'}); }
+  }
+  // ── Exportar mis datos (REAL: GET /v1/users/{id}/export → descarga JSON; sin la llave secreta) ──
+  async exportData(){
+    const id=await this.ensureUid();
+    const en=!!(window.AlephI18n&&window.AlephI18n.lang&&window.AlephI18n.lang()==='en');
+    if(!id){ alert(en?'Log in first.':'Inicia sesión primero.'); return; }
+    try{
+      const r=await fetch('/v1/users/'+id+'/export');
+      if(!r.ok){ alert(en?('Export failed ('+r.status+').'):('No se pudo exportar ('+r.status+').')); return; }
+      const data=await r.json();
+      const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement('a'); a.href=url; a.download='aleph-export.json';
+      document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),1500);
+    }catch(e){ alert(en?'Network error exporting.':'Error de red al exportar.'); }
+  }
+
+  /** Abre (o cierra) una sección. */
+  toggle(id){
+    this.setState(st=>({ abiertas: st.abiertas.indexOf(id)>=0
+      ? st.abiertas.filter(x=>x!==id) : st.abiertas.concat([id]) }));
+  }
+
+  /* `goto` ya existía y era SÓLO un scroll, porque todos los paneles estaban abiertos.
+     Con la lista plegada, llevar sin abrir dejaría al `?seccion=` de los seis workspaces
+     aterrizando en una fila cerrada: la puerta seguiría existiendo y ya no mostraría nada.
+     Así que ahora abre primero y después baja. */
+  goto(id){
+    this.setState(st=>({ active:id,
+      abiertas: st.abiertas.indexOf(id)>=0 ? st.abiertas : st.abiertas.concat([id]) }));
+    const el=this['_'+id];
+    if(el&&el.scrollIntoView===undefined){} // never use scrollIntoView per guidance
+    if(el){ const y=el.getBoundingClientRect().top+window.scrollY-18; window.scrollTo({top:y,behavior:'smooth'}); }
+  }
+
+  renderVals(){
+    const s=this.state;
+    const _label=(key,fb)=>{ const v=window.t&&window.t(key); return v&&v!==key?v:fb; };
+
+    // La entrada del espacio va DESPUÉS de Preferencias y ANTES de Conexiones: primero lo
+    // de la casa, después lo de este espacio. Y sólo aparece si venís de uno — una barra con
+    // una sección vacía enseña una puerta que no lleva a ningún lado.
+    /* [rediseño · fase 2 · 2.3] LA FILA `Models`, y es un ENLACE — decisión del dueño.
+     * El mockup la dibuja como una fila más de GENERAL con sus mini-ajustes anidados. Pero
+     * `Modelos.dc.html` son 1.014 líneas de UI (catálogo, alta de llaves, «probar todas»,
+     * tres familias de cognición) y es la pantalla más medida del subconjunto: 46 varas la
+     * nombran. Embeberla sería una obra propia, no una fila.
+     * Se declara la excepción en vez de esconderla: esta fila rompe la regla de «anidado
+     * dentro de su fila», y a cambio no mueve una línea de la pantalla que ya funciona. El ⚙
+     * sigue siendo la puerta única; lo que cambia es que desde adentro de Ajustes se llega a
+     * Modelos sin volver al riel. */
+    const navItems=[
+      /* [Finanzas · Ajustes] LA FILA SE LLAMA `Appearance`, QUE ES SU NOMBRE EN EL DISEÑO.
+         La hoja del estándar lo dice sin vueltas: «El idioma y el tema viven en Appearance».
+         Esta sección ya tenía exactamente eso —Idioma, Tema y Tamaño del texto— y se
+         llamaba «Preferencias», así que el botón de idioma estaba, pero con un rótulo que no
+         es el del diseño y donde nadie lo busca. Es un cambio de NOMBRE, no de contenido:
+         mismo `ref_pref`, mismos controles, mismos cables.
+         (El artboard lista además una fila «Preferencias» aparte y otra «Chat». Ninguna de
+         las dos tiene ajustes en esta casa —`GET /v1/preferencias` devuelve la lista vacía—,
+         así que no se dibujan: una fila que abre un panel sin nada es la puerta a ningún
+         lado que este rediseño vino a sacar.) */
+      ['perfil',_label('set.nav.perfil','Perfil'),'◍'],['keys',_label('set.nav.apikeys','API keys'),'⚿'],
+      ['pref',_label('set.nav.appearance','Apariencia'),'⚙'],
+      ['modelos',_label('set.nav.modelos','Modelos'),'▤'],
+      /* [fase 4] LA ENTRADA DEL ESPACIO SE ABRE POR CUALQUIER FILA, NO SÓLO POR
+         `compactacion`. Estaba colgada de esa clave porque era la única que la sección
+         dibujaba; con las de Legal adentro, esa condición dejaba a Legal con su sección
+         pintada y SIN forma de llegar desde la barra. Ahora pregunta lo mismo que la
+         sección: ¿hay al menos una fila? */
+      ...(s.esp && (s.aplican||[]).some(k=> k==='compactacion'
+            || ((((s.declarados||{})[k]||{}).lee_ws)||[]).indexOf(s.esp)>=0)
+          ? [['espacio', s.espLabel || s.esp, '▣']] : []),
+      ['conex',_label('set.nav.conex','Conexiones'),'⇄'],['plan',_label('set.nav.plan','Plan'),'◇'],
+      ['memoria',_label('set.nav.memoria','Memoria'),'◈'],
+      ['peligro',_label('set.nav.peligro','Zona de peligro'),'⚠'],
+    ];
+    /* LA MISMA TABLA, OTRO LECTOR. `navItems` era la barra lateral; ahora son las filas de
+       la lista. El id, el rótulo y el glifo no cambian — cambia que en vez de llevarte con
+       un scroll, la fila se abre donde está. */
+    const _rot={}; navItems.forEach(([id,label])=>{ _rot[id]=label; });
+    const _q=(s.q||'').trim().toLowerCase();
+    /* El buscador filtra por el NOMBRE de la sección, que es lo que el campo promete
+       («Buscar ajuste o sección»). Sin texto no filtra nada: todas las filas se ven. */
+    const _ve=(id)=> !_q || String(_rot[id]||id).toLowerCase().indexOf(_q)>=0;
+    const _abre=(id)=> s.abiertas.indexOf(id)>=0;
+    const _chev=(id)=> _abre(id) ? 'transform:rotate(90deg)' : '';
+    const filaVals={};
+    ['perfil','keys','pref','modelos','conex','plan','memoria','peligro','espacio'].forEach(id=>{
+      filaVals['nom_'+id]=_rot[id]|| id;
+      filaVals['ver_'+id]=_ve(id);
+      filaVals['abre_'+id]=_abre(id);
+      filaVals['chev_'+id]=_chev(id);
+      filaVals['tog_'+id]=()=>this.toggle(id);
+    });
+    const _visibles=['perfil','keys','pref','modelos','conex','plan','memoria','peligro']
+      .filter(_ve).length + ((s.esp && _ve('espacio')) ? 1 : 0);
+
+    /* La salud, leída de `/health`. `disco.libre_gb` es el número real que la casa mide;
+       el punto se pone ámbar si el libre cayó por debajo del mínimo que el propio backend
+       declara (`minimo_gb`), que es su criterio, no uno inventado acá. */
+    const _sa=s.salud, _ok=!!(_sa && _sa.status==='ok');
+    const _d=(_sa && _sa.disco) || null;
+    const _dok=!!(_d && typeof _d.libre_gb==='number' && (!_d.minimo_gb || _d.libre_gb>=_d.minimo_gb));
+    // Use the resolved UI locale below, not the component's initial s.lang default.
+    const _num=(n)=> String(n).replace('.', _curLang==='en' ? '.' : ',');
+
+    // el campo es un POZO, no una caja con borde: --paper2 + r-md y nada más (el foco lo tiñe
+    // con --accent-soft desde el style-focus de la plantilla).
+    const field='width:100%;border:0;background:var(--paper2);border-radius:var(--r-md);padding:12px 15px;font:400 13.5px var(--font-ui);color:var(--ink);outline:none;transition:background .16s';
+
+    // profile (sesión real) — login suave: la sesión puede ser LOCAL anónima (device
+    // user); ahí no se muestra el email centinela sino el estado honesto "sin cuenta".
+    const u=s.user||{};
+    const __A=window.AlephSession, __t=window.t||function(k){return k;};
+    const anonLocal=!!(u&&u.id&&__A&&__A.isAnon&&__A.isAnon(u));
+    const userEmail=anonLocal?__t('set.local.line'):(u.email||'');
+    const userName=anonLocal?__t('set.local.name'):(u.name || (userEmail ? userEmail.split('@')[0] : 'Tu cuenta'));
+    const avatarInitial=anonLocal?'⌂':((userName||userEmail||'A').trim().charAt(0).toUpperCase()||'A');
+    const memberSince=anonLocal?__t('set.local.sub'):(userEmail ? 'Cuenta Aleph · '+userEmail : 'Sin sesión activa');
+
+    // keys (BYOK reales — GET /v1/users/{id}/keys, solo provider+last4)
+    const PBG={groq:'#F55036',openai:'#10A37F',anthropic:'#D4915D',openrouter:'#6467F2',
+      notion:'#2B2723',canvas:'#E2453C',asana:'#F06A6A',linear:'#5E6AD2',hubspot:'#FF7A59',
+      zotero:'#CC2936',onshape:'#1E88E5',moodle:'#F98012',classroom:'#1E8E3E',orcid:'#A6CE39',
+      zenodo:'#1F57A4',osf:'#264E73',openbom:'#0B7285'};
+    const keys=(s.keys||[]).map(k=>{
+      const prov=k.provider||'';
+      return { provider:prov, logo:prov.slice(0,2).toUpperCase(),
+        masked:'••••'+(k.last4||''), models:(k.enc_scheme?('cifrada · '+k.enc_scheme):'cifrada'),
+        failed:false, remove:()=>this.removeKey(prov),
+        // [90/8/2] las iniciales del proveedor van neutras y en la serif de marca — el color de
+        // marca del proveedor no pertenece a la paleta del sistema (mismo criterio que Home).
+        logoStyle:'width:34px;height:34px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12px;font-weight:400;font-family:var(--font-brand);flex:none;background:var(--paper2)',
+        statusText:'activa',
+        // el verde es un PUNTO de estado, no una cápsula con borde
+        statusStyle:'display:inline-flex;align-items:center;gap:6px;font:400 10.5px var(--font-ui);color:var(--green)',
+        statusDot:'width:5px;height:5px;border-radius:50%;background:var(--green);animation:livePulse 1.6s ease-in-out infinite',
+      };
+    });
+
+    // langs
+    const _curLang=(window.AlephI18n&&window.AlephI18n.lang&&window.AlephI18n.lang())||'es';   // cableado REAL al motor i18n
+    // [90/8/2] la opción elegida es un "destino activo": tinte de mascota, no relleno sólido —
+    // el mismo tratamiento que la nav activa y que el elemento en foco de una pista.
+    const langs=[['es','Español'],['en','English']].map(([k,l])=>({label:l, pick:()=>window.AlephI18n&&window.AlephI18n.setLang(k),
+      style:'border:0;border-radius:var(--r-sm);padding:7px 15px;font:400 12px var(--font-ui);cursor:pointer;transition:all .14s;'+(_curLang===k?'background:var(--accent-soft);color:var(--accent-deep)':'background:none;color:var(--muted)')}));
+
+    // theme (cableado REAL a theme.js: system · light · dark)
+    const _T=window.t||function(k){return k;};
+    const _curTheme=(window.AlephTheme&&window.AlephTheme.get&&window.AlephTheme.get())||'dark';
+    const themes=[['light','set.theme.light'],['dark','set.theme.dark'],['system','set.theme.system']].map(([k,key])=>({label:_T(key),
+      pick:()=>{ if(window.AlephTheme) window.AlephTheme.set(k); this.setState(st=>({_themeTick:(st._themeTick||0)+1})); },
+      style:'border:0;border-radius:var(--r-sm);padding:7px 15px;font:400 12px var(--font-ui);cursor:pointer;transition:all .14s;'+(_curTheme===k?'background:var(--accent-soft);color:var(--accent-deep)':'background:none;color:var(--muted)')}));
+
+    // tamaño del texto (cableado REAL: escala la raíz del documento)
+    const _T2=(k,fb,vars)=>{ const v=_T(k,vars); return (v&&v!==k)?v:fb; };
+    const _btn=(activo)=>'border:0;border-radius:var(--r-sm);padding:7px 15px;font:400 12px var(--font-ui);cursor:pointer;transition:all .14s;'+(activo?'background:var(--accent-soft);color:var(--accent-deep)':'background:none;color:var(--muted)');
+    const sizes=[['compacto','Compacto'],['estandar','Estándar'],['grande','Grande']].map(([k,l])=>({
+      label:l, pick:()=>this.setTexto(k), style:_btn(s.texto===k)}));
+
+    // compactación del espacio. El valor viene del backend; hasta que llega, `compact` es
+    // null y NINGUNA de las dos se pinta elegida — mejor un control sin elegir por medio
+    // segundo que uno que muestra «Sí» y después salta a «No».
+    // LAS CLAVES QUE ESTA SECCIÓN DIBUJA. No es lo mismo que `aplican`: el backend
+    // contesta todo lo que rige en este ámbito —tema, idioma, tamaño…— y eso vale para los
+    // seis espacios, así que colgar la sección de «¿aplican trae algo?» la hacía aparecer
+    // SIEMPRE. Lo vio la PANTALLA, no una vara: entrando desde Ciencia salía «Ciencia» con
+    // su bajada y CERO controles. La sección existe si hay al menos una clave que ella misma
+    // pinta.
+    /* [fase 4] YA NO ES UNA LISTA A MANO. La sección dibuja `compactacion` —que cuelga de
+       la FORMA del motor y por eso sigue teniendo su regla propia— MÁS todo ajuste que el
+       vocabulario declare como leído por ESTE espacio (`lee_ws`) y para el que el backend
+       haya confirmado que hay puente: `aplican` ya filtra por las dos cosas. Agregar la fila
+       de otro espacio pasa a costar una entrada en `memoria.AJUSTES` y cero líneas acá. */
+    const _decl=s.declarados||{};
+    const CLAVES_DEL_ESPACIO=['compactacion'].concat(
+      Object.keys(_decl).filter(k=>(_decl[k].lee_ws||[]).indexOf(s.esp)>=0));
+    // Hasta que el backend contesta, `aplican` es null y no se dibuja nada: mejor medio
+    // segundo sin sección que una sección que aparece y se va.
+    const delEspacio=(s.aplican||[]).filter(k=>CLAVES_DEL_ESPACIO.indexOf(k)>=0);
+    const puedeCompact=delEspacio.indexOf('compactacion')>=0;
+    const compactOpts=[['si','Sí'],['no','No']].map(([k,l])=>({
+      label:l, pick:()=>this.setCompact(k), style:_btn(s.compact===k)}));
+
+    /* Las filas del oficio de este espacio, construidas desde el vocabulario que manda el
+       backend: título, bajada y opciones salen de ahí. El VALOR de cada opción es el literal
+       del stack (`balanced`, `official`…) y no una traducción: el almacén guarda el
+       vocabulario de quien ya lo escribía, y una tabla de ida y vuelta es una cosa más que
+       mantener. El rótulo humano sí es nuestro, y sale de `--` cuando no hay copy. */
+    const _fila=(k)=>{
+      const d=_decl[k]||{}; const actual=(s.valores||{})[k];
+      const displayActual=_T2('set.'+k+'.'+actual,actual);
+      return { clave:k, titulo:_T2('set.'+k+'.title',d.titulo||k), sub:_T2('set.'+k+'.sub',d.sub||''), actual, displayActual,
+        opciones:(d.valores||[]).map(op=>({ label:_T2('set.'+k+'.'+op,op), pick:()=>this.setAjuste(k,op),
+                                            style:_btn(actual===op) })) };
+    };
+    const _delOficio=delEspacio.filter(k=>k!=='compactacion');
+    // Planas: las que el vocabulario NO agrupa. Es lo que se dibujaba hasta hoy, y sigue
+    // igual para los cinco ajustes de la casa.
+    const filasEspacio=_delOficio.filter(k=>!(_decl[k]||{}).grupo).map(_fila);
+    /* [rediseño · Legal · 38b] AGRUPADAS: la fila madre con sus perillas adentro. El orden
+       de los grupos es el del vocabulario —no alfabético— porque ese orden ya es una
+       decisión de quien escribió la tabla. `abiertos` guarda cuáles están desplegados; el
+       default es ABIERTO, que es como el artboard dibuja Drafting: anidar no puede costar
+       un click de más para ver lo que antes se veía solo. */
+    const _orden=[]; const _porGrupo={};
+    _delOficio.forEach(k=>{ const gr=(_decl[k]||{}).grupo; if(!gr) return;
+      if(!_porGrupo[gr]){ _porGrupo[gr]=[]; _orden.push(gr); } _porGrupo[gr].push(k); });
+    const gruposEspacio=_orden.map(gr=>{
+      const filas=_porGrupo[gr].map(_fila);
+      const abierto=(s.gruposCerrados||{})[gr]!==true;
+      const groupKey=gr==='Drafting'?'set.section.legal.drafting':gr==='Research'?'set.section.legal.research':null;
+      return { titulo:groupKey?_T2(groupKey,gr):gr, filas, abierto,
+        // El resumen es DERIVADO: los valores que sus hijos tienen ahora mismo. Con uno
+        // solo adentro no se repite —diría dos veces lo mismo, arriba y abajo—.
+        resumen: filas.length>1 ? filas.map(f=>f.displayActual).filter(Boolean).join(' · ') : '',
+        estiloCab: abierto ? 'color:var(--accent)' : '',
+        chev: 'transform:rotate('+(abierto?'90':'0')+'deg)',
+        estiloCuerpo: abierto ? 'background:var(--page-solid)' : 'display:none',
+        tog: ()=>{ const m=Object.assign({}, this.state.gruposCerrados||{});
+                   m[gr]=!m[gr]; this.setState({gruposCerrados:m}); } };
+    });
+
+    // connections (catálogo real GET /v1/connectors; conectada = hay key con ese nombre)
+    const connectedSet=new Set((s.keys||[]).map(k=>(k.provider||'').toLowerCase()));
+    // verified por provider (de /keys): el badge va VERDE solo si la key se validó DURO; ÁMBAR si
+    // quedó connected_unverified (validate.soft, ej. Alpha Vantage). Genérico — mismo criterio que
+    // el motor. Default true (verde) si no hay flag → los conectores que validan duro quedan IGUAL.
+    const verifiedMap={}; (s.keys||[]).forEach(k=>{ verifiedMap[(k.provider||'').toLowerCase()]=(k.verified!==false); });
+    // [caminata2] CARA de servicio: MISMA fuente que Conectar/Cuarto (AlephBrand). Conocido → logo
+    // curado (/v1/icons/<slug>, el mismo <img> que Conectar) de fondo; desconocido → iniciales +
+    // color determinista colorFor(nombre), idéntico a AlephBrand.faceHTML. Antes: 1 inicial + PBG →
+    // "logos en Conectar pero iniciales genéricas acá". Sin AlephBrand → cae a PBG/inicial (previo).
+    const AB=window.AlephBrand;
+    const svcFace=(cc, nm, size)=>{
+      // sin borde (regla del sistema): la CARA del servicio se recorta con el radio, no con línea
+      const box='width:'+size+'px;height:'+size+'px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;flex:none;';
+      if(AB && AB.has(cc)) return { logo:'', logoStyle: box+'background:#fff url('+AB.url(cc)+') center/cover no-repeat' };
+      const bg=(AB&&AB.colorFor)?AB.colorFor(nm):(PBG[nm.toLowerCase()]||'var(--accent-soft)');
+      const init=(AB&&AB.initialsOf)?AB.initialsOf(nm):((nm.charAt(0)||'·').toUpperCase());
+      return { logo:init, logoStyle: box+'color:#fff;font-family:var(--font-brand);font-weight:400;font-size:'+Math.max(11,Math.round(size*0.42))+'px;background:'+bg };
+    };
+    const conns=(s.conns||[]).map(c=>{
+      const nm=c.connector||'';
+      const isOn=connectedSet.has(nm.toLowerCase());
+      const isVerified=verifiedMap[nm.toLowerCase()]!==false;
+      const perms=isOn ? (c.capability_line||'conectada') : (c.capability_line||('conecta con tu '+(c.auth_method||'credencial')));
+      const face=svcFace({connector:c.connector, server:c.server, name:c.id||c.name}, nm, 36);
+      return { name:nm, logo:face.logo, perms,
+        connected:isOn, disconnected:!isOn,
+        verifiedOn:isOn&&isVerified, unverifiedOn:isOn&&!isVerified,
+        connect:()=>this.connectTool(nm), revoke:()=>this.removeKey(nm),
+        logoStyle:face.logoStyle };
+    });
+
+    return {
+      // login suave: cerrar sesión SUELTA la cuenta y cae a Home (que rearma la sesión
+      // local anónima) — la puerta jamás vuelve a ser un login. Limpia AMBOS storages.
+      logout:()=>{ let done=null; try{ if(window.AlephSession&&window.AlephSession.clear) done=window.AlephSession.clear(); else { sessionStorage.removeItem('puppet_user'); localStorage.removeItem('puppet_user'); } }catch(e){} if(done&&typeof done.finally==='function') done.finally(()=>{ window.location.href='Home.dc.html'; }); else window.location.href='Home.dc.html'; },
+      avatarInitial, userName, userEmail, memberSince,
+      anonLocal, hasAccount:!anonLocal,
+      anonLine:__t('set.local.banner'), anonCta:__t('set.local.cta'),
+      anonPremium:__t('set.local.premium'), anonPremiumCta:__t('set.local.premium_cta'),
+      addKey:()=>this.addKey(),
+      ref_perfil:el=>this._perfil=el, ref_keys:el=>this._keys=el, ref_pref:el=>this._pref=el,
+      ref_conex:el=>this._conex=el, ref_plan:el=>this._plan=el,
+      ref_memoria:el=>this._memoria=el, ref_peligro:el=>this._peligro=el,
+      field, keys,
+      langs, themes, themeLabel:_T('set.theme.label'), themeDesc:_T('set.theme.desc'), conns,
+      sizes, sizeLabel:_T2('set.textsize.label','Tamaño del texto'),
+      sizeDesc:_T2('set.textsize.desc','Para leer cómodo. Afecta a toda la interfaz.'),
+      // La sección existe sólo si el espacio tiene AL MENOS UN control con lector. Una
+      // sección vacía con el nombre del espacio promete una configuración que no hay.
+      hasEspacio:!!s.esp && !!delEspacio.length, verCompact:puedeCompact,
+      filasEspacio, gruposEspacio,
+      verPuenteAviso:!!s.puenteAviso, puenteAviso:s.puenteAviso,
+      ref_espacio:el=>this._espacio=el,
+      ref_q:el=>this._q=el,
+      ...filaVals,
+      nom_modelos:_rot['modelos']||_label('set.nav.modelos','Modelos'),
+      tituloPantalla:_T2('set.titulo','Ajustes'),
+      subPantalla:_T2('set.sub','Un solo Ajustes para todo Aleph, dividido por secciones.'),
+      buscarPh:_T2('set.buscar','Buscar ajuste o sección…'),
+      q:s.q, setQ:(e)=>this.setState({q:(e&&e.target?e.target.value:'')||''}),
+      generalNota:_T2('set.general_nota','igual en todos los espacios'),
+      espGrupo:(s.espLabel||s.esp||'').toUpperCase(),
+      /* LOS SEIS GRUPOS, en el orden de la casa (`espacios-tabla.js`, la misma copia que
+         usan los chips y el ⚙). El que ya tiene su sección desplegable —el espacio del que
+         venís— no se repite acá: se dibuja abajo, entero. Los otros salen con la tarjeta
+         punteada del artboard.
+
+         ⚠️ POR QUÉ FINANZAS SALE VACÍO Y NO CON SUS OCHO FILAS. El artboard le dibuja Agent,
+         Runtime, Scheduled, Reports, Alpha Zoo, Correlation Matrix, Permissions y Storage.
+         Esos ajustes viven en el backend DEL STACK, y la decisión del dueño para esta tanda
+         fue la opción (a): converge la PUERTA, no la plomería — las credenciales y la config
+         se quedan donde están. Traerlos acá es la deuda escrita en
+         `qa/DEUDA-FINANZAS-CREDENCIALES-AL-VAULT.md`. El día que el backend los declare en
+         `GET /v1/preferencias?ambito=finanzas`, aparecen solos y esta tarjeta se va: la cara
+         no tiene una lista propia que mantener sincronizada. */
+      /* ⚠️ [integración] EL ESPACIO DEL QUE VENÍS NO SE FILTRA SI NO TIENE SECCIÓN PROPIA.
+         El filtro de abajo saca al espacio actual porque ASUME que se dibuja aparte, entero,
+         arriba de esta lista. Pero ese bloque tiene su propio portón —`hasEspacio`, que exige
+         `delEspacio.length`— y cuatro de los seis no tienen ni una perilla propia. Resultado
+         MEDIDO en la instalada, entrando a Ajustes desde cada espacio:
+
+             desde Legal     LEGAL primero, entero        ✓   (4 perillas)
+             desde Oficina   OFICINA primero              ✓   (1 perilla)
+             desde Ciencia · Educación · Diseño · Finanzas    su grupo NO APARECE
+
+         O sea: la única sección que se cae es JUSTO la del espacio en el que estás. Y el
+         artboard dice lo contrario con todas las letras para el caso vacío: «Oficina no
+         agrega nada al bloque general. LA SECCIÓN EXISTE IGUAL para que la página no cambie
+         de forma».
+
+         Se arregla acá y no aflojando `hasEspacio`: ese portón está bien —sin perillas no hay
+         nada que desplegar— y lo que faltaba era la tarjeta vacía, que este bloque ya sabe
+         dibujar. Va PRIMERA, que es donde el brief pide el grupo del espacio del que venís. */
+      grupos: (function(){
+        const ORDEN = ['ciencia','oficina','legal','educacion','diseno','finanzas'];
+        const NOM = Object.fromEntries(ORDEN.map(id=>[id,_T('ws.'+id+'.nombre')]));
+        /* Los glifos, en el orden de la fila. El artboard dibuja un ícono por fila; acá van
+           los de la casa —los mismos que usa GENERAL— porque inventar un SVG por superficie
+           ajena sería dibujar algo que el diseño no fijó para nosotros. */
+        const ICO = { skills:'◈', specialists:'✳', compute:'▦', sandbox:'⌘', permissions:'✓',
+                      knowledge:'▤', cowriter:'✎', space:'▣',
+                      agent:'◍', runtime:'⚡', scheduled:'▦', reports:'▤', alphazoo:'◇',
+                      correlation:'▥' };
+        const propioVaAparte = !!s.esp && !!delEspacio.length;
+        const orden = propioVaAparte
+          ? ORDEN.filter(id => id !== s.esp)
+          : (s.esp && NOM[s.esp] ? [s.esp].concat(ORDEN.filter(id => id !== s.esp)) : ORDEN);
+        const SEC = s.secciones || {};
+        return orden.map(id => {
+          const filas = (SEC[id] || []).map(sec => ({
+            rotulo: sec.rotulo,
+            ico: ICO[sec.id] || '▣',
+            /* Ya viene armado de la tabla: un path para los stacks que rutean, un id de panel
+               para los que abren un diálogo, o la propia pantalla de Ajustes cuando el ajuste
+               es de la casa (Legal). */
+            href: sec.href,
+          }));
+          return {
+            titulo: NOM[id].toUpperCase(),
+            hayFilas: filas.length > 0,
+            filas,
+            /* La tarjeta punteada SÓLO cuando de verdad no hay nada. Antes salía para los
+               cinco espacios de los que no venías —Legal y Oficina incluidos, que sí tienen
+               ajustes—, y eso era mentira en pantalla. */
+            vacio: filas.length === 0,
+            vacioTit: _T2('set.grupo.vacio.tit','Sin ajustes propios'),
+            vacioSub: _T2('set.grupo.vacio.sub',
+              NOM[id] + ' no agrega nada al bloque general. La sección existe igual para que la página no cambie de forma.', {nombre:NOM[id]}),
+          };
+        });
+      })(),
+      nadaEncontrado:_visibles===0,
+      nadaTexto:_T2('set.nada','Ningún ajuste se llama así. Prueba con otra palabra.'),
+      salirLabel:_T2('set.salir','Cerrar sesión'),
+      backendLabel:_T2('set.salud.backend','Backend'),
+      backendEstado:_ok?_T2('set.salud.online','En línea'):_T2('set.salud.caido','Sin respuesta'),
+      saludPunto:'width:8px;height:8px;background:'+(_ok?'var(--green)':'var(--red)'),
+      hayDisco:!!_d,
+      discoLabel:_T2('set.salud.disco','Disco'),
+      discoTexto:_d?(_num(_d.libre_gb)+' GB '+_T2('set.salud.libres','libres')):'',
+      discoPunto:'width:8px;height:8px;background:'+(_dok?'var(--green)':'var(--amber)'),
+      espLabel:s.espLabel||s.esp||'',
+      espSub:_T2('set.espacio.sub','Lo que es sólo de este espacio. Lo demás —cuenta, modelos, apariencia, conexiones y memoria— es de toda la casa y vive arriba.'),
+      compactLabel:_T2('set.compact.label','Compactar el contexto solo'),
+      compactDesc:_T2('set.compact.desc','Cuando la conversación se hace larga, el espacio la resume solo para poder seguir.'),
+      compactAviso:_T2('set.compact.aviso','Se aplica al abrir el espacio. Si lo tienes abierto, ciérralo y vuelve a entrar.'),
+      compactOpts,
+      togglePw:()=>this.togglePw(), setPwCur:e=>this.setPwCur(e), setPwNew:e=>this.setPwNew(e), savePw:()=>this.savePw(), exportData:()=>this.exportData(),
+      pwOpen:s.pwOpen, pwCur:s.pwCur, pwNew:s.pwNew, pwMsg:s.pwMsg, pwHasMsg:!!s.pwMsg,
+      pwMsgStyle:'font:400 12px var(--font-ui);margin-top:12px;color:'+(s.pwOk?'var(--green)':'var(--red)'),
+      changePassLabel:_T('set.changepass'), exportLabel:_T('set.export'),
+      savePassLabel:_T('common.guardar'), cancelLabel:_T('common.cancelar'),
+      pwCurPh:_T('set.pw_current'), pwNewPh:_T('set.pw_new'),
+      // ── [F4b · obra 4] los transcripts del CLI ────────────────────────────────
+      // TODO lo que se muestra sale del backend (`donde()` y el dry-run del borrado):
+      // el front no cuenta archivos por su cuenta. Si contara, podría decir un número y
+      // borrar otro — y en un botón destructivo esa diferencia se paga cara.
+      txLede: (s.tx && s.tx.disponible)
+        ? (s.tx.activo
+            ? 'Esto elimina únicamente las transcripciones CLI creadas por Aleph. No elimina tus chats, memoria ni otros datos de Aleph.'
+            : 'Las sesiones del CLI están apagadas (PUPPET_CLI_SESIONES=0): no se guarda ninguna conversación nueva.')
+        : 'No se pudo leer el estado de las sesiones del CLI.',
+      txHay: !!(s.tx && s.tx.disponible && s.tx.de_aleph),
+      txDonde: s.tx ? ('Carpeta: '+(s.tx.carpeta||'—')) : '',
+      txAleph: s.tx && s.tx.de_aleph
+        ? ('De Aleph: '+s.tx.de_aleph.carpetas+' conversación(es) · '+s.tx.de_aleph.transcripts+' archivo(s)') : '',
+      // LA LÍNEA EXPLÍCITA. En esa carpeta viven también las conversaciones que el usuario
+      // abre en su terminal — y Aleph no las toca. Decirlo con el NÚMERO es lo que hace
+      // que sea una garantía y no una promesa.
+      txTuyas: s.tx && s.tx.tuyos
+        ? ('Tus '+s.tx.tuyos.carpetas+' conversaciones propias de la terminal NO se tocan.')
+        : 'Tus conversaciones propias de la terminal NO se tocan.',
+      txConfirmar: (s.tx && s.tx.previo)
+        ? ('Se van a borrar únicamente las transcripciones CLI generadas por Aleph: '
+           +(s.tx.previo.borradas||0)+' conversación(es), '
+           +(s.tx.previo.transcripts||0)+' archivo(s). Tus chats, memoria y otros datos de Aleph no se tocan.')
+        : 'Se van a borrar únicamente las transcripciones CLI generadas por Aleph. Tus chats, memoria y otros datos de Aleph no se tocan.',
+      // ── MEMORIA ──────────────────────────────────────────────────────────────────
+      // El lede dice el NÚMERO y de dónde sale, sin promesas: si son 0 no se anuncia una
+      // memoria que no hay, y si hay se dice que entra en cada turno, que es el hecho.
+      memLede: (s.mems===null) ? 'Leyendo…'
+        : (s.mems.length===0
+            ? 'Aleph todavía no guardó nada tuyo.'
+            : 'Son '+s.mems.length+' cosa(s) que Aleph aprendió de ti y le entran en cada '
+              +'turno. Puedes sacar cualquiera: si la olvidas, deja de leerla.'),
+      memVacio: s.mems!==null && s.mems.length===0,
+      mems: (s.mems||[]).slice(0, s.memsVer).map(m=>({
+        content: m.content,
+        // La procedencia importa: no es lo mismo lo que vos le dijiste que lo que él
+        // dedujo solo. Y el agente, porque el mismo dueño tiene muchos.
+        pie: (m.source==='user' ? 'Se lo dijiste tú' : 'Lo aprendió él')
+             + (m.puppet_name ? ' · '+m.puppet_name : '')
+             + (m.created_at ? ' · '+String(m.created_at).slice(0,10) : ''),
+        btn: s.memsBorrando===m.id ? 'Olvidando…' : 'Olvidar',
+        olvidar: ()=>this.olvidar(m),
+      })),
+      memHayMas: !!(s.mems && s.mems.length > s.memsVer),
+      memVerMasTxt: s.mems ? ('Ver '+Math.min(50, s.mems.length-s.memsVer)+' más de '+(s.mems.length-s.memsVer)) : '',
+      memVerMas: ()=>this.setState(st=>({memsVer: st.memsVer+50})),
+      memMsg: s.memsMsg,
+      txAbierto: s.txOpen, txCerrado: !s.txOpen && !s.txBusy, txMsg: s.txMsg,
+      askTx:()=>this.askTx(), doTx:()=>this.doTx(),
+      cancelTx:()=>this.setState({txOpen:false}),
+    };
+  }
+}
+</script>
+</body>
+</html>

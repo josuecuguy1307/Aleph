@@ -1,0 +1,107 @@
+{
+  "connector": "zotero",
+  "auth_method": "personal_token",
+  "tier": "average",
+  "needs_base_url": false,
+  "deep_link": "https://www.zotero.org/settings/keys/new",
+  "api_base": "https://api.zotero.org",
+  "credential_fields": [
+    {
+      "id": "key",
+      "label": "Tu llave de Zotero",
+      "shape": "P9NiFoyLeZu2bZ…vuQPDWsd (24 letras y números, sin prefijo)",
+      "secret": true
+    }
+  ],
+  "auth": {
+    "scheme": "header",
+    "name": "Zotero-API-Key",
+    "value": "{key}"
+  },
+  "steps": [
+    {
+      "txt": "Te llevo a crear una llave nueva en Zotero. Ahí: pon un nombre (ej. 'Mi asistente') → marca «Allow library access» Y «Allow write access» (así puede GUARDAR citas, no solo leer) → Guardar.",
+      "emphasis": [
+        "Allow library access",
+        "Allow write access",
+        "Guarda"
+      ]
+    },
+    {
+      "txt": "Copia la llave que aparece. Es la única vez que Zotero te la muestra — cópiala completa."
+    },
+    {
+      "txt": "Pega tu llave aquí."
+    }
+  ],
+  "validate": {
+    "method": "GET",
+    "path": "/keys/current",
+    "identity_field": "username",
+    "require": [
+      {
+        "field": "access.user.library",
+        "error": "missing_permission:leer tu biblioteca"
+      },
+      {
+        "field": "access.user.write",
+        "error": "missing_permission:guardar citas en tu biblioteca"
+      }
+    ]
+  },
+  "permissions": [
+    "leer tu biblioteca",
+    "guardar citas en tu biblioteca"
+  ],
+  "requires_sharing": false,
+  "errors": {
+    "invalid": "Esa llave no funcionó o se borró — genera una nueva en Zotero y pégala.",
+    "wrong_account": "Esa llave es de otra cuenta de Zotero. Generala desde la cuenta donde está tu biblioteca.",
+    "missing_permission:leer tu biblioteca": "Tu llave no tiene acceso a la biblioteca. Al crearla, marca «Allow library access».",
+    "missing_permission:guardar citas en tu biblioteca": "Tu llave puede leer pero no escribir. Genera una nueva y marca «Allow write access» para que pueda guardar citas.",
+    "network": "No pude verificar ahora — prueba de nuevo en un momento."
+  },
+  "escape_hatch": true,
+  "capability_line": "Listo — ya puedo leer tu biblioteca de Zotero y guardar las citas que encuentre.",
+  "trust_line": "Tu llave se guarda cifrada · la quitas cuando quieras.",
+  "verification": {
+    "deep_link_ok": true,
+    "anchor_ok": false,
+    "validated_with_test_key": false,
+    "notes": "validate GET api.zotero.org/keys/current devuelve {key,userID,username,access} → identity 'username' Y el userID (el wizard lo deriva, NO se pide aparte). Llave = 24 chars sin prefijo (reconocible por forma/longitud, no por prefijo). La llave va en header 'Zotero-API-Key' (el wizard lo arma). NO confirmé en vivo el label 'Allow library access' ni /keys/new. Sin test key, no validé. [v3] auth scheme declarado (header); es el estándar del proveedor pero NO validado en vivo sin test key."
+  },
+  "en": {
+    "steps": [
+      {
+        "txt": "I'll take you to create a new key in Zotero. There: give it a name (e.g. 'My assistant') → check «Allow library access» AND «Allow write access» (so it can SAVE citations, not just read) → Save.",
+        "emphasis": [
+          "Allow library access",
+          "Allow write access",
+          "Save"
+        ]
+      },
+      {
+        "txt": "Copy the key that appears. This is the only time Zotero shows it to you — copy it in full."
+      },
+      {
+        "txt": "Paste it here."
+      }
+    ],
+    "trust_line": "Your key is stored encrypted · remove it anytime.",
+    "capability_line": "Done — I can now read your Zotero library and save the citations I find.",
+    "errors": {
+      "invalid": "That key didn't work or was deleted — generate a new one in Zotero and paste it.",
+      "wrong_account": "That key belongs to a different Zotero account. Generate it from the account where your library lives.",
+      "missing_permission:leer tu biblioteca": "Your key doesn't have access to the library. When you create it, check «Allow library access».",
+      "missing_permission:guardar citas en tu biblioteca": "Your key can read but not write. Generate a new one and check «Allow write access» so it can save citations.",
+      "network": "I couldn't verify right now — try again in a moment."
+    },
+    "credential_fields": [
+      {
+        "id": "key",
+        "label": "Your Zotero key",
+        "shape": "P9NiFoyLeZu2bZ…vuQPDWsd (24 letters and numbers, no prefix)"
+      }
+    ]
+  }
+}

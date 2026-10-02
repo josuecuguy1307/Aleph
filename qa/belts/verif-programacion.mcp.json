@@ -1,0 +1,1 @@
+{"mcpServers":{"script_runner":{"command":"python3","args":["${PUPPET_REPO}/product/belts/gaps/script_runner_mcp.py"]}}}

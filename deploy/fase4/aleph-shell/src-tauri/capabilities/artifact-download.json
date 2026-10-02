@@ -1,0 +1,16 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "artifact-download",
+  "description": "Allow the local Aleph workspace container to save generated exports in Downloads.",
+  "windows": ["main"],
+  "local": true,
+  "remote": {
+    "urls": [
+      "http://127.0.0.1:8330",
+      "http://127.0.0.1:8331",
+      "http://127.0.0.1:8332",
+      "http://127.0.0.1:8333"
+    ]
+  },
+  "permissions": ["allow-download-artifact"]
+}

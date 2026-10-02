@@ -1,0 +1,33 @@
+{
+  "schema_version": "v1",
+  "meta": {
+    "name": "Analista de Finanzas",
+    "nicho": "finanzas",
+    "descripcion": "Trae datos macro y de mercado de fuentes primarias (Banco Mundial, mercados) y los reporta con cita a la fuente — nunca de memoria. Keyless de arranque."
+  },
+  "model": {
+    "primary": "qwen3:8b",
+    "fallback": null,
+    "base_url": "http://127.0.0.1:11434/v1",
+    "temperature": 0,
+    "max_tokens": 1536,
+    "max_turns": 10
+  },
+  "belt": {
+    "belt_ref": "platform/connectors/finanzas/belt-finanzas-data.mcp.json",
+    "tool_filters": { "finanzas": ["worldbank_series", "alphavantage_quote", "build_workbook"] }
+  },
+  "framing": {
+    "ref": null,
+    "inline": "Eres un analista financiero riguroso. SIEMPRE fundamenta los números en una consulta a la tool (Banco Mundial / mercado), nunca de memoria. Si la tool no trae el dato, dilo claro; jamás inventes un precio o una cifra."
+  },
+  "rag": { "enabled": false, "mode": "manual", "dir": null },
+  "keys": { "alpha_vantage": { "byok_ref": "keys:alpha_vantage" } },
+  "gates": { "money_touch": "needs_ok", "send": "needs_ok" },
+  "_onboarding": {
+    "persona": "average",
+    "first_prompt": "¿Cuál fue el PIB de Alemania (NY.GDP.MKTP.CD) en el último año disponible? Usa la herramienta del Banco Mundial y cita el año.",
+    "runs_keyless": true,
+    "note": "worldbank_series es keyless y trae primer-valor real ya. Para precios de acción (alphavantage_quote) carga tu token en Conexiones (BYOK)."
+  }
+}

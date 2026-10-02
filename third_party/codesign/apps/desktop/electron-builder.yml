@@ -1,0 +1,145 @@
+appId: ai.aleph.diseno
+productName: Aleph Diseno
+directories:
+  buildResources: resources
+  output: release
+files:
+  - out/**
+  - package.json
+  - "!**/*.map"
+  - "!**/*.d.ts"
+  - "!**/*.d.cts"
+  - "!**/*.d.mts"
+  - "!**/*.tsbuildinfo"
+  - "!**/{test,tests,__tests__,coverage,docs,doc,example,examples}/**"
+  - "!**/*.{test,spec}.*"
+extraResources:
+  - from: resources/templates
+    to: templates
+asar: true
+afterPack: scripts/after-pack-prune.cjs
+electronLanguages:
+  - en-US
+  - zh-CN
+  - pt-BR
+mac:
+  # Electron 39 aborts before creating a window when CFBundleExecutable contains
+  # the decomposed "ñ" of Diseño (locale_file_path.empty() for en-US). Keep the
+  # executable path ASCII while Finder presents the localized house name.
+  extendInfo:
+    CFBundleDisplayName: Diseño
+    # [Aleph] NACE SIN ÍCONO, no lo esconde después. Adentro de Aleph este binario es el
+    # MOTOR de un workspace, no una aplicación: su cara vive en la webview. Sin esta llave
+    # macOS lo registra como app y su ícono aparece en el Dock y en cmd-Tab, como si Diseño
+    # fuera un programa aparte que el usuario puede traer al frente.
+    #
+    # Va acá y no sólo en `app.dock.hide()` porque son dos momentos distintos: esto es una
+    # llave del Info.plist —la lee el sistema ANTES de ejecutar una línea de JS— y aquello
+    # es runtime, que depende de llegar hasta esa línea (hoy corre después de construir el
+    # puente y registrar los IPC). El `dock.hide()` del main queda de respaldo.
+    LSUIElement: true
+  category: public.app-category.developer-tools
+  icon: resources/icon.icns
+  hardenedRuntime: true
+  gatekeeperAssess: false
+  notarize: false
+  artifactName: open-codesign-${version}-${arch}.${ext}
+  target:
+    - target: dmg
+      arch: [arm64, x64]
+dmg:
+  # Custom window layout guides users to drag the app into /Applications.
+  # Running Open CoDesign from a mounted DMG instead of /Applications
+  # breaks (1) the auto-update code path (read-only volume can't receive
+  # electron-updater's staged binary), and (2) XDG-style user-data-dir
+  # resolution (Electron falls back to a path inside the mounted image
+  # which disappears when the volume ejects). The background, arrow, and
+  # in-app boot check (install-check.ts) steer users to the right flow.
+  background: build/dmg-background.png
+  iconSize: 92
+  window:
+    width: 640
+    height: 480
+  contents:
+    - x: 140
+      y: 240
+      type: file
+    - x: 500
+      y: 240
+      type: link
+      path: /Applications
+win:
+  icon: resources/icon.ico
+  # Windows package-manager channels have different needs: winget installs the
+  # NSIS setup exe, while Scoop should consume a plain portable zip so it does
+  # not have to unpack electron-builder's nested NSIS payload.
+  artifactName: open-codesign-${version}-${arch}.${ext}
+  target:
+    - target: nsis
+      arch: [x64, arm64]
+    - target: zip
+      arch: [x64, arm64]
+nsis:
+  artifactName: open-codesign-${version}-${arch}-setup.${ext}
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+linux:
+  icon: resources/icon.png
+  # `executableName` controls the binary name AND the deb/rpm package name.
+  # Without it electron-builder falls back to `productName` ("Open CoDesign"),
+  # which rpmbuild rejects because RPM package names can't contain spaces or
+  # uppercase — the fpm invocation `--name Open CoDesign` gets shell-split
+  # into two args and the generated spec file ends up at "Open CoDesign.spec"
+  # which rpmbuild then refuses to read. Scoped to `linux.` so the macOS
+  # `.app` bundle and Windows `.exe` keep their pretty "Open CoDesign" name.
+  executableName: open-codesign
+  # `maintainer`, `vendor`, `synopsis`, and `description` are REQUIRED metadata
+  # for deb/rpm. electron-builder falls back to `author@noreply.github.com` and
+  # "Unknown" when they're missing, which causes lintian warnings and gets the
+  # package rejected by strict apt mirrors. Values kept in sync with
+  # opencowork.ai's other published contacts (security@, conduct@).
+  maintainer: Open CoDesign Maintainers <maintainers@opencowork.ai>
+  vendor: OpenCoworkAI
+  # `synopsis` is the deb `Description:` one-liner and the rpm `Summary:`
+  # field. Debian convention says no trailing period — lintian emits
+  # "synopsis-ends-with-a-full-stop" if you add one.
+  synopsis: Prompt-to-design desktop app for HTML prototypes, decks, and marketing assets
+  # Single-line description: fpm passes it through as a shell arg and some
+  # rpmbuild paths choke on embedded newlines even when the arg is quoted.
+  description: Open CoDesign turns natural-language prompts into interactive HTML prototypes, PDF-ready slide decks, and marketing assets. Multi-provider model support (Anthropic, OpenAI, Google Gemini, DeepSeek, local Ollama, any OpenAI-compatible endpoint), BYOK, local-first storage, no telemetry.
+  # Hardcode `x64` (not ${arch}) because electron-builder substitutes ${arch}
+  # differently per Linux target convention (AppImage → x86_64, deb → amd64,
+  # rpm → x86_64). SmartDownload.vue + Homebrew cask + Flatpak manifest all
+  # reference `-x64.ext`; picking a fixed literal keeps them in sync. We
+  # only ship one Linux arch, so this is safe until we add arm64.
+  artifactName: open-codesign-${version}-x64.${ext}
+  target:
+    - target: AppImage
+      arch: [x64]
+    - target: deb
+      arch: [x64]
+    - target: rpm
+      arch: [x64]
+    # Snap is built in a separate, best-effort CI step (see
+    # .github/workflows/release.yml) because snapcraft on ubuntu-latest
+    # is heavyweight and occasionally flakes. The target config below is
+    # used when that step invokes `electron-builder --linux snap`.
+  category: Graphics
+snap:
+  grade: stable
+  confinement: strict
+  summary: Prompt → polished HTML prototypes, slide decks, and marketing assets.
+# electron-builder defaults fpm's `--name` arg to productName ("Open CoDesign"),
+# which rpmbuild rejects outright (spaces + uppercase are forbidden in RPM
+# package names) and which makes `Package: Open CoDesign` in the deb control
+# file — lintian trips on both. `linux.executableName` fixes binary / desktop
+# file / icon names but NOT the fpm --name, so we override that explicitly
+# here. Passing --name last in the fpm arg list makes it win argparse.
+deb:
+  fpm:
+    - "--name"
+    - "open-codesign"
+rpm:
+  fpm:
+    - "--name"
+    - "open-codesign"

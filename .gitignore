@@ -1,0 +1,164 @@
+# Secretos / config local — NO commitear
+.claude/settings.local.json
+.env
+**/secrets/**
+# Override OAuth desktop de desarrollo (el valor jamás entra al repo/bundle).
+**/onshape.local.json
+
+# Entornos virtuales Python
+.venv/
+venv/
+
+# Caché Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Dependencias Node
+node_modules/
+
+# Caché de tests
+.pytest_cache/
+
+# Vault cifrado (credenciales) — local, nunca a git
+*.enc
+**/vault.enc
+
+# Data de runtime generada (outputs de runs con .git embebidos, RAG subido) — no es source
+product/backend/data/run_outputs/
+product/backend/data/rag/
+product/backend/data/artifacts/
+product/backend/data/artifact_downloads/
+# Estado de runtime de la capa de safety (audit/kill-switch/rate/blast) — no es source [T9]
+product/backend/data/safety/
+# Espacios/sesiones de runtime (events.jsonl de runs, recon, inspect, byo, audit-probe) — data, no source
+product/backend/data/espacios/
+# Belts forjados on-demand por BYO-MCP (synth) — runtime por-árbol, "no se commitean" por diseño
+product/backend/data/synth_belts/
+# Cache de resoluciones del resolver de MCPs (nombre→server validado, SIN credencial) — runtime
+product/backend/data/resolver_cache/
+# Favicons de servicios cacheados server-side (ticket 8 · /v1/icons) — cache regenerable, no source
+product/backend/data/brand_icons/
+# D3 · puentes de identidad exportados por el router (agent_catalog.export_agent) + tmp atómico —
+# runtime keyed por UUID, NO source. Los 2 fixtures committeados (qa-sum-sub / research-sub) NO matchean.
+catalog/agents/agent-*.config.json
+catalog/agents/.agent-*.tmp
+# Biblioteca de captura §8 (estrategias ganadoras indexadas por huella de familia) — runtime/flywheel, no source
+product/backend/data/capture_library/
+# Borradores de la Mesa de Construcción (snapshots retomables por-principal) — runtime, no source
+product/backend/data/construcciones/
+product/backend/data/outbox/
+
+# Dumps de la base (Step 5 · v2) — red de seguridad del free tier de Supabase, que NO
+# tiene backups automáticos. Contienen el esquema completo y, en el futuro, DATOS DE
+# USUARIOS. Jamás a git: se guardan fuera del repo.
+backups/supabase/
+
+# ── Higiene del árbol (Casa 2 · Fase 0) ────────────────────────────────────────
+# Estos ya estaban TRACKEADOS pese a que data/ tiene patrones: git no saca solo lo que
+# ya entró al índice. Se destrackearon con `git rm --cached` (siguen en disco) y estas
+# líneas evitan que vuelvan. users.db es el store de cuentas PARALELO que murió en P8
+# (main.py:446) — 0 filas, carcasa vacía.
+product/backend/data/users.db
+.DS_Store
+**/.DS_Store
+# Logs de RUNTIME, por ruta. NO un `*.log` global: reports/ guarda logs a propósito
+# (security.log, usage.log, la evidencia del Caso 3) y son artefactos que SÍ se commitean.
+/chatbot.log
+platform/eval/*.log
+.caso3-logs/
+
+# [Casa 2 · Fase 4 · 4.3] identidad de build HORNEADA — se genera por build (preparar_cliente.sh), nunca se commitea
+aleph_build_id.py
+
+# [Casa 2 · Fase 4 · 4.4.0] salida de PyInstaller — el bundle congelado (~277M) y el work-dir.
+# Se REGENERAN desde el .spec; jamás a git. (dist/ y build/ en la raíz del repo.)
+/dist/
+/build/
+
+# ── [Gate 4 · Fase 6 · §6.a.bis] LOS RUNTIMES DE LA BÚSQUEDA DE LA SALA ────────
+# Artefactos de build: se PRODUCEN (deploy/fase6/producir_busqueda.sh) y viajan por el
+# spec del sidecar. Ninguno se commitea.
+#
+# ⚠️ EL PRIMERO NO ES HIGIENE, ES LA FRONTERA DE LICENCIA. SearXNG es AGPL-3.0 y
+# `third_party/README.md` lo prohíbe como código adentro; su venv vive acá sólo como
+# proceso vecino (PROCESO-SEARXNG.md). Hoy queda fuera de git porque `python3 -m venv`
+# escribe su propio `.gitignore` con `*` — o sea que la frontera de licencia depende de
+# un archivo que genera una herramienta y que cualquiera puede borrar sin saber qué
+# sostiene. Se declara acá, explícito, para que no dependa de ese accidente.
+/platform/sala/busqueda/searxng/
+
+# El navegador de Playwright que Vane usa para LEER las páginas que encuentra
+# (`src/lib/scraper.ts:16`). ~192 MB, se baja con `playwright install --only-shell`.
+/third_party/vane/.playwright/
+# Caché incremental de tsc, subproducto de `yarn build`.
+/third_party/vane/tsconfig.tsbuildinfo
+# El Python que viaja (python-build-standalone via uv), compartido por los dos modos de
+# la Sala. Artefacto de build: lo produce `deploy/fase6/producir_busqueda.sh`.
+/platform/sala/research/runtime/
+
+# [§6.f] Las 279 dependencias del motor de Deep Research, instaladas al lado del launcher
+# (`platform/sala/research/arranque.sh` las pone en PYTHONPATH). 1,9 GiB de wheels: es
+# runtime producido, no source — el mismo criterio con el que su hermano deja afuera el
+# venv de SearXNG, y producidas por el mismo camino (`deploy/fase6/`).
+/platform/sala/research/lib/
+
+# [Gate 4 · Fase 6 · §6.a] EL DIST Y EL BINARIO DE OFICINA — artefactos de BUILD.
+# Se colaron a un commit de esta obra (597 archivos, con un binario de 62 MB) porque, a
+# diferencia de los de Vane, SearXNG y los runtimes, nadie los había ignorado. El spec ya
+# los exige y el build los produce (`cd third_party/openwork && pnpm run build` y el
+# `bun build --compile` del server): viajan por el spec, no por git. Los bytes no van a
+# git; lo que va es la instrucción de producirlos.
+third_party/openwork/apps/app/dist/
+third_party/openwork/apps/server/dist/
+# Native addon output of apps/server/script/build-safe-fs.sh; commit its C source and builder.
+third_party/openwork/apps/server/src/safe-fs-darwin.node
+
+# salida de la vara visual (capturas de una corrida, no del árbol)
+qa/visual/salida/
+
+# Saneamiento de la exportación pública local: estos directorios son estado,
+# adjuntos o evidencias generadas, no código fuente portable.
+/.claude/
+/data/user/
+/reports/
+/product/app/design/uploads/
+/platform/eval/runs/
+/eval/report/
+/platform/assembler/cli_brain/agents/.grok/
+
+# Binarios producidos por el empaquetado de los cuatro stacks. En el origen eran
+# enlaces absolutos a una app instalada; la copia limpia nunca los referencia.
+/third_party/deeptutor/bin/
+/third_party/openscience/bin/
+/third_party/vibetrading/bin/
+/third_party/openwork/bin/
+
+# Snapshots versionados por error en el origen; los runners los regeneran con una
+# ruta explícita y no constituyen fixtures de producto.
+/platform/assembler/.demo-session-run/
+/platform/flywheel/agents.jsonl
+
+# Internal local sanitation report, not public build evidence.
+/docs/CORRECCION-DIRIGIDA.md
+/third_party/dochaus/packages/storybook/debug-storybook.log
+/deploy/fase4/isolated-output/
+/.officecli-validation.*/
+
+# Public source snapshot: generated/private inputs stay outside the new history.
+*.dmg
+*.app/
+*.db
+*.sqlite
+*.sqlite3
+*.log
+*.p12
+*.pfx
+*.key.pem
+**/.secrets.baseline
+/deploy/guest/runtime/
+/third_party/officecli/bin/
+/third_party/gws/bin/
+/third_party/opencode/bin/
+/qa/visual/baseline/
+/qa/visual/stacks/

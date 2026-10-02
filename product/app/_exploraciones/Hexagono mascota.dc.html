@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:#DED6C7;font-family:'Hanken Grotesk',system-ui,-apple-system,sans-serif;color:#2B2925;-webkit-font-smoothing:antialiased}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+  @keyframes hop{0%,55%,100%{transform:translateY(0)}70%{transform:translateY(-9px)}85%{transform:translateY(0)}}
+  @keyframes blink{0%,90%,100%{transform:scaleY(1)}95%{transform:scaleY(.12)}}
+  @keyframes look{0%,100%{transform:translateX(-2.2px)}50%{transform:translateX(2.2px)}}
+  @keyframes twinkle{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.55)}}
+  @keyframes zfloat{0%{opacity:0;transform:translate(0,0) scale(.7)}30%{opacity:1}100%{opacity:0;transform:translate(6px,-12px) scale(1.1)}}
+  @keyframes think{0%,100%{opacity:.2}50%{opacity:1}}
+  .orbit{transform-origin:32px 32px}
+  .ctr{transform-box:fill-box;transform-origin:center}
+</style>
+</helmet>
+
+<div style="min-height:100vh;padding:42px 40px 72px">
+  <div style="max-width:1180px;margin:0 auto">
+
+    <div style="font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#9A9082">Mascota · hexágono vivo</div>
+    <h1 style="font-family:'Spectral',Georgia,serif;font-weight:600;font-size:31px;margin:8px 0 6px;letter-spacing:-.015em">El hexágono, como personaje</h1>
+    <p style="margin:0 0 38px;color:#6F6A60;font-size:14.5px;max-width:74ch;line-height:1.6">El mismo átomo-hexágono, pero actuado: seis estados que muestran que está vivo y reacciona. Así se sentiría dentro del producto — pensando mientras trabaja, festejando cuando termina, dormido cuando descansa. Decime cuáles te gustan y los dejo como set oficial.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px">
+
+      <!-- 1 · Reposo -->
+      <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+        <div style="display:flex;align-items:center;justify-content:center;height:188px;background:#16172A">
+          <svg width="112" height="112" viewBox="0 0 64 64" fill="none" style="animation:bob 4.5s ease-in-out infinite">
+            <g class="orbit" style="animation:spin 14s linear infinite">
+              <g transform="rotate(0 32 32)"><ellipse cx="32" cy="32" rx="24" ry="9.5" stroke="#6E6BD0" stroke-width="1.7"></ellipse><circle cx="56" cy="32" r="3" fill="#C9C6FF"></circle></g>
+              <g transform="rotate(60 32 32)"><ellipse cx="32" cy="32" rx="24" ry="9.5" stroke="#6E6BD0" stroke-width="1.7"></ellipse><circle cx="56" cy="32" r="3" fill="#C9C6FF"></circle></g>
+              <g transform="rotate(120 32 32)"><ellipse cx="32" cy="32" rx="24" ry="9.5" stroke="#6E6BD0" stroke-width="1.7"></ellipse><circle cx="56" cy="32" r="3" fill="#C9C6FF"></circle></g>
+            </g>
+            <path d="M32 20 L42.4 26 L42.4 38 L32 44 L21.6 38 L21.6 26 Z" fill="#8E8BF5" stroke="#8E8BF5" stroke-width="4" stroke-linejoin="round"></path>
+            <g class="ctr" style="animation:blink 4.5s ease-in-out infinite">
+              <circle cx="28.5" cy="32" r="2" fill="#211E3A"></circle>
+              <circle cx="35.5" cy="32" r="2" fill="#211E3A"></circle>
+            </g>
+          </svg>
+        </div>
+        <div style="padding:14px 16px;border-top:1px solid #F0E8D8">
+          <div style="font-family:'Spectral',serif;font-weight:600;font-size:16px">1 · Reposo</div>
+          <div style="font-size:12.5px;color:#7C766B;line-height:1.5;margin-top:3px">Flota tranquilo y parpadea. Su estado por defecto, esperando que le des una tarea.</div>
+        </div>
+      </div>
+
+      <!-- 2 · Pensando -->
+      <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+        <div style="display:flex;align-items:center;justify-content:center;height:188px;background:#16172A">
+          <svg width="112" height="112" viewBox="0 0 64 64" fill="none">
+            <g class="orbit" style="animation:spin 10s linear infinite">
+              <g transform="rotate(0 32 32)"><ellipse cx="32" cy="32" rx="24" ry="9.5" stroke="#6E6BD0" stroke-width="1.7"></ellipse><circle cx="56" cy="32" r="3" fill="#C9C6FF"></circle></g>
+              <g transform="rotate(60 32 32)"><ellipse cx="32" cy="32" rx="24" ry="9.5" stroke="#6E6BD0" stroke-width="1.7"></ellipse><circle cx="56" cy="32" r="3" fill="#C9C6FF"></circle></g>
+              <g transform="rotate(120 32 32)"><ellipse cx="32" cy="32" rx="24" ry="9.5" stroke="#6E6BD0" stroke-width="1.7"></ellipse><circle cx="56" cy="32" r="3" fill="#C9C6FF"></circle></g>
+            </g>
+            <path d="M32 20 L42.4 26 L42.4 38 L32 44 L21.6 38 L21.6 26 Z" fill="#8E8BF5" stroke="#8E8BF5" stroke-width="4" stroke-linejoin="round"></path>
+            <circle cx="29.5" cy="30.4" r="2" fill="#211E3A"></circle>
+            <circle cx="36.5" cy="30.4" r="2" fill="#211E3A"></circle>
+            <circle cx="46" cy="20" r="1.6" fill="#C9C6FF" style="animation:think 1.4s ease-in-out infinite"></circle>
+            <circle cx="50.5" cy="16" r="1.3" fill="#C9C6FF" style="animation:think 1.4s ease-in-out infinite .25s"></circle>
+            <circle cx="54.5" cy="12.5" r="1" fill="#C9C6FF" style="animation:think 1.4s ease-in-out infinite .5s"></circle>
+          </svg>
+        </div>
+        <div style="padding:14px 16px;border-top:1px solid #F0E8D8">
+          <div style="font-family:'Spectral',serif;font-weight:600;font-size:16px">2 · Pensando</div>
+          <div style="font-size:12.5px;color:#7C766B;line-height:1.5;margin-top:3px">Mira para arriba y le aparecen burbujitas. Para cuando está razonando un pedido.</div>
+        </div>
+      </div>
+
+      <!-- 3 · Trabajando -->
+      <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+        <div style="display:flex;align-items:center;justify-content:center;height:188px;background:#16172A">
+          <svg width="112" height="112" viewBox="0 0 64 64" fill="none">
+            <g class="orbit" style="animation:spin 3.4s linear infinite">
+              <g transform="rotate(0 32 32)"><ellipse cx="32" cy="32" rx="24" ry="9.5" stroke="#6E6BD0" stroke-width="1.7"></ellipse><circle class="ctr" style="animation:twinkle 1.4s ease-in-out infinite" cx="56" cy="32" r="3" fill="#C9C6FF"></circle></g>
+              <g transform="rotate(60 32 32)"><ellipse cx="32" cy="32" rx="24" ry="9.5" stroke="#6E6BD0" stroke-width="1.7"></ellipse><circle class="ctr" style="animation:twinkle 1.4s ease-in-out infinite .45s" cx="56" cy="32" r="3" fill="#C9C6FF"></circle></g>
+              <g transform="rotate(120 32 32)"><ellipse cx="32" cy="32" rx="24" ry="9.5" stroke="#6E6BD0" stroke-width="1.7"></ellipse><circle class="ctr" style="animation:twinkle 1.4s ease-in-out infinite .9s" cx="56" cy="32" r="3" fill="#C9C6FF"></circle></g>
+            </g>
+            <path d="M32 20 L42.4 26 L42.4 38 L32 44 L21.6 38 L21.6 26 Z" fill="#8E8BF5" stroke="#8E8BF5" stroke-width="4" stroke-linejoin="round"></path>
+            <circle cx="28.5" cy="32" r="2" fill="#211E3A"></circle>
+            <circle cx="35.5" cy="32" r="2" fill="#211E3A"></circle>
+          </svg>
+        </div>
+        <div style="padding:14px 16px;border-top:1px solid #F0E8D8">
+          <div style="font-family:'Spectral',serif;font-weight:600;font-size:16px">3 · Trabajando</div>
+          <div style="font-size:12.5px;color:#7C766B;line-height:1.5;margin-top:3px">Las órbitas aceleran y los electrones titilan. Señal de que está procesando — un buen loader.</div>
+        </div>
+      </div>
+
+      <!-- 4 · Contento -->
+      <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+        <div style="display:flex;align-items:center;justify-content:center;height:188px;background:#16172A">
+          <svg width="112" height="112" viewBox="0 0 64 64" fill="none" style="animation:hop 2.6s ease-in-out infinite">
+            <g class="orbit" style="animation:spin 11s linear infinite">
+              <g transform="rotate(0 32 32)"><ellipse cx="32" cy="32" rx="24" ry="9.5" stroke="#6E6BD0" stroke-width="1.7"></ellipse><circle cx="56" cy="32" r="3" fill="#C9C6FF"></circle></g>
+              <g transform="rotate(60 32 32)"><ellipse cx="32" cy="32" rx="24" ry="9.5" stroke="#6E6BD0" stroke-width="1.7"></ellipse><circle cx="56" cy="32" r="3" fill="#C9C6FF"></circle></g>
+              <g transform="rotate(120 32 32)"><ellipse cx="32" cy="32" rx="24" ry="9.5" stroke="#6E6BD0" stroke-width="1.7"></ellipse><circle cx="56" cy="32" r="3" fill="#C9C6FF"></circle></g>
+            </g>
+            <path d="M32 20 L42.4 26 L42.4 38 L32 44 L21.6 38 L21.6 26 Z" fill="#8E8BF5" stroke="#8E8BF5" stroke-width="4" stroke-linejoin="round"></path>
+            <path d="M26.6 33 q2.4 -3 4.8 0" stroke="#211E3A" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+            <path d="M33.6 33 q2.4 -3 4.8 0" stroke="#211E3A" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+          </svg>
+        </div>
+        <div style="padding:14px 16px;border-top:1px solid #F0E8D8">
+          <div style="font-family:'Spectral',serif;font-weight:600;font-size:16px">4 · Contento</div>
+          <div style="font-size:12.5px;color:#7C766B;line-height:1.5;margin-top:3px">Ojitos en arco y un saltito. Para cuando terminó la tarea o algo salió bien.</div>
+        </div>
+      </div>
+
+      <!-- 5 · Mirando -->
+      <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+        <div style="display:flex;align-items:center;justify-content:center;height:188px;background:#16172A">
+          <svg width="112" height="112" viewBox="0 0 64 64" fill="none">
+            <g class="orbit" style="animation:spin 13s linear infinite">
+              <g transform="rotate(0 32 32)"><ellipse cx="32" cy="32" rx="24" ry="9.5" stroke="#6E6BD0" stroke-width="1.7"></ellipse><circle cx="56" cy="32" r="3" fill="#C9C6FF"></circle></g>
+              <g transform="rotate(60 32 32)"><ellipse cx="32" cy="32" rx="24" ry="9.5" stroke="#6E6BD0" stroke-width="1.7"></ellipse><circle cx="56" cy="32" r="3" fill="#C9C6FF"></circle></g>
+              <g transform="rotate(120 32 32)"><ellipse cx="32" cy="32" rx="24" ry="9.5" stroke="#6E6BD0" stroke-width="1.7"></ellipse><circle cx="56" cy="32" r="3" fill="#C9C6FF"></circle></g>
+            </g>
+            <path d="M32 20 L42.4 26 L42.4 38 L32 44 L21.6 38 L21.6 26 Z" fill="#8E8BF5" stroke="#8E8BF5" stroke-width="4" stroke-linejoin="round"></path>
+            <g style="animation:look 3.4s ease-in-out infinite">
+              <circle cx="28.5" cy="32" r="2" fill="#211E3A"></circle>
+              <circle cx="35.5" cy="32" r="2" fill="#211E3A"></circle>
+            </g>
+          </svg>
+        </div>
+        <div style="padding:14px 16px;border-top:1px solid #F0E8D8">
+          <div style="font-family:'Spectral',serif;font-weight:600;font-size:16px">5 · Mirando</div>
+          <div style="font-size:12.5px;color:#7C766B;line-height:1.5;margin-top:3px">Los ojos pasean de lado a lado. Curioso, atento — bueno para onboarding o tips.</div>
+        </div>
+      </div>
+
+      <!-- 6 · Dormido -->
+      <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+        <div style="display:flex;align-items:center;justify-content:center;height:188px;background:#16172A">
+          <svg width="112" height="112" viewBox="0 0 64 64" fill="none" style="animation:bob 6s ease-in-out infinite">
+            <g class="orbit" style="animation:spin 26s linear infinite">
+              <g transform="rotate(0 32 32)"><ellipse cx="32" cy="32" rx="24" ry="9.5" stroke="#4A4A82" stroke-width="1.6"></ellipse><circle cx="56" cy="32" r="2.6" fill="#8C8AC0"></circle></g>
+              <g transform="rotate(60 32 32)"><ellipse cx="32" cy="32" rx="24" ry="9.5" stroke="#4A4A82" stroke-width="1.6"></ellipse><circle cx="56" cy="32" r="2.6" fill="#8C8AC0"></circle></g>
+              <g transform="rotate(120 32 32)"><ellipse cx="32" cy="32" rx="24" ry="9.5" stroke="#4A4A82" stroke-width="1.6"></ellipse><circle cx="56" cy="32" r="2.6" fill="#8C8AC0"></circle></g>
+            </g>
+            <path d="M32 20 L42.4 26 L42.4 38 L32 44 L21.6 38 L21.6 26 Z" fill="#7C79DE" stroke="#7C79DE" stroke-width="4" stroke-linejoin="round"></path>
+            <path d="M26.4 32.5 q2.1 2 4.2 0" stroke="#211E3A" stroke-width="2" fill="none" stroke-linecap="round"></path>
+            <path d="M33.4 32.5 q2.1 2 4.2 0" stroke="#211E3A" stroke-width="2" fill="none" stroke-linecap="round"></path>
+            <text x="44" y="22" font-family="Hanken Grotesk, sans-serif" font-weight="700" font-size="9" fill="#C9C6FF" style="animation:zfloat 2.6s ease-in-out infinite">z</text>
+            <text x="49" y="16" font-family="Hanken Grotesk, sans-serif" font-weight="700" font-size="7" fill="#C9C6FF" style="animation:zfloat 2.6s ease-in-out infinite 1.3s">z</text>
+          </svg>
+        </div>
+        <div style="padding:14px 16px;border-top:1px solid #F0E8D8">
+          <div style="font-family:'Spectral',serif;font-weight:600;font-size:16px">6 · Dormido</div>
+          <div style="font-size:12.5px;color:#7C766B;line-height:1.5;margin-top:3px">Ojos cerrados, todo se apaga y flota una «z». Para estados inactivos o vacíos.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:38px;padding-top:24px;border-top:1px solid #CFC6B5">
+      <span style="font-size:13.5px;color:#6F6A60">¿Te gusta como mascota viva? Decime qué estados dejamos y lo armo como set oficial + lockup.</span>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

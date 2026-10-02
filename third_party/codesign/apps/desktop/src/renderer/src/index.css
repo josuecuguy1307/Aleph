@@ -1,0 +1,367 @@
+@import "@open-codesign/ui/tokens.css";
+@import "tailwindcss";
+@source "../../../../../packages/ui/src";
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  font-family: var(--font-sans);
+  background: var(--color-background);
+  color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior: none;
+}
+
+h1,
+h2,
+h3,
+.display {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+#root {
+  height: 100%;
+  overflow: hidden;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  transition: background 160ms ease;
+}
+
+*:hover::-webkit-scrollbar-thumb,
+*:focus-within::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--color-text-muted) 35%, transparent);
+  background-clip: padding-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--color-text-muted) 60%, transparent);
+  background-clip: padding-box;
+}
+
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+.codesign-scroll-area {
+  scrollbar-gutter: auto;
+  overscroll-behavior: contain;
+}
+
+.codesign-preview-scroll {
+  overscroll-behavior: contain;
+  scrollbar-gutter: auto;
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+.codesign-preview-scroll:hover,
+.codesign-preview-scroll:focus-within {
+  scrollbar-color: color-mix(in srgb, var(--color-text-muted) 26%, transparent) transparent;
+}
+
+.codesign-preview-scroll::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+.codesign-preview-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.codesign-preview-scroll::-webkit-scrollbar-thumb {
+  min-height: 48px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  background-clip: padding-box;
+}
+
+.codesign-preview-scroll:hover::-webkit-scrollbar-thumb,
+.codesign-preview-scroll:focus-within::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--color-text-muted) 20%, transparent);
+  background-clip: padding-box;
+}
+
+.codesign-preview-scroll::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--color-text-muted) 32%, transparent);
+  background-clip: padding-box;
+}
+
+.codesign-scroll-x {
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+
+.codesign-scroll-x::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+@keyframes overlay-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes toast-countdown {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+
+@keyframes shimmer-pulse {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.shimmer {
+  background-image: linear-gradient(
+    90deg,
+    var(--color-surface-muted) 0%,
+    var(--color-surface-hover) 50%,
+    var(--color-surface-muted) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer-pulse 1.6s linear infinite;
+}
+
+@keyframes codesign-stream-blink {
+  0%,
+  80%,
+  100% {
+    opacity: 0.2;
+  }
+  40% {
+    opacity: 1;
+  }
+}
+
+.codesign-stream-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  animation: codesign-stream-blink 1.2s ease-in-out infinite;
+}
+
+.codesign-prompt-textarea {
+  border: 0;
+  outline: none;
+  box-shadow: none;
+  background: transparent;
+  scrollbar-width: none;
+}
+.codesign-prompt-textarea:focus,
+.codesign-prompt-textarea:focus-visible {
+  border: 0;
+  outline: none;
+  box-shadow: none;
+}
+.codesign-prompt-textarea::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+/* Markdown prose inside assistant chat bubbles and file previews */
+.codesign-prose h1,
+.codesign-prose h2,
+.codesign-prose h3,
+.codesign-prose h4 {
+  font-weight: 600;
+  line-height: 1.3;
+  margin: 1em 0 0.5em;
+}
+.codesign-prose h1 { font-size: 1.8em; }
+.codesign-prose h2 { font-size: 1.4em; }
+.codesign-prose h3 { font-size: 1.15em; }
+.codesign-prose h4 { font-size: 1em; }
+.codesign-prose > :first-child { margin-top: 0; }
+.codesign-prose p {
+  margin: 0;
+}
+.codesign-prose p + p {
+  margin-top: var(--space-2);
+}
+.codesign-prose strong {
+  font-weight: 600;
+}
+.codesign-prose code {
+  font-family: var(--font-mono, ui-monospace, Menlo, monospace);
+  font-size: 0.9em;
+  background: var(--color-background-secondary);
+  border-radius: var(--radius-sm);
+  padding: 1px 4px;
+}
+.codesign-prose pre {
+  background: var(--color-background-secondary);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3);
+  overflow-x: auto;
+  margin: var(--space-2) 0;
+}
+.codesign-prose pre code {
+  background: none;
+  padding: 0;
+  font-size: 12px;
+}
+.codesign-frontmatter {
+  border-bottom: 1px solid var(--color-border-muted);
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-3);
+}
+.codesign-frontmatter summary {
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+}
+.codesign-frontmatter pre {
+  margin-bottom: 0;
+  white-space: pre-wrap;
+}
+.codesign-prose ul,
+.codesign-prose ol {
+  margin: var(--space-2) 0;
+  padding-left: 1.25em;
+}
+.codesign-prose ul { list-style-type: disc; }
+.codesign-prose ol { list-style-type: decimal; }
+.codesign-prose li + li {
+  margin-top: 2px;
+}
+.codesign-prose table {
+  display: block;
+  overflow-x: auto;
+  border-collapse: collapse;
+  font-size: 12px;
+  margin: var(--space-2) 0;
+  white-space: nowrap;
+}
+.codesign-prose th,
+.codesign-prose td {
+  border: 1px solid var(--color-border-muted);
+  padding: 3px var(--space-2);
+  text-align: left;
+}
+.codesign-prose th {
+  background: var(--color-background-secondary);
+  font-weight: 600;
+}
+.codesign-prose hr {
+  border: none;
+  border-top: 1px solid var(--color-border-muted);
+  margin: var(--space-3) 0;
+}
+.codesign-prose blockquote {
+  border-left: 3px solid var(--color-border);
+  padding-left: var(--space-3);
+  margin: var(--space-2) 0;
+  color: var(--color-text-secondary);
+}
+.codesign-prose a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* ── [Aleph · 2026-08-11] LA ACCIÓN PRIMARIA INVIERTE EL CAMPO ──────────────────────────
+ *
+ * En el sistema de Aleph el color es 90/8/2: el acento se reserva para el 8% —el chip
+ * activo, el punto de estado, el foco— y la acción primaria se resuelve INVIRTIENDO el
+ * campo: tinta de fondo, papel de letra. Es lo que hace `.ds-btn` en `aleph-ds.css`, y por
+ * eso el botón "Traer" del catálogo es negro en claro y blanco en oscuro.
+ *
+ * Los botones de Diseño pintan su fondo con `bg-[var(--color-accent)]` en 27 archivos. En
+ * vez de editar los 27, se los distingue por lo que YA los distingue: un botón lleva fondo
+ * de acento Y texto sobre acento; una marca (el stripe del ítem activo, el hover del
+ * divisor, los tintes /10 y /45) lleva sólo el fondo. El selector pide las dos clases
+ * juntas, así que toca los 11 botones y deja intactas las 25 marcas — que son el 8% y deben
+ * seguir siendo violetas.
+ *
+ * Los nombres de clase van escapados porque Tailwind los genera así para valores
+ * arbitrarios: `bg-[var(--color-accent)]` compila a `.bg-\[var\(--color-accent\)\]`. */
+.bg-\[var\(--color-accent\)\].text-\[var\(--color-on-accent\)\],
+.bg-\[var\(--color-accent\)\].text-\[var\(--color-text-on-accent\)\],
+.bg-\[var\(--color-accent\)\].text-white {
+  background-color: var(--color-text-primary);
+  color: var(--color-surface);
+}
+
+/* El hover no cambia de color: baja de intensidad, como en la casa. */
+.bg-\[var\(--color-accent\)\].text-\[var\(--color-on-accent\)\]:hover:not(:disabled),
+.bg-\[var\(--color-accent\)\].text-\[var\(--color-text-on-accent\)\]:hover:not(:disabled),
+.bg-\[var\(--color-accent\)\].text-white:hover:not(:disabled) {
+  background-color: var(--color-text-primary);
+  opacity: 0.88;
+}
+
+/* [Aleph] La zona de navegación de la barra superior se desliza en vez de desbordar.
+   `min-width: 0` es lo que permite que un hijo de flex se encoja por debajo de su contenido
+   —sin eso, `overflow` no hace nada—; la barra se oculta como en la pista del sistema. */
+.aleph-topbar-nav {
+  overflow-x: auto;
+  min-width: 0;
+  scrollbar-width: none;
+}
+.aleph-topbar-nav::-webkit-scrollbar {
+  display: none;
+}

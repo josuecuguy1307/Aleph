@@ -1,0 +1,1 @@
+{"mcpServers":{"broker":{"command":"python3","args":["${PUPPET_REPO}/qa/belts/broker_money_mcp.py"]}}}

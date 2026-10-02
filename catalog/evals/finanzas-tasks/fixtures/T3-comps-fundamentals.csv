@@ -1,0 +1,6 @@
+ticker,empresa,revenue_ltm_musd,ebitda_ltm_musd,net_income_ltm_musd,acciones_diluidas_m,precio_usd,deuda_total_musd,caja_musd,fuente_filing
+NUVT,Nuvotek Software Corp,1840.2,478.5,231.4,142.3,58.4,620.0,410.5,10-K FY2025 (filed 2026-02-12)
+DTLK,DataLink Systems Inc,2310.7,531.5,198.7,210.8,41.15,980.3,305.2,10-K FY2025 (filed 2026-02-26)
+CLVR,Clearvue Analytics,925.4,138.8,41.6,88.6,71.2,150.0,520.8,"10-Q Q1-2026 (filed 2026-05-07, LTM)"
+OPSG,OpSignal Holdings,1512.9,332.8,121.0,175.4,33.6,710.5,198.4,10-K FY2025 (filed 2026-03-05)
+VRTX2,Vertexa Cloud Group,684.3,61.6,-12.3,96.2,49.8,88.0,350.1,"10-Q Q1-2026 (filed 2026-04-30, LTM)"

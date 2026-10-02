@@ -1,0 +1,139 @@
+{
+  "connector": "onshape",
+  "provider": "Onshape",
+  "auth_method": "oauth",
+  "tier": "average",
+  "requires_account": true,
+  "needs_base_url": false,
+  "deep_link": "https://cad.onshape.com",
+  "api_base": "https://cad.onshape.com/api/v16",
+  "oauth": {
+    "client_id": "LKPXLXZZRWL36WJTWEL5VM6JQIOWI2MG47CFYNA=",
+    "authorize_url": "https://oauth.onshape.com/oauth/authorize",
+    "token_url": "https://oauth.onshape.com/oauth/token",
+    "redirect_uri": "http://localhost:8765/oauth/callback",
+    "scopes": [
+      {
+        "id": "OAuth2ReadPII",
+        "label": "perfil",
+        "requested": true,
+        "tools": [
+          "onshape_whoami"
+        ],
+        "action_class": "read"
+      },
+      {
+        "id": "OAuth2Read",
+        "label": "leer",
+        "requested": true,
+        "tools": [
+          "onshape_list_documents"
+        ],
+        "action_class": "read"
+      },
+      {
+        "id": "OAuth2Write",
+        "label": "escribir",
+        "requested": true,
+        "tools": [
+          "onshape_create_document"
+        ],
+        "action_class": "write-world"
+      },
+      {
+        "id": "OAuth2Delete",
+        "label": "borrar",
+        "requested": true,
+        "tools": [
+          "onshape_delete_document"
+        ],
+        "action_class": "write-world"
+      },
+      {
+        "id": "OAuth2Share",
+        "label": "compartir",
+        "requested": true,
+        "tools": [
+          "onshape_share_document"
+        ],
+        "action_class": "write-world"
+      },
+      {
+        "id": "OAuth2Purchase",
+        "label": "comprar",
+        "requested": false,
+        "tools": [
+          "onshape_consume_purchase"
+        ],
+        "action_class": "money_touch"
+      }
+    ],
+    "loopback_ok": false,
+    "pkce": {
+      "required": true,
+      "method": "S256"
+    },
+    "revoke_url": null,
+    "client_auth": "secret_post",
+    "refresh_required": true,
+    "development_client_secret": {
+      "file": "~/.aleph/onshape.local.json",
+      "field": "client_secret",
+      "mode": "0600"
+    },
+    "loopback_timeout_seconds": 600
+  },
+  "steps": [
+    {
+      "txt": "Abre Onshape en tu navegador y revisa los permisos que quieres conceder."
+    },
+    {
+      "txt": "Al autorizar, Onshape vuelve una sola vez a Aleph por localhost:8765. El listener se cierra al recibir el código."
+    },
+    {
+      "txt": "Aleph guarda access token, refresh token y scopes concedidos cifrados en tu vault global."
+    }
+  ],
+  "validate": {
+    "method": "GET",
+    "path": "/users/sessioninfo",
+    "identity_field": "name",
+    "auth": "bearer"
+  },
+  "permissions": [
+    "perfil",
+    "leer",
+    "escribir",
+    "borrar",
+    "compartir"
+  ],
+  "errors": {
+    "invalid_client": "Onshape rechazó la app: revisa el client_id del catálogo y la app registrada.",
+    "oauth_revoked": "Revocaste el acceso desde Onshape. Conéctalo otra vez para continuar.",
+    "network": "No pude contactar a Onshape ahora. Prueba de nuevo en un momento."
+  },
+  "capability_line": "Listo — ya puedo usar las operaciones de Onshape que concediste.",
+  "trust_line": "Tokens y scopes concedidos se guardan cifrados · quitas el acceso cuando quieras.",
+  "en": {
+    "steps": [
+      {"txt": "Open Onshape in your browser and review the permissions you want to grant."},
+      {"txt": "After authorization, Onshape returns once to Aleph through localhost:8765. The listener closes when it receives the code."},
+      {"txt": "Aleph stores the access token, refresh token and granted scopes encrypted in your global vault."}
+    ],
+    "permissions": ["profile", "read", "write", "delete", "share"],
+    "capability_line": "Done — I can now use the Onshape operations you authorized.",
+    "trust_line": "Tokens and granted scopes are stored encrypted; remove access whenever you want.",
+    "errors": {
+      "invalid_client": "Onshape rejected the app. Check the catalog client_id and the registered app.",
+      "oauth_revoked": "You revoked access in Onshape. Connect it again to continue.",
+      "network": "Could not contact Onshape. Please try again shortly."
+    }
+  },
+  "verification": {
+    "desktop_app": true,
+    "redirect_registered": "http://localhost:8765/oauth/callback",
+    "loopback_ok": false,
+    "loopback_verdict": "Onshape exige client_secret en el token exchange aun cuando el request incluye PKCE S256. La distribución necesita account broker; el secreto local es sólo un override de desarrollo fuera del bundle.",
+    "client_id_padding": "El client_id va con su padding base64 '=' COMPLETO. La ficha lo llevaba truncado (39 chars en vez de 40): misma app, pero un proveedor que compare el string exacto ve OTRO id. Modo de fallo silencioso — verificado 2026-08-03 contra ~/.aleph/onshape.local.json comparando longitud y SHA, sin imprimir el valor."
+  }
+}

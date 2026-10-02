@@ -1,0 +1,76 @@
+{
+  "_meta": {
+    "belt": "inline-rich",
+    "que_es": "Belt DEFAULT del agente general inline: el set commodity de Capa B, REAL e inline. Python real (cómputo/SQL-sqlite/CSV/file/urllib-fetch) + archivos descargables reales (.xlsx/.csv) + calculadora exacta. Todo keyless, all-python, boot rápido. Los gráficos son client-side (render.js). Diferenciar para ARRIBA (el puppet suma dominio/MCPs), no para abajo: el default NO se cripplea.",
+    "legs": "pysandbox=ejecución Python real (anti-fabricación; stdlib: math/statistics/csv/sqlite3/json/urllib) · datatools=escribe .xlsx/.csv REAL en el workdir (captura→Biblioteca) · calc=aritmética exacta.",
+    "credencial": "ninguna. Todo keyless. Lo que ESCRIBE a cuentas/plata (email/slack/pagos) NO está en este belt y queda gateado por diseño (honesty gate en el front + send/money gate en el path).",
+    "slug": "inline-rich",
+    "action_classes": {
+      "_que_es": "S16 · CLASE DE ACCIÓN declarada por el belt curado. El assembler la pliega a recipe.belt.action_classes ANTES de build_enforced_gate. Los pisos mandatorios ganan SIEMPRE: run_python y cualquier alias conocido de ejecución reciben code_exec y requieren confirmación en todos los modos porque python3 -I + workdir NO son un jail de filesystem/proceso/red. calc conserva clase read. datatools.write_xlsx/write_csv se declaran write-local, pero el piso de mutación mantiene confirmación.",
+      "calc": { "add": "read", "sub": "read", "mul": "read", "div": "read", "pow": "read", "mod": "read" },
+      "pysandbox": { "run_python": "write-local" },
+      "datatools": { "write_xlsx": "write-local", "write_csv": "write-local" }
+    },
+    "cards": [
+      {
+        "id": "pysandbox",
+        "connector": "pysandbox",
+        "label": "Python (cómputo)",
+        "sub": "ejecuta código real: cálculo, SQL (sqlite3), CSV, leer/escribir archivos, traer una URL (urllib)",
+        "auth": "keyless",
+        "armario": "datos",
+        "backed_by": "pysandbox",
+        "tools": ["run_python"]
+      },
+      {
+        "id": "datatools",
+        "connector": "datatools",
+        "label": "Archivos (Excel / CSV)",
+        "sub": "produce un .xlsx o .csv REAL descargable a partir de datos",
+        "auth": "keyless",
+        "armario": "archivos",
+        "backed_by": "datatools",
+        "tools": ["write_xlsx", "write_csv"]
+      },
+      {
+        "id": "calc",
+        "connector": "calc",
+        "label": "Calculadora",
+        "sub": "aritmética exacta",
+        "auth": "keyless",
+        "armario": "datos",
+        "backed_by": "calc",
+        "tools": ["add", "sub", "mul", "div", "pow", "mod"]
+      }
+    ]
+  },
+  "mcpServers": {
+    "pysandbox": {
+      "command": "python3",
+      "args": [
+        "${PUPPET_BELTS}/generalistas/pysandbox_server.py"
+      ],
+      "env": {
+        "PUPPET_WORKDIR": "${PUPPET_WORKDIR}"
+      },
+      "description": "Python runner MCP (stdio, keyless). python3 -I + cwd temporal + entorno reducido + timeout; NO es un jail de sistema operativo y el gate exige aprobación."
+    },
+    "datatools": {
+      "command": "python3",
+      "args": [
+        "${PUPPET_BELTS}/generalistas/datatools_server.py"
+      ],
+      "env": {
+        "PUPPET_WORKDIR": "${PUPPET_WORKDIR}"
+      },
+      "description": "Data-tools MCP (stdio, keyless). write_xlsx / write_csv escriben un archivo REAL y descargable en ${PUPPET_WORKDIR} (capturado a Biblioteca). No ejecuta código del modelo; recibe datos estructurados. Auto-ejecuta (no toca plata ni manda afuera)."
+    },
+    "calc": {
+      "command": "python3",
+      "args": [
+        "${PUPPET_BELTS}/generalistas/calc_server.py"
+      ],
+      "description": "Calculadora MCP (stdio, keyless, 6 tools: add/sub/mul/div/pow/mod, solo stdlib)."
+    }
+  }
+}

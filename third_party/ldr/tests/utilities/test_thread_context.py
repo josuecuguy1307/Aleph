@@ -1,0 +1,464 @@
+"""Tests for thread_context module."""
+
+import threading
+from concurrent.futures import ThreadPoolExecutor
+from contextvars import copy_context
+from unittest.mock import patch
+
+import pytest
+
+
+from local_deep_research.utilities.thread_context import (
+    clear_search_context,
+    get_search_context,
+    preserve_research_context,
+    search_context,
+    set_search_context,
+)
+
+
+class TestSetSearchContext:
+    """Tests for set_search_context function."""
+
+    def setup_method(self):
+        """Clear context before each test."""
+        clear_search_context()
+
+    def test_sets_context(self):
+        """Should set context."""
+        context = {"research_id": "123", "user": "test"}
+        set_search_context(context)
+        assert get_search_context() == context
+
+    def test_copies_context(self):
+        """Should copy context to avoid mutations."""
+        context = {"research_id": "123"}
+        set_search_context(context)
+        context["new_key"] = "value"
+        assert "new_key" not in get_search_context()
+
+    def test_overwrites_existing_context(self):
+        """Should overwrite existing context."""
+        set_search_context({"old": "context"})
+        set_search_context({"new": "context"})
+        assert get_search_context() == {"new": "context"}
+
+    def test_logs_debug_on_overwrite(self):
+        """Should log debug message when overwriting existing context."""
+        set_search_context({"first": "context"})
+        with patch(
+            "local_deep_research.utilities.thread_context.logger"
+        ) as mock_logger:
+            set_search_context({"second": "context"})
+            mock_logger.debug.assert_called_once()
+
+    def test_handles_empty_context(self):
+        """Should handle empty context dictionary."""
+        set_search_context({})
+        assert get_search_context() == {}
+
+
+class TestClearSearchContext:
+    """Tests for clear_search_context function."""
+
+    def setup_method(self):
+        """Clear context before each test."""
+        clear_search_context()
+
+    def test_clears_existing_context(self):
+        """Should clear context when set."""
+        set_search_context({"research_id": "123"})
+        clear_search_context()
+        assert get_search_context() is None
+
+    def test_noop_when_no_context(self):
+        """Should not raise when no context is set."""
+        clear_search_context()  # Should not raise
+
+    def test_clear_then_set(self):
+        """Should allow setting new context after clearing."""
+        set_search_context({"first": "context"})
+        clear_search_context()
+        set_search_context({"second": "context"})
+        assert get_search_context() == {"second": "context"}
+
+
+class TestGetSearchContext:
+    """Tests for get_search_context function."""
+
+    def setup_method(self):
+        """Clear context before each test."""
+        clear_search_context()
+
+    def test_returns_none_when_not_set(self):
+        """Should return None when no context is set."""
+        result = get_search_context()
+        assert result is None
+
+    def test_returns_context_when_set(self):
+        """Should return context when set."""
+        context = {"research_id": "456"}
+        set_search_context(context)
+        result = get_search_context()
+        assert result == context
+
+    def test_returns_copy_of_context(self):
+        """Should return a copy to prevent mutations."""
+        context = {"research_id": "789"}
+        set_search_context(context)
+        result = get_search_context()
+        result["mutated"] = True
+        # Original should not be mutated
+        assert "mutated" not in get_search_context()
+
+    def test_multiple_calls_return_same_data(self):
+        """Multiple calls should return same data."""
+        context = {"key": "value"}
+        set_search_context(context)
+        result1 = get_search_context()
+        result2 = get_search_context()
+        assert result1 == result2
+
+
+class TestThreadIsolation:
+    """Tests for thread isolation of context."""
+
+    def setup_method(self):
+        """Clear context before each test."""
+        clear_search_context()
+
+    def test_context_isolated_between_threads(self):
+        """Context should be isolated between threads."""
+        main_context = {"thread": "main"}
+        set_search_context(main_context)
+
+        other_thread_context = []
+
+        def other_thread():
+            other_thread_context.append(get_search_context())
+
+        thread = threading.Thread(target=other_thread)
+        thread.start()
+        thread.join()
+
+        # Other thread should not see main thread's context
+        assert other_thread_context[0] is None
+
+    def test_each_thread_has_own_context(self):
+        """Each thread should have its own context."""
+        results = {}
+
+        def thread_worker(thread_id):
+            set_search_context({"thread_id": thread_id})
+            # Small delay to allow interleaving
+            import time
+
+            time.sleep(0.01)
+            ctx = get_search_context()
+            results[thread_id] = ctx["thread_id"] if ctx else None
+
+        threads = []
+        for i in range(5):
+            t = threading.Thread(target=thread_worker, args=(i,))
+            threads.append(t)
+            t.start()
+
+        for t in threads:
+            t.join()
+
+        # Each thread should have preserved its own context
+        for i in range(5):
+            assert results[i] == i
+
+
+class TestPreserveResearchContext:
+    """Tests for preserve_research_context decorator."""
+
+    def setup_method(self):
+        """Clear context before each test."""
+        clear_search_context()
+
+    def test_preserves_context_in_thread_pool(self):
+        """Should preserve context when function runs in thread pool."""
+        context = {"research_id": "pool-test"}
+        set_search_context(context)
+
+        captured_context = []
+
+        @preserve_research_context
+        def worker():
+            captured_context.append(get_search_context())
+            return "done"
+
+        with ThreadPoolExecutor(max_workers=1) as executor:
+            future = executor.submit(worker)
+            future.result()
+
+        assert len(captured_context) == 1
+        assert captured_context[0] == context
+
+    def test_works_without_context(self):
+        """Should work when no context is set."""
+        captured_context = []
+
+        @preserve_research_context
+        def worker():
+            captured_context.append(get_search_context())
+            return "done"
+
+        with ThreadPoolExecutor(max_workers=1) as executor:
+            future = executor.submit(worker)
+            future.result()
+
+        # Should not fail, context should be None
+        assert len(captured_context) == 1
+        assert captured_context[0] is None
+
+    def test_preserves_function_metadata(self):
+        """Should preserve function name and docstring."""
+
+        @preserve_research_context
+        def my_function():
+            """My docstring."""
+            pass
+
+        assert my_function.__name__ == "my_function"
+        assert my_function.__doc__ == "My docstring."
+
+    def test_passes_arguments_correctly(self):
+        """Should pass arguments to wrapped function."""
+        context = {"research_id": "arg-test"}
+        set_search_context(context)
+
+        @preserve_research_context
+        def worker(a, b, c=None):
+            return (a, b, c)
+
+        with ThreadPoolExecutor(max_workers=1) as executor:
+            future = executor.submit(worker, 1, 2, c=3)
+            result = future.result()
+
+        assert result == (1, 2, 3)
+
+    def test_returns_function_result(self):
+        """Should return the wrapped function's result."""
+        context = {"research_id": "return-test"}
+        set_search_context(context)
+
+        @preserve_research_context
+        def worker():
+            return {"result": "success"}
+
+        with ThreadPoolExecutor(max_workers=1) as executor:
+            future = executor.submit(worker)
+            result = future.result()
+
+        assert result == {"result": "success"}
+
+    def test_clears_context_after_execution(self):
+        """Should clear context after wrapped function completes to prevent leaks."""
+        context = {"research_id": "cleanup-test"}
+        set_search_context(context)
+
+        @preserve_research_context
+        def worker():
+            # Context should be set during execution
+            return get_search_context()
+
+        context_after = []
+
+        def run_and_check():
+            worker()
+            context_after.append(get_search_context())
+
+        with ThreadPoolExecutor(max_workers=1) as executor:
+            future = executor.submit(run_and_check)
+            future.result()
+
+        # After worker completes, context should be cleared on the worker thread
+        assert context_after[0] is None
+
+    def test_clears_context_on_exception(self):
+        """Should clear context even when wrapped function raises."""
+        context = {"research_id": "exception-test"}
+        set_search_context(context)
+
+        @preserve_research_context
+        def failing_worker():
+            raise ValueError("test error")
+
+        context_after = []
+
+        def run_and_check():
+            try:
+                failing_worker()
+            except ValueError:
+                pass
+            context_after.append(get_search_context())
+
+        with ThreadPoolExecutor(max_workers=1) as executor:
+            future = executor.submit(run_and_check)
+            future.result()
+
+        # Context should be cleared even after exception
+        assert context_after[0] is None
+
+    def test_preserves_context_across_multiple_calls(self):
+        """Should preserve context for multiple calls."""
+        context = {"research_id": "multi-call"}
+        set_search_context(context)
+
+        results = []
+
+        @preserve_research_context
+        def worker(idx):
+            ctx = get_search_context()
+            return (idx, ctx["research_id"] if ctx else None)
+
+        with ThreadPoolExecutor(max_workers=2) as executor:
+            futures = [executor.submit(worker, i) for i in range(3)]
+            results = [f.result() for f in futures]
+
+        for idx, research_id in results:
+            assert research_id == "multi-call"
+
+
+class TestEdgeCases:
+    """Edge case tests for thread_context module."""
+
+    def setup_method(self):
+        """Clear context before each test."""
+        clear_search_context()
+
+    def test_context_with_nested_dict(self):
+        """Should handle nested dictionaries in context."""
+        context = {
+            "research_id": "nested",
+            "metadata": {"key1": "value1", "key2": {"nested": "value"}},
+        }
+        set_search_context(context)
+        result = get_search_context()
+        assert result["metadata"]["key2"]["nested"] == "value"
+
+    def test_context_with_list_values(self):
+        """Should handle lists in context."""
+        context = {"items": [1, 2, 3], "tags": ["a", "b", "c"]}
+        set_search_context(context)
+        result = get_search_context()
+        assert result["items"] == [1, 2, 3]
+
+    def test_context_with_none_values(self):
+        """Should handle None values in context."""
+        context = {"research_id": "test", "optional": None}
+        set_search_context(context)
+        result = get_search_context()
+        assert result["optional"] is None
+
+    def test_rapid_set_get_cycles(self):
+        """Should handle rapid set/get cycles."""
+        for i in range(100):
+            set_search_context({"iteration": i})
+            result = get_search_context()
+            assert result["iteration"] == i
+
+
+class TestSearchContextManager:
+    """Tests for search_context context manager."""
+
+    def setup_method(self):
+        """Clear context before each test."""
+        clear_search_context()
+
+    def test_sets_and_clears_context(self):
+        """Context should be set inside and cleared after the block."""
+        with search_context({"research_id": "cm-test"}):
+            ctx = get_search_context()
+            assert ctx == {"research_id": "cm-test"}
+
+        assert get_search_context() is None
+
+    def test_clears_on_exception(self):
+        """Context should be cleared even when an exception occurs."""
+        with pytest.raises(ValueError):
+            with search_context({"research_id": "error-test"}):
+                raise ValueError("boom")
+
+        assert get_search_context() is None
+
+    def test_copies_context(self):
+        """Context manager should copy the input dict."""
+        original = {"research_id": "copy-test"}
+        with search_context(original):
+            original["mutated"] = True
+            ctx = get_search_context()
+            assert "mutated" not in ctx
+
+    def test_works_in_thread_pool(self):
+        """Context manager should work correctly in thread pool workers."""
+        results = []
+
+        def worker(rid):
+            with search_context({"research_id": rid}):
+                ctx = get_search_context()
+                results.append(ctx["research_id"])
+            # After exiting, context should be cleared
+            assert get_search_context() is None
+
+        with ThreadPoolExecutor(max_workers=3) as executor:
+            futures = [executor.submit(worker, f"pool-{i}") for i in range(5)]
+            for f in futures:
+                f.result()
+
+        assert sorted(results) == [f"pool-{i}" for i in range(5)]
+
+    def test_nested_context_restores_nothing(self):
+        """Exiting inner context manager clears context (no stacking)."""
+        with search_context({"research_id": "outer"}):
+            with search_context({"research_id": "inner"}):
+                assert get_search_context()["research_id"] == "inner"
+            # Inner exited — context is cleared
+            assert get_search_context() is None
+
+
+class TestContextVarsPropagation:
+    """Regression: context must propagate through frameworks that copy
+    contextvars to worker threads (e.g. langchain's ContextThreadPoolExecutor
+    used by LangGraph for tool execution)."""
+
+    def setup_method(self):
+        clear_search_context()
+
+    def test_copy_context_run_propagates_to_worker(self):
+        """copy_context().run(fn) — the mechanism used by langchain's
+        ContextThreadPoolExecutor — must carry our context across threads."""
+        set_search_context({"research_id": "ctx-propagation"})
+
+        observed = {}
+
+        def worker():
+            observed["ctx"] = get_search_context()
+
+        # Capture the parent context, then run the worker inside that copy
+        # on a new thread (matches what ContextThreadPoolExecutor.submit does).
+        ctx = copy_context()
+        t = threading.Thread(target=ctx.run, args=(worker,))
+        t.start()
+        t.join()
+
+        assert observed["ctx"] == {"research_id": "ctx-propagation"}
+
+    def test_worker_mutation_does_not_leak_to_caller(self):
+        """A copied context is isolated — set_search_context inside the
+        worker must not affect the caller's context."""
+        set_search_context({"research_id": "caller"})
+
+        def worker():
+            set_search_context({"research_id": "worker"})
+
+        ctx = copy_context()
+        t = threading.Thread(target=ctx.run, args=(worker,))
+        t.start()
+        t.join()
+
+        # Caller still sees its own value
+        assert get_search_context() == {"research_id": "caller"}

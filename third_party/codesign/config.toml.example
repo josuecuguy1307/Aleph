@@ -1,0 +1,18 @@
+version = 3
+activeProvider = "aleph-brain"
+activeModel = "aleph-workspace"
+
+[providers.aleph-brain]
+id = "aleph-brain"
+name = "Cerebro de Aleph"
+builtin = false
+wire = "openai-chat"
+baseUrl = "http://127.0.0.1:<puerto-de-aleph>/v1/workspaces/brain/openai"
+defaultModel = "aleph-workspace"
+modelsHint = ["aleph-workspace"]
+requiresApiKey = false
+
+[providers.aleph-brain.capabilities]
+supportsKeyless = true
+supportsModelsEndpoint = false
+modelDiscoveryMode = "static-hint"

@@ -1,0 +1,69 @@
+{
+  "_meta": {
+    "belt": "programacion",
+    "slug": "programacion",
+    "que_es": "Cinturon MCP del agente programacion. Edita el repo, corre tests/comandos en subprocesos del host con confirmación, consulta repos/PRs (github BYOK) y docs (context7 BYOK).",
+    "fuente": "catalog/belts/programacion.md + org/artifacts/FASE0-tabla-tool-caso-bucket.md (seccion 6) + product/belts/gaps.mcp.json (script-runner B3).",
+    "consumido_por": "product/recipes/programacion.config.json (belt_ref: catalog/belts/programacion.md -> slug programacion)",
+    "verificado": "JSON-RPC init+tools/list reales el 2026-06-15 sobre filesystem + script_runner. En 2026-07-04, run_python(print(21*2)) devolvió stdout 42. Es ejecución REAL en un subproceso del host con cwd efímero, allow-list y timeout, no un jail de filesystem/proceso/red; el piso code_exec actual exige confirmación en cada invocación. Evidencia histórica: reports/catalog-wave-a/evidence-a05-huerfanos.json.",
+    "cards": [
+      {
+        "id": "script-runner",
+        "label": "Correr scripts y tests (confirmación)",
+        "sub": "ejecuta Python y comandos shell en el host (allow-list y timeout; sin jail de filesystem/red) · requiere confirmación",
+        "auth": "keyless",
+        "armario": "datos",
+        "backed_by": "script_runner",
+        "tools": [
+          "run_python",
+          "run_shell"
+        ]
+      }
+    ],
+    "nota_tool_filters": "RESUELTO (F4-B1, 2026-06-16): la receta filtra script_runner: ['run_python','run_shell'], que coinciden EXACTAMENTE con la tools/list VIVA del gap (product/belts/gaps/script_runner_mcp.py). Antes pedia nombres aspiracionales ['run_command','run_tests'] que NO existian en el surface vivo -> el assembler los dropeaba en silencio (false-green: agente sin capacidad de ejecutar codigo). Cruce contra surface vivo: 0 fantasmas.",
+    "gate_seguridad": "script_runner declara needs_gate (RECIPE-SCHEMA 3.5) ante patrones money/send y aplica allow-list de binarios. Security HACE CUMPLIR el gate; el belt solo lo DECLARA."
+  },
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": { "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PERSONAL_ACCESS_TOKEN}" },
+      "caso": 1,
+      "bucket": "B1",
+      "nichos": ["programacion"],
+      "credenciales": "GITHUB_PERSONAL_ACCESS_TOKEN (BYOK — gate de credencial). Sin token el server no arranca; el belt degrada a filesystem+script_runner.",
+      "description": "Repos, PRs, issues, search_code (read-only en la receta v1). Existe-optimo, conectado en este entorno."
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp"],
+      "env": { "CONTEXT7_API_KEY": "${CONTEXT7_API_KEY}" },
+      "caso": 1,
+      "bucket": "B1",
+      "nichos": ["programacion", "research"],
+      "credenciales": "CONTEXT7_API_KEY (BYOK — free tier).",
+      "description": "Docs de librerias/SDK al dia (resolve-library-id, query-docs). Compartido con research."
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "${PUPPET_WORKDIR}"],
+      "caso": 1,
+      "bucket": "B1",
+      "nichos": ["programacion", "research", "cowork", "educacion", "finanzas"],
+      "credenciales": "ninguna (allow-list = ${PUPPET_WORKDIR})",
+      "atomica": true,
+      "description": "Editar el codigo del proyecto (read_file, write_file, edit_file, list_directory). Backbone atomico keyless."
+    },
+    "script_runner": {
+      "command": "python3",
+      "args": ["${PUPPET_BELTS}/gaps/script_runner_mcp.py"],
+      "caso": 2,
+      "bucket": "B3",
+      "nichos": ["programacion", "finanzas", "educacion"],
+      "credenciales": "ninguna",
+      "moat": "Corre/parsea código y tests con cwd inicial efímero, timeout, output cap y allow-list de binarios. No es un jail del host; el piso code_exec exige confirmación siempre.",
+      "tools_reales": ["run_python", "run_shell"],
+      "description": "script-runner sandbox (gap B3, product/belts/gaps/script_runner_mcp.py). El moat: solo declara verde cuando el runner devuelve pass real."
+    }
+  }
+}

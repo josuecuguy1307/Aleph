@@ -1,0 +1,314 @@
+{
+  "_meta": {
+    "belt": "ingenieria",
+    "slug": "ingenieria",
+    "que_es": "Cinturon MCP del agente de INGENIERIA MECANICA (nicho #2, org/NORTH.md y catalog/belts/SCHEMA.md). CAD parametrico REAL (FreeCAD via freecad-mcp, stdio) + archivos/computo del run (filesystem) + correo en BORRADOR (mitad Gmail del belt cowork, Familia 3 OAuth). FreeCAD ejecuta de verdad contra una instancia LOCAL de FreeCAD por XML-RPC (127.0.0.1:9875).",
+    "fuente": "INSTALL freecad-mcp 2026-06-19 (neka-nat/freecad-mcp, README actual) + belt-cowork-gmail.mcp.json (mitad Gmail, reusada tal cual) + belt-research.mcp.json (patron mcpServers/cards) + catalog/belts/SCHEMA.md (#2 ingenieria).",
+    "consumido_por": "catalog/templates/ingenieria/t01-pieza-cad/config.json",
+    "verificado": "freecad: JSON-RPC init+tools/list + tools/call REAL por platform/assembler/assembler.MCPServer (el mismo MCPServer que usa :8080) contra FreeCAD 1.1.1 vivo el 2026-06-19 — box 10x20x30 creado, Volume=6000.0 mm3 leido de la geometria (no simulado). gmail: server stdio del belt cowork (init+tools/list reales el 2026-06-16 contra stub); ENVIAR pasa por send-gate (HELD sin OK); conectar la cuenta REAL de Gmail = OAuth pendiente de app Google registrada (oauth_pending) — wireado y verificado, pero sin GMAIL_TOKEN create_draft devuelve 'no hay credencial' (honesto, no green).",
+    "verificado_catalogo": "2026-07-04 PASS-gate verify_catalog_batch.py (batch a05-huerfanos, cliente de PROD assembler.MCPServer): cad PASS — cad_server.py bootea stdio headless (freecadcmd en /Applications/FreeCAD.app, SIN GUI ni RPC :9875), build_cad_model construyo el bracket REAL: bbox 120x80x70 mm, volume_mm3=140183.0, 3072 triangulos leidos de la geometria (no de memoria). Card nueva cad-headless = el server 'cad' (huerfano hasta hoy) surfacea en /v1/atoms/catalog. Evidencia: reports/catalog-wave-a/evidence-a05-huerfanos.json.",
+    "base_matrix": "catalog/templates/ingenieria/base-matrix-ingenieria.json",
+    "base_matrix_nota": "Declara las tools CAD locales de FreeCAD (crear/editar/leer) como auto-ejecuta y create_draft de Gmail como auto-ejecuta. delete_object = confirma-una-vez. El enforcer (recipe_enforcer) sigue forzando money/send por encima: send_email queda HELD pase lo que pase.",
+    "DEPENDENCIA_FREECAD": "freecad-mcp NO es un API remoto: es un PUENTE a una GUI local. Requiere FreeCAD ABIERTO con el workbench 'MCP Addon' activo y 'Start RPC Server' clickeado (escucha en 127.0.0.1:9875). El server MCP bootea igual SIN FreeCAD (el handshake initialize responde), pero las tools fallan con '[Errno 61] Connection refused' hasta que el RPC este vivo. Para uso desatendido: flag 'Auto-Start Server' del addon (arranca el RPC al abrir FreeCAD).",
+    "cards": [
+      {
+        "id": "cad-freecad",
+        "label": "Modelado CAD parametrico (FreeCAD)",
+        "sub": "Crea y edita piezas 3D · lee geometria real (volumen, bounding box) · local",
+        "auth": "keyless",
+        "armario": "apps",
+        "backed_by": "freecad",
+        "tools": [
+          "create_document",
+          "create_object",
+          "edit_object",
+          "get_object",
+          "get_objects"
+        ]
+      },
+      {
+        "id": "cad-script",
+        "label": "Automatizar FreeCAD (Python)",
+        "sub": "Corre scripts de FreeCAD · operaciones parametricas y booleanas · local",
+        "auth": "keyless",
+        "armario": "apps",
+        "backed_by": "freecad",
+        "tools": [
+          "execute_code"
+        ]
+      },
+      {
+        "id": "cad-headless",
+        "label": "Modelo CAD 3D (FreeCAD headless)",
+        "sub": "soporte en L paramétrico real (freecadcmd, sin GUI) · STL orbitable en La Sala · local",
+        "auth": "keyless",
+        "armario": "apps",
+        "backed_by": "cad",
+        "tools": [
+          "build_cad_model"
+        ]
+      },
+      {
+        "id": "cad-fem",
+        "label": "Analisis FEM (CalculiX)",
+        "sub": "von Mises max + desplazamiento + mapa de campo real · viga parametrica · local headless",
+        "auth": "keyless",
+        "armario": "apps",
+        "backed_by": "fem",
+        "criticality": "high",
+        "tools": [
+          "run_fem_analysis"
+        ]
+      },
+      {
+        "id": "files",
+        "label": "Computo y archivos",
+        "sub": "Guarda y organiza su trabajo de la ejecución · sin llave",
+        "auth": "keyless",
+        "armario": "archivos",
+        "backed_by": "filesystem",
+        "tools": [
+          "read_file",
+          "write_file",
+          "list_directory"
+        ]
+      },
+      {
+        "id": "gmail-draft",
+        "label": "Correo (Gmail)",
+        "sub": "Prepara borradores y ENVÍA correos · enviar siempre te pide el OK · tu cuenta",
+        "auth": "oauth",
+        "armario": "apps",
+        "connector": "gmail",
+        "backed_by": "gmail",
+        "tools": [
+          "create_draft",
+          "send_email"
+        ]
+      },
+      {
+        "id": "materials",
+        "label": "Propiedades de materiales (Materials Project)",
+        "sub": "estructura cristalina, band gap, modulos elasticos · datos reales · tu API key",
+        "auth": "token",
+        "armario": "mundo",
+        "connector": "materialsproject",
+        "backed_by": "materialsproject",
+        "tools": [
+          "get_structure_by_id",
+          "search_materials",
+          "get_elastic_constants",
+          "get_oxidation_states"
+        ]
+      },
+      {
+        "id": "cfd",
+        "gate": null,
+        "label": "Simulacion CFD (OpenFOAM)",
+        "sub": "flujo, numero de Reynolds, caida de presion · analisis CFD real · local",
+        "auth": "keyless",
+        "armario": "apps",
+        "backed_by": "openfoam",
+        "tools": [
+          "run_pipe_flow",
+          "analyze_external_flow",
+          "analyze_heat_transfer"
+        ]
+      }
+    ]
+  },
+  "mcpServers": {
+    "freecad": {
+      "command": "uvx",
+      "args": [
+        "freecad-mcp",
+        "--only-text-feedback"
+      ],
+      "caso": 1,
+      "bucket": "B1-local",
+      "familia": 1,
+      "nichos": [
+        "ingenieria"
+      ],
+      "credenciales": "ninguna (puente local; requiere FreeCAD GUI + RPC en 127.0.0.1:9875)",
+      "transport": "stdio",
+      "requiere_app": "FreeCAD 1.1.1 (/Applications/FreeCAD.app) + addon FreeCADMCP en ~/Library/Application Support/FreeCAD/v1-1/Mod/",
+      "REGLA": "execute_code corre Python ARBITRARIO con autoridad del proceso FreeCAD y requiere confirmación en cada invocación. delete_object también se confirma (borra geometría local, recuperable).",
+      "description": "CAD parametrico en FreeCAD: crea/edita/borra objetos, ejecuta Python de FreeCAD, lee geometria REAL (volumen, bounding box), libreria de partes, FEM. --only-text-feedback = sin screenshots (token-lean; quitar el flag para feedback visual por get_view).",
+      "reparacion": {
+        "precondiciones": [
+          {
+            "id": "freecad_instalado",
+            "tipo": "ruta",
+            "programa": "FreeCAD",
+            "titulo": "Instala FreeCAD",
+            "ruta": "/Applications/FreeCAD.app",
+            "como": "brew install --cask freecad",
+            "url": "https://www.freecad.org/downloads.php"
+          },
+          {
+            "id": "freecad_rpc",
+            "tipo": "humana",
+            "programa": "FreeCAD MCP Addon",
+            "titulo": "Activa MCP Addon y Start RPC Server",
+            "guia": "El complemento tiene que quedar activado dentro de FreeCAD; instalar FreeCAD solo no alcanza.",
+            "pasos": [
+              "Copia la carpeta FreeCADMCP al directorio Mod de tu versión de FreeCAD.",
+              "Cierra y vuelve a abrir FreeCAD.",
+              "Elige MCP Addon en la lista de workbenches.",
+              "En la barra FreeCAD MCP, toca Start RPC Server."
+            ],
+            "como": "git clone https://github.com/neka-nat/freecad-mcp.git && mkdir -p ~/Library/Application\\ Support/FreeCAD/v1-1/Mod && cp -R freecad-mcp/addon/FreeCADMCP ~/Library/Application\\ Support/FreeCAD/v1-1/Mod/",
+            "archivo": "https://github.com/neka-nat/freecad-mcp/tree/main/addon/FreeCADMCP",
+            "archivo_label": "Abrir la carpeta exacta del addon FreeCADMCP",
+            "url": "https://github.com/neka-nat/freecad-mcp",
+            "verificacion": {
+              "tipo": "tcp",
+              "host": "127.0.0.1",
+              "port": 9875
+            }
+          }
+        ]
+      },
+      "instalacion": {
+        "que": "FreeCAD 1.1.1 + el addon FreeCADMCP",
+        "link": "https://www.freecad.org/downloads.php",
+        "verificar": "/Applications/FreeCAD.app",
+        "rotulo": "Ya lo instalé · verificar"
+      }
+    },
+    "fem": {
+      "command": "python3",
+      "args": [
+        "${PUPPET_BELTS}/ingenieria/fem_server.py"
+      ],
+      "env": {
+        "FREECADCMD": "/Applications/FreeCAD.app/Contents/Resources/bin/freecadcmd",
+        "FEM_TIMEOUT": "300",
+        "PUPPET_LANG": "${PUPPET_LANG}",
+        "PUPPET_WORKDIR": "${PUPPET_WORKDIR}"
+      },
+      "caso": 1,
+      "bucket": "B1-local",
+      "nichos": [
+        "ingenieria"
+      ],
+      "transport": "stdio",
+      "credenciales": "ninguna (corre CalculiX local via freecadcmd headless).",
+      "requiere_app": "FreeCAD 1.1.1 (/Applications/FreeCAD.app) — usa freecadcmd (consola) + ccx bundleado; NO requiere la GUI ni el RPC :9875.",
+      "REGLA": "run_fem_analysis corre un solver FEM local de baja consecuencia (no toca plata ni manda nada) -> auto-ejecuta. Headless y determinista: NO usa el bridge GUI de freecad-mcp (que cuelga en ops pesadas). Escribe vonmises.fieldplot.json en ${PUPPET_WORKDIR} -> La Sala lo rinde como heatmap fieldplot.",
+      "description": "Analisis FEM REAL con CalculiX sobre una viga en voladizo parametrica (Part::Box mallada con Gmsh): devuelve tension de von Mises max/min (MPa), desplazamiento max (mm) y un mapa de campo escalar (fieldplot) renderizable. Todo numero sale del solver, nunca de memoria.",
+      "instalacion": {
+        "que": "FreeCAD 1.1.1 (usa freecadcmd, sin GUI)",
+        "link": "https://www.freecad.org/downloads.php",
+        "verificar": "/Applications/FreeCAD.app",
+        "rotulo": "Ya lo instalé · verificar"
+      }
+    },
+    "cad": {
+      "command": "python3",
+      "args": [
+        "${PUPPET_BELTS}/ingenieria/cad_server.py"
+      ],
+      "env": {
+        "FREECADCMD": "/Applications/FreeCAD.app/Contents/Resources/bin/freecadcmd",
+        "CAD_TIMEOUT": "180",
+        "PUPPET_LANG": "${PUPPET_LANG}",
+        "PUPPET_WORKDIR": "${PUPPET_WORKDIR}"
+      },
+      "caso": 1,
+      "bucket": "B1-local",
+      "nichos": [
+        "ingenieria"
+      ],
+      "transport": "stdio",
+      "credenciales": "ninguna (construye geometria local via freecadcmd headless).",
+      "requiere_app": "FreeCAD 1.1.1 (/Applications/FreeCAD.app) — usa freecadcmd (consola); NO requiere la GUI ni el RPC :9875.",
+      "REGLA": "build_cad_model construye un modelo CAD local de baja consecuencia (no toca plata ni manda nada) -> auto-ejecuta. Headless y determinista. Escribe model.cad.json (type=cad, STL) en ${PUPPET_WORKDIR} -> La Sala lo rinde como malla 3D orbitable.",
+      "description": "Modelo CAD 3D REAL con FreeCAD headless: un soporte/bracket en L parametrico (placa base + ala con barrenos). Exporta malla ASCII STL orbitable. Dimensiones (bbox, volumen, nro de triangulos) salen de la geometria real, nunca de memoria.",
+      "instalacion": {
+        "que": "FreeCAD 1.1.1 (usa freecadcmd, sin GUI)",
+        "link": "https://www.freecad.org/downloads.php",
+        "verificar": "/Applications/FreeCAD.app",
+        "rotulo": "Ya lo instalé · verificar"
+      }
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "${PUPPET_WORKDIR}"
+      ],
+      "caso": 1,
+      "bucket": "B1",
+      "nichos": [
+        "research",
+        "programacion",
+        "cowork",
+        "finanzas",
+        "ingenieria"
+      ],
+      "credenciales": "ninguna (allow-list de dirs = ${PUPPET_WORKDIR})",
+      "atomica": true,
+      "description": "Leer/escribir el workspace del run (read_file, write_file, list_directory). Backbone atomico: persiste planos, scripts y notas del agente."
+    },
+    "gmail": {
+      "command": "python3",
+      "args": [
+        "${PUPPET_BELTS}/cowork/gmail_draft_server.py"
+      ],
+      "env": {
+        "GMAIL_TOKEN": "${GMAIL_TOKEN}",
+        "GMAIL_ACCESS_TOKEN": "${GMAIL_ACCESS_TOKEN}",
+        "GMAIL_API_KEY": "${GMAIL_API_KEY}",
+        "GMAIL_API_BASE": "https://gmail.googleapis.com",
+        "GMAIL_USER": "me",
+        "PUPPET_LANG": "${PUPPET_LANG}"
+      },
+      "caso": 1,
+      "bucket": "B1-draft · B3-gate(send)",
+      "familia": 3,
+      "nichos": [
+        "cowork",
+        "ingenieria"
+      ],
+      "credenciales": "OAuth Google (access-token) BYOK por-usuario via credential-broker (Familia 3). Multi-usuario; jamas la cuenta de dev. ${GMAIL_TOKEN} lo inyecta el runtime; sin el, create_draft devuelve 'no hay credencial' (honesto).",
+      "REGLA": "create_draft prepara borrador (NO envia). send_email existe para probar el send-gate; el enforcer lo fuerza a needs_ok. En produccion NO se lista send_email en tool_filters.",
+      "description": "Prepara borradores de correo en Gmail (mandar specs, cotizaciones, notas a un cliente/proveedor). Enviar pasa por el send-gate (HELD sin OK)."
+    },
+    "materialsproject": {
+      "command": "/usr/local/bin/docker",
+      "args": [
+        "run",
+        "--rm",
+        "-i",
+        "-e",
+        "MP_API_KEY",
+        "benedict2002/materials-project-mcp"
+      ],
+      "env": {
+        "MP_API_KEY": "${MP_API_KEY}"
+      },
+      "transport": "stdio (docker)",
+      "credenciales": "MP_API_KEY (free, materialsproject.org) BYOK via byok_ref keys:mp -> ${MP_API_KEY} (pass-through a docker con -e). Sin key, los lookups fallan (honesto).",
+      "description": "Propiedades de materiales reales desde Materials Project: estructura cristalina (lattice, sites), band gap, modulos elasticos, etc. Lookup directo por material_id (ej mp-149 silicio) o por formula. Corre como contenedor Docker."
+    },
+    "openfoam": {
+      "command": "/usr/local/bin/docker",
+      "args": [
+        "run",
+        "--rm",
+        "-i",
+        "openfoam-mcp:arm64",
+        "bash",
+        "-lc",
+        "source /opt/openfoam12/etc/bashrc && exec /app/build/openfoam-mcp-server"
+      ],
+      "transport": "stdio (docker)",
+      "credenciales": "ninguna (OpenFOAM 12 dentro del contenedor).",
+      "REGLA": "run_pipe_flow / analyze_* computan fisica real (Hagen-Poiseuille, etc.). El flujo de caso completo en vivo (execute_openfoam_operation) esta WIP (migracion OF12) -> preferir run_pipe_flow/analyze_*.",
+      "description": "Simulacion/analisis CFD con OpenFOAM 12 (contenedor Docker, arm64): run_pipe_flow (Reynolds, friction factor, pressure drop reales), analyze_external_flow, analyze_heat_transfer, analyze_multiphase_flow."
+    }
+  }
+}

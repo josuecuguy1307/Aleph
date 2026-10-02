@@ -1,0 +1,13 @@
+{
+  "schema_version": "v1",
+  "meta": { "name": "myself_loop", "nicho": "general",
+            "descripcion": "ATAQUE riel #2: agent_ref que apunta a su PROPIA receta" },
+  "model": { "primary": "stub", "base_url": "stub://local", "temperature": 0, "max_tokens": 256, "max_turns": 8 },
+  "belt": {
+    "belt_ref": "platform/assembler/deleg_fixtures/belt-deleg.mcp.json",
+    "agent_refs": ["platform/assembler/deleg_fixtures/recursive_self.json"],
+    "tool_filters": { "deleg": ["read_data"] }
+  },
+  "rag": { "enabled": false },
+  "gates": { "money_touch": "needs_ok", "send": "needs_ok" }
+}

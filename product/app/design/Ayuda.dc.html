@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+<script src="./i18n.js"></script>
+<script src="./nav.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="vendor/fonts.css"><!-- [Casa 2 · F1.b] fuentes locales: antes 2 preconnect + css2 de Google -->
+<link rel="stylesheet" href="aleph-tokens.css"><!-- [identidad visual] la piel: tokens, forma y tipografía en un solo lugar -->
+<style>
+  /* [sistema 2026-07-31] Ayuda entra al sistema "Híbrido Spatial + Soft futurism".
+     Las primitivas (.ds-plane/.ds-well/.ds-track/.ds-card/.ds-item/.ds-title/…) llegan solas
+     por aleph-tokens.css → @import aleph-ds.css; acá NO se redeclara ningún token.
+     Lo que cambia es la PIEL: cero bordes, cero relieves, cero hundidos — la jerarquía es
+     sombra + radio. Color 90/8/2: neutros casi todo, el violeta sólo en el elemento en foco
+     y en los acentos de identidad (la mascota, el asistente).
+     Lo que NO cambia: ni un binding, ni un <sc-for>, ni un <sc-if>, ni una acción, ni un
+     texto. La lista de temas es la misma lista; ahora se recorre con Vertical Sliding Focus. */
+  *{box-sizing:border-box}
+  html,body{margin:0}
+
+  body{background:var(--page-bg);min-height:100vh;font-family:var(--font-ui);color:var(--ink);-webkit-font-smoothing:antialiased}
+  a{text-decoration:none;color:inherit}
+  ::placeholder{color:var(--faint)}
+  input{font-family:inherit}
+  ::-webkit-scrollbar{width:9px;height:9px}::-webkit-scrollbar-thumb{background:var(--paper2);border-radius:var(--r-full)}
+  @keyframes livePulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
+  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+  @keyframes fadeUp{0%{transform:translateY(8px)}100%{transform:translateY(0)}}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes sweep{0%{transform:translateX(-110%)}100%{transform:translateX(440%)}}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+</style>
+
+<style id="aleph-theme-style">
+
+</style>
+<script src="./theme.js"></script>
+</helmet>
+
+<div style="min-height:100vh;padding:24px 30px 80px">
+  <div style="max-width:1080px;margin:0 auto">
+
+
+    <!-- ============ HOME VIEW ============ -->
+    <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+      <div class="ds-plane">
+        <!-- HERO + SEARCH -->
+        <div style="text-align:center;max-width:640px;margin:0 auto 20px">
+          <h1 class="ds-title">¿Qué quieres hacer?</h1>
+          <p class="ds-sub" style="margin:11px 0 20px;font-size:13.5px">Busca tu pregunta o elige una meta. Sin manuales —te mostramos cómo.</p>
+          <div style="position:relative">
+            <span style="position:absolute;left:20px;top:50%;transform:translateY(-50%);color:var(--faint);font-size:16px">⌕</span>
+            <input value="{{ query }}" onInput="{{ setQuery }}" placeholder="Ej: cómo hago que lea mis hojas de cálculo…" style="width:100%;border:0;background:var(--paper2);border-radius:var(--r-md);padding:14px 18px 14px 48px;font:300 14px var(--font-ui);color:var(--ink);outline:none" style-focus="background:var(--accent-soft)">
+          </div>
+          <!-- search suggestions -->
+          <sc-if value="{{ searching }}" hint-placeholder-val="{{ false }}">
+            <div class="ds-well" style="text-align:left;margin-top:10px;padding:6px">
+              <sc-for list="{{ results }}" as="r" hint-placeholder-count="3"><button onClick="{{ r.open }}" style="display:flex;align-items:center;gap:11px;width:100%;border:0;background:none;border-radius:var(--r-md);padding:11px 14px;font:inherit;cursor:pointer;text-align:left" style-hover="background:var(--paper)"><span style="font-size:13px;color:var(--accent-deep);flex:none">{{ r.icon }}</span><span style="font:400 13.5px var(--font-ui);color:var(--ink)">{{ r.title }}</span><span class="ds-meta" style="margin-left:auto">{{ r.cat }}</span></button></sc-for>
+              <sc-if value="{{ noResults }}" hint-placeholder-val="{{ false }}"><div class="ds-sub" style="padding:16px;text-align:center">Nada con esas palabras. <button onClick="{{ openChat }}" style="border:0;background:none;color:var(--accent-deep);font:400 13px var(--font-ui);cursor:pointer;text-decoration:underline">Pregunta al asistente de ayuda →</button></div></sc-if>
+            </div>
+          </sc-if>
+        </div>
+
+        <!-- popular chips -->
+        <sc-if value="{{ showPopular }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:24px">
+            <span class="ds-meta">popular:</span>
+            <sc-for list="{{ popular }}" as="p" hint-placeholder-count="3"><button onClick="{{ p.open }}" style="border:0;background:var(--paper2);color:var(--muted);border-radius:var(--r-full);padding:7px 14px;font:400 12px var(--font-ui);cursor:pointer" style-hover="color:var(--ink)">{{ p.title }}</button></sc-for>
+          </div>
+        </sc-if>
+
+        <!-- GOAL CATEGORIES · la PISTA: exactamente un tema en foco, con sus artículos
+             alcanzables; el resto retrocede conservando nombre y conteo legibles. -->
+        <div class="ds-well ds-track" data-ds-track style="padding:18px 20px">
+          <sc-for list="{{ cats }}" as="c" hint-placeholder-count="5">
+            <div class="ds-card ds-item" style="margin-bottom:10px;padding:16px 18px">
+              <div style="display:flex;align-items:center;gap:12px">
+                <!-- el color de la categoría sobrevive donde el sistema lo permite: como tinte
+                     del glifo al pasar el mouse (2%), no como borde teñido de la tarjeta. -->
+                <span style="{{ c.iconStyle }}" style-hover="color:{{ c.color }}">{{ c.icon }}</span>
+                <div style="flex:1;min-width:0">
+                  <div class="ds-name" style="font-size:15px">{{ c.label }}</div>
+                  <div class="ds-meta" style="margin-top:3px">{{ c.count }} artículos</div>
+                </div>
+              </div>
+              <!-- Los artículos son el CUERPO de la fila, no acciones ocultas: en .ds-actions
+                   la opacidad 0 sigue ocupando alto y las filas retrocedidas quedaban como
+                   tarjetas huecas (medido). Retroceden con la fila y siguen legibles. -->
+              <div style="display:flex;flex-direction:column;margin-top:8px">
+                <sc-for list="{{ c.articles }}" as="a" hint-placeholder-count="3"><button onClick="{{ a.open }}" style="display:flex;align-items:center;gap:10px;width:100%;border:0;background:none;border-radius:var(--r-sm);padding:7px 10px;font:inherit;cursor:pointer;text-align:left" style-hover="background:var(--paper2)"><span style="font-size:12px;color:var(--faint);flex:none">›</span><span style="font:300 13px var(--font-ui);color:var(--muted)" style-hover="color:var(--ink)">{{ a.title }}</span></button></sc-for>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+
+        <!-- HUMAN EXIT -->
+        <div class="ds-well" style="display:flex;align-items:center;gap:18px;border-radius:var(--r-lg);padding:20px 24px;margin-top:18px;flex-wrap:wrap">
+          <svg width="58" height="58" viewBox="0 0 128 128" fill="none" style="flex:none;animation:floaty 5s ease-in-out infinite"><g style="transform-origin:64px 64px;animation:spin 13s linear infinite"><g transform="rotate(0 64 64)"><ellipse cx="64" cy="64" rx="46" ry="17" stroke="var(--accent)" stroke-width="2.4" opacity="0.5"></ellipse><circle cx="110" cy="64" r="5" fill="var(--accent)"></circle></g><g transform="rotate(60 64 64)"><ellipse cx="64" cy="64" rx="46" ry="17" stroke="var(--accent)" stroke-width="2.4" opacity="0.5"></ellipse><circle cx="110" cy="64" r="5" fill="var(--accent)"></circle></g><g transform="rotate(120 64 64)"><ellipse cx="64" cy="64" rx="46" ry="17" stroke="var(--accent)" stroke-width="2.4" opacity="0.5"></ellipse><circle cx="110" cy="64" r="5" fill="var(--accent)"></circle></g></g><path d="M64 40 L85 52 L85 76 L64 88 L43 76 L43 52 Z" fill="var(--accent)" stroke="var(--accent)" stroke-width="7" stroke-linejoin="round"></path><path d="M53 65 q4.5 -5.5 9 0" stroke="#211E3A" stroke-width="3.6" fill="none" stroke-linecap="round"></path><path d="M66 65 q4.5 -5.5 9 0" stroke="#211E3A" stroke-width="3.6" fill="none" stroke-linecap="round"></path></svg>
+          <div style="flex:1;min-width:200px">
+            <div style="font:400 17px var(--font-ui);color:var(--ink)">¿No encuentras lo que buscas?</div>
+            <div class="ds-sub" style="margin-top:5px;line-height:1.5">Pregunta al asistente de ayuda, o escríbenos —te contesta una persona.</div>
+          </div>
+          <div style="display:flex;gap:10px;flex:none">
+            <button onClick="{{ openChat }}" class="ds-btn" style-hover="filter:brightness(1.12)">Preguntar al asistente</button>
+            <button class="ds-btn-ghost" style-hover="color:var(--ink)">Escríbenos</button>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ============ ARTICLE VIEW ============ -->
+    <sc-if value="{{ isArticle }}" hint-placeholder-val="{{ false }}">
+      <div class="ds-plane" style="max-width:760px;margin:0 auto;animation:fadeUp .3s ease both">
+        <button onClick="{{ back }}" class="ds-btn-ghost" style="padding-left:0;margin-bottom:14px" style-hover="color:var(--ink)">← todos los temas</button>
+
+        <div style="display:flex;align-items:center;gap:9px;margin-bottom:12px"><span style="{{ art.catStyle }}">{{ art.cat }}</span><span class="ds-meta">· {{ art.read }}</span></div>
+        <h1 class="ds-title">{{ art.title }}</h1>
+        <p class="ds-sub" style="margin:12px 0 22px;font-size:14px;line-height:1.6;max-width:64ch">{{ art.intro }}</p>
+
+        <!-- steps with product captures -->
+        <div class="ds-well" style="padding:18px 20px;display:flex;flex-direction:column;gap:12px">
+          <sc-for list="{{ art.steps }}" as="s" hint-placeholder-count="3">
+            <div class="ds-card" style="padding:16px 18px">
+              <div style="display:flex;align-items:flex-start;gap:13px">
+                <span style="width:26px;height:26px;border-radius:var(--r-xs);background:var(--accent-soft);color:var(--accent-deep);font:400 12px var(--font-ui);display:flex;align-items:center;justify-content:center;flex:none">{{ s.n }}</span>
+                <div style="flex:1;padding-top:2px"><div class="ds-name" style="font-size:14.5px">{{ s.title }}</div><div class="ds-sub" style="margin-top:5px;line-height:1.55">{{ s.body }}</div></div>
+              </div>
+              <!-- product capture (real mini UI, "show not tell") -->
+              <div style="margin-top:14px;border-radius:var(--r-md);overflow:hidden;background:var(--paper2)">
+                <div style="display:flex;align-items:center;gap:6px;padding:8px 12px"><span style="display:flex;gap:4px"><span style="width:7px;height:7px;border-radius:50%;background:var(--faint);opacity:.4"></span><span style="width:7px;height:7px;border-radius:50%;background:var(--faint);opacity:.4"></span><span style="width:7px;height:7px;border-radius:50%;background:var(--faint);opacity:.4"></span></span><span class="ds-meta" style="margin-left:5px;font-size:10px">{{ s.shotLabel }}</span><span style="margin-left:auto;font:400 9.5px var(--font-ui);color:var(--accent-deep);background:var(--accent-soft);border-radius:var(--r-full);padding:3px 9px">▶ animación</span></div>
+                <div style="height:128px;position:relative">{{ s.shot }}</div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+
+        <!-- related + helpful -->
+        <div class="ds-well" style="margin-top:16px;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:15px 20px;flex-wrap:wrap">
+          <span class="ds-sub">¿Te sirvió este artículo?</span>
+          <div style="display:flex;gap:9px">
+            <button style="border:0;background:var(--paper);color:var(--muted);border-radius:var(--r-md);padding:9px 17px;font:400 12px var(--font-ui);cursor:pointer;box-shadow:var(--sh-1)" style-hover="color:var(--green)">👍 Sí</button>
+            <button style="border:0;background:var(--paper);color:var(--muted);border-radius:var(--r-md);padding:9px 17px;font:400 12px var(--font-ui);cursor:pointer;box-shadow:var(--sh-1)" style-hover="color:var(--ink)">No del todo</button>
+          </div>
+        </div>
+
+        <div class="ds-meta" style="margin-top:14px;text-align:center">¿Sigues trabado? <button onClick="{{ openChat }}" style="border:0;background:none;color:var(--accent-deep);font:400 12px var(--font-ui);cursor:pointer;text-decoration:underline">Pregunta al asistente de ayuda</button> o escríbenos.</div>
+      </div>
+    </sc-if>
+
+  </div>
+
+  <!-- ============ HELP PUPPET CHAT (floating) ============ -->
+  <sc-if value="{{ chatOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;right:24px;bottom:24px;width:360px;max-width:calc(100vw - 32px);background:var(--paper);border-radius:var(--r-xl);overflow:hidden;box-shadow:var(--sh-3);z-index:50;animation:fadeUp .3s ease both">
+      <div style="display:flex;align-items:center;gap:11px;padding:14px 16px;background:var(--paper2)">
+        <div class="ds-mark" style="width:34px;height:34px;border-radius:var(--r-sm)"><img src="assets/aleph-mascot-v2.png" alt="" width="20" height="20" style="display:block"></div>
+        <div style="flex:1"><div class="ds-name">Asistente de ayuda</div><div class="ds-meta" style="color:var(--green);display:flex;align-items:center;gap:5px;margin-top:2px"><span class="ds-dot ds-dot-ok" style="animation:livePulse 1.6s ease-in-out infinite"></span>te responde al instante</div></div>
+        <button onClick="{{ closeChat }}" style="border:0;background:none;color:var(--faint);font-size:18px;cursor:pointer;line-height:1" style-hover="color:var(--ink)">×</button>
+      </div>
+      <div style="padding:15px;display:flex;flex-direction:column;gap:11px;max-height:300px;overflow:auto">
+        <sc-for list="{{ chatMsgs }}" as="m" hint-placeholder-count="2">
+          <div style="{{ m.rowStyle }}">
+            <sc-if value="{{ m.isBot }}" hint-placeholder-val="{{ true }}"><span class="ds-mark" style="width:24px;height:24px;border-radius:var(--r-xs);flex:none"></span></sc-if>
+            <div style="{{ m.bubbleStyle }}"><span data-no-tm>{{ m.text }}</span><sc-if value="{{ m.hasLink }}" hint-placeholder-val="{{ false }}"><button onClick="{{ m.openArt }}" style="display:block;margin-top:8px;border:0;background:var(--accent-soft);color:var(--accent-deep);border-radius:var(--r-sm);padding:7px 12px;font:400 12px var(--font-ui);cursor:pointer">{{ m.linkLabel }} →</button></sc-if></div>
+          </div>
+        </sc-for>
+        <sc-if value="{{ chatTyping }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:8px;align-items:center"><span class="ds-mark" style="width:24px;height:24px;border-radius:var(--r-xs);flex:none"></span><div style="background:var(--paper2);border-radius:6px 16px 16px 16px;padding:11px 14px;display:flex;gap:4px"><span style="width:6px;height:6px;border-radius:50%;background:var(--faint);animation:blink 1s infinite"></span><span style="width:6px;height:6px;border-radius:50%;background:var(--faint);animation:blink 1s infinite .2s"></span><span style="width:6px;height:6px;border-radius:50%;background:var(--faint);animation:blink 1s infinite .4s"></span></div></div></sc-if>
+      </div>
+      <div style="padding:12px 15px 15px">
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px">
+          <sc-for list="{{ chatChips }}" as="c" hint-placeholder-count="2"><button onClick="{{ c.ask }}" style="border:0;background:var(--paper2);color:var(--muted);border-radius:var(--r-full);padding:6px 12px;font:400 11.5px var(--font-ui);cursor:pointer" style-hover="color:var(--ink)">{{ c.text }}</button></sc-for>
+        </div>
+        <div style="display:flex;gap:8px">
+          <input value="{{ chatInput }}" onInput="{{ setChatInput }}" onKeyDown="{{ chatKey }}" placeholder="Escribe tu pregunta…" style="flex:1;border:0;background:var(--paper2);border-radius:var(--r-md);padding:11px 14px;font:300 13px var(--font-ui);color:var(--ink);outline:none" style-focus="background:var(--accent-soft)">
+          <button onClick="{{ sendChat }}" class="ds-btn" style="padding:0 16px" style-hover="filter:brightness(1.12)">→</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- floating help button -->
+  <sc-if value="{{ chatClosed }}" hint-placeholder-val="{{ true }}">
+    <button onClick="{{ openChat }}" style="position:fixed;right:24px;bottom:24px;display:flex;align-items:center;gap:9px;background:var(--accent);color:var(--on-accent);border:0;border-radius:var(--r-full);padding:13px 20px 13px 15px;font:400 13.5px var(--font-ui);cursor:pointer;box-shadow:var(--sh-2);z-index:50" style-hover="filter:brightness(1.08)">
+      <span style="width:26px;height:26px;border-radius:var(--r-sm);background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center"><svg width="17" height="17" viewBox="0 0 28 28" fill="none"><ellipse cx="14" cy="14" rx="12" ry="4.6" stroke="#fff" stroke-width="1.4" opacity=".7" transform="rotate(28 14 14)"></ellipse><ellipse cx="14" cy="14" rx="12" ry="4.6" stroke="#fff" stroke-width="1.4" opacity=".7" transform="rotate(-28 14 14)"></ellipse><path d="M14 6.5 L20.5 10.2 L20.5 16.8 L14 20.5 L7.5 16.8 L7.5 10.2 Z" fill="#fff"></path><path d="M11.4 13.3 q1.3 -1.7 2.6 0" stroke="var(--accent)" stroke-width="1.4" fill="none" stroke-linecap="round"></path><path d="M14.6 13.3 q1.3 -1.7 2.6 0" stroke="var(--accent)" stroke-width="1.4" fill="none" stroke-linecap="round"></path></svg></span>
+      ¿Te ayudo?
+    </button>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#8E8BF5&quot;}}">
+class Component extends DCLogic {
+  state = { view:'home', article:null, query:'', chat:false, chatInput:'', chatMsgs:null, typing:false };
+
+  componentDidMount(){ const a=this.props.accent; if(a) document.documentElement.style.setProperty('--accent',a); this.dsKeepFocus(); }
+  componentDidUpdate(p){ const a=this.props.accent; if(p&&p.accent!==a&&a) document.documentElement.style.setProperty('--accent',a); this.dsKeepFocus(); }
+  componentWillUnmount(){ (this._dsT||[]).forEach(clearTimeout); }
+
+  /* [sistema · Vertical Sliding Focus] REACT SE COME EL data-focus (mismo caso medido en
+     Historial): en el commit que sigue al primer apply() de aleph-ds.js, react-dom llama
+     removeAttribute('data-focus') sobre las filas, y aleph-ds.js sólo re-aplica cuando cambia
+     la CANTIDAD de filas — así que la pista queda sin foco: todos los temas a tamaño real con
+     todos sus artículos, o sea lo contrario del patrón. Esto NO re-implementa nada: usa la API
+     pública (AlephDS.focus) y sólo entra si el atributo falta, así que no roba scroll ni mueve
+     el foco que el usuario eligió. */
+  dsKeepFocus(){
+    (this._dsT||[]).forEach(clearTimeout);
+    this._dsT=[0,120,400].map(ms=>setTimeout(()=>{
+      try{
+        const t=document.querySelector('[data-ds-track]');
+        if(!t || !window.AlephDS || !t.querySelector('.ds-item')) return;
+        if(!t.querySelector('.ds-item[data-focus]')) window.AlephDS.focus(t, t._dsIndex||0);
+      }catch(e){}
+    },ms));
+  }
+
+  // [identidad visual] con un TOKEN emite color-mix: el tinte gira con el tema en vez de
+  // quedar clavado (la paleta de categorías era ciega al tema y en claro daba 2.3:1).
+  rgba(c,a){ if(String(c).indexOf('var(')===0) return 'color-mix(in srgb, '+c+' '+Math.round(a*100)+'%, transparent)';
+    const h=String(c).replace('#',''); const n=parseInt(h,16); return 'rgba('+((n>>16)&255)+','+((n>>8)&255)+','+(n&255)+','+a+')'; }
+
+  cats = [
+    {id:'start', label:'Empezar', icon:'✦', color:'var(--accent-deep)', articles:[
+      {id:'a1', title:'Qué es un Aleph (en 1 minuto)'},
+      {id:'a2', title:'Usar tu primer Aleph'},
+      {id:'a3', title:'La diferencia entre Usar y Editar'},
+    ]},
+    {id:'build', label:'Armar un Aleph', icon:'＋', color:'var(--green)', articles:[
+      {id:'b1', title:'Cómo hago que un Aleph lea mis hojas de cálculo'},
+      {id:'b2', title:'Darle una tarea y verlo trabajar'},
+      {id:'b3', title:'Guardar lo que produjo'},
+    ]},
+    {id:'connect', label:'Conectar tus herramientas', icon:'⇄', color:'var(--cool)', articles:[
+      {id:'c1', title:'Conectar Gmail o Drive a un Aleph'},
+      {id:'c2', title:'Usar tu propia key de IA (BYOK)'},
+      {id:'c3', title:'Sumar una herramienta nueva'},
+    ]},
+    {id:'perms', label:'Entender los permisos', icon:'🔒', color:'var(--amber)', articles:[
+      {id:'p1', title:'Por qué me pide permiso antes de enviar'},
+      {id:'p2', title:'Aprobar o rechazar lo que el Aleph quiere hacer'},
+      {id:'p3', title:'Revocar el acceso a una app'},
+    ]},
+    {id:'fix', label:'Cuando algo falla', icon:'⚠', color:'var(--red)', articles:[
+      {id:'f1', title:'Mi Aleph se frenó a mitad de la tarea'},
+      {id:'f2', title:'Mi key falló o se quedó sin saldo'},
+      {id:'f3', title:'Retomar una sesión donde la dejé'},
+    ]},
+  ];
+
+  articleData = {
+    b1:{ cat:'Armar un Aleph', catColor:'var(--green)', read:'2 min de lectura',
+      title:'Cómo hago que un Aleph lea mis hojas de cálculo',
+      intro:'Le das tus hojas de cálculo una vez y el Aleph las usa para trabajar —sin que tengas que copiar nada a mano. Tres pasos.',
+      steps:[
+        {title:'Abre el Aleph y entrégale la hoja de cálculo', body:'En la Sala, arrastra tu archivo (o conecta tu Drive). El Aleph lo toma como su fuente de datos.', shotLabel:'Sala · adjuntar', shot:'attach'},
+        {title:'Pídele qué hacer con ella', body:'Escribe en lenguaje normal: «arma el cierre de la semana con esto». No hace falta fórmula ni configuración.', shotLabel:'Sala · instrucción', shot:'chat'},
+        {title:'Míralo trabajar y guarda', body:'Vas viendo en la bitácora cómo lee y arma la tabla. Cuando termina, guardas en la biblioteca.', shotLabel:'Sala · resultado', shot:'table'},
+      ]},
+    p1:{ cat:'Entender los permisos', catColor:'var(--amber)', read:'1 min de lectura',
+      title:'Por qué me pide permiso antes de enviar',
+      intro:'El Aleph hace su trabajo solo, pero para cualquier acción que sale al mundo —enviar un correo, gastar, borrar— frena y te pide el OK. Tú tienes la última palabra.',
+      steps:[
+        {title:'El Aleph prepara la acción', body:'Prepara el correo (o lo que sea) y, en vez de enviarlo, lo deja listo para que lo revises.', shotLabel:'Sala · gate', shot:'gate'},
+        {title:'Tú apruebas o rechazas', body:'Ves exactamente qué va a hacer —a quién, con qué texto— y decides. Hasta que no apruebas, no pasa nada.', shotLabel:'Sala · aprobar', shot:'gate'},
+      ]},
+    c2:{ cat:'Conectar tus herramientas', catColor:'var(--cool)', read:'2 min de lectura',
+      title:'Usar tu propia key de IA (BYOK)',
+      intro:'Lo básico corre sobre la lane incluida, sin configurar nada. Si quieres un modelo propio o premium, agrega tu key en Settings.',
+      steps:[
+        {title:'Ve a Settings → API keys', body:'Toca «Agregar key» y pega la tuya. La guardamos cifrada; solo la usan los Aleph que tú indiques.', shotLabel:'Settings · API keys', shot:'keys'},
+        {title:'Asígnala a un Aleph', body:'Eliges qué modelo usa cada Aleph. Si la key falla o se queda sin saldo, te avisamos y tu trabajo queda guardado.', shotLabel:'Settings · estado', shot:'keys'},
+      ]},
+  };
+
+  // search index (flat)
+  uiText(text){ return window.AlephI18n ? window.AlephI18n.text(text) : text; }
+  allArticles(){ const out=[]; this.cats.forEach(c=>c.articles.forEach(a=>out.push({...a, title:this.uiText(a.title), cat:this.uiText(c.label), catId:c.id, color:c.color}))); return out; }
+
+  openArticle(id){ const real=this.articleData[id]?id:'b1'; this.setState({view:'article', article:real, query:'', chat:false}); window.scrollTo(0,0); }
+  back(){ this.setState({view:'home'}); }
+
+  openChat(){
+    this.setState({chat:true});
+    if(!this.state.chatMsgs) this.setState({chatMsgs:[{from:'bot', text:'¡Hola! Soy el asistente de ayuda. Cuéntame qué quieres hacer y te muestro cómo —o te llevo al artículo exacto.'}]});
+  }
+  closeChat(){ this.setState({chat:false}); }
+  pushMsg(m){ this.setState(s=>({chatMsgs:[...(s.chatMsgs||[]),m]})); }
+  ask(text){
+    this.pushMsg({from:'user', text});
+    this.setState({typing:true, chatInput:''});
+    setTimeout(()=>{
+      this.setState({typing:false});
+      const t=text.toLowerCase();
+      if(t.includes('planilla')||t.includes('excel')||t.includes('datos')||t.includes('spreadsheet')||t.includes('data')) this.pushMsg({from:'bot', text:'Le das la hoja de cálculo en la Sala y le pides qué hacer en lenguaje normal. Te dejo el paso a paso:', link:'b1', linkLabel:'Cómo hago que lea mis hojas de cálculo'});
+      else if(t.includes('permiso')||t.includes('mail')||t.includes('enviar')||t.includes('gate')||t.includes('permission')||t.includes('send')) this.pushMsg({from:'bot', text:'Para todo lo que sale al mundo (enviar, gastar, borrar) el Aleph te pide OK primero. Aquí lo explico:', link:'p1', linkLabel:'Por qué me pide permiso'});
+      else if(t.includes('key')||t.includes('byok')||t.includes('modelo')||t.includes('model')) this.pushMsg({from:'bot', text:'Lo básico funciona sin key. Si quieres modelo propio, lo sumas en Settings. Mira:', link:'c2', linkLabel:'Usar tu propia key'});
+      else this.pushMsg({from:'bot', text:'Buena pregunta. Prueba con el buscador de arriba, o si quieres te comunico con alguien del equipo —te responde por correo.'});
+    }, 900);
+  }
+  sendChat(){ const t=this.state.chatInput.trim(); if(t) this.ask(t); }
+  chatKey(e){ if(e.key==='Enter'){ e.preventDefault(); this.sendChat(); } }
+
+  // ===== mini product captures =====
+  /* [sistema] las capturas también entran al sistema: cero bordes, cero hexadecimales sueltos.
+     Las barras son el gris de apoyo con opacidad; las superficies, --paper sobre el pozo. */
+  shot(kind){
+    const e=React.createElement, bar=(w,h,c,x)=>e('div',{style:Object.assign({width:w,height:h,borderRadius:'var(--r-2xs)',background:c},x||{})});
+    const INK='var(--muted)', SOFT={opacity:.45};
+    if(kind==='attach') return e('div',{style:{position:'absolute',inset:0,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:8,padding:14}},[
+      e('div',{key:1,style:{width:'70%',borderRadius:'var(--r-md)',padding:'14px',display:'flex',flexDirection:'column',alignItems:'center',gap:7,background:'var(--accent-soft)'}},[
+        e('div',{key:'i',style:{width:30,height:30,borderRadius:'var(--r-sm)',background:'var(--accent)',color:'var(--on-accent)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:13}},'▦'),
+        bar('60%','6px',INK),bar('40%','5px',INK,SOFT)
+      ]),
+      e('div',{key:2,style:{fontSize:10,color:'var(--faint)'}},'arrastra tu hoja de cálculo aquí')
+    ]);
+    if(kind==='chat') return e('div',{style:{position:'absolute',inset:0,display:'flex',flexDirection:'column',justifyContent:'flex-end',gap:7,padding:14}},[
+      e('div',{key:1,style:{alignSelf:'flex-end',background:'var(--accent-soft)',borderRadius:'14px 14px 4px 14px',padding:'7px 11px',fontSize:11,color:'var(--ink)',maxWidth:'80%'}},'arma el cierre de la semana con esto'),
+      e('div',{key:2,style:{display:'flex',gap:7,alignItems:'center'}},[
+        bar('40%','9px','var(--paper)',{flex:1,borderRadius:'var(--r-sm)',height:'30px'}),
+        e('div',{key:'b',style:{width:34,height:30,borderRadius:'var(--r-sm)',background:'var(--ink)',color:'var(--paper)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:12}},'→')
+      ])
+    ]);
+    if(kind==='table') return e('div',{style:{position:'absolute',inset:0,padding:13,display:'flex',flexDirection:'column',gap:5,justifyContent:'center'}},[
+      e('div',{key:'h',style:{display:'flex',gap:5}},[bar('46%','6px',INK),bar('27%','6px',INK),bar('20%','6px',INK)]),
+      ...[0,1,2].map(i=>e('div',{key:i,style:{display:'flex',gap:5}},[bar('46%','8px',INK,SOFT),bar('27%','8px','var(--paper)'),bar('20%','8px',i===2?'var(--accent)':'var(--paper)')])),
+      e('div',{key:'t',style:{display:'flex',gap:5,marginTop:2}},[bar('46%','8px',this.rgba('var(--accent)',.5)),bar('27%','8px','var(--paper)'),bar('20%','8px','var(--accent)')])
+    ]);
+    if(kind==='gate') return e('div',{style:{position:'absolute',inset:0,padding:13,display:'flex',alignItems:'center',justifyContent:'center'}},[
+      e('div',{key:1,style:{width:'88%',background:'var(--amber-bg)',borderRadius:'var(--r-md)',padding:'11px 13px'}},[
+        e('div',{key:'t',style:{fontSize:11,fontWeight:500,color:'var(--amber)',display:'flex',gap:6,alignItems:'center'}},'🔒 Pide tu OK para enviar el correo'),
+        bar('80%','5px','var(--amber)',{marginTop:8,opacity:.5}),bar('60%','5px','var(--amber)',{marginTop:5,opacity:.35}),
+        e('div',{key:'b',style:{display:'flex',gap:6,marginTop:9}},[
+          e('div',{key:'a',style:{background:'var(--amber)',color:'var(--on-accent)',borderRadius:'var(--r-xs)',padding:'5px 12px',fontSize:10,fontWeight:500}},'Aprobar'),
+          e('div',{key:'r',style:{color:'var(--muted)',borderRadius:'var(--r-xs)',padding:'5px 11px',fontSize:10,fontWeight:400}},'Rechazar')
+        ])
+      ])
+    ]);
+    if(kind==='keys') return e('div',{style:{position:'absolute',inset:0,padding:13,display:'flex',flexDirection:'column',gap:8,justifyContent:'center'}},[
+      e('div',{key:1,style:{display:'flex',gap:10,alignItems:'center',background:'var(--paper)',borderRadius:'var(--r-md)',padding:'9px 11px'}},[
+        e('div',{key:'l',style:{width:26,height:26,borderRadius:'var(--r-xs)',background:'var(--paper2)',color:'var(--muted)',fontSize:9,fontWeight:400,display:'flex',alignItems:'center',justifyContent:'center'}},'AI'),
+        e('div',{key:'m',style:{flex:1}},[bar('50%','6px',INK),bar('72%','5px',INK,{marginTop:4,opacity:.45})]),
+        e('div',{key:'s',style:{fontSize:9,fontWeight:500,color:'var(--green)',background:'var(--green-bg)',borderRadius:'var(--r-full)',padding:'2px 8px'}},'activa')
+      ]),
+      e('div',{key:2,style:{display:'flex',gap:10,alignItems:'center',background:'var(--paper)',borderRadius:'var(--r-md)',padding:'9px 11px'}},[
+        e('div',{key:'l',style:{width:26,height:26,borderRadius:'var(--r-xs)',background:'var(--paper2)',color:'var(--muted)',fontSize:9,fontWeight:400,display:'flex',alignItems:'center',justifyContent:'center'}},'Ic'),
+        e('div',{key:'m',style:{flex:1}},[bar('44%','6px',INK),bar('66%','5px',INK,{marginTop:4,opacity:.45})]),
+        e('div',{key:'s',style:{fontSize:9,fontWeight:500,color:'var(--accent-deep)',background:'var(--accent-soft)',borderRadius:'var(--r-full)',padding:'2px 8px'}},'activa')
+      ])
+    ]);
+    return null;
+  }
+
+  renderVals(){
+    const s=this.state;
+    const isHome=s.view==='home', isArticle=s.view==='article';
+    const q=s.query.trim().toLowerCase();
+
+    /* [sistema 2026-07-31 · 90/8/2] El chip de categoría deja de llevar su color propio: cinco
+       hexadecimales saturados repartidos por la lista era justo lo contrario de "neutros casi
+       todo". El glifo distingue el tema; el color queda para el estado y el foco. `c.color`
+       se conserva (lo consume allArticles) y el borde muere: la forma la da el radio. */
+    const cats=this.cats.map(c=>({
+      label:c.label, icon:c.icon, color:c.color, count:c.articles.length,
+      iconStyle:'width:38px;height:38px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-size:16px;flex:none;color:var(--muted);background:var(--paper2)',
+      articles:c.articles.map(a=>({ title:a.title, open:()=>this.openArticle(a.id) })),
+    }));
+
+    // search
+    const searching=q.length>0;
+    let results=[], noResults=false;
+    if(searching){
+      const hits=this.allArticles().filter(a=>a.title.toLowerCase().includes(q)||a.cat.toLowerCase().includes(q));
+      results=hits.map(a=>({ title:a.title, cat:a.cat, icon:'›', open:()=>this.openArticle(a.id) }));
+      noResults=hits.length===0;
+    }
+
+    const popular=[
+      {id:'b1', title:'Leer mis planillas'},
+      {id:'p1', title:'Por qué pide permiso'},
+      {id:'c2', title:'Usar mi propia key'},
+    ].map(p=>({ title:p.title, open:()=>this.openArticle(p.id) }));
+
+    // article
+    let art={};
+    if(isArticle && s.article){
+      const A=this.articleData[s.article];
+      art={ cat:A.cat, read:A.read, title:A.title, intro:A.intro,
+        catStyle:'font:400 11px var(--font-ui);color:var(--muted);background:var(--paper2);border-radius:var(--r-full);padding:4px 11px',
+        steps:A.steps.map((st,i)=>({ n:i+1, title:st.title, body:st.body, shotLabel:st.shotLabel, shot:this.shot(st.shot) })),
+      };
+    }
+
+    // chat
+    const chatMsgs=(s.chatMsgs||[]).map(m=>{
+      const bot=m.from==='bot';
+      return { text:bot?this.uiText(m.text):m.text, isBot:bot, hasLink:!!m.link, linkLabel:this.uiText(m.linkLabel||''),
+        openArt: m.link?(()=>{ this.setState({chat:false}); this.openArticle(m.link); }):null,
+        rowStyle: bot?'display:flex;gap:9px;align-items:flex-start':'display:flex;justify-content:flex-end',
+        bubbleStyle: bot?'background:var(--paper2);border-radius:6px 16px 16px 16px;padding:11px 14px;font:300 13px var(--font-ui);line-height:1.5;color:var(--ink);max-width:84%'
+          :'background:var(--accent-soft);border-radius:16px 16px 6px 16px;padding:11px 14px;font:300 13px var(--font-ui);line-height:1.5;color:var(--ink);max-width:84%' };
+    });
+    const chatChips=[{text:'¿Cómo lee mis planillas?'},{text:'¿Por qué pide permiso?'}].map(c=>({text:c.text, ask:()=>this.ask(c.text)}));
+
+    return {
+      isHome, isArticle,
+      query:s.query, setQuery:e=>this.setState({query:e.target.value}),
+      searching, results, noResults, showPopular:!searching,
+      popular, cats, art, back:()=>this.back(),
+      // chat
+      chatOpen:s.chat, chatClosed:!s.chat,
+      openChat:()=>this.openChat(), closeChat:()=>this.closeChat(),
+      chatMsgs, chatTyping:s.typing, chatChips,
+      chatInput:s.chatInput, setChatInput:e=>this.setState({chatInput:e.target.value}),
+      sendChat:()=>this.sendChat(), chatKey:e=>this.chatKey(e),
+    };
+  }
+}
+</script>
+</body>
+</html>

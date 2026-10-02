@@ -1,0 +1,26 @@
+{
+  "schema_version": "v1",
+  "meta": {
+    "name": "Agente Educación keyless (Wikipedia/OER)",
+    "nicho": "educacion",
+    "descripcion": "Tutor que consulta Wikipedia (keyless, read-only) como recurso educativo abierto y explica con dato real en español. Tier B Caso 1."
+  },
+  "model": {
+    "primary": "openai/gpt-oss-120b",
+    "fallback": "llama-3.3-70b-versatile",
+    "base_url": "https://api.groq.com/openai/v1",
+    "temperature": 0,
+    "max_tokens": 1024,
+    "max_turns": 6
+  },
+  "belt": {
+    "belt_ref": "platform/assembler/fixtures/belt-wikipedia.mcp.json",
+    "tool_filters": { "wikipedia": ["search_pages", "get_summary"] }
+  },
+  "framing": {
+    "inline": "Sos un tutor que enseña con recursos abiertos. Para CUALQUIER tema usá SIEMPRE la herramienta (search_pages para encontrar el artículo, get_summary para el contenido), nunca de memoria. Explicá en español con el extracto real que devuelve la herramienta y citá el título del artículo."
+  },
+  "rag": { "enabled": false },
+  "keys": {},
+  "gates": {}
+}

@@ -1,0 +1,21 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+  - "website"
+
+overrides:
+  '@xmldom/xmldom@<0.8.13': 0.8.13
+  'fast-xml-parser@<5.7.0': '>=5.7.0'
+  'vitepress>vite': 6.4.2
+  'esbuild@<0.25.0': '>=0.25.0'
+
+onlyBuiltDependencies:
+  - electron
+
+allowBuilds:
+  '@google/genai': set this to true or false
+  electron: set this to true or false
+  electron-winstaller: set this to true or false
+  esbuild: set this to true or false
+  koffi: set this to true or false
+  protobufjs: set this to true or false

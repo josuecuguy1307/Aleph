@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <title>Diseño · Aleph</title>
+
+    <!-- [un solo picker en las siete · 2026-08-22] El chip de modelo de Aleph, en el
+         composer. Este stack no tiene picker de modelo propio —su «Change model» es un
+         string de su panel de proveedores, no un control del composer— así que no se le
+         esconde nada: el chip se ancla y listo. Fuera de Aleph el archivo es un no-op
+         (LEY 0). El núcleo viaja al lado por la misma razón que en Finanzas: el CSP del
+         stack es suyo y no se toca. -->
+    <script src="/aleph-picker-unico.js"></script>
+    <!-- [Aleph · rediseño fase 1 · cable (b)] EL INTERRUPTOR DE LA PIEL. La hoja viaja
+         siempre; sólo se aplica con `?aleph_piel=v2` en la URL del iframe. Apagar el
+         rediseño no cuesta un build. Fuera de Aleph es un no-op (LEY 0).
+         Ver public/aleph-piel.js. -->
+    <script src="/aleph-piel.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script>
+      // [Gate 4 · F6 · Diseño · inmersión 3.8] EL ESQUEMA DE LA CASA, ANTES DEL PRIMER PINTADO.
+      //
+      // La casa no le manda colores al lienzo: le manda UNA PALABRA por query string
+      // (`?aleph_scheme=dark|light`, que arma `product/app/design/workspaces/diseno.html` con
+      // el tema YA RESUELTO — jamás «auto»), y el lienzo la resuelve con SU propia paleta. El
+      // criterio no es «mismo hex» sino caer del MISMO LADO de la línea claro/oscuro.
+      //
+      // Se PERSISTE en la clave de tema que este stack ya usaba, y eso es load-bearing: la
+      // casa pone el `src` del iframe una sola vez, y en cuanto el router navega se pierde el
+      // `search`. Sin persistir, el tema volvería a claro en la primera navegación.
+      (() => {
+        try {
+          var deLaCasa = new URLSearchParams(location.search).get('aleph_scheme');
+          if (deLaCasa === 'dark' || deLaCasa === 'light') {
+            localStorage.setItem('aleph-diseno:theme', deLaCasa);
+          }
+          var t = localStorage.getItem('aleph-diseno:theme');
+          if (t === 'dark') document.documentElement.classList.add('dark');
+        } catch (_e) {
+          /* localStorage unavailable; default light theme */
+        }
+      })();
+    </script>
+    <script type="module" src="./src/main.tsx"></script>
+  </body>
+</html>

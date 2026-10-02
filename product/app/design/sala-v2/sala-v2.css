@@ -1,0 +1,727 @@
+/* LA SALA (v2) — la piel.
+ *
+ * Ley 3 del plan: «anatomía del oficio + piel de Aleph. Test: si el usuario adivina de qué
+ * repo vino, se adaptó mal». Por eso acá NO hay un solo color literal: todo sale de
+ * `../aleph-tokens.css`, que es la única hoja que da vuelta claro/oscuro en todo el producto.
+ * assistant-ui no trae CSS propio en las primitivas que usamos —son componentes sin estilo,
+ * `radix`-style— así que no hay nada de su default que pisar: la piel es ésta y punto.
+ *
+ * Regla que se hereda de la Sala vieja y no se discute: cero bordes duros, cero relieves,
+ * cero hundidos. La jerarquía es sombra + radio. Color 90/8/2: neutros casi todo, el acento
+ * sólo en el destino activo y en la identidad; verde/ámbar/rojo sólo como punto de estado.
+ */
+
+:root {
+  --sv-spine: 232px;      /* el menú lateral */
+  --sv-max: 760px;        /* ancho de lectura del hilo */
+  --sv-canvas: 46%;       /* la mitad derecha: la obra (3.0) */
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: var(--page-bg);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+}
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+
+/* [Gate 4 · Fase 4 · O6b · B10] DOS COLUMNAS, Y UNA TERCERA QUE EMERGE.
+ *
+ * Acá decía: «la tercera existe SIEMPRE (vacía dice qué va a aparecer) porque una columna
+ * que va y viene mueve el chat de lugar a mitad de una conversación». Ese defecto de Fase 1
+ * es real y sigue prohibido — lo que cambió es QUIÉN la mueve.
+ *
+ * La palabra que importaba en esa frase era **SOLA**: lo intolerable es el movimiento que
+ * el usuario no pidió. Desde O6b un turno ya NO abre el canvas: anuncia su obra con una
+ * tarjeta EN EL HILO, donde el usuario ya está mirando y donde nada se corre de lugar. La
+ * columna aparece únicamente cuando él la pide (tap en la tarjeta, click en la Biblioteca)
+ * y desaparece cuando la cierra. Un movimiento que es consecuencia del propio gesto no es
+ * el defecto que Fase 1 pagó: es cómo funciona un panel.
+ *
+ * Y así la mitad derecha deja de ser medio pantalla ocupada por un cartel que dice qué
+ * podría aparecer algún día. */
+#sv-root { display: grid; grid-template-columns: var(--sv-spine) 1fr; height: 100%; min-height: 0; overflow: hidden; }
+#sv-root[data-canvas="abierto"] { grid-template-columns: var(--sv-spine) 1fr var(--sv-canvas); }
+@media (max-width: 1180px) { #sv-root[data-canvas="abierto"] { grid-template-columns: var(--sv-spine) 1fr; } .sv-canvas { display: none; } }
+@media (max-width: 860px) { #sv-root { grid-template-columns: 1fr; } .sv-spine { display: none; } }
+
+/* ── el canvas · la obra del turno (3.0 · deuda D3) ───────────────────────────────────── */
+.sv-canvas {
+  display: flex; flex-direction: column; min-width: 0; height: 100%;
+  /* `min-height: 0` es load-bearing: sin él, un item de grid usa `min-height:auto` y
+     CRECE con su contenido en vez de dejar que el hijo con `overflow:auto` scrollee. Con
+     una obra larga (la ficha de AAPL: 27 filas) el canvas se desbordaba y la Biblioteca
+     se caía del viewport — se veía en la captura, con la vara en verde porque las filas
+     EXISTÍAN en el DOM. */
+  min-height: 0;
+  border-left: 1px solid var(--line);
+  background: var(--paper);
+}
+.sv-canvas-head {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+  padding: 14px 18px 12px; border-bottom: 1px solid var(--line);
+}
+.sv-canvas-id { min-width: 0; }
+.sv-canvas-tit {
+  margin: 0; font-size: 15px; font-weight: 500; line-height: 1.3; color: var(--ink);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.sv-canvas-meta {
+  display: flex; align-items: center; gap: 8px; margin-top: 4px;
+  font-size: 12px; color: var(--faint);
+}
+.sv-canvas-tipo {
+  padding: 1px 7px; border: 1px solid var(--line); border-radius: 999px;
+  background: var(--paper2); color: var(--muted);
+}
+.sv-canvas-vers { font-variant-numeric: tabular-nums; }
+.sv-canvas-prov { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sv-canvas-acciones { display: flex; gap: 8px; flex: none; }
+.sv-btn-sec {
+  font: inherit; font-size: 12px; padding: 5px 11px; border-radius: 8px; cursor: pointer;
+  border: 1px solid var(--line); background: var(--paper2); color: var(--ink);
+  text-decoration: none; line-height: 1.4;
+}
+.sv-btn-sec:hover { background: var(--paper3, var(--paper2)); }
+.sv-canvas-host { flex: 1 1 auto; min-height: 0; overflow: auto; padding: 16px 18px; }
+.sv-canvas-cargando, .sv-canvas-vacio-txt {
+  flex: 1 1 auto; display: grid; place-items: center; padding: 32px 24px;
+  color: var(--faint); text-align: center; line-height: 1.6;
+}
+.sv-canvas-aviso {
+  margin: 10px 18px 0; padding: 8px 11px; border-radius: 8px;
+  border: 1px solid var(--line); background: var(--paper2);
+  color: var(--muted); font-size: 12.5px;
+}
+
+/* la Biblioteca — el file-browser de la sesión */
+.sv-lib { flex: none; border-top: 1px solid var(--line); padding: 10px 12px 12px; max-height: 34%; overflow: auto; }
+.sv-lib-tit-sec {
+  font-size: 11px; text-transform: uppercase; letter-spacing: .06em;
+  color: var(--faint); padding: 0 6px 6px;
+}
+.sv-lib-lista { display: flex; flex-direction: column; gap: 1px; }
+.sv-lib-item {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  font: inherit; font-size: 13px; text-align: left; cursor: pointer;
+  padding: 6px 8px; border: 0; border-radius: 7px; background: transparent; color: var(--muted);
+}
+.sv-lib-item:hover { background: var(--paper2); color: var(--ink); }
+.sv-lib-item[aria-current="true"] { background: var(--paper2); color: var(--ink); }
+.sv-lib-tit { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sv-lib-tipo { flex: none; font-size: 11px; color: var(--faint); }
+
+/* ── el menú lateral (1.5) ────────────────────────────────────────────────────────────── */
+.sv-spine {
+  background: var(--paper);
+  display: flex; flex-direction: column; gap: 2px;
+  padding: 14px 10px; overflow-y: auto;
+}
+.sv-brand { display: flex; align-items: center; gap: 8px; padding: 4px 8px 14px; font-family: var(--font-brand); font-size: 15px; }
+.sv-sect { padding: 14px 8px 6px; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--faint); }
+.sv-link {
+  display: flex; align-items: center; gap: 9px;
+  padding: 8px 10px; border-radius: var(--r-sm);
+  color: var(--muted); text-decoration: none; cursor: pointer;
+  background: none; border: 0; width: 100%; text-align: left; font: inherit;
+}
+.sv-link:hover { background: var(--paper2); color: var(--ink); }
+
+/* Buscar en los chats — rescatado de la Sala vieja (`sala.html:331`). */
+.sv-buscar {
+  width: calc(100% - 16px); margin: 4px 8px 6px; padding: 7px 11px;
+  border: 0; border-radius: var(--r-md); background: var(--paper2);
+  color: var(--ink); font: inherit; font-size: 12.5px; outline: none;
+}
+.sv-buscar::placeholder { color: var(--faint); }
+
+/* ── una pieza del cinturón ────────────────────────────────────────────────────────────
+   Deliberadamente MÁS CALLADA que un `.sv-link`: sin hover, sin cursor, sin fondo. Desde
+   acá no se equipa nada —eso es del Cuarto— y un elemento que parece accionable y no hace
+   nada es peor que uno que no lo parece. Cero color literal: todo de aleph-tokens.css. */
+.sv-pieza {
+  display: flex; align-items: center; gap: 8px;
+  padding: 5px 10px; font-size: 12.5px; color: var(--muted);
+}
+.sv-pieza-lbl { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* Cuántas tools trae esa pieza. Es un DATO del belt, no una decoración: dice de un vistazo
+   si el agente tiene una herramienta de ese server o seis. */
+.sv-pieza-n {
+  margin-left: auto; flex: none; font-family: var(--font-mono); font-size: 11px;
+  color: var(--faint); font-feature-settings: 'tnum';
+}
+.sv-link[aria-current="page"] { background: var(--accent-soft); color: var(--accent-deep); }
+.sv-link .ic { width: 16px; text-align: center; opacity: .85; }
+
+/* Los hilos recientes viven ACÁ ADENTRO: «Chats» dejó de ser un destino. */
+.sv-hilos { display: flex; flex-direction: column; gap: 1px; margin-top: 2px; }
+.sv-hilo {
+  display: block; width: 100%; text-align: left; font: inherit;
+  padding: 6px 10px; border: 0; background: none; border-radius: var(--r-sm);
+  color: var(--muted); cursor: pointer;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.sv-hilo:hover { background: var(--paper2); color: var(--ink); }
+.sv-hilo[aria-current="true"] { background: var(--paper2); color: var(--ink); }
+.sv-vacio { padding: 6px 10px; color: var(--faint); font-size: 12.5px; }
+
+/* La sección de workspaces NO TIENE ESTILO PROPIO a propósito: sus filas son `.sv-link`
+   como cualquier otro destino del menú, y cuando no hay ninguno elegible la sección
+   entera no se dibuja (sidebar.js) — así que no hay estado vacío que pintar. Los no
+   elegibles no aparecen —ni grises—, que es ley de producto. */
+
+/* ── el hilo ──────────────────────────────────────────────────────────────────────────── */
+/* `min-height: 0` es load-bearing acá por el MISMO motivo que en `.sv-canvas`, donde ya
+   estaba escrito: un item de grid toma `min-height: auto` y CRECE con su contenido en vez
+   de dejar que el hijo con `overflow:auto` (`.sv-vp`) scrollee. Sin él, el hilo desborda la
+   fila y empuja al canvas fuera de la pantalla.
+   MEDIDO en la .app instalada: viewport 655 px de alto y `.sv-main` en 1105 px — el canvas
+   quedaba en `y:2440` con altura 0. Se vio mirando, no en una vara. */
+.sv-main { display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow: hidden; background: var(--page-bg); }
+.sv-head {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  padding: 12px 20px; color: var(--muted);
+}
+.sv-head .sv-title { font-weight: 500; color: var(--ink); }
+.sv-head .sv-cerebro {
+  font-size: 12px; color: var(--muted); padding: 2px 9px;
+  background: var(--paper); border-radius: var(--r-pill);
+}
+/* EL COMPOSER NO SE VA AL FONDO CUANDO HAY POCO QUE LEER.
+ *
+ * Medido en captura: con un turno corto quedaban ~900 px de nada entre la conversación y
+ * el campo de escribir, y la pantalla se leía como sin terminar. `justify-content: flex-end`
+ * sobre el viewport apoya el hilo ABAJO mientras entra, y en cuanto la conversación pasa el
+ * alto disponible el scroll toma el control y todo se comporta como siempre. Es una línea y
+ * arregla la sensación entera. */
+.sv-vp {
+  flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain;
+  scrollbar-gutter: stable; padding: 8px 20px 12px;
+  display: flex; flex-direction: column; justify-content: flex-end;
+}
+.sv-thread {
+  max-width: var(--sv-max); margin: 0 auto; width: 100%;
+  display: flex; flex-direction: column; gap: 22px; padding-bottom: 12px;
+  /* `flex-end` en el padre + este margen automático = el hilo se apoya abajo sin dejar de
+     poder crecer hacia arriba. Sin `margin-top:auto` el contenido se comprimiría. */
+  margin-top: auto;
+}
+
+.sv-msg { display: flex; flex-direction: column; gap: 6px; }
+.sv-msg.user { align-items: flex-end; }
+.sv-burbuja {
+  padding: 10px 14px; border-radius: var(--r-lg);
+  background: var(--paper); box-shadow: var(--sh-1);
+  max-width: 100%; white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.55;
+}
+.sv-msg.user .sv-burbuja { background: var(--accent-soft); color: var(--accent-deep); max-width: 82%; }
+
+/* LA RESPUESTA DEL AGENTE TIENE QUE TENER ANCLA.
+ *
+ * Sin esto era texto pelado a la izquierda: al lado de la burbuja del usuario —que sí está
+ * diseñada— parecía un renglón caído ahí. No se le pone burbuja (la convención moderna es
+ * que el asistente NO la tenga: da aire a respuestas largas), se le pone identidad: una
+ * marca de quién habla y tamaño de lectura. */
+.sv-msg.assistant { padding-left: 26px; position: relative; }
+.sv-msg.assistant::before {
+  content: ""; position: absolute; left: 0; top: 7px;
+  width: 9px; height: 9px; border-radius: var(--r-full);
+  background: var(--accent); opacity: .9;
+}
+.sv-msg.assistant .sv-burbuja {
+  background: transparent; box-shadow: none; padding: 0;
+  font-size: 14.5px; line-height: 1.65;
+}
+
+.sv-razon {
+  font-size: 13px; color: var(--muted); background: var(--paper);
+  border-radius: var(--r-md); padding: 8px 12px; box-shadow: var(--sh-1);
+  white-space: pre-wrap; line-height: 1.5;
+}
+.sv-razon-tit { font-size: 11px; letter-spacing: .05em; text-transform: uppercase; color: var(--faint); margin-bottom: 4px; }
+
+/* Una tool en el hilo. El texto del modelo y esto NO comparten renglón: son bloques
+   distintos, en el orden real en que ocurrieron. */
+.sv-tool {
+  display: flex; align-items: center; gap: 9px;
+  padding: 8px 12px; border-radius: var(--r-md);
+  background: var(--paper); box-shadow: var(--sh-1); font-size: 13px;
+}
+.sv-tool .nom { font-family: var(--font-mono); font-size: 12.5px; color: var(--ink); }
+.sv-tool .est { margin-left: auto; font-size: 12px; color: var(--muted); }
+.sv-punto { width: 7px; height: 7px; border-radius: var(--r-full); background: var(--quiet); flex: none; }
+.sv-punto.ok { background: var(--green); }
+.sv-punto.error { background: var(--red); }
+.sv-punto.gated { background: var(--amber); }
+
+/* ── LA DELEGACIÓN — el agente le pidió algo a otro agente ─────────────────────────────
+   Sangrada a propósito: la jerarquía se lee en el eje X antes que en el texto. El borde
+   izquierdo es el que cambia de color con el veredicto — el mismo lenguaje de `sv-punto`,
+   para que un ✓ signifique lo mismo en las dos superficies. Cero color literal: todo sale
+   de ../aleph-tokens.css, que es la regla de esta carpeta. */
+.sv-delegs { display: flex; flex-direction: column; gap: 6px; margin: 4px 0 4px 14px; }
+.sv-deleg {
+  border-left: 2px solid var(--quiet); border-radius: 0 var(--r-md) var(--r-md) 0;
+  background: var(--paper); box-shadow: var(--sh-1); font-size: 13px;
+}
+.sv-deleg.ok   { border-left-color: var(--green); }
+.sv-deleg.no   { border-left-color: var(--red); }
+.sv-deleg.held { border-left-color: var(--amber); }
+.sv-deleg-head { display: flex; align-items: baseline; gap: 8px; padding: 8px 12px; }
+.sv-deleg-head .d { color: var(--muted); flex: none; }
+.sv-deleg-head .dt { color: var(--ink); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sv-deleg-head .dq { color: var(--muted); }
+.sv-deleg-head .dok { margin-left: auto; flex: none; color: var(--muted); }
+.sv-deleg-head .dok.ok   { color: var(--green); }
+.sv-deleg-head .dok.no   { color: var(--red); }
+.sv-deleg-head .dok.held { color: var(--amber); }
+/* La fila viva LATE — es el único elemento animado, y sólo mientras el sub-agente trabaja.
+   Sin evento de cierre no hay latido que apagar: el CSS no simula progreso. */
+.sv-deleg.viva .dok { animation: sv-deleg-late 1.15s ease-in-out infinite; }
+@keyframes sv-deleg-late { 0%, 100% { opacity: .35 } 50% { opacity: 1 } }
+@media (prefers-reduced-motion: reduce) { .sv-deleg.viva .dok { animation: none } }
+.sv-deleg-tog {
+  flex: none; border: 0; background: none; cursor: pointer;
+  font-size: 12px; color: var(--muted); padding: 0 2px;
+}
+.sv-deleg-tog:hover { color: var(--ink); }
+.sv-deleg-sub {
+  display: flex; gap: 8px; padding: 0 12px 9px 12px;
+  font-size: 12.5px; color: var(--muted);
+}
+.sv-deleg-sub .d { flex: none; }
+
+/* ── el estado en vivo (1.4) ──────────────────────────────────────────────────────────── */
+.sv-estado {
+  display: flex; align-items: center; gap: 9px;
+  max-width: var(--sv-max); margin: 0 auto; width: 100%;
+  padding: 6px 0 2px; color: var(--muted); font-size: 13px;
+}
+.sv-pulso {
+  width: 8px; height: 8px; border-radius: var(--r-full); background: var(--accent);
+  animation: sv-latir 1.15s ease-in-out infinite;
+}
+.sv-estado[data-estado="esperando_ok"] .sv-pulso { background: var(--amber); animation: none; }
+.sv-estado[data-estado="fallo"] .sv-pulso { background: var(--red); animation: none; }
+.sv-estado[data-estado="final"] .sv-pulso { background: var(--green); animation: none; }
+@keyframes sv-latir { 0%, 100% { opacity: .35; } 50% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .sv-pulso { animation: none; } }
+
+/* ── la tarjeta de consentimiento (Ó11, conectada) ────────────────────────────────────── */
+.sv-gate {
+  border-radius: var(--r-lg); background: var(--paper); box-shadow: var(--sh-2);
+  padding: 14px 16px; display: flex; flex-direction: column; gap: 10px;
+}
+.sv-gate-tit { display: flex; align-items: center; gap: 8px; font-weight: 500; }
+.sv-gate-tit .sv-punto { background: var(--amber); }
+.sv-gate-prev { font-size: 13px; color: var(--muted); line-height: 1.5; white-space: pre-wrap; }
+.sv-gate-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.sv-chip {
+  font-size: 11.5px; padding: 2px 8px; border-radius: var(--r-pill);
+  background: var(--paper2); color: var(--muted);
+}
+.sv-gate-acts { display: flex; gap: 8px; }
+.sv-btn {
+  font: inherit; font-size: 13px; padding: 7px 14px; border: 0; cursor: pointer;
+  border-radius: var(--r-pill); background: var(--paper2); color: var(--ink);
+}
+.sv-btn:hover { background: var(--line2); }
+.sv-btn.primario { background: var(--accent); color: var(--on-accent); }
+.sv-btn.primario:hover { background: var(--accent-deep); }
+.sv-btn[disabled] { opacity: .5; cursor: default; }
+.sv-gate-hecho { font-size: 13px; color: var(--muted); }
+
+/* ── el composer ──────────────────────────────────────────────────────────────────────── */
+.sv-composer-wrap {
+  flex: 0 0 auto; min-height: 0; position: relative; z-index: 1;
+  padding: 8px 20px calc(18px + env(safe-area-inset-bottom, 0px));
+}
+.sv-composer {
+  width: 100%; max-width: var(--sv-max); margin: 0 auto;
+  display: flex; align-items: flex-end; gap: 8px;
+  background: var(--paper); border-radius: var(--r-xl); box-shadow: var(--sh-2);
+  padding: 8px 8px 8px 14px;
+}
+.sv-composer textarea {
+  flex: 1; min-width: 0; resize: none; border: 0; outline: 0; background: transparent;
+  color: var(--ink); font: inherit; line-height: 1.5; max-height: 180px; padding: 6px 0;
+}
+.sv-composer textarea::placeholder { color: var(--faint); }
+/* ── EL CHIP DE MODELO YA NO SE ESTILA ACÁ ───────────────────────────────────────────
+   Sus 19 reglas se MUDARON a `product/app/design/ui/model-chip.core.css`, que es la hoja
+   del componente compartido: el mismo chip vive ahora en la Sala y adentro de los seis
+   workspaces. Dejar una copia acá sería que los dos se fueran separando de a un píxel.
+   `sala-v2.html` linkea esa hoja. [un solo picker en las siete · 2026-08-22] */
+.sv-enviar {
+  flex: none; width: 34px; height: 34px; border-radius: var(--r-full); border: 0; cursor: pointer;
+  background: var(--accent); color: var(--on-accent); font-size: 15px; line-height: 1;
+}
+.sv-enviar[disabled] { opacity: .45; cursor: default; }
+.sv-parar { flex: none; border-radius: var(--r-pill); border: 0; cursor: pointer; background: var(--paper2); color: var(--ink); font: inherit; font-size: 12.5px; padding: 7px 12px; }
+
+/* ── fallo visible, jamás mudo ─────────────────────────────────────────────────────────── */
+.sv-error {
+  border-radius: var(--r-md); background: var(--paper); box-shadow: var(--sh-1);
+  padding: 10px 14px; font-size: 13px; color: var(--ink);
+  border-left: 3px solid var(--red);
+}
+.sv-error-causa { margin-top: 4px; font-size: 12px; color: var(--muted); font-family: var(--font-mono); }
+/* La salida del turno perdido. Va DENTRO del error y no como aviso aparte: es la acción de
+ * ese fallo, no una sugerencia suelta. Sin color propio — los tokens de la casa alcanzan. */
+.sv-error-accion {
+  margin-top: 8px; padding: 5px 12px; font: inherit; font-size: 12.5px;
+  border-radius: var(--r-sm); border: 1px solid var(--line);
+  background: var(--surface); color: var(--ink); cursor: pointer;
+}
+.sv-error-accion:hover { background: var(--paper-2, var(--paper)); }
+.sv-aviso {
+  border-radius: var(--r-md); background: var(--paper); box-shadow: var(--sh-1);
+  padding: 8px 12px; font-size: 12.5px; color: var(--muted);
+  border-left: 3px solid var(--amber);
+}
+.sv-vacio-hilo { color: var(--faint); text-align: center; padding: 48px 0; line-height: 1.6; }
+
+/* ── [Gate 4 · Fase 4 · O6b · 4.3] LA TARJETA DE LA OBRA, EN EL HILO ──────────────────
+ * Vive en el flujo del hilo, no flotando: aparecer no puede correr nada de lugar. Los
+ * colores salen de los tokens, como todo lo demás — acá no se declara ni uno. */
+.sv-tarjeta-obra {
+  margin: 10px 0 2px; padding: 12px 14px;
+  border: 1px solid var(--line); border-radius: 12px;
+  background: var(--paper); box-shadow: var(--sh-1, none);
+}
+.sv-tarjeta-cab { display: flex; align-items: baseline; gap: 8px; min-width: 0; }
+.sv-tarjeta-tipo {
+  font-size: 11px; letter-spacing: .04em; text-transform: uppercase;
+  color: var(--accent); flex: none;
+}
+.sv-tarjeta-tit {
+  font-size: 14px; font-weight: 500; color: var(--ink);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.sv-tarjeta-preview {
+  margin: 6px 0 0; font-size: 13px; line-height: 1.5; color: var(--muted);
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
+.sv-tarjeta-acciones { display: flex; gap: 8px; margin-top: 10px; }
+.sv-tarjeta-btn {
+  font: inherit; font-size: 12.5px; padding: 5px 11px; border-radius: 8px; cursor: pointer;
+  border: 1px solid var(--line); background: var(--paper2); color: var(--ink);
+}
+.sv-tarjeta-btn:hover { background: var(--paper3, var(--paper2)); }
+.sv-tarjeta-btn--ws { border-color: var(--accent); color: var(--accent); }
+/* La ambigüedad se dice en UNA LÍNEA (ley 6), y la línea la escribió el aplicador. */
+.sv-tarjeta-pregunta { margin: 8px 0 0; font-size: 12.5px; color: var(--faint); }
+
+/* El cerrar del canvas — B10: lo que se abre, se cierra. */
+.sv-canvas-cerrar {
+  font: inherit; font-size: 15px; line-height: 1; padding: 4px 8px; border-radius: 8px;
+  cursor: pointer; border: 1px solid transparent; background: none; color: var(--muted);
+}
+.sv-canvas-cerrar:hover { background: var(--paper2); color: var(--ink); }
+
+/* El motor del cerebro elegido no está listo. Un punto ámbar dentro del chip — no un
+   cartel: el aviso de fallo del turno ya cubre el DESPUÉS y dos mensajes sobre el mismo
+   hecho es peor que uno. Ámbar y no rojo porque todavía no falló nada. */
+/* `.sv-model-alerta` se mudó con el resto del chip a `ui/model-chip.core.css`. */
+
+/* ── LOS TRES GRUPOS DE UN RESULTADO ─────────────────────────────────────────────────
+   [convergencia · superficie 5 · F.5] Ni un color literal: todo sale de los tokens, que es
+   la regla que este archivo declara en su encabezado. La fila reusa `.sv-hilo` como base y
+   sólo agrega lo que un resultado tiene y un hilo no: el fragmento del hit. */
+.sv-res { display: flex; flex-direction: column; gap: 10px; }
+.sv-res-grupo { display: flex; flex-direction: column; gap: 2px; }
+.sv-res-tit { font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--faint); padding: 6px 10px 2px; }
+.sv-res-fila { display: flex; flex-direction: column; align-items: flex-start; gap: 2px;
+  height: auto; text-align: left; }
+.sv-res-nom { display: block; width: 100%; overflow: hidden; text-overflow: ellipsis;
+  white-space: nowrap; }
+.sv-res-frag { display: block; width: 100%; font-size: 11px; line-height: 1.4;
+  color: var(--faint); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sv-res-mas { padding: 8px 10px; font-size: 11px; color: var(--faint); }
+
+/* ── [§6.a.bis] El disparador de la búsqueda web ──────────────────────────────
+   Vive en el composer, junto al selector de modelo: es una forma de mandar el
+   turno, no una pantalla aparte. Discreto por defecto — el turno normal sigue
+   siendo el camino principal y este botón no compite con «Enviar». */
+.sv-buscar-web {
+  border: 1px solid var(--sv-borde, #d4d4d8);
+  background: transparent;
+  color: var(--sv-texto-2, #52525b);
+  border-radius: 999px;
+  padding: 4px 12px;
+  font: inherit;
+  font-size: 12px;
+  line-height: 1.6;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background .12s ease, border-color .12s ease, color .12s ease;
+}
+.sv-buscar-web:hover:not(:disabled) {
+  background: var(--sv-hover, rgba(0, 0, 0, .04));
+  border-color: var(--sv-borde-fuerte, #a1a1aa);
+  color: var(--sv-texto, #18181b);
+}
+.sv-buscar-web:disabled { opacity: .45; cursor: default; }
+.sv-buscar-web:focus-visible {
+  outline: 2px solid var(--sv-foco, #2563eb);
+  outline-offset: 2px;
+}
+
+/* ── [§6.f] El disparador del modo largo, y su parar ──────────────────────────
+   Al lado del de búsqueda y con su forma —hereda todo el estilo de `.sv-buscar-web`—
+   pero NO su color: son dos capacidades distintas y tienen que verse distintas de
+   un vistazo, no leyendo. Ésta tarda minutos, así que el borde la marca. */
+.sv-investigar {
+  border: 1px solid var(--sv-acento-borde, #a5b4fc);
+  background: transparent;
+  color: var(--sv-acento-texto, #4338ca);
+  border-radius: 999px;
+  padding: 4px 12px;
+  font: inherit;
+  font-size: 12px;
+  line-height: 1.6;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background .12s ease, border-color .12s ease, color .12s ease;
+}
+.sv-investigar:hover:not(:disabled) {
+  background: var(--sv-acento-suave, rgba(79, 70, 229, .08));
+  border-color: var(--sv-acento, #6366f1);
+}
+.sv-investigar:disabled { opacity: .45; cursor: default; }
+.sv-investigar:focus-visible { outline: 2px solid var(--sv-foco, #2563eb); outline-offset: 2px; }
+
+/* El parar SÓLO existe mientras hay una obra viva, así que puede permitirse gritar:
+   cuando está en pantalla, es lo que el usuario está buscando. */
+.sv-parar-obra {
+  border: 1px solid var(--sv-alarma-borde, #fca5a5);
+  background: var(--sv-alarma-suave, rgba(220, 38, 38, .06));
+  color: var(--sv-alarma-texto, #b91c1c);
+  border-radius: 999px;
+  padding: 4px 12px;
+  font: inherit;
+  font-size: 12px;
+  line-height: 1.6;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.sv-parar-obra:hover:not(:disabled) { background: var(--sv-alarma-suave-2, rgba(220, 38, 38, .12)); }
+.sv-parar-obra:disabled { opacity: .55; cursor: default; }
+.sv-parar-obra:focus-visible { outline: 2px solid var(--sv-alarma, #dc2626); outline-offset: 2px; }
+
+@media (prefers-color-scheme: dark) {
+  .sv-investigar { border-color: var(--sv-acento-borde-d, #4f46e5); color: var(--sv-acento-texto-d, #a5b4fc); }
+  .sv-parar-obra { border-color: var(--sv-alarma-borde-d, #7f1d1d); color: var(--sv-alarma-texto-d, #fca5a5);
+                   background: var(--sv-alarma-suave-d, rgba(220, 38, 38, .14)); }
+}
+
+/* ── [§6.a.bis · §6.f] UN MODO PRENDIDO SE VE PRENDIDO ────────────────────────
+   Fondo LLENO, no un borde más fuerte: el usuario tiene que saber en qué modo
+   está de un vistazo y a un metro, no comparando dos tonos de gris. Cada modo
+   conserva su color —gris el de búsqueda, índigo el largo— así que «cuál está
+   prendido» y «hay uno prendido» se leen en el mismo golpe de vista. */
+.sv-buscar-web.sv-modo-on {
+  background: var(--sv-texto-2, #52525b);
+  border-color: var(--sv-texto-2, #52525b);
+  color: var(--sv-fondo, #fff);
+}
+.sv-investigar.sv-modo-on {
+  background: var(--sv-acento, #6366f1);
+  border-color: var(--sv-acento, #6366f1);
+  color: #fff;
+}
+.sv-buscar-web.sv-modo-on:hover:not(:disabled),
+.sv-investigar.sv-modo-on:hover:not(:disabled) { filter: brightness(1.1); }
+
+/* Y el composer entero lo acompaña: un anillo tenue que dice «este turno no es
+   el normal». Es la tercera señal, después del botón y del placeholder. */
+.sv-composer.sv-composer-modo {
+  box-shadow: 0 0 0 1px var(--sv-acento-borde, #a5b4fc);
+}
+
+/* ── El composer ENVUELVE sus controles cuando no entran ──────────────────────
+   ⚠️ MEDIDO EN PANTALLA, y es el defecto más caro de esta tanda: en una ventana
+   de 666 px el composer daba `scrollWidth 630 > clientWidth 394` y «Parar la
+   investigación» quedaba en x=678 — FUERA DE LA PANTALLA. O sea: el único botón
+   que tiene que estar siempre al alcance durante una obra de minutos era el que
+   se caía primero. Ninguna vara lo ve: el botón existe, está habilitado y
+   responde a `.click()`. Sólo se ve mirando, y sólo en angosto.
+
+   `flex-wrap` en vez de scroll horizontal: un control al que hay que scrollear
+   para llegar es un control que no está. El textarea conserva su ancho mínimo
+   para no quedar reducido a una ranura cuando los chips bajan de línea. */
+.sv-composer { flex-wrap: wrap; }
+.sv-composer textarea { min-width: 0; }
+
+/* [T2.5] LO ADJUNTO, ANTES DE ENVIAR. Va arriba del composer y no adentro: el composer es
+   de assistant-ui y meterle hijos propios pelea con su layout.
+
+   ES LA MINIATURA, NO UN CHIP DE TEXTO. Patrón tomado de Oficina, que ya lo tenía resuelto
+   (`openwork/.../chat/image-attachment-badge.tsx`): recuadro con la imagen de verdad y la ✕
+   flotando en la esquina CON FONDO SÓLIDO — sin fondo, la ✕ cae encima de la foto y se
+   pierde contra cualquier imagen clara. Un adjunto que no se pudo leer sí es texto: no hay
+   miniatura que mostrar, y su causa es lo único útil. */
+/* MISMO ANCHO Y MISMO CENTRADO QUE EL COMPOSER (`max-width: var(--sv-max); margin: 0 auto`).
+   Sin esto la fila se pegaba al borde izquierdo del wrap mientras el composer es una píldora
+   centrada: la miniatura quedaba flotando lejos del campo al que pertenece. Se vio en
+   pantalla, no en el código. */
+.sv-adjuntos {
+  max-width: var(--sv-max); margin: 0 auto 8px;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 0 4px;
+}
+
+.sv-adjunto-mini {
+  position: relative; display: inline-flex; flex: 0 0 auto;
+  width: 40px; height: 40px; border-radius: 10px; overflow: visible;
+}
+.sv-adjunto-mini img {
+  width: 100%; height: 100%; border-radius: 10px; object-fit: cover; display: block;
+  border: 1px solid var(--border, rgba(255,255,255,.14));
+  background: var(--surface-2, rgba(255,255,255,.06));
+}
+
+/* el error sí es texto: no hay imagen que mostrar y la causa es lo único útil */
+.sv-adjunto {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 10px; border-radius: 999px;
+  background: var(--surface-2, rgba(255,255,255,.06));
+  border: 1px solid var(--danger, #e5484d); color: var(--danger, #e5484d);
+  font-size: 12px; max-width: 100%;
+}
+
+/* LA ✕ CON FONDO SÓLIDO Y BORDE: es lo que la hace legible sobre una foto clara. */
+.sv-adjunto-mini .sv-adjunto-x,
+.sv-adjunto .sv-adjunto-x {
+  position: absolute; top: -6px; right: -6px;
+  width: 18px; height: 18px; padding: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 999px; cursor: pointer; font-size: 13px; line-height: 1;
+  background: var(--surface, #17171c);
+  color: var(--ink-soft, #cfc7bb);
+  border: 1px solid var(--border, rgba(255,255,255,.18));
+  box-shadow: 0 1px 3px rgba(0,0,0,.45);
+  transition: background .12s, color .12s;
+}
+.sv-adjunto .sv-adjunto-x { position: static; box-shadow: none; border: 0; background: none; }
+.sv-adjunto-mini .sv-adjunto-x:hover { background: var(--surface-2, #24242c); color: var(--ink, #F3ECE0); }
+
+/* El aviso de que el cerebro elegido no ve. Ocupa su renglón: es una decisión a tomar
+   ANTES de enviar, no una nota al pie. */
+.sv-adjunto-aviso {
+  flex: 1 1 100%; font-size: 12px; line-height: 1.4;
+  color: var(--warn, #e2a336);
+}
+
+/* [T2.5c] EL DOCUMENTO no tiene miniatura: de un PDF no hay nada que previsualizar en
+   40px. Se muestra el NOMBRE, que es como el usuario va a referirse a él cuando pregunte
+   («¿qué dice el contrato?»). Misma píldora que el error, sin el rojo. */
+.sv-adjunto-doc {
+  border-color: var(--border, rgba(255,255,255,.14));
+  color: var(--ink-soft, #cfc7bb);
+  position: relative; padding-right: 26px;
+}
+.sv-adjunto-nombre {
+  max-width: 22ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.sv-adjunto-estado { opacity: .6; }
+.sv-adjunto-doc .sv-adjunto-x {
+  position: absolute; top: 50%; right: 6px; transform: translateY(-50%);
+  border: 0; background: none; box-shadow: none;
+}
+
+/* [T2.6] «Viene del método X» — procedencia, no acción: va en el tono secundario y no
+   compite con los botones de la obra. */
+.sv-canvas-metodo {
+  padding: 6px 16px; font-size: 12px; color: var(--ink-soft, #cfc7bb);
+  border-bottom: 1px solid var(--border, rgba(255,255,255,.08));
+}
+.sv-metodo-link { color: var(--accent, #8b5cf6); text-decoration: none; }
+.sv-metodo-link:hover { text-decoration: underline; }
+
+/* [T2.3] LA ISLA DE LOS WIDGETS DEL TURNO. El contenido lo dibuja el motor por DOM con sus
+   clases `ac-*` (su hoja se inyecta al montar); acá va sólo el hueco y su ritmo. */
+.sv-opt-host:empty { display: none; }
+.sv-opt-host { display: flex; flex-direction: column; gap: 10px; padding: 4px 0 8px; }
+.sv-opt-card { max-width: 100%; }
+.sv-opt-user {
+  align-self: flex-end; max-width: 80%;
+  padding: 8px 12px; border-radius: var(--r-pill, 14px);
+  background: var(--accent-soft, rgba(139,92,246,.15)); color: var(--ink, #F3ECE0);
+  font-size: 14px;
+}
+.sv-opt-vitals { font-size: 12px; color: var(--ink-soft, #cfc7bb); opacity: .85; }
+.sv-opt-error { color: var(--danger, #e5484d); }
+
+/* [T2.10] LOS SEIS WORKSPACES, AGRUPADOS. Seis entradas planas ocupaban media barra y
+   competían con El Cuarto y La Sala, que son a donde se entra todo el tiempo. Se abre en
+   el flujo: empuja sólo lo que tiene debajo, no reacomoda la barra ni tapa nada. */
+.sv-ws { margin: 0; }
+.sv-ws > summary { list-style: none; cursor: pointer; user-select: none; }
+.sv-ws > summary::-webkit-details-marker { display: none; }
+.sv-ws > summary::after {
+  content: "›"; margin-left: auto; opacity: .5; font-size: 15px;
+  transition: transform .15s ease; display: inline-block;
+}
+.sv-ws[open] > summary::after { transform: rotate(90deg); }
+.sv-ws-n {
+  margin-left: 6px; font-size: 11px; opacity: .55;
+  font-variant-numeric: tabular-nums;
+}
+/* la lista sangrada: se lee como hija del grupo, no como hermana de La Sala */
+.sv-ws-lista { padding-left: 14px; border-left: 1px solid var(--border, rgba(255,255,255,.10)); margin-left: 10px; }
+
+/* [T2.11] El texto del modelo, renderizado. Hereda el ritmo del hilo: sin márgenes
+   gigantes de navegador y sin que una tabla larga rompa el ancho de la burbuja. */
+.sv-md > :first-child { margin-top: 0; }
+.sv-md > :last-child { margin-bottom: 0; }
+.sv-md p { margin: 0 0 .6em; }
+.sv-md ul, .sv-md ol { margin: .4em 0 .7em; padding-left: 1.3em; }
+.sv-md li { margin: .15em 0; }
+.sv-md h1, .sv-md h2, .sv-md h3 { margin: 1em 0 .4em; line-height: 1.3; }
+.sv-md h1 { font-size: 1.25em; } .sv-md h2 { font-size: 1.12em; } .sv-md h3 { font-size: 1em; }
+.sv-md code { background: var(--surface-2, rgba(255,255,255,.08)); padding: 1px 5px;
+              border-radius: 4px; font-size: .9em; }
+.sv-md pre { background: var(--surface-2, rgba(255,255,255,.06)); padding: 10px 12px;
+             border-radius: 8px; overflow-x: auto; }
+.sv-md pre code { background: none; padding: 0; }
+/* El scroll va en el CONTENEDOR, no en la tabla. Con `display:block` sobre el <table> el
+   navegador deja de tratarla como tabla y `thead` y `tbody` se separan en dos bloques
+   sueltos — se vio en pantalla: la fila de encabezado flotando arriba de la de datos. */
+.sv-md { overflow-x: auto; }
+.sv-md table { border-collapse: collapse; margin: .6em 0; }
+.sv-md td, .sv-md th { border: 1px solid var(--border, rgba(255,255,255,.14));
+                       padding: 5px 9px; text-align: left; }
+.sv-md th { background: var(--surface-2, rgba(255,255,255,.06)); }
+.sv-md a { color: var(--accent, #8b5cf6); }
+
+/* la regla del markdown en el hilo: separador, no una línea gruesa */
+.sv-md hr { border: 0; border-top: 1px solid var(--border, rgba(255,255,255,.14)); margin: 1em 0; }
+.sv-md .sala-chart-fig { margin: .8em 0; padding: 0; }
+.sv-md .sala-chart { display: block; width: 100%; height: auto; }
+
+/* Optional search provider: modal appears only after a search/research action. */
+.sv-search-provider-dialog {
+  width: min(500px, calc(100vw - 32px)); max-height: min(80vh, 680px);
+  overflow-y: auto; box-sizing: border-box; padding: 24px;
+  border: 1px solid var(--border, rgba(255,255,255,.2)); border-radius: 14px;
+  background: var(--surface, #202027); color: var(--ink, #F3ECE0);
+}
+.sv-search-provider-dialog::backdrop { background: rgba(0,0,0,.7); }
+.sv-search-provider-dialog h2 { margin: 0 0 12px; font-size: 20px; }
+.sv-search-provider-choices, .sv-search-provider-details { display: grid; gap: 10px; margin-top: 18px; }
+.sv-search-provider-details[hidden] { display: none; }
+.sv-search-provider-dialog button, .sv-search-provider-dialog input {
+  font: inherit; padding: 9px 12px; border-radius: 7px;
+}
+.sv-search-provider-dialog button { cursor: pointer; border: 1px solid var(--border, rgba(255,255,255,.2));
+  background: var(--surface-2, #32323a); color: inherit; text-align: left; }
+.sv-search-provider-dialog button:focus-visible, .sv-search-provider-dialog a:focus-visible,
+.sv-search-provider-dialog input:focus-visible { outline: 2px solid var(--accent, #8b5cf6); }
+.sv-search-provider-dialog input { min-width: 0; }
+.sv-search-provider-dialog a { color: var(--accent, #b695ff); }
+.sv-search-provider-message { min-height: 1.4em; margin: 0; }

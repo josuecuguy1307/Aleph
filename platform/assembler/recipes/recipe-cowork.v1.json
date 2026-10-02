@@ -1,0 +1,36 @@
+{
+  "schema_version": "v1",
+  "meta": {
+    "name": "Agente Cowork-Utility",
+    "nicho": "cowork",
+    "descripcion": "Asistente de cálculo con una calculadora MCP cableada por subset curado."
+  },
+  "model": {
+    "primary": "qwen3:8b",
+    "fallback": null,
+    "base_url": "http://127.0.0.1:11434/v1",
+    "temperature": 0,
+    "max_tokens": 2048,
+    "max_turns": 8
+  },
+  "belt": {
+    "belt_ref": "platform/assembler/fixtures/belt-calc.mcp.json",
+    "tool_filters": {
+      "calc": ["add", "mul"]
+    }
+  },
+  "framing": {
+    "ref": null,
+    "inline": "Eres un agente de cálculo. Para CUALQUIER operación aritmética usa las herramientas cableadas (no calcules de cabeza). Tienes add y mul. Responde el número final."
+  },
+  "rag": {
+    "enabled": false,
+    "mode": "manual",
+    "dir": null
+  },
+  "keys": {},
+  "gates": {
+    "money_touch": "off",
+    "send": "off"
+  }
+}

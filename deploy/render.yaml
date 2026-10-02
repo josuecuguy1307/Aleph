@@ -1,0 +1,82 @@
+# Blueprint de Render — plano de control de Aleph (Step 5 · Casa 1 · P11).
+#
+# Free tier: sin `min_machines_running` (eso era del plan Fly). El servicio SE DUERME
+# tras ~15 min sin tráfico y el primer request despierta con ~30-60 s de cold start.
+# Aceptado por decisión de costo ($0 hasta la primera venta).
+#
+# POR QUÉ EL COLD START NO PIERDE PAGOS: Dodo reintenta el webhook 8 veces con backoff
+# (inmediato · 5s · 5min · 30min · 2h · 5h · 10h · 10h, ~28 h en total). Si el primer
+# intento cae en un servicio dormido y muere por timeout (15 s), el reintento de 5 s ya
+# encuentra la instancia despierta. El pago activa premium en 1-2 min, no se pierde.
+# El costo real del cold start es la PERCEPCIÓN del usuario que acaba de pagar y no ve
+# el cambio al instante — por eso el keep-alive de abajo.
+
+services:
+  - type: web
+    name: aleph-control-plane
+    runtime: docker
+    dockerfilePath: ./deploy/Dockerfile
+    dockerContext: .
+    plan: free
+    region: oregon          # el free tier no ofrece sa-east-1; Supabase sí está allá.
+                            # La latencia extra sólo la paga el plano de control, no el
+                            # cliente (que corre local). Ver nota en README.
+    healthCheckPath: /health
+
+    envVars:
+      # ── Pagos (Dodo) ──────────────────────────────────────────────────────────
+      # sync:false = se cargan A MANO en el panel de Render. NUNCA en la imagen ni en
+      # este archivo, que sí va al repo.
+      - key: DODO_PAYMENTS_API_KEY
+        sync: false
+      - key: DODO_PAYMENTS_WEBHOOK_KEY
+        sync: false
+      - key: DODO_PAYMENTS_ENVIRONMENT
+        value: test_mode      # ⚠️ cambiar a live_mode SÓLO cuando se salga a cobrar.
+                              # El SDK defaultea a live_mode: acá es explícito a propósito.
+      - key: DODO_PRODUCT_MONTHLY
+        sync: false
+      - key: DODO_PRODUCT_LIFETIME
+        sync: false
+
+      # ── Base de datos (Supabase) ──────────────────────────────────────────────
+      - key: SUPABASE_DB_URL
+        sync: false
+
+      # ── Rol del proceso (Casa 2 · Fase 2 · 2.0) ───────────────────────────────
+      # OBLIGATORIA. `platform/role.py` defaultea a `client` a propósito (fail-closed: un
+      # rol sin declarar NO expone la superficie de pagos). Esto es EL plano de control,
+      # así que lo dice explícito. ⚠️ Si esta env no llega al contenedor, el servicio
+      # arranca como `client` y DEJA DE SERVIR EL WEBHOOK DE PAGOS — los cobros de Dodo
+      # empezarían a fallar en silencio. El rol se loguea en la primera línea del arranque
+      # (`[rol] ALEPH_ROLE=control`): mirar ahí antes de dar por bueno un deploy.
+      - key: ALEPH_ROLE
+        value: control
+
+      # ── Identidad (Supabase Auth · CONTRACT-AUTH-v2) ──────────────────────────
+      # session_owner verifica los JWT de Google/GitHub contra el JWKS del proyecto.
+      # SIN estas dos, todo login de usuario da 401 en prod (el JWT no se verifica).
+      # La anon key es PÚBLICA por diseño (viaja al cliente); va acá igual.
+      - key: SUPABASE_URL
+        value: https://vinsmikauqlpmqdcihax.supabase.co
+      - key: SUPABASE_ANON_KEY
+        sync: false
+
+      # ── Cifrado ───────────────────────────────────────────────────────────────
+      # PUPPET_DB_ENC_KEY: sin esto, db.py la AUTO-GENERA y la persiste local — en un
+      # contenedor efímero eso significa una clave nueva por deploy, y toda credencial
+      # BYOK cifrada con la anterior queda ILEGIBLE. Tiene que ser fija y externa.
+      - key: PUPPET_DB_ENC_KEY
+        sync: false
+      - key: PUPPET_VAULT_MASTER
+        sync: false
+
+      # ── URLs públicas (para el retorno del checkout y el OAuth) ───────────────
+      - key: PUPPET_SPA_BASE
+        sync: false
+      - key: PUPPET_OAUTH_REDIRECT_BASE
+        sync: false
+
+      # NO se declaran PUPPET_ENFORCE_MCP_CONSTRUCTION ni PUPPET_ENFORCE_METHOD_EXPORT:
+      # desde P7 los muros están ACTIVOS POR DEFAULT. Declararlas acá sólo serviría para
+      # apagarlas, y eso tiene que ser una decisión visible, no una línea heredada.

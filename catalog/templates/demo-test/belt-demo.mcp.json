@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "echo": {
+      "command": "python3",
+      "args": ["platform/assembler/fixtures/echo_server.py"],
+      "description": "Echo trivial (stdio, 1 tool `echo`, solo stdlib). Fixture ejecutable del nicho demo-test — sin credenciales, ya probado en 0002."
+    }
+  }
+}

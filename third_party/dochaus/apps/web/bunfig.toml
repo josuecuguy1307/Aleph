@@ -1,0 +1,6 @@
+[install]
+exact = true
+# Bun only reads bunfig.toml from the install's working directory, so the root
+# bunfig does not cover this package — mirror its supply-chain settings here.
+# Only install newly resolved package versions published at least 3 days ago.
+minimumReleaseAge = 259200

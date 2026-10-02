@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+<script src="./i18n.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="vendor/fonts.css"><!-- [Casa 2 · F1.b] fuentes locales: antes 2 preconnect + css2 de Google -->
+<link rel="stylesheet" href="aleph-tokens.css"><!-- [identidad visual] la piel: tokens, forma y tipografía en un solo lugar -->
+<style>
+  /* [sistema 2026-07-31] La cara pública entra al sistema "Híbrido Spatial + Soft futurism".
+     Se fueron los CUATRO gradientes cálidos hardcodeados de las secciones (#322A4A/#241F2C/
+     #15120F/#2A2433/#2E2742…) — el sistema pide CAMPO PLANO (--page-bg) y la jerarquía la
+     ponen el plano de contenido (.ds-plane, r30 + sombra ambiental) y el pozo (.ds-well,
+     plano, sin sombra propia). Se fueron también los 21 `border:1px solid`: la línea no es
+     una herramienta de jerarquía en este sistema.
+     Landing es PRE-LOGIN: no carga nav.js, así que aleph-ds.js NO se inyecta acá. Todo lo
+     que hay es CSS del sistema; no se usa `data-ds-track` porque no habría comportamiento. */
+  *{box-sizing:border-box}
+  html,body{margin:0}
+
+  body{background:var(--page-bg);font-family:var(--font-ui);color:var(--ink);-webkit-font-smoothing:antialiased}
+  a{text-decoration:none;color:inherit}
+  /* el pulgar del scroll apuntaba a var(--line), que en el sistema es TRANSPARENT: la barra
+     quedaba sin pulgar visible. Ahora es el pozo. */
+  ::-webkit-scrollbar{width:10px}::-webkit-scrollbar-thumb{background:var(--paper2);border-radius:var(--r-full)}
+  @keyframes livePulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes sweep{0%{transform:translateX(-110%)}100%{transform:translateX(440%)}}
+  @keyframes fadeUp{0%{transform:translateY(9px)}100%{transform:translateY(0)}}
+  @keyframes shimmer{0%{background-position:-180% 0}100%{background-position:180% 0}}
+  @keyframes glowPulse{0%,100%{opacity:.5}50%{opacity:.85}}
+</style>
+
+<style id="aleph-theme-style">
+/* El tema entra entero por los tokens (aleph-tokens.css). Esta pantalla ya no tiene un
+   solo color hardcodeado que haya que dar vuelta a mano. */
+</style>
+<script src="./theme.js"></script>
+</helmet>
+
+<div style="min-height:100vh;overflow:hidden">
+
+  <!-- ============ NAV ============ -->
+  <!-- cristal FLOTANTE (.ds-glass): el sistema hace flotar la nav sobre el campo en vez de
+       apoyarla con un `border-bottom`. La marca es la mascota nueva, sin marco. -->
+  <div style="position:sticky;top:0;z-index:40;padding:12px 24px">
+    <div class="ds-glass" style="max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:10px 14px 10px 20px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span class="ds-mark"><img src="assets/aleph-mascot-v2.png" alt="" width="18" height="18"></span>
+        <span class="ds-brand">Aleph</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <a href="Ayuda.dc.html" class="ds-btn-ghost" style-hover="color:var(--ink)">Ayuda</a>
+        <a href="Auth.dc.html" class="ds-btn-ghost" style-hover="color:var(--ink)">Ingresar</a>
+        <a href="Onboarding.dc.html" class="ds-btn" style="border-radius:var(--r-full)" style-hover="opacity:.86">Empieza gratis</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 1. HERO ============ -->
+  <div style="position:relative;background:var(--page-bg)">
+    <!-- el halo de identidad: el 8% de acento, ahora con el token en vez de un rgba suelto -->
+    <div style="position:absolute;top:-90px;left:50%;transform:translateX(-50%);width:820px;height:440px;border-radius:50%;background:radial-gradient(circle,var(--accent-soft) 0%,transparent 68%);animation:glowPulse 5s ease-in-out infinite;pointer-events:none"></div>
+    <div style="position:relative;max-width:1180px;margin:0 auto;padding:56px 30px 60px;text-align:center">
+      <!-- la cápsula va sobre el CAMPO, así que es una TARJETA (paper + sh-1), no un pozo:
+           en tema claro --paper2 y --page-bg son el MISMO #F4F4F5 y la cápsula desaparecía. -->
+      <div class="ds-meta" style="display:inline-flex;align-items:center;gap:8px;background:var(--paper);box-shadow:var(--sh-1);border-radius:var(--r-full);padding:7px 15px;margin-bottom:26px"><span class="ds-dot ds-dot-ok" style="animation:livePulse 1.6s ease-in-out infinite"></span>Mira a un agente trabajar — ahí abajo, en vivo</div>
+      <!-- el gesto del sistema: 34px peso 200 con tracking negativo, no serif 600 -->
+      <h1 class="ds-title" style="margin:0 auto;max-width:19ch">Asígnale una tarea. Mira cómo la hace.</h1>
+      <p class="ds-sub" style="margin:20px auto 0;font-size:16px;line-height:var(--lh-loose);max-width:56ch">Aleph construye agentes —Aleph— que hacen tu trabajo a la vista: leen tus datos, arman el entregable y te lo dejan listo. Tú miras, no adivinas.</p>
+      <div style="display:flex;align-items:center;justify-content:center;gap:14px;margin-top:30px">
+        <!-- la acción primaria INVIERTE el campo (--ink sobre --paper); el violeta queda
+             reservado al 8% de identidad, no a los botones. -->
+        <a href="Onboarding.dc.html" class="ds-btn" style="font-size:14px;padding:14px 28px" style-hover="opacity:.86">Empieza gratis →</a>
+        <span class="ds-meta">sin tarjeta · tu primer Aleph en 2 min</span>
+      </div>
+
+      <!-- ===== LIVE HERO DEMO ===== -->
+      <div style="margin-top:44px;max-width:940px;margin-left:auto;margin-right:auto;text-align:left">
+        <!-- niche switcher · también va sobre el CAMPO: cápsula-tarjeta, no pozo (en claro
+             --paper2 == --page-bg y el control quedaba flotando sin recinto). -->
+        <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:16px">
+          <span class="ds-meta">en vivo:</span>
+          <div style="display:flex;gap:4px;background:var(--paper);box-shadow:var(--sh-1);border-radius:var(--r-full);padding:4px">
+            <sc-for list="{{ heroTabs }}" as="t" hint-placeholder-count="3"><button onClick="{{ t.pick }}" style="{{ t.style }}">{{ t.label }}</button></sc-for>
+          </div>
+        </div>
+
+        <!-- el PLANO DE CONTENIDO: r30 + la única sombra ambiental. Antes traía un borde y,
+             encima, un `0 0 0 1px rgba(139,108,240,.12)` que era un segundo borde disfrazado. -->
+        <div class="ds-plane" style="padding:0;overflow:hidden">
+          <!-- window header -->
+          <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:var(--paper2)">
+            <div style="{{ heroMonoStyle }}">{{ heroMono }}</div>
+            <div style="flex:1;min-width:0"><div class="ds-name">{{ heroName }}</div><div class="ds-meta">{{ heroRole }}</div></div>
+            <span class="ds-meta" style="display:inline-flex;align-items:center;gap:6px;color:var(--green);background:var(--green-bg);border-radius:var(--r-full);padding:4px 11px;letter-spacing:.05em"><span class="ds-dot ds-dot-ok" style="animation:livePulse 1.6s ease-in-out infinite"></span>EN VIVO</span>
+          </div>
+          <div style="height:2px;background:var(--paper2);overflow:hidden;position:relative"><sc-if value="{{ heroRunning }}" hint-placeholder-val="{{ true }}"><span style="position:absolute;top:0;left:0;width:22%;height:100%;background:var(--accent);animation:sweep 1.1s linear infinite"></span></sc-if></div>
+
+          <div style="display:grid;grid-template-columns:1fr 248px">
+            <!-- artifact -->
+            <div style="min-height:286px;position:relative;background:var(--paper)">
+              <sc-if value="{{ heroForming }}" hint-placeholder-val="{{ true }}">
+                <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:30px">
+                  <!-- el anillo NO es un borde: es un cónico enmascarado -->
+                  <div style="width:42px;height:42px;border-radius:50%;background:conic-gradient(from 0deg,transparent 0%,var(--accent) 100%);-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 0);mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 0);animation:spin .8s linear infinite"></div>
+                  <div style="display:flex;flex-direction:column;gap:8px;width:230px">
+                    <div style="height:9px;border-radius:var(--r-xs);background:linear-gradient(90deg,var(--paper2) 8%,var(--accent-soft) 18%,var(--paper2) 33%);background-size:200% 100%;animation:shimmer 1.3s linear infinite"></div>
+                    <div style="height:9px;width:76%;border-radius:var(--r-xs);background:linear-gradient(90deg,var(--paper2) 8%,var(--accent-soft) 18%,var(--paper2) 33%);background-size:200% 100%;animation:shimmer 1.3s linear infinite"></div>
+                    <div style="height:9px;width:54%;border-radius:var(--r-xs);background:linear-gradient(90deg,var(--paper2) 8%,var(--accent-soft) 18%,var(--paper2) 33%);background-size:200% 100%;animation:shimmer 1.3s linear infinite"></div>
+                  </div>
+                  <div class="ds-meta">{{ heroFormingText }}</div>
+                </div>
+              </sc-if>
+
+              <!-- TABLE -->
+              <sc-if value="{{ heroTable }}" hint-placeholder-val="{{ false }}">
+                <div style="padding:20px 22px">
+                  <div class="ds-name" style="font-size:15px">Cierre semanal · S24</div>
+                  <div class="ds-meta" style="margin-bottom:12px">3 planillas consolidadas</div>
+                  <!-- las filas se separan con un GAP de 1px que deja ver el pozo, no con border-top -->
+                  <div class="ds-well" style="border-radius:var(--r-md)">
+                    <div class="ds-meta" style="display:grid;grid-template-columns:1.5fr 1fr 76px;padding:9px 14px;text-transform:uppercase;letter-spacing:.06em"><span>Categoría</span><span style="text-align:right">Semana</span><span style="text-align:right">vs ant.</span></div>
+                    <div style="display:flex;flex-direction:column;gap:1px">
+                      <sc-for list="{{ heroTableRows }}" as="r" hint-placeholder-count="4"><div style="{{ r.style }}"><span>{{ r.cat }}</span><span style="text-align:right;font-variant-numeric:tabular-nums">{{ r.val }}</span><span style="text-align:right;color:{{ r.dCol }};font-variant-numeric:tabular-nums">{{ r.delta }}</span></div></sc-for>
+                    </div>
+                  </div>
+                </div>
+              </sc-if>
+
+              <!-- DOC -->
+              <sc-if value="{{ heroDoc }}" hint-placeholder-val="{{ false }}">
+                <div style="padding:22px 28px;max-width:540px">
+                  <div class="ds-meta" style="letter-spacing:.14em;color:var(--accent-deep)">INFORME</div>
+                  <div style="font:200 var(--fs-2xl)/1.2 var(--font-ui);letter-spacing:var(--tracking-title);color:var(--ink);margin:8px 0 4px">Estado del mercado · 2026</div>
+                  <div class="ds-meta" style="margin-bottom:13px">6 fuentes citadas</div>
+                  <div style="font:300 13.5px/1.7 var(--font-ui);color:var(--ink)">El mercado creció cerca del <b style="font-weight:500;color:var(--ink)">14% interanual</b>, sostenido por la demanda regional y dos jugadores nuevos.</div>
+                  <!-- la cita: la barra es un ELEMENTO de 3px, no un `border-left` -->
+                  <div style="display:flex;gap:14px;margin-top:15px">
+                    <span style="width:3px;border-radius:var(--r-2xs);background:var(--accent);flex:none"></span>
+                    <div style="font:300 italic 13.5px/1.55 var(--font-ui);color:var(--ink)">“El ajuste regulatorio redibuja quién compite.”<span class="ds-meta" style="display:block;font-style:normal;margin-top:5px">— Reuters · jun 2026</span></div>
+                  </div>
+                </div>
+              </sc-if>
+
+              <!-- CODE -->
+              <sc-if value="{{ heroCode }}" hint-placeholder-val="{{ false }}">
+                <div style="background:var(--page-solid);font-family:var(--font-mono);min-height:286px">
+                  <div class="ds-meta" style="display:flex;align-items:center;gap:7px;padding:10px 16px;background:var(--paper2);font-family:var(--font-ui)"><span style="color:var(--accent-deep)">{ }</span>fetch_prices.py<span style="flex:1"></span><span style="color:var(--green)">✓ corrió · 0.4s</span></div>
+                  <div style="padding:14px 0">
+                    <sc-for list="{{ heroCodeLines }}" as="ln" hint-placeholder-count="6"><div style="display:flex;font-size:12px;line-height:1.7"><span style="display:inline-block;width:32px;text-align:right;padding-right:13px;color:var(--faint);user-select:none;flex:none">{{ ln.n }}</span><span style="white-space:pre"><sc-for list="{{ ln.toks }}" as="t" hint-placeholder-count="3"><span style="color:{{ t.c }}">{{ t.t }}</span></sc-for></span></div></sc-for>
+                  </div>
+                  <div class="ds-meta" style="padding:10px 16px;background:var(--paper2);font-family:var(--font-ui);color:var(--muted)"><span style="color:var(--green)">▸</span> BTC $67,420 · ETH $3,180 · SOL $172</div>
+                </div>
+              </sc-if>
+            </div>
+
+            <!-- bitácora · el pozo lateral -->
+            <div style="padding:16px 18px;background:var(--paper2)">
+              <div class="ds-meta" style="letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px">Bitácora</div>
+              <div style="position:relative">
+                <div style="position:absolute;left:9px;top:6px;bottom:8px;width:2px;background:color-mix(in srgb, var(--muted) 26%, transparent)"></div>
+                <sc-for list="{{ heroSteps }}" as="st" hint-placeholder-count="4">
+                  <div style="display:flex;gap:11px;margin-bottom:15px;position:relative;animation:fadeUp .35s ease both">
+                    <span style="{{ st.dot }}">{{ st.glyph }}</span>
+                    <div style="flex:1;min-width:0;padding-top:1px"><div style="font:400 12.5px/1.35 var(--font-ui);color:{{ st.txtCol }}">{{ st.title }}</div><sc-if value="{{ st.hasSub }}" hint-placeholder-val="{{ false }}"><div class="ds-meta" style="margin-top:3px">{{ st.sub }}</div></sc-if></div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 2. EL GIRO ============ -->
+  <div style="max-width:1180px;margin:0 auto;padding:60px 30px 0">
+    <div class="ds-plane" style="text-align:center;padding:44px 34px">
+      <div class="ds-meta" style="letter-spacing:.14em;color:var(--accent-deep);margin-bottom:14px">EL GIRO</div>
+      <h2 class="ds-title" style="margin:0 auto;max-width:22ch">No es un chatbot: es un agente equipado que hace el trabajo.</h2>
+      <!-- el POZO con las dos tarjetas de contraste -->
+      <div class="ds-well" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:780px;margin:34px auto 0;padding:14px">
+        <div class="ds-card" style="padding:20px;text-align:left;opacity:.72">
+          <div class="ds-meta" style="display:flex;align-items:center;gap:9px;margin-bottom:13px">💬 UN CHATBOT</div>
+          <div style="display:flex;flex-direction:column;gap:9px">
+            <div class="ds-sub" style="display:flex;gap:8px"><span class="ds-dot" style="background:var(--muted);margin-top:6px"></span>te dice cómo armar el cierre</div>
+            <div class="ds-sub" style="display:flex;gap:8px"><span class="ds-dot" style="background:var(--muted);margin-top:6px"></span>copias, pegas, lo haces tú</div>
+            <div class="ds-sub" style="display:flex;gap:8px"><span class="ds-dot" style="background:var(--muted);margin-top:6px"></span>una caja negra que charla</div>
+          </div>
+        </div>
+        <!-- el 8% de identidad: la tarjeta buena se tiñe con --accent-soft en vez de llevar
+             un borde violeta y un gradiente cálido hardcodeado -->
+        <div class="ds-card" style="padding:20px;text-align:left;background:var(--accent-soft);box-shadow:var(--sh-3)">
+          <div class="ds-meta" style="display:flex;align-items:center;gap:9px;color:var(--accent-deep);margin-bottom:13px">🪆 UN ALEPH</div>
+          <div style="display:flex;flex-direction:column;gap:9px">
+            <div style="font:300 13.5px var(--font-ui);color:var(--ink);display:flex;gap:8px"><span class="ds-dot ds-dot-ok" style="margin-top:6px"></span>arma el cierre él mismo</div>
+            <div style="font:300 13.5px var(--font-ui);color:var(--ink);display:flex;gap:8px"><span class="ds-dot ds-dot-ok" style="margin-top:6px"></span>te lo deja listo para usar</div>
+            <div style="font:300 13.5px var(--font-ui);color:var(--ink);display:flex;gap:8px"><span class="ds-dot ds-dot-ok" style="margin-top:6px"></span>a la vista, paso a paso</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 3. UNIVERSALIDAD ============ -->
+  <div style="max-width:1180px;margin:0 auto;padding:22px 30px 0">
+    <div class="ds-plane" style="text-align:center;padding:44px 34px">
+      <h2 class="ds-title" style="margin:0">Un motor. Mil Aleph.</h2>
+      <p class="ds-sub" style="margin:14px auto 30px;font-size:15px;line-height:var(--lh-loose);max-width:54ch">El mismo Aleph sirve a todo tu mundo. No es una herramienta —es la fábrica de tus agentes.</p>
+      <div class="ds-well" style="display:flex;flex-wrap:wrap;justify-content:center;gap:12px;padding:16px">
+        <sc-for list="{{ niches }}" as="n" hint-placeholder-count="5">
+          <div style="{{ n.style }}" class="ds-card">
+            <span style="{{ n.iconStyle }}">{{ n.icon }}</span>
+            <div style="text-align:left"><div class="ds-name">{{ n.label }}</div><div class="ds-meta">{{ n.does }}</div></div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 4. CÓMO FUNCIONA ============ -->
+  <div style="max-width:1180px;margin:0 auto;padding:22px 30px 0">
+    <div class="ds-plane" style="padding:44px 34px">
+      <div style="text-align:center;margin-bottom:38px">
+        <div class="ds-meta" style="letter-spacing:.14em;color:var(--accent-deep);margin-bottom:12px">CÓMO FUNCIONA</div>
+        <h2 class="ds-title" style="margin:0">De la idea al resultado, en tres pasos</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px">
+        <sc-for list="{{ steps }}" as="s" hint-placeholder-count="3">
+          <div style="position:relative">
+            <div style="display:flex;align-items:center;gap:11px;margin-bottom:14px"><span style="font:400 15px var(--font-ui);color:var(--accent-deep);width:34px;height:34px;border-radius:var(--r-sm);background:var(--accent-soft);display:flex;align-items:center;justify-content:center;flex:none">{{ s.n }}</span><span style="font:400 15px var(--font-ui);color:var(--ink)">{{ s.title }}</span></div>
+            <p class="ds-sub" style="margin:0;font-size:13.5px;line-height:var(--lh-loose)">{{ s.body }}</p>
+            <div style="{{ s.vizWrap }}">{{ s.viz }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 5. LA TESIS ============ -->
+  <div style="max-width:1180px;margin:0 auto;padding:22px 30px 0">
+    <div class="ds-plane" style="padding:44px 34px">
+      <div style="text-align:center;margin-bottom:34px">
+        <div class="ds-meta" style="letter-spacing:.14em;color:var(--accent-deep);margin-bottom:12px">POR QUÉ FUNCIONA</div>
+        <h2 class="ds-title" style="margin:0 auto;max-width:26ch">Tú eres dueño del entorno. El Aleph pone el trabajo.</h2>
+        <p class="ds-sub" style="margin:15px auto 0;font-size:14px;line-height:var(--lh-loose);max-width:60ch">La cognición es prestada y cambia cada mes. Lo que importa —y lo que es tuyo— es el entorno: tus datos, tus herramientas, tus reglas. Aleph te da el control de eso.</p>
+      </div>
+      <div class="ds-well" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:14px">
+        <sc-for list="{{ thesis }}" as="t" hint-placeholder-count="3">
+          <div class="ds-card" style="padding:20px">
+            <span style="{{ t.iconStyle }}">{{ t.icon }}</span>
+            <div style="font:400 15px var(--font-ui);color:var(--ink);margin-top:14px">{{ t.title }}</div>
+            <div class="ds-sub" style="margin-top:7px;line-height:var(--lh-loose)">{{ t.body }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 6. CIERRE + CTA ============ -->
+  <div style="position:relative;background:var(--page-bg)">
+    <div style="position:absolute;bottom:-60px;left:50%;transform:translateX(-50%);width:660px;height:340px;border-radius:50%;background:radial-gradient(circle,var(--accent-soft) 0%,transparent 68%);pointer-events:none"></div>
+    <div style="position:relative;max-width:1180px;margin:0 auto;padding:76px 30px;text-align:center">
+      <!-- LA MASCOTA: el átomo SVG inline era la marca vieja. Va SIN MARCO, sobre el halo. -->
+      <span style="width:168px;height:168px;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle,var(--accent-soft) 0%,transparent 76%)">
+        <img src="assets/aleph-mascot-v2.png" alt="" width="96" height="96" style="display:block;width:96px;height:96px">
+      </span>
+      <h2 class="ds-title" style="margin:0 auto;max-width:20ch">Construye tu primer Aleph</h2>
+      <p class="ds-sub" style="margin:16px auto 0;font-size:15px;line-height:var(--lh-loose);max-width:48ch">En dos minutos lo verás produciendo algo real. Sin tarjeta.</p>
+      <a href="Onboarding.dc.html" class="ds-btn" style="display:inline-block;font-size:14px;padding:15px 32px;margin-top:26px" style-hover="opacity:.86">Empieza gratis →</a>
+    </div>
+  </div>
+
+  <!-- ============ 7. FOOTER ============ -->
+  <div style="background:var(--page-bg)">
+    <div style="max-width:1180px;margin:0 auto;padding:30px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span class="ds-mark"><img src="assets/aleph-mascot-v2.png" alt="" width="18" height="18"></span>
+        <span class="ds-brand" style="font-size:15px">Aleph</span>
+        <span class="ds-meta" style="margin-left:6px">© 2026</span>
+      </div>
+      <div class="ds-meta" style="display:flex;gap:22px">
+        <a href="Ayuda.dc.html" style-hover="color:var(--ink)">Ayuda</a>
+        <a href="Auth.dc.html" style-hover="color:var(--ink)">Ingresar</a>
+        <span style="cursor:pointer" style-hover="color:var(--ink)">Términos</span>
+        <span style="cursor:pointer" style-hover="color:var(--ink)">Privacidad</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#8E8BF5&quot;}}">
+class Component extends DCLogic {
+  state = { hero:'fin', reveal:0 };
+
+  // [sistema 2026-07-31] el color de los tres héroes era el mismo hex (#8E8BF5) escrito a
+  // mano tres veces: pasa a var(--accent) y así gira con el tema (en claro el acento es
+  // #5A4FD6, no #8E8BF5 — el hex fijo se salía del sistema en tema claro).
+  heroes = {
+    fin:{ name:'Reportero', mono:'Rp', color:'var(--accent)', role:'cierra los números de la semana', type:'table', forming:'armando el cierre…',
+      steps:[
+        {glyph:'▦',title:'Leyó 3 hojas de cálculo',sub:'ventas · gastos · caja',kind:'cool'},
+        {glyph:'‹›',title:'Limpió 1.240 filas',sub:'quitó 18 duplicados',kind:'run'},
+        {glyph:'▦',title:'Escribió el cierre',sub:'6 categorías',kind:'create'},
+        {glyph:'✓',title:'Listo · +8,2%',sub:'guardado a la biblioteca',kind:'done'},
+      ]},
+    res:{ name:'Investigador', mono:'Iv', color:'var(--accent)', role:'investiga y redacta informes citados', type:'doc', forming:'redactando el informe…',
+      steps:[
+        {glyph:'◍',title:'Buscó en la web',sub:'24 resultados',kind:'cool'},
+        {glyph:'¶',title:'Leyó 9 páginas',sub:'descartó 3 flojas',kind:'run'},
+        {glyph:'¶',title:'Escribió el informe',sub:'6 fuentes citadas',kind:'create'},
+        {glyph:'✓',title:'Listo · con fuentes',sub:'guardado a la biblioteca',kind:'done'},
+      ]},
+    dev:{ name:'Programador', mono:'Pg', color:'var(--accent)', role:'escribe y prueba código', type:'code', forming:'escribiendo el script…',
+      steps:[
+        {glyph:'{ }',title:'Escribió el script',sub:'fetch_prices.py',kind:'create'},
+        {glyph:'▷',title:'Lo ejecutó',sub:'0 errores · 0.4s',kind:'run'},
+        {glyph:'▣',title:'Trajo los precios',sub:'3 activos en vivo',kind:'create'},
+        {glyph:'✓',title:'Corrió bien',sub:'salida abajo',kind:'done'},
+      ]},
+  };
+
+  componentDidMount(){ const a=this.props.accent; if(a) document.documentElement.style.setProperty('--accent',a); this.loop(); }
+  componentDidUpdate(p){ const a=this.props.accent; if(p&&p.accent!==a&&a) document.documentElement.style.setProperty('--accent',a); }
+  componentWillUnmount(){ clearInterval(this._iv); }
+
+  loop(){
+    clearInterval(this._iv);
+    this._iv=setInterval(()=>{
+      this.setState(s=>{
+        const total=this.heroes[s.hero].steps.length;
+        if(s.reveal>=total+1) return {reveal:0}; // brief pause on "done" then restart
+        return {reveal:s.reveal+1};
+      });
+    }, 1150);
+  }
+  pickHero(id){ if(id===this.state.hero) return; this.setState({hero:id, reveal:0}); this.loop(); }
+
+  // [identidad visual] con un TOKEN emite color-mix: el tinte gira con el tema.
+  rgba(c,a){ if(String(c).indexOf('var(')===0) return 'color-mix(in srgb, '+c+' '+Math.round(a*100)+'%, transparent)';
+    const h=String(c).replace('#',''); const n=parseInt(h,16); return 'rgba('+((n>>16)&255)+','+((n>>8)&255)+','+(n&255)+','+a+')'; }
+
+  // Las mini-ilustraciones de "cómo funciona": eran barras de var(--line) —que en el
+  // sistema es TRANSPARENT, o sea invisibles— y cajitas con `border:1px solid`. Ahora son
+  // planos del sistema (paper sobre el pozo) y el acento marca el único punto vivo.
+  // Cada hijo lleva `key`: sin eso React escupía "unique key" a la consola en cada render.
+  miniViz(kind){
+    const e=React.createElement, bar=(k,w,h,c)=>e('div',{key:k,style:{width:w,height:h,borderRadius:3,background:c}});
+    // el gris neutro de las mini-ilustraciones. NO puede ser --paper: las vizzes viven en un
+    // POZO (--paper2) y paper-sobre-paper2 da 1.05:1 en los DOS temas — las barras existían
+    // pero no se veían. Un color-mix del gris de apoyo se lee en claro y en oscuro.
+    const N='color-mix(in srgb, var(--muted) 26%, transparent)';
+    if(kind==='choose') return e('div',{style:{position:'absolute',inset:0,padding:13,display:'flex',gap:8,alignItems:'center',justifyContent:'center'}},
+      [0,1,2].map(i=>e('div',{key:i,style:{width:38,height:46,borderRadius:'var(--r-sm)',background:i===0?'var(--accent-soft)':N,display:'flex',alignItems:'flex-end',justifyContent:'center',paddingBottom:5,opacity:i===0?1:.55}},
+        e('div',{key:'d',style:{width:18,height:18,borderRadius:'50%',background:i===0?'var(--accent)':'var(--paper2)'}}))));
+    if(kind==='work') return e('div',{style:{position:'absolute',inset:0,padding:13,display:'flex',flexDirection:'column',gap:7,justifyContent:'center'}},[0,1,2].map(i=>
+      e('div',{key:i,style:{display:'flex',gap:8,alignItems:'center'}},[
+        e('div',{key:'d',style:{width:16,height:16,borderRadius:'50%',background:i<2?'var(--green)':'var(--accent-soft)',flex:'none',opacity:i<2?.5:1}}),
+        bar('b',(70-i*12)+'%','6px',i===2?'var(--accent)':N)
+      ])));
+    if(kind==='result') return e('div',{style:{position:'absolute',inset:0,padding:13,display:'flex',flexDirection:'column',gap:5,justifyContent:'center'}},[
+      e('div',{key:'h',style:{display:'flex',gap:5}},[bar('a','46%','6px',N),bar('b','27%','6px',N),bar('c','20%','6px',N)]),
+      ...[0,1].map(i=>e('div',{key:i,style:{display:'flex',gap:5}},[bar('a','46%','8px',N),bar('b','27%','8px',N),bar('c','20%','8px',i===1?'var(--accent)':N)])),
+      e('div',{key:'cta',style:{marginTop:4,alignSelf:'flex-start',background:'var(--ink)',color:'var(--paper)',borderRadius:'var(--r-sm)',padding:'4px 11px',fontSize:9}},'↓ Descargar')
+    ]);
+    return null;
+  }
+
+  renderVals(){
+    const s=this.state, H=this.heroes[s.hero], col=H.color;
+    const total=H.steps.length;
+    const reveal=Math.min(s.reveal, total);
+
+    // el selector de nicho: la pestaña activa toma --accent-soft, que es EXACTAMENTE lo que
+    // el sistema reserva para "destino activo". Antes se pintaba con el acento macizo — eso
+    // gastaba el 8% en un control, no en la identidad.
+    const heroTabs=[['fin','Finanzas'],['res','Research'],['dev','Código']].map(([k,l])=>({label:l, pick:()=>this.pickHero(k),
+      style:'border:0;border-radius:var(--r-full);padding:7px 15px;font:400 12px var(--font-ui);cursor:pointer;transition:background .15s,color .15s;'+(s.hero===k?'background:var(--accent-soft);color:var(--accent-deep)':'background:transparent;color:var(--muted)')}));
+
+    const running=reveal<total;
+    const showArtifact=reveal>=2;
+    const KIND={cool:['var(--cool)','var(--cool-bg)'],run:['var(--accent-deep)','var(--accent-soft)'],create:['var(--accent-deep)','var(--accent-soft)'],done:['var(--green)','var(--green-bg)']};
+    const heroSteps=H.steps.slice(0,reveal).map((st,i)=>{
+      const last=i===reveal-1, isRun=last&&running, k=KIND[st.kind];
+      let glyph=st.glyph,bg=k[1],cl=k[0],extra='';
+      if(isRun){ glyph='◌'; bg='var(--accent-soft)';cl='var(--accent-deep)'; extra='animation:spin 1s linear infinite;'; }
+      // el punto llevaba DOS anillos de box-shadow (uno de color, uno de --paper): eso es un
+      // borde disfrazado. Queda sólo el halo del pozo, que tapa la línea del tiempo.
+      return { glyph, title:st.title, hasSub:!!st.sub, sub:st.sub, txtCol: st.kind==='done'?'var(--green)':'var(--ink)',
+        dot:'width:20px;height:20px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-size:9px;z-index:1;background:'+bg+';color:'+cl+';box-shadow:0 0 0 3px var(--paper2);'+extra };
+    });
+
+    // table — filas separadas por GAP sobre el pozo, no con border-top
+    const heroTableRows=[
+      {cat:'Ventas',val:'$980k',delta:'+6%',up:true},
+      {cat:'Servicios',val:'$260k',delta:'+14%',up:true},
+      {cat:'Variables',val:'$330k',delta:'+58%',flag:true},
+      {cat:'Resultado',val:'+$370k',delta:'+8,2%',total:true},
+    ].map(x=>({cat:x.cat,val:x.val,delta:x.delta, dCol:x.flag?'var(--amber)':(x.up||x.total?'var(--green)':'var(--muted)'),
+      style:'display:grid;grid-template-columns:1.5fr 1fr 76px;padding:10px 14px;font:300 12.5px var(--font-ui);color:var(--ink);background:var(--paper);'+(x.total?'background:var(--accent-soft);color:var(--accent-deep);font-weight:400;':'')}));
+
+    // el resaltado de código traía cinco hexes cálidos propios (#C9C6FF #7FC9A0 #E0A23C
+    // #D8CFC2 #A89C8B) — otra paleta dentro de la paleta. Ahora son tokens y giran con el tema.
+    const C={kw:'var(--accent-deep)',str:'var(--green)',fn:'var(--amber)',pl:'var(--ink)',punc:'var(--muted)'};
+    const heroCodeLines=[
+      [['import',C.kw],[' requests',C.pl]],
+      [['def ',C.kw],['get_prices',C.fn],['(ids):',C.punc]],
+      [['  url = ',C.pl],['"api.coin/price"',C.str]],
+      [['  return',C.kw],[' requests.',C.pl],['get',C.fn],['(url).',C.punc],['json',C.fn],['()',C.punc]],
+      [['print',C.fn],['(get_prices(ids))',C.punc]],
+    ].map((ln,i)=>({n:i+1, toks:ln.map(t=>({t:t[0],c:t[1]}))}));
+
+    // niches — la tarjeta la pone .ds-card; acá va sólo la caja (sin el borde tintado)
+    const niches=[
+      {label:'Finanzas',does:'cierres, reportes',icon:'▦',color:'var(--accent)'},
+      {label:'Research',does:'informes citados',icon:'◍',color:'var(--accent)'},
+      {label:'Programación',does:'scripts, datos',icon:'{ }',color:'var(--accent)'},
+      {label:'Educación',does:'clases, guías',icon:'✎',color:'var(--accent)'},
+      {label:'Cowork',does:'mails, docs',icon:'✉',color:'var(--amber)'},
+    ].map(n=>({label:n.label, does:n.does, icon:n.icon,
+      style:'display:flex;align-items:center;gap:11px;padding:12px 16px',
+      iconStyle:'width:34px;height:34px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font:400 15px var(--font-ui);flex:none;color:'+n.color+';background:'+this.rgba(n.color,0.14)}));
+
+    // how it works
+    const steps=[
+      {n:1,title:'Elige un Aleph',body:'Arma uno dándole habilidades, o usa uno listo. Lo adaptas a lo que necesitas.',viz:'choose'},
+      {n:2,title:'Trabaja a la vista',body:'Le das la tarea y lo miras hacerla —cada paso en la bitácora, el artefacto formándose.',viz:'work'},
+      {n:3,title:'Tienes el resultado',body:'El entregable queda listo: descárgalo, ábrelo en tu app o guárdalo. Y lo retomas cuando quieras.',viz:'result'},
+    ].map(st=>({n:st.n, title:st.title, body:st.body,
+      vizWrap:'margin-top:16px;border-radius:var(--r-lg);height:128px;position:relative;overflow:hidden;background:var(--paper2)',
+      viz:this.miniViz(st.viz)}));
+
+    // thesis
+    const thesis=[
+      {icon:'🧰',color:'var(--accent)',title:'Agentes equipados',body:'No es un modelo pelado: es un agente con herramientas, memoria y acceso a tus datos. Viene listo para hacer, no para charlar.'},
+      {icon:'🔑',color:'var(--accent)',title:'Tú eres dueño del entorno',body:'La cognición es prestada y cambia; tu entorno —datos, herramientas, reglas— es tuyo. Incluso tu propia key, si quieres.'},
+      {icon:'🔒',color:'var(--amber)',title:'Tu trabajo, bajo control',body:'Todo pasa a la vista, y para enviar, gastar o borrar el Aleph te pide OK. Nada sale al mundo sin que lo apruebes.'},
+    ].map(t=>({title:t.title, body:t.body, icon:t.icon,
+      iconStyle:'width:40px;height:40px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-size:18px;background:'+this.rgba(t.color,0.14)}));
+
+    return {
+      heroTabs,
+      heroName:H.name, heroMono:H.mono, heroRole:H.role,
+      // --on-accent es el color de texto que va SOBRE --accent (blanco en claro, tinta oscura
+      // en oscuro). El '#fff' fijo se leía a 1.9:1 sobre el acento del tema oscuro.
+      heroMonoStyle:'width:36px;height:36px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;color:var(--on-accent);font:400 13px var(--font-ui);flex:none;background:'+col,
+      heroRunning:running, heroForming:reveal<2, heroFormingText:H.forming,
+      heroTable:showArtifact&&H.type==='table', heroDoc:showArtifact&&H.type==='doc', heroCode:showArtifact&&H.type==='code',
+      heroSteps, heroTableRows, heroCodeLines,
+      niches, steps, thesis,
+    };
+  }
+}
+</script>
+</body>
+</html>

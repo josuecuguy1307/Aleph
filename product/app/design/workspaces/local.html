@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title data-i18n="ws.local.title">En tu máquina · Aleph</title>
+<link rel="stylesheet" href="../vendor/fonts.css">
+<link rel="stylesheet" href="../aleph-tokens.css">
+<link rel="stylesheet" href="./workspace.css">
+<script>window.ALEPH_THEME_NOFLOAT=true;</script>
+<script src="../auth.js"></script>
+<script src="../aleph-config.js"></script>
+<script src="../i18n.js?v=ws-1"></script>
+<script src="../theme.js"></script>
+<script>window.ALEPH_NAV_BRAIN_OFF = 1;</script>
+<script src="../nav.js"></script>
+</head>
+<body>
+<!--
+  EL WEBVIEW LOCAL GENÉRICO. [Gate 4 · Fase 6 · §6.a · LEY 8]
+
+  QUÉ ES: la anfitriona de CUALQUIER proceso que el agente levantó en esta máquina — no de
+  un workspace del registro. La ley 8 pone «webview local (localhost embebido en Tauri,
+  siempre local)» en el segundo escalón de la jerarquía de visualización, y hasta hoy ese
+  escalón existía sólo para los seis: seis páginas de ~390 líneas que, normalizando el
+  nombre, difieren entre 28 y 81 líneas entre sí (medido 2026-08-19).
+
+  POR QUÉ NO ES UN REFACTOR DE ESAS SEIS: ellas resuelven cosas que acá no existen —fila del
+  registro, `enter`/`leave` del pack, credenciales, plugin, cerebro del stack—. Unificarlas
+  es otra obra, con su propio riesgo, y este archivo no la hace ni la impide.
+
+  ⚠️ LO QUE ESTA PÁGINA NO HACE, Y ES LO MÁS IMPORTANTE: **no le cree a su propia URL.**
+  Si `?puerto=N` alcanzara para pintar un iframe, cualquiera que abra esta página con un
+  puerto en la query estaría mirando lo que quiera de loopback — incluido el sidecar de
+  Aleph, que sirve TODA `/v1` con la sesión del usuario ya puesta. Así que PREGUNTA
+  (`GET /v1/sala/local/<run>/<puerto>`), y el que contesta es el mismo guard que gobierna al
+  navegador del agente: allowlist por `(run_id, puerto)`, jamás por rango.
+  Ver `platform/browser/REGLA-LOOPBACK.md`.
+
+  FALLO VISIBLE, no negociable: si el permiso no está o el proceso no contesta, esta
+  pantalla LO DICE con la causa y su copy. Jamás un iframe en blanco.
+-->
+<!-- [rediseño · fase 2 · 2.4] Mismo marco que los seis, aunque esta pantalla no sea un
+     workspace del registro: comparte `workspace.css` y si conservara la barra vieja se
+     quedaría con un contenedor que la hoja ya no estila. -->
+<aside class="ws-riel">
+  <div class="ws-marca-fila">
+    <img src="../assets/aleph-mascot-v2.png" alt="" width="20" height="20">
+    <span class="ws-wordmark">Aleph</span>
+    <span class="ws-nombre" data-i18n="ws.local.nombre">Proceso local</span>
+  </div>
+  <a class="ws-volver" href="../Home.dc.html" data-i18n="ws.volver">‹ Inicio</a>
+  <div class="ws-sep"></div>
+  <div class="ws-seccion"></div>
+  <div class="ws-pie ws-bar">
+    <div class="ws-estado" id="ws-estado" role="status" aria-live="polite"></div>
+  </div>
+</aside>
+
+<main class="ws-lienzo">
+  <iframe id="ws-frame" class="ws-frame" title="Proceso local" hidden></iframe>
+  <section class="ws-caido" id="ws-caido" hidden>
+    <h1 class="ws-caido-tit" id="ws-caido-tit" data-i18n="ws.local.caido.tit">Esto no se está mostrando.</h1>
+    <p class="ws-caido-txt" id="ws-caido-txt"></p>
+    <button type="button" class="ws-btn" id="ws-reintentar" data-i18n="ws.reintentar">Reintentar</button>
+  </section>
+</main>
+
+<script type="module">
+"use strict";
+import { causaDe } from "../conectores/causas-catalogo.js";
+
+const tr = (k, fb) => { try { const s = window.t && window.t(k); return (s && s !== k) ? s : fb; } catch (_) { return fb; } };
+const frame = document.getElementById("ws-frame");
+const caido = document.getElementById("ws-caido");
+const caidoTit = document.getElementById("ws-caido-tit");
+const caidoTxt = document.getElementById("ws-caido-txt");
+const estado = document.getElementById("ws-estado");
+const nombre = document.getElementById("ws-nombre");
+
+const q = new URLSearchParams(location.search);
+const RUN = (q.get("run") || "").trim();
+const PUERTO = parseInt(q.get("puerto") || "", 10);
+const TITULO = (q.get("titulo") || "").trim();
+if (TITULO) nombre.textContent = TITULO;
+
+function usuario() {
+  try {
+    const u = window.AlephSession && AlephSession.get ? AlephSession.get() : null;
+    if (u) return u;
+    const raw = localStorage.getItem("puppet_user") || sessionStorage.getItem("puppet_user");
+    return raw ? JSON.parse(raw) : null;
+  } catch (_) { return null; }
+}
+function headers() {
+  const h = {}; const u = usuario();
+  if (u && u.session_token) h["Authorization"] = "Bearer " + u.session_token;
+  return h;
+}
+function tema() {
+  try {
+    if (window.AlephTheme && AlephTheme.resolved) return AlephTheme.resolved();
+    return document.documentElement.getAttribute("data-theme") || "dark";
+  } catch (_) { return "dark"; }
+}
+
+/** El fallo, SIEMPRE con copy. `causaDe` es el vocabulario compartido: si el backend manda
+ *  una causa que el catálogo no conoce, deriva una frase honesta y la marca provisional —
+ *  jamás se pinta el nombre técnico crudo y jamás se calla. */
+function caer(causa, detalle) {
+  const c = causaDe(causa) || {};
+  caidoTit.textContent = tr("ws.local.caido.tit", "Esto no se está mostrando.");
+  caidoTxt.textContent = (c.texto || detalle || "") + (detalle && c.texto ? ` (${detalle})` : "");
+  caido.hidden = false; frame.hidden = true;
+  estado.textContent = tr("ws.caido", "no responde");
+  estado.className = "ws-estado ws-caido-luz";
+}
+
+async function pintar() {
+  caido.hidden = true;
+  estado.textContent = tr("ws.comprobando", "comprobando…");
+  estado.className = "ws-estado";
+  if (!RUN || !Number.isFinite(PUERTO)) {
+    caer("url_bloqueada", tr("ws.local.sin_datos", "falta el trabajo o el puerto"));
+    return;
+  }
+  // ── EL PERMISO SE PREGUNTA, NO SE ASUME ────────────────────────────────────────────
+  let r;
+  try {
+    r = await fetch(`/v1/sala/local/${encodeURIComponent(RUN)}/${PUERTO}`, { headers: headers() });
+  } catch (_) {
+    caer("motor_no_responde"); return;
+  }
+  if (!r.ok) {
+    let d = null; try { d = (await r.json())?.detail; } catch (_) {}
+    caer(d?.error || "url_bloqueada", d?.detail);
+    return;
+  }
+  const { url } = await r.json();
+  // El `src` se pone UNA vez: re-asignarlo en cada mirada recargaría lo que el usuario está
+  // usando. Misma razón que en las seis anfitrionas, donde adentro puede haber un kernel.
+  if (!frame.src) {
+    frame.src = url + (url.includes("?") ? "&" : "?")
+      + "aleph_scheme=" + encodeURIComponent(tema());
+  }
+  frame.hidden = false;
+  estado.textContent = tr("ws.vivo", "en vivo");
+  estado.className = "ws-estado ws-vivo";
+}
+
+// El tema es del shell. Se manda por la misma palabra que ya cruza a los seis.
+window.addEventListener("aleph:theme-changed", () => {
+  if (!frame.src) return;
+  try {
+    const n = new URL(frame.src, location.href);
+    if (n.searchParams.get("aleph_scheme") === tema()) return;
+    n.searchParams.set("aleph_scheme", tema());
+    frame.src = n.toString();
+  } catch (_) {}
+});
+
+// ── EL CIERRE DEL CICLO ────────────────────────────────────────────────────────────────
+// «Levantar al entrar, apagar al salir, jamás huérfanos». Acá el que levanta es el agente,
+// así que lo que esta página cierra es EL PERMISO: se desanota el puerto. Tiene que morir
+// aunque el proceso sobreviva — si no, un puerto que el sistema recicle quedaría autorizado
+// para otro dueño. `keepalive` para que el pedido sobreviva a la navegación; si igual se
+// pierde, el registro muere con el run, que es la red de abajo.
+function soltar() {
+  try {
+    const h = headers(); h["Content-Type"] = "application/json";
+    fetch("/v1/sala/local/apagar", { method: "POST", headers: h, keepalive: true,
+                                     body: JSON.stringify({ run_id: RUN, puerto: PUERTO }) });
+  } catch (_) {}
+}
+window.addEventListener("pagehide", soltar);
+document.getElementById("ws-reintentar").addEventListener("click", () => { frame.src = ""; pintar(); });
+pintar();
+</script>
+</body>
+</html>

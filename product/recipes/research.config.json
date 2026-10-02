@@ -1,0 +1,58 @@
+{
+  "schema_version": "v1",
+  "meta": {
+    "name": "Agente Research",
+    "nicho": "research",
+    "descripcion": "Investigador que hace fan-out de busqueda, verifica adversarialmente las fuentes y sintetiza un reporte CITADO, no un resumen sin respaldo."
+  },
+  "model": {
+    "primary": "openai/gpt-oss-120b",
+    "fallback": "openai/gpt-oss-20b",
+    "base_url": "https://api.groq.com/openai/v1",
+    "temperature": 0,
+    "max_tokens": 4096,
+    "max_turns": 16
+  },
+  "belt": {
+    "belt_ref": "catalog/belts/research.md",
+    "tool_filters": {
+      "exa": [
+        "web_search_exa",
+        "web_fetch_exa"
+      ],
+      "huggingface": [
+        "paper_search",
+        "hf_doc_search",
+        "hub_repo_search"
+      ],
+      "context7": [
+        "resolve-library-id",
+        "query-docs"
+      ],
+      "fetch": [
+        "fetch"
+      ],
+      "filesystem": [
+        "read_file",
+        "write_file"
+      ],
+      "pandoc": [
+        "convert-contents"
+      ]
+    }
+  },
+  "framing": {
+    "ref": "product/recipes/framing/research.md",
+    "inline": null
+  },
+  "rag": {
+    "enabled": true,
+    "mode": "manual",
+    "dir": "rag/research"
+  },
+  "keys": {},
+  "gates": {
+    "money_touch": "off",
+    "send": "off"
+  }
+}

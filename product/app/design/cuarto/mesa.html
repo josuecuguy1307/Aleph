@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>La Mesa de Construcción — Aleph</title>
+  <script src="../theme.js"></script>
+  <script src="../i18n.js"></script>
+  <link rel="stylesheet" href="../aleph-tokens.css"><!-- [identidad visual] la piel: tokens, forma y tipografía en un solo lugar -->
+<style>
+    :root { color-scheme: dark;
+      --bg:#0a0d13; --panel:#11151f; --panel2:#0c0f17; --ink:#dde3ef; --muted:#8a93a6;
+      --line:rgba(255,255,255,.07); --teal:#46d6c8; --ok:#57e08a; --no:#e08a8a; --prop:#5a6376;
+      --nucleo:#b389ff; --gate:#ffb454; --block:#ffb454; }
+    :root[data-theme="light"] { color-scheme: light;
+      --bg:#f4f6fb; --panel:#ffffff; --panel2:#eef1f7; --ink:#1a2030; --muted:#5a6172;
+      --line:rgba(0,0,0,.08); --teal:#1aa596; --ok:#1f9d54; --no:#c0483f; --prop:#9aa2b4; --block:#c07a1a; }
+    @media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) {
+      --bg:#f4f6fb; --panel:#ffffff; --panel2:#eef1f7; --ink:#1a2030; --muted:#5a6172;
+      --line:rgba(0,0,0,.08); --teal:#1aa596; --ok:#1f9d54; --no:#c0483f; --prop:#9aa2b4; --block:#c07a1a; } }
+    * { box-sizing:border-box; }
+    html,body { margin:0; height:100%; background:var(--bg); color:var(--ink);
+      font-family:var(--font-ui); }
+    .mc-shell { max-width:1000px; margin:0 auto; padding:22px 18px 60px; }
+    .mc-top { display:flex; align-items:center; gap:14px; margin-bottom:14px; flex-wrap:wrap; }
+    .mc-top h1 { font-size:19px; margin:0; font-weight:500; letter-spacing:.2px; }
+    .mc-top .mc-tag { color:var(--muted); font-size:12.5px; }
+    .mc-modo { margin-left:auto; display:inline-flex; background:var(--panel2); border-radius:var(--r-sm);
+      box-shadow:var(--sh-line); overflow:hidden; }
+    .mc-modo button { border:0; background:transparent; color:var(--muted); padding:8px 14px;
+      font:inherit; font-size:12.5px; cursor:pointer; }
+    .mc-modo button.on { background:var(--panel); color:var(--ink); box-shadow:var(--sh-line); }
+
+    /* barra de intención (crear una construcción) */
+    #mcbar { display:flex; gap:8px; margin:8px 0 20px; flex-wrap:wrap; }
+    #mcbar input { flex:1; min-width:220px; padding:10px 13px; border:0; border-radius:var(--r-sm);
+      background:var(--panel2); color:var(--ink); box-shadow:var(--sh-line); font:inherit; }
+    #mcbar input.mono { flex:0 1 190px; font-family:var(--font-mono); font-size:12px; }
+    #mcbar select, .mc-btn { padding:10px 14px; border:0; border-radius:var(--r-sm); background:var(--panel);
+      color:var(--ink); font:inherit; font-size:12.5px; cursor:pointer; box-shadow:var(--sh-line); }
+    #mcCrear { background:var(--teal); color:#04201d; font-weight:500; box-shadow:none; }
+
+    /* riel */
+    .mc-rail { display:flex; align-items:stretch; gap:0; overflow-x:auto; padding:6px 2px 16px; }
+    .mc-node { flex:1 0 128px; min-width:128px; padding:12px 10px; border-radius:var(--r-md);
+      background:var(--panel); box-shadow:var(--sh-line); text-align:center; position:relative;
+      transition:box-shadow .2s, opacity .2s; }
+    .mc-link { flex:0 0 20px; align-self:center; height:2px; background:var(--quiet); }
+    .mc-node-ic { width:34px; height:34px; margin:0 auto 6px; display:grid; place-items:center;
+      border-radius:var(--r-sm); background:var(--panel2); color:var(--muted); }
+    .mc-glyph { width:19px; height:19px; }
+    .mc-node-lbl { font-size:11.5px; line-height:1.25; color:var(--ink); }
+    .mc-node-n { font-size:10px; color:var(--muted); margin-top:3px; }
+    .mc-pendiente { opacity:.5; }
+    .mc-activa { box-shadow:inset 0 0 0 1.5px var(--teal); }
+    .mc-activa .mc-node-ic { color:var(--teal); animation:mcpulse 1.15s ease-in-out infinite; }
+    @keyframes mcpulse { 0%,100%{ opacity:.55; } 50%{ opacity:1; } }
+    .mc-lista .mc-node-ic { color:var(--ok); background:color-mix(in srgb, var(--ok) 16%, transparent); }
+    .mc-bloqueada { box-shadow:inset 0 0 0 1.5px var(--block); }
+    .mc-bloqueada .mc-node-ic { color:var(--block); }
+    .mc-tools { display:flex; flex-wrap:wrap; gap:3px; justify-content:center; margin-top:8px; }
+    .mc-tool { font-size:9.5px; padding:2px 5px; border-radius:var(--r-xs); background:var(--panel2);
+      color:var(--muted); max-width:78px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .mc-tool-ok { color:var(--ok); box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--ok) 40%,transparent); }
+    .mc-tool-no { color:var(--no); text-decoration:line-through; opacity:.7; }
+    .mc-tool-run { color:var(--teal); animation:mcpulse 1s infinite; }
+
+    /* pieles */
+    .mc-body { margin-top:8px; }
+    .mc-card, .mc-c-card { background:var(--panel); border-radius:var(--r-md); padding:14px 16px; margin-bottom:12px;
+      box-shadow:var(--sh-line); }
+    .mc-card h3, .mc-c-card h4 { margin:0 0 9px; font-size:13.5px; font-weight:500; }
+    .mc-sub, .mc-c-hint, .mc-empty { color:var(--muted); font-size:12px; }
+    .mc-chips { display:flex; flex-wrap:wrap; gap:6px; }
+    .mc-chip { font-size:11.5px; padding:3px 9px; border-radius:var(--r-xl); background:var(--panel2); color:var(--ink); }
+    .mc-toollist { list-style:none; margin:0; padding:0; }
+    .mc-tl { padding:6px 0; border-bottom:1px solid var(--line); font-size:13px; display:flex; gap:8px; align-items:baseline; flex-wrap:wrap; }
+    .mc-tl-desc { color:var(--muted); font-size:12px; }
+    .mc-ok { color:var(--ok); } .mc-no { color:var(--no); } .mc-run { color:var(--teal); } .mc-prop { color:var(--prop); }
+    .mc-motivo { color:var(--no); font-size:11px; } .mc-flojo { color:var(--gate); font-size:11px; }
+    .mc-equipada { box-shadow:inset 0 0 0 1.5px var(--ok); }
+
+    /* pregunta temprana */
+    .mc-pregunta { box-shadow:inset 0 0 0 1.5px var(--gate); }
+    .mc-preg-badge { display:inline-block; font-size:10.5px; letter-spacing:.5px; text-transform:uppercase;
+      color:var(--gate); margin-bottom:6px; }
+    .mc-opts { display:flex; flex-direction:column; gap:8px; margin-top:6px; }
+    .mc-opt { text-align:left; border:0; background:var(--panel2); color:var(--ink); padding:11px 13px;
+      border-radius:var(--r-sm); cursor:pointer; box-shadow:var(--sh-line); font:inherit; display:flex; flex-direction:column; gap:2px; }
+    .mc-opt:hover { box-shadow:inset 0 0 0 1.5px var(--teal); }
+    .mc-opt-lbl { font-size:13px; font-weight:550; } .mc-opt-det { font-size:11.5px; color:var(--muted); }
+    .mc-preg-input { margin-top:10px; }
+    .mc-inline { display:flex; gap:8px; align-items:center; flex-wrap:wrap; font-size:12.5px; }
+    .mc-inline span { color:var(--muted); flex-basis:100%; }
+    .mc-inline-in { flex:1; min-width:180px; padding:9px 11px; border:0; border-radius:var(--r-sm); background:var(--panel2);
+      color:var(--ink); box-shadow:var(--sh-line); font:inherit; }
+    .mc-note { color:var(--muted); font-size:12px; margin:6px 0 0; }
+
+    /* gestos */
+    .mc-gestos { display:flex; gap:8px; align-items:center; margin-top:6px; flex-wrap:wrap; }
+    .mc-gesto { border:0; background:var(--panel); color:var(--ink); padding:8px 13px; border-radius:var(--r-sm);
+      cursor:pointer; box-shadow:var(--sh-line); font:inherit; font-size:12px; }
+    .mc-estado-lbl { margin-left:auto; color:var(--muted); font-size:11.5px; text-transform:uppercase; letter-spacing:.4px; }
+
+    /* modo código */
+    .mc-tbl { width:100%; border-collapse:collapse; font-size:12px; }
+    .mc-tbl th { text-align:left; color:var(--muted); font-weight:500; padding:4px 6px; border-bottom:1px solid var(--line); }
+    .mc-tbl td { padding:4px 6px; border-bottom:1px solid var(--line); }
+    code, .mc-c-editor, .mc-c-consola { font-family:var(--font-mono); }
+    .mc-c-tool { margin-bottom:14px; padding:10px; border-radius:var(--r-sm); background:var(--panel2); box-shadow:var(--sh-line); }
+    .mc-c-tool.mc-dirty { box-shadow:inset 0 0 0 1.5px var(--gate); }
+    .mc-c-tool-head { display:flex; gap:8px; align-items:center; font-size:12px; margin-bottom:6px; flex-wrap:wrap; }
+    .mc-c-ok { color:var(--ok); } .mc-c-no { color:var(--no); } .mc-c-run { color:var(--teal); } .mc-c-prop { color:var(--muted); }
+    .mc-c-diff { color:var(--gate); font-size:11px; }
+    .mc-c-editor { width:100%; min-height:120px; resize:vertical; border:0; border-radius:var(--r-sm); background:var(--bg);
+      color:var(--ink); padding:9px; font-size:11.5px; box-shadow:var(--sh-line); }
+    .mc-c-actions { display:flex; gap:6px; margin-top:6px; }
+    .mc-c-consola { margin:8px 0 0; padding:9px; background:var(--bg); border-radius:var(--r-sm); font-size:11px; white-space:pre-wrap;
+      box-shadow:var(--sh-line); max-height:220px; overflow:auto; }
+    .mc-c-run-row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+    .mc-c-conv { color:var(--muted); font-size:11.5px; }
+    .mc-body[hidden] { display:none; }
+  </style>
+</head>
+<body>
+  <div class="mc-shell">
+    <div class="mc-top">
+      <h1 data-i18n="mesa.titulo">La Mesa de Construcción</h1>
+      <span class="mc-tag" data-i18n="mesa.sub">construye un MCP para un servicio, paso a paso</span>
+      <div class="mc-modo" role="tablist">
+        <button id="mcModoGuiado" class="on" data-i18n="mesa.modo.guiado">Guiado</button>
+        <button id="mcModoCodigo" data-i18n="mesa.modo.codigo">Código</button>
+      </div>
+    </div>
+
+    <div id="mcbar">
+      <input id="mcServicio" data-i18n-ph="mesa.ph.servicio" placeholder="servicio o URL de la API (ej: TMDB, https://api.…)" />
+      <input id="mcToken" class="mono" data-i18n-ph="mesa.ph.token" placeholder="clave (opcional)" autocomplete="off" />
+      <select id="mcForma">
+        <option value="">— cómo se entra —</option>
+        <option value="token">con clave</option>
+        <option value="login">usuario y contraseña</option>
+        <option value="abierto">abierto</option>
+        <option value="browser">navegador (2FA)</option>
+      </select>
+      <button id="mcCrear" class="mc-btn" data-i18n="mesa.crear">Construir</button>
+    </div>
+
+    <div id="mcRail"></div>
+    <div id="mcBody" class="mc-body"></div>
+  </div>
+
+  <script type="module">
+    import { MesaState } from "./mesa.state.js";
+    import { mountRail } from "./mesa.rail.js";
+    import { mountGuiado } from "./mesa.guiado.js";
+    import { mountCodigo } from "./mesa.codigo.js";
+
+    const BASE = "";            // mismo origen (serve.py proxya /v1 → backend)
+    const railHost = document.getElementById("mcRail");
+    const bodyHost = document.getElementById("mcBody");
+    let state = new MesaState({ BASE });
+    let rail = mountRail({ host: railHost });
+    let skin = null, modo = "guiado";
+
+    // el riel se suscribe al store
+    let unsubRail = state.subscribe((st) => rail.render(st));
+
+    function montarPiel() {
+      if (skin) skin.destroy();
+      bodyHost.innerHTML = "";
+      skin = (modo === "codigo")
+        ? mountCodigo({ host: bodyHost, state })
+        : mountGuiado({ host: bodyHost, state });
+    }
+    montarPiel();
+
+    // toggle de modo — NO cambia el estado, solo la piel
+    const bg = document.getElementById("mcModoGuiado");
+    const bc = document.getElementById("mcModoCodigo");
+    function setModo(m) {
+      modo = m; bg.classList.toggle("on", m === "guiado"); bc.classList.toggle("on", m === "codigo");
+      montarPiel();
+    }
+    bg.addEventListener("click", () => setModo("guiado"));
+    bc.addEventListener("click", () => setModo("codigo"));
+    window.addEventListener("mesa:modo", (e) => setModo(e.detail.modo));
+
+    // crear una construcción
+    document.getElementById("mcCrear").addEventListener("click", async () => {
+      const raw = (document.getElementById("mcServicio").value || "").trim();
+      const token = (document.getElementById("mcToken").value || "").trim();
+      const forma = document.getElementById("mcForma").value || "";
+      const pedido = {};
+      if (/^https?:/i.test(raw)) pedido.url = raw; else pedido.service = raw;
+      if (token) pedido.cred = token;
+      if (forma) pedido.forma = forma;
+      // re-crear el store limpio y re-suscribir el riel + piel
+      unsubRail(); if (skin) skin.destroy();
+      const { st, resp } = await MesaState.crear(BASE, pedido);
+      if (!resp.ok) { bodyHost.innerHTML = `<div class="mc-card">No se pudo crear: ${JSON.stringify(resp.body)}</div>`; return; }
+      state = st;
+      unsubRail = state.subscribe((s) => rail.render(s));
+      montarPiel();
+      window.__mesaState = state;   // hook de verificación
+    });
+
+    // hooks de verificación (Playwright)
+    window.__mesa = { get state() { return state; }, setModo, MesaState, get modo() { return modo; } };
+    window.__mesaState = state;
+    window.addEventListener("aleph:langchange", () => { rail.render(state); if (skin) skin.render(state); });
+  </script>
+</body>
+</html>

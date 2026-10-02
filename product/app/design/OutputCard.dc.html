@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- OutputCard es un COMPONENTE embebido: Biblioteca y Sala lo montan por import de DC. El
+     runtime sólo usa el bloque de plantilla, así que estos links valen únicamente cuando se
+     abre el archivo suelto; embebido, el anfitrión ya trae los tokens. Por eso la tarjeta NO
+     va envuelta en .ds-plane (el plano lo pone la pantalla anfitriona): la tarjeta ES el
+     elemento del sistema, o sea .ds-card.
+     OJO: en este archivo un comentario NO puede contener el nombre de la etiqueta raíz de la
+     plantilla — el runtime la busca por texto y se llevaría el comentario como plantilla. -->
+<link rel="stylesheet" href="vendor/fonts.css">
+<link rel="stylesheet" href="aleph-tokens.css"><!-- [identidad visual] la piel: tokens, forma y tipografía en un solo lugar -->
+<style>
+  /* sólo para la vista SUELTA del componente: embebido, el anfitrión ya pinta el campo */
+  body{margin:0;background:var(--page-bg);font-family:var(--font-ui);color:var(--ink);
+       padding:26px;-webkit-font-smoothing:antialiased}
+</style>
+<script src="./paywall.js"></script>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<div class="ds-card" style="padding:0;overflow:hidden;display:flex;flex-direction:column;font-family:var(--font-ui)" style-hover="box-shadow:var(--sh-3)">
+
+  <!-- mini polymorphic preview (real render of the artifact type) -->
+  <!-- el POZO de la tarjeta: plano, sin sombra y sin línea de separación -->
+  <div style="height:94px;background:var(--paper2);border:0;position:relative;overflow:hidden">
+    <span style="position:absolute;top:8px;left:9px;z-index:2;font:400 9px var(--font-ui);letter-spacing:.06em;text-transform:uppercase;color:var(--ink);background:var(--glass);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-radius:var(--r-full);padding:3px 8px">{{ typeLabel }}</span>
+
+    <sc-if value="{{ isTable }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;padding:11px 12px;display:flex;flex-direction:column;gap:5px;justify-content:center">
+        <div style="display:flex;gap:5px"><div style="flex:2;height:6px;border-radius:var(--r-2xs);background:color-mix(in srgb, var(--muted) 30%, transparent)"></div><div style="flex:1;height:6px;border-radius:var(--r-2xs);background:color-mix(in srgb, var(--muted) 30%, transparent)"></div><div style="flex:1;height:6px;border-radius:var(--r-2xs);background:color-mix(in srgb, var(--muted) 30%, transparent)"></div></div>
+        <div style="display:flex;gap:5px"><div style="flex:2;height:8px;border-radius:var(--r-2xs);background:color-mix(in srgb, var(--muted) 15%, transparent)"></div><div style="flex:1;height:8px;border-radius:var(--r-2xs);background:color-mix(in srgb, var(--muted) 15%, transparent)"></div><div style="flex:1;height:8px;border-radius:var(--r-2xs);background:{{ accent }}"></div></div>
+        <div style="display:flex;gap:5px"><div style="flex:2;height:8px;border-radius:var(--r-2xs);background:color-mix(in srgb, var(--muted) 15%, transparent)"></div><div style="flex:1;height:8px;border-radius:var(--r-2xs);background:color-mix(in srgb, var(--muted) 15%, transparent)"></div><div style="flex:1;height:8px;border-radius:var(--r-2xs);background:color-mix(in srgb, var(--muted) 15%, transparent)"></div></div>
+        <div style="display:flex;gap:5px"><div style="flex:2;height:8px;border-radius:var(--r-2xs);background:color-mix(in srgb, var(--muted) 15%, transparent)"></div><div style="flex:1;height:8px;border-radius:var(--r-2xs);background:color-mix(in srgb, var(--muted) 15%, transparent)"></div><div style="flex:1;height:8px;border-radius:var(--r-2xs);background:{{ accent }};opacity:.6"></div></div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isChart }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;padding:14px 14px 16px;display:flex;align-items:flex-end;gap:7px">
+        <div style="flex:1;height:24px;border-radius:3px 3px 0 0;background:color-mix(in srgb, var(--muted) 30%, transparent)"></div>
+        <div style="flex:1;height:40px;border-radius:3px 3px 0 0;background:color-mix(in srgb, var(--muted) 30%, transparent)"></div>
+        <div style="flex:1;height:30px;border-radius:3px 3px 0 0;background:color-mix(in srgb, var(--muted) 30%, transparent)"></div>
+        <div style="flex:1;height:50px;border-radius:3px 3px 0 0;background:color-mix(in srgb, var(--muted) 48%, transparent)"></div>
+        <div style="flex:1;height:62px;border-radius:3px 3px 0 0;background:{{ accent }}"></div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isDoc }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;padding:13px 14px;display:flex;flex-direction:column;gap:6px;justify-content:center">
+        <div style="width:58%;height:9px;border-radius:var(--r-2xs);background:{{ accent }};opacity:.85"></div>
+        <div style="width:100%;height:6px;border-radius:var(--r-2xs);background:color-mix(in srgb, var(--muted) 30%, transparent)"></div>
+        <div style="width:96%;height:6px;border-radius:var(--r-2xs);background:color-mix(in srgb, var(--muted) 30%, transparent)"></div>
+        <div style="width:90%;height:6px;border-radius:var(--r-2xs);background:color-mix(in srgb, var(--muted) 30%, transparent)"></div>
+        <div style="width:64%;height:6px;border-radius:var(--r-2xs);background:color-mix(in srgb, var(--muted) 15%, transparent)"></div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isSources }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;padding:12px 13px;display:flex;flex-direction:column;gap:7px;justify-content:center">
+        <div style="display:flex;gap:8px;align-items:center"><div style="width:15px;height:15px;border-radius:var(--r-2xs);background:{{ accent }};opacity:.8;flex:none"></div><div style="flex:1"><div style="width:80%;height:5px;border-radius:var(--r-2xs);background:color-mix(in srgb, var(--muted) 30%, transparent)"></div><div style="width:50%;height:4px;border-radius:var(--r-2xs);background:color-mix(in srgb, var(--muted) 15%, transparent);margin-top:3px"></div></div></div>
+        <div style="display:flex;gap:8px;align-items:center"><div style="width:15px;height:15px;border-radius:var(--r-2xs);background:color-mix(in srgb, var(--muted) 30%, transparent);flex:none"></div><div style="flex:1"><div style="width:72%;height:5px;border-radius:var(--r-2xs);background:color-mix(in srgb, var(--muted) 30%, transparent)"></div><div style="width:44%;height:4px;border-radius:var(--r-2xs);background:color-mix(in srgb, var(--muted) 15%, transparent);margin-top:3px"></div></div></div>
+        <div style="display:flex;gap:8px;align-items:center"><div style="width:15px;height:15px;border-radius:var(--r-2xs);background:color-mix(in srgb, var(--muted) 30%, transparent);flex:none"></div><div style="flex:1"><div style="width:64%;height:5px;border-radius:var(--r-2xs);background:color-mix(in srgb, var(--muted) 30%, transparent)"></div><div style="width:38%;height:4px;border-radius:var(--r-2xs);background:color-mix(in srgb, var(--muted) 15%, transparent);margin-top:3px"></div></div></div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isCode }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;padding:12px 13px;display:flex;flex-direction:column;gap:6px;justify-content:center;font-family:var(--font-mono)">
+        <div style="display:flex;gap:5px"><div style="width:18%;height:6px;border-radius:var(--r-2xs);background:var(--accent)"></div><div style="width:30%;height:6px;border-radius:var(--r-2xs);background:var(--green)"></div></div>
+        <div style="display:flex;gap:5px;padding-left:12px"><div style="width:22%;height:6px;border-radius:var(--r-2xs);background:var(--amber)"></div><div style="width:40%;height:6px;border-radius:var(--r-2xs);background:color-mix(in srgb, var(--muted) 55%, transparent)"></div></div>
+        <div style="display:flex;gap:5px;padding-left:12px"><div style="width:14%;height:6px;border-radius:var(--r-2xs);background:var(--accent)"></div><div style="width:24%;height:6px;border-radius:var(--r-2xs);background:var(--green)"></div><div style="width:18%;height:6px;border-radius:var(--r-2xs);background:color-mix(in srgb, var(--muted) 55%, transparent)"></div></div>
+        <div style="display:flex;gap:5px"><div style="width:10%;height:6px;border-radius:var(--r-2xs);background:color-mix(in srgb, var(--muted) 55%, transparent)"></div></div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isPreview }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;display:flex;flex-direction:column">
+        <div style="height:16px;background:color-mix(in srgb, var(--muted) 22%, transparent);display:flex;align-items:center;gap:3px;padding:0 8px"><span style="width:5px;height:5px;border-radius:50%;background:color-mix(in srgb, var(--muted) 45%, transparent)"></span><span style="width:5px;height:5px;border-radius:50%;background:color-mix(in srgb, var(--muted) 45%, transparent)"></span><span style="width:5px;height:5px;border-radius:50%;background:color-mix(in srgb, var(--muted) 45%, transparent)"></span></div>
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:8px">
+          <div style="width:44%;height:8px;border-radius:var(--r-2xs);background:{{ accent }}"></div>
+          <div style="display:flex;gap:6px;width:100%;padding:0 10px;margin-top:2px"><div style="flex:1;height:20px;border-radius:var(--r-2xs);background:color-mix(in srgb, var(--muted) 15%, transparent)"></div><div style="flex:1;height:20px;border-radius:var(--r-2xs);background:color-mix(in srgb, var(--muted) 30%, transparent)"></div><div style="flex:1;height:20px;border-radius:var(--r-2xs);background:color-mix(in srgb, var(--muted) 15%, transparent)"></div></div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isSlides }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;padding:13px;display:flex;gap:8px;align-items:stretch">
+        <div style="flex:2;border-radius:var(--r-xs);background:color-mix(in srgb, var(--muted) 15%, transparent);padding:9px;display:flex;flex-direction:column;gap:5px;justify-content:center"><div style="width:70%;height:8px;border-radius:var(--r-2xs);background:{{ accent }}"></div><div style="width:90%;height:5px;border-radius:var(--r-2xs);background:color-mix(in srgb, var(--muted) 30%, transparent)"></div><div style="width:60%;height:5px;border-radius:var(--r-2xs);background:color-mix(in srgb, var(--muted) 15%, transparent)"></div></div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:8px"><div style="flex:1;border-radius:var(--r-xs);background:color-mix(in srgb, var(--muted) 15%, transparent)"></div><div style="flex:1;border-radius:var(--r-xs);background:color-mix(in srgb, var(--muted) 15%, transparent)"></div></div>
+      </div>
+    </sc-if>
+  </div>
+
+  <!-- meta + actions -->
+  <div style="padding:11px 12px 12px">
+    <div class="ds-name" style="font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ o.title }}</div>
+    <div style="display:flex;align-items:center;gap:7px;margin-top:7px">
+      <span style="{{ byMonoStyle }}">{{ o.byMono }}</span>
+      <span class="ds-meta" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ o.byName }}</span>
+      <span class="ds-meta" style="margin-left:auto;flex:none">{{ o.date }}</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:5px;margin-top:14px">
+      <a href="sala-v2/sala-v2.html" style="display:flex;align-items:center;gap:5px;flex:1;justify-content:center;border:0;background:var(--ink);color:var(--paper);border-radius:var(--r-md);padding:8px 0;font:400 11.5px var(--font-ui);text-decoration:none" style-hover="filter:brightness(1.12)">↻ Seguir en la Sala</a>
+      <button onClick="{{ dl }}" title="Descargar" style="width:30px;height:30px;border:0;background:var(--paper2);color:var(--muted);border-radius:var(--r-md);font:inherit;font-size:13px;cursor:pointer;flex:none" style-hover="color:var(--ink)">↓</button>
+      <button title="Abrir en la app" style="width:30px;height:30px;border:0;background:var(--paper2);color:var(--muted);border-radius:var(--r-md);font:inherit;font-size:13px;cursor:pointer;flex:none" style-hover="color:var(--ink)">↗</button>
+      <button onClick="{{ o.del }}" title="Borrar" style="width:30px;height:30px;border:0;background:var(--paper2);color:var(--muted);border-radius:var(--r-md);font:inherit;font-size:13px;cursor:pointer;flex:none" style-hover="color:var(--red)">✕</button>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:260,&quot;height&quot;:210},&quot;o&quot;:{&quot;editor&quot;:null}}">
+class Component extends DCLogic {
+  renderVals(){
+    const o=this.props.o||{};
+    const t=o.type;
+    const labels={table:'Planilla',chart:'Gráfico',doc:'Documento',sources:'Fuentes',code:'Código',preview:'Preview',slides:'Clase'};
+    // DESCARGA REAL de la obra: GET /v1/outputs/{id}/download. El endpoint exige Bearer
+    // (authz por dueño) + sirve solo bajo run_outputs (anti-traversal) — auth.js adjunta el
+    // token, así que NO sirve un <a href> plano (navegación no pasa por el wrapper → 401).
+    // Bajamos el blob autenticado y lo entregamos con su filename.
+    const dl = async ()=>{
+      if(!o.id){ return; }
+      try{
+        const r = await fetch('/v1/outputs/'+o.id+'/download');
+        if(!r.ok){ alert(r.status===409 ? 'Esta obra es texto, no tiene archivo para descargar.' : 'No pude descargar (error '+r.status+').'); return; }
+        const cd = r.headers.get('content-disposition')||'';
+        const m = cd.match(/filename="?([^"]+)"?/);
+        const name = (m && m[1]) || (o.title||'obra');
+        const blob = await r.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href=url; a.download=name;
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(()=>URL.revokeObjectURL(url), 1500);
+      }catch(e){ alert('No pude descargar ahora. Prueba de nuevo.'); }
+    };
+    return {
+      o, dl,
+      isTable:t==='table', isChart:t==='chart', isDoc:t==='doc', isSources:t==='sources',
+      isCode:t==='code', isPreview:t==='preview', isSlides:t==='slides',
+      typeLabel:labels[t]||'Archivo',
+      accent:o.byColor||'var(--accent)',
+      byMonoStyle:'width:22px;height:22px;border-radius:var(--r-full);display:flex;align-items:center;justify-content:center;color:#fff;font:500 9px var(--font-brand);flex:none;background:'+(o.byColor||'var(--accent)'),
+    };
+  }
+}
+</script>
+</body>
+</html>

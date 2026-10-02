@@ -1,0 +1,32 @@
+cff-version: 1.2.0
+message: "If you reference Open CoDesign in a paper, article, or product comparison, please cite it as below."
+type: software
+title: "Open CoDesign"
+abstract: "Open-source desktop AI design tool. The open-source alternative to Anthropic Claude Design. Accepts natural-language prompts and produces HTML prototypes, PPTX slide decks, and PDF one-pagers. Multi-model BYOK (Anthropic, OpenAI, Gemini, DeepSeek, Ollama), local-first, MIT licensed."
+authors:
+  - name: "OpenCoworkAI Contributors"
+    website: "https://github.com/OpenCoworkAI"
+repository-code: "https://github.com/OpenCoworkAI/open-codesign"
+url: "https://opencoworkai.github.io/open-codesign/"
+license: MIT
+version: "0.1.1"
+date-released: "2026-04-21"
+preferred-citation:
+  type: software
+  title: "Open CoDesign: An Open-Source Desktop AI Design Tool"
+  authors:
+    - name: "OpenCoworkAI Contributors"
+      website: "https://github.com/OpenCoworkAI"
+  year: 2026
+  repository-code: "https://github.com/OpenCoworkAI/open-codesign"
+  url: "https://github.com/OpenCoworkAI/open-codesign"
+  notes: "GitHub repository"
+keywords:
+  - "AI design"
+  - "Claude Design alternative"
+  - "open source"
+  - "BYOK"
+  - "local-first"
+  - "Electron"
+  - "prototype generator"
+  - "multi-model"

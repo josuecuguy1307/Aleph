@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>sonda Capa 0 · v2</title>
+<!--
+  GEMELA de `sala/__probe_capa0.html`, y existe por un hueco que el audit midió:
+
+  las dos varas de Capa 0 (`qa/verify_capa0_offline.mjs` y `qa/verify_capa0_frozen.mjs`)
+  montaban la probe VIEJA, que carga `render/render.js` — el registro **v1**, 1.319
+  líneas. Pero la Sala que se sirve (`sala-v2/sala-v2.html`) carga
+  `render/sala-render.js` — el registro **v2**, 751 líneas, otro archivo.
+
+  O sea: la Capa 0 estaba VERDE contra un registro que el producto no usa. No era un
+  falso verde por descuido del que escribió las varas: la v2 apareció después, con su
+  propio registro, y nadie movió la sonda.
+
+  Esta página monta EL MISMO cableado que `sala-v2.html`: `sala-render.js` como script
+  CLÁSICO (su contrato es `window.SalaRender` y está congelado — `render/README.md`), sin
+  backend, sin sesión, sin React. Lo que se prueba es si la obra RENDERIZA; meter la app
+  entera agregaría motivos de fallo ajenos.
+
+  ⚠️ NO carga `render/render.js`. La v1 tiene su propia sonda y su propia vara, y ese
+  archivo está fuera de esta obra.
+-->
+<style>html,body{margin:0;background:#0b0b0f;color:#ddd;font:14px system-ui}#host{padding:12px}</style>
+</head>
+<body>
+<div id="host"></div>
+<script src="../render/sala-render.js"></script>
+</body>
+</html>

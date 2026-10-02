@@ -1,0 +1,29 @@
+{
+  "_meta": {
+    "belt": "osint-maritimo",
+    "slug": "osint-maritimo",
+    "que_es": "Cinturon MCP de Rook (OSINT marítimo, hilo 2B): identidad y eventos AIS de buques (Global Fishing Watch), screening de sanciones/PEP (OpenSanctions) y propiedad declarada (GLEIF LEI). Todo dato sale de un lookup REAL; una respuesta vacia = la fuente NO confirma (el agente rehusa honesto, jamas inventa).",
+    "fuente": "Step 4.5 · Caso 2 · hilo 2B. Construccion de MCP (HTTP-wrap stdio) sobre APIs reales. Tokens por byok_ref (GLOBALFISHINGWATCH_API_KEY, OPENSANCTIONS_API_KEY); GLEIF keyless.",
+    "verificado": "maritime_osint_server por stdio con tokens reales del vault (2026-07-10): gfw_vessel_search 'OVERSEAS HOUSTON' -> IMO 9351062 / MMSI 367109000 / USA (ancla §0.1); busqueda inexistente -> empty:true honesto; opensanctions_screen 'Rosneft' -> 3 hits reales, inexistente -> SIN HIT; gleif_lei 'Rosneft' -> LEI reales. GFW pasa Cloudflare (error 1010) con User-Agent de browser.",
+    "cards": [
+      { "id": "gfw-vessels", "label": "Buques e identidad AIS (Global Fishing Watch)", "sub": "identidad + eventos (gap/encounter/loitering) de AIS real · token propio", "auth": "token", "armario": "mundo", "connector": "globalfishingwatch", "backed_by": "maritime", "tools": ["gfw_vessel_search", "gfw_vessel_events"] },
+      { "id": "opensanctions", "label": "Sanciones y PEP (OpenSanctions)", "sub": "screening de personas/empresas · sin hit = honesto, no es prueba · token propio", "auth": "token", "armario": "mundo", "connector": "opensanctions", "backed_by": "maritime", "tools": ["opensanctions_screen"] },
+      { "id": "gleif-lei", "label": "LEI y propiedad (GLEIF)", "sub": "identificador legal + propiedad declarada · sin llave", "auth": "keyless", "armario": "mundo", "backed_by": "maritime", "tools": ["gleif_lei"] },
+      { "id": "premium-report", "label": "Informe premium de buque (pago)", "sub": "compra un dossier AIS ampliado · TOCA PLATA · NO se ejecuta sin tu OK (money-gate)", "auth": "keyless", "armario": "mundo", "backed_by": "maritime", "tools": ["pay_for_premium_report"], "money_touch": true }
+    ]
+  },
+  "mcpServers": {
+    "maritime": {
+      "command": "uv",
+      "args": ["run", "--no-project", "python3", "${PUPPET_BELTS}/research/maritime_osint_server.py"],
+      "transport": "stdio",
+      "env": {
+        "GLOBALFISHINGWATCH_API_KEY": "${GLOBALFISHINGWATCH_API_KEY}",
+        "OPENSANCTIONS_API_KEY": "${OPENSANCTIONS_API_KEY}"
+      },
+      "credenciales": "GFW: token propio (byok_ref keys:globalfishingwatch). OpenSanctions: token propio (byok_ref keys:opensanctions). GLEIF: keyless.",
+      "REGLA": "Lecturas OSINT de baja consecuencia (no tocan plata ni mandan nada) -> auto-ejecutan. Una respuesta VACIA de la fuente = NO confirma -> el agente debe rehusar honesto (anti-grift). Un fallo del tercero (rate-limit/caida) se etiqueta external:true (atribucion EXTERNA, no bug interno). GFW requiere User-Agent de browser (Cloudflare 1010).",
+      "description": "OSINT maritimo REAL: Global Fishing Watch (identidad + eventos AIS), OpenSanctions (sanciones/PEP), GLEIF (LEI + propiedad). Tokens por byok; GLEIF keyless. stdlib pura (urllib), spawn uv run."
+    }
+  }
+}

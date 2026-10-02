@@ -1,0 +1,166 @@
+/* model-chip.core.css — LA HOJA DEL CHIP DE MODELO. UNA SOLA, PARA LAS SIETE.
+ *
+ * [convergencia · un solo picker en las siete · 2026-08-22]
+ *
+ * ═══ DE DÓNDE SALE ════════════════════════════════════════════════════════════════════
+ * Estas 19 reglas vivían en `sala-v2/sala-v2.css` (líneas 350-394 + la del punto ámbar).
+ * Se MUEVEN acá enteras, sin retocar ni un valor, y la Sala pasa a linkear esta hoja. No es
+ * una copia: si quedaran las dos, el chip de un workspace y el de la Sala se irían separando
+ * de a un píxel por vez, que es exactamente lo que el dueño no quiere.
+ *
+ * ═══ POR QUÉ EL CHIP NO LEE NI UN TOKEN DEL DOCUMENTO QUE LO ALOJA ═══════════════════
+ * La primera versión escribía `var(--amc-muted)` y compañía, con la idea de que en la
+ * Sala ganaran los tokens de la casa y afuera cayera el fallback. **Falló, y en silencio.**
+ * Medido en Oficina: openwork es shadcn/Tailwind, y shadcn DEFINE `--muted` — pero como
+ * COLOR DE FONDO, no de texto. Así que `color: var(--muted, …)` tomó su gris oscuro y el
+ * rótulo del chip quedó invisible sobre un fondo casi del mismo color. Ni un error: sólo
+ * una pastilla vacía.
+ *
+ * `--muted`, `--accent`, `--border`, `--ring`, `--background` son nombres del vocabulario
+ * COMÚN de media web. Un componente que cruza a un documento ajeno no puede pedirlos y
+ * esperar los suyos.
+ *
+ * Así que el chip trae su propia paleta bajo `--amc-*`, declarada acá y en ningún otro
+ * lado, y **todas** sus reglas leen de ahí. Los valores son los de `aleph-tokens.css`
+ * copiados a mano: en la Sala el chip se ve exactamente igual que antes porque son los
+ * mismos números. El precio, dicho: si la casa re-tematiza, este archivo hay que tocarlo.
+ * El precio de lo otro era un chip invisible en seis superficies.
+ *
+ * El prefijo `--amc-` es por «Aleph Model Chip»: corto, y sin chance de chocar con el
+ * vocabulario de nadie. */
+
+.sv-model-chip { position: relative; flex: none; align-self: center; }
+/* ── LA PALETA DEL CHIP. Propia, no heredada. ─────────────────────────────────────────── */
+.sv-model-chip {
+  --amc-paper:   #141416;
+  --amc-paper2:  #1C1C1F;
+  --amc-ink:     #F5F5F6;
+  --amc-muted:   #A0A0A6;
+  --amc-line:    transparent;
+  --amc-acc-bg:  rgba(141,139,238,.15);
+  --amc-acc-ink: #B7B5F5;
+  --amc-amber:   #D9A445;
+  --amc-sh:      0 26px 70px rgba(0,0,0,.62);
+  --amc-r-pill:  20px;
+  --amc-r-md:    18px;
+  --amc-r-sm:    13px;
+}
+
+/* El `<span>` que React usa de ancla NO puede ser una caja: si lo fuera, el flex item del
+   composer pasaría a ser él y el chip perdería su `align-self: center`. `display: contents`
+   lo saca del layout y deja que `.sv-model-chip` siga siendo el hijo directo, como siempre. */
+.sv-model-chip-host { display: contents; }
+
+.sv-model-chip-trigger {
+  display: flex; align-items: center; gap: 6px; max-width: 165px;
+  border: 0; border-radius: var(--amc-r-pill); padding: 5px 8px 5px 6px;
+  background: var(--amc-paper2); color: var(--amc-muted); font: inherit; font-size: 11.5px;
+  cursor: pointer;
+}
+.sv-model-chip-trigger[disabled] { opacity: .62; cursor: default; }
+
+.sv-model-brand {
+  display: grid; place-items: center; width: 20px; height: 20px; flex: none;
+  border-radius: 7px; background: var(--amc-acc-bg);
+  color: var(--amc-acc-ink);
+  font-size: 12px; line-height: 1;
+}
+.sv-model-chip-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.sv-model-menu {
+  position: absolute; z-index: 30; left: 0; bottom: calc(100% + 8px);
+  width: min(292px, calc(100vw - 32px)); max-height: 280px; overflow: hidden;
+  border: 1px solid var(--amc-line); border-radius: var(--amc-r-md);
+  background: var(--amc-paper); box-shadow: var(--amc-sh); padding: 5px;
+}
+/* El menú volteado: cuando el chip quedó tan arriba que abrir hacia arriba lo saca de la
+   pantalla. Lo decide el JS midiendo, no una media query — depende de dónde quedó el chip. */
+.sv-model-menu.sv-model-menu-abajo { bottom: auto; top: calc(100% + 8px); }
+
+.sv-model-search {
+  width: 100%; border: 0; outline: 0; border-radius: var(--amc-r-md);
+  background: var(--amc-paper2); color: var(--amc-ink); font: inherit;
+  padding: 9px 11px; margin-bottom: 6px;
+}
+.sv-model-rows { max-height: 232px; overflow-y: auto; display: flex; flex-direction: column; gap: 1px; }
+.sv-model-row {
+  display: grid; grid-template-columns: 28px minmax(0, 1fr) 18px; align-items: center;
+  gap: 8px; width: 100%; min-height: 46px;
+  border: 0; border-radius: var(--amc-r-sm); padding: 6px 8px; text-align: left;
+  background: transparent; color: var(--amc-ink); cursor: pointer; font: inherit;
+}
+.sv-model-row:hover { background: var(--amc-paper2); }
+.sv-model-row[aria-selected="true"] { background: var(--amc-acc-bg); }
+.sv-model-row-logo {
+  display: grid; place-items: center; width: 28px; height: 28px;
+  border-radius: 9px; background: var(--amc-paper2); color: var(--amc-ink);
+  font-size: 14px; line-height: 1;
+}
+.sv-model-row-copy { display: flex; flex-direction: column; min-width: 0; gap: 1px; }
+.sv-model-row-main { font-size: 12.5px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sv-model-row-meta { font-size: 10.5px; color: var(--amc-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sv-model-row-check { color: var(--amc-acc-ink); font-size: 13px; text-align: center; }
+
+/* El motor del cerebro elegido no está listo. Un punto ámbar dentro del chip — no un
+   cartel: el aviso de fallo del turno ya cubre el DESPUÉS y dos mensajes sobre el mismo
+   hecho es peor que uno. Ámbar y no rojo porque todavía no falló nada. */
+.sv-model-alerta { color: var(--amc-amber); font-size: 15px; line-height: 1; margin-left: 2px; }
+
+@media (max-width: 620px) {
+  .sv-model-chip-label { max-width: 76px; }
+  .sv-model-menu { left: -6px; }
+}
+
+/* ── LA PALETA CLARA ──────────────────────────────────────────────────────────────────
+   Un solo bloque por tema en vez de una regla por propiedad: como todo lee `--amc-*`,
+   re-declarar la paleta alcanza. `[data-theme="light"]` es el mismo selector que usa la
+   casa y el que los stacks ya se estampan solos (el launcher les baja `?aleph_scheme=` y su
+   boot script escribe el atributo). */
+/* LA MARCA PROPIA gana sobre todo lo demás: es la que el host nos dijo explícitamente.
+   Va primero en cascada de especificidad porque el elemento la lleva encima. */
+.sv-model-chip[data-amc-theme="dark"] {
+  --amc-paper:   #141416;
+  --amc-paper2:  #1C1C1F;
+  --amc-ink:     #F5F5F6;
+  --amc-muted:   #A0A0A6;
+  --amc-acc-bg:  rgba(141,139,238,.15);
+  --amc-acc-ink: #B7B5F5;
+  --amc-amber:   #D9A445;
+  --amc-sh:      0 26px 70px rgba(0,0,0,.62);
+}
+.sv-model-chip[data-amc-theme="light"] {
+  --amc-paper:   #FFFFFF;
+  --amc-paper2:  #F4F4F5;
+  --amc-ink:     #0A0A0A;
+  --amc-muted:   #65656A;
+  --amc-acc-bg:  #F2F1FE;
+  --amc-acc-ink: #5A4FD6;
+  --amc-amber:   #8A5D0C;
+  --amc-sh:      0 18px 48px rgba(10,10,10,.14);
+}
+
+[data-theme="light"] .sv-model-chip:not([data-amc-theme]) {
+  --amc-paper:   #FFFFFF;
+  --amc-paper2:  #F4F4F5;
+  --amc-ink:     #0A0A0A;
+  --amc-muted:   #65656A;
+  --amc-acc-bg:  #F2F1FE;
+  --amc-acc-ink: #5A4FD6;
+  --amc-amber:   #8A5D0C;
+  --amc-sh:      0 18px 48px rgba(10,10,10,.14);
+}
+
+/* El stack que resuelve su tema por preferencia del sistema y no por atributo. Se excluye
+   el caso en que alguien ya estampó `dark` a mano, que manda sobre la preferencia. */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) .sv-model-chip:not([data-amc-theme]) {
+    --amc-paper:   #FFFFFF;
+    --amc-paper2:  #F4F4F5;
+    --amc-ink:     #0A0A0A;
+    --amc-muted:   #65656A;
+    --amc-acc-bg:  #F2F1FE;
+    --amc-acc-ink: #5A4FD6;
+    --amc-amber:   #8A5D0C;
+    --amc-sh:      0 18px 48px rgba(10,10,10,.14);
+  }
+}

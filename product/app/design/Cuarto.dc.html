@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title data-i18n="workshop.title">El Cuarto</title>
+<script src="./support.js"></script>
+<script src="./auth.js"></script>
+<script src="./paywall.js"></script>
+<script src="./i18n.js"></script>
+<script src="./nav.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="vendor/fonts.css"><!-- [Casa 2 · F1.b] fuentes locales: antes 2 preconnect + css2 de Google -->
+<link rel="stylesheet" href="aleph-tokens.css"><!-- [identidad visual] la piel: tokens, forma y tipografía en un solo lugar -->
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0}
+
+  body{background:var(--page-bg);min-height:100vh;font-family:var(--font-ui);color:var(--ink);-webkit-font-smoothing:antialiased}
+  ::placeholder{color:#6E6557}
+  textarea,input{font-family:inherit}
+  @keyframes breathe{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-6px)}}
+  @keyframes badgeFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+  @keyframes pieceIn{0%{opacity:0;transform:translateY(-28px) scale(.35)}60%{opacity:1}100%{opacity:1;transform:translateY(0) scale(1)}}
+  @keyframes auraPulse{0%,100%{opacity:.9}50%{opacity:1}}
+  @keyframes glowDot{0%,100%{opacity:1}50%{opacity:.4}}
+  @keyframes fadeUp{0%{opacity:0;transform:translateY(6px)}100%{opacity:1;transform:translateY(0)}}
+  @keyframes spin{to{transform:rotate(360deg)}}
+</style>
+
+<style id="aleph-theme-style">
+
+body{background:var(--page-bg)}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+<script src="./theme.js"></script>
+</helmet>
+
+<div data-screen-label="El Cuarto" style="min-height:100vh;padding:20px 26px 40px">
+  <div style="max-width:1320px;margin:0 auto">
+
+    <!-- HEADER -->
+    <!-- [identidad visual 6/6] acá vivía la píldora Guiado | Técnico. Se fue: partía el Taller en
+         dos productos y escondía la mitad detrás de una palabra que el usuario tenía que elegir
+         antes de saber qué significaba. Ahora hay UN Taller: lo simple a la vista, lo crudo
+         (system prompt, MCP a mano, tu propio modelo) a un toque de "más". -->
+    <div style="display:flex;align-items:center;justify-content:flex-end;margin-bottom:16px">
+      <a href="sala-v2/sala-v2.html" style="text-decoration:none;display:flex;align-items:center;gap:8px;padding:8px 14px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.04);font-size:13px;color:var(--muted);font-weight:500"><span style="width:18px;height:18px;border-radius:50%;background:var(--paper2);color:var(--faint);font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center">2</span><span data-i18n="workshop.start_using">Ir a la ejecución →</span></a>
+    </div>
+
+    <!-- WORKSPACE -->
+    <div style="display:grid;grid-template-columns:352px 1fr 376px;gap:16px;align-items:start">
+
+      <!-- ============ LEFT: IDENTIDAD ============ -->
+      <div style="display:flex;flex-direction:column;gap:14px">
+
+        <!-- purpose + model -->
+        <div style="position:relative;background:var(--paper);border:1px solid var(--line);border-radius:var(--r-lg);padding:17px 18px">
+          <div data-i18n="workshop.goal.title" style="font-family:var(--font-display);font-weight:500;font-size:17px;margin-bottom:12px">¿Qué quieres que haga?</div>
+          <input value="{{ name }}" onInput="{{ setName }}" data-i18n-ph="workshop.name.placeholder" placeholder="Ponle un nombre — por ejemplo, Reportero" style="width:100%;border:1px solid var(--line);background:var(--paper2);border-radius:var(--r-md);padding:11px 13px;font-size:14px;color:var(--ink);outline:none" style-focus="border-color:var(--accent)">
+
+          <!-- brain chip -->
+          <button onClick="{{ toggleModel }}" style="display:flex;align-items:center;gap:8px;margin-top:9px;width:100%;border:1px solid var(--line);background:var(--paper2);border-radius:var(--r-md);padding:9px 12px;font:inherit;cursor:pointer;text-align:left" style-hover="border-color:var(--accent)">
+            <span style="font-size:15px">🧠</span>
+            <span style="flex:1;min-width:0">
+              <span data-i18n="workshop.model" style="display:block;font-size:11px;color:var(--faint);line-height:1.1">MODELO</span>
+              <span style="display:block;font-size:13.5px;font-weight:500;color:var(--ink)">{{ modelName }}</span>
+            </span>
+            <sc-if value="{{ modelConfigured }}" hint-placeholder-val="{{ false }}"><span data-i18n="workshop.model.connected" style="font-size:11px;color:var(--green);font-weight:500">✓ Conectado con tu llave</span></sc-if>
+            <span style="font-size:11px;color:var(--faint)">{{ modelCaret }}</span>
+          </button>
+
+          <textarea value="{{ purpose }}" onInput="{{ setPurpose }}" rows="2" data-i18n-ph="workshop.goal.placeholder" placeholder="Cuéntale con tus palabras qué quieres que haga. Mientras escribes, se iluminan los armarios que le sirven →" style="width:100%;margin-top:9px;border:1px solid var(--line);background:var(--paper2);border-radius:var(--r-md);padding:11px 13px;font-size:14px;line-height:1.5;color:var(--ink);outline:none;resize:vertical" style-focus="border-color:var(--accent)"></textarea>
+          <div style="display:flex;gap:7px;margin-top:9px">
+            <button onClick="{{ applyEx1 }}" data-i18n="workshop.sample.weekly_report" style="border:1px solid var(--line);background:var(--paper2);color:var(--muted);border-radius:999px;padding:5px 11px;font:inherit;font-size:12px;cursor:pointer" style-hover="border-color:var(--accent);color:var(--accent-deep)">🗂️ informe semanal</button>
+            <button onClick="{{ applyEx2 }}" data-i18n="workshop.sample.research" style="border:1px solid var(--line);background:var(--paper2);color:var(--muted);border-radius:999px;padding:5px 11px;font:inherit;font-size:12px;cursor:pointer" style-hover="border-color:var(--accent);color:var(--accent-deep)">🔎 investigar un tema</button>
+          </div>
+
+          <!-- MODEL COMMAND PALETTE -->
+          <sc-if value="{{ modelOpen }}" hint-placeholder-val="{{ false }}">
+            <div onClick="{{ closeModel }}" style="position:fixed;inset:0;z-index:40"></div>
+            <div style="position:absolute;left:14px;right:14px;top:96px;z-index:41;background:var(--paper);border:1px solid var(--line2);border-radius:var(--r-lg);box-shadow:var(--sh-3);overflow:hidden;animation:fadeUp .16s ease both">
+              <div style="padding:13px 14px 0">
+                <div data-i18n="workshop.model.choose" style="font-size:13px;font-weight:500;color:var(--accent-deep)">¿Qué modelo quieres usar?</div>
+                <div style="display:flex;align-items:center;gap:8px;border:1px solid var(--line2);background:var(--paper2);border-radius:var(--r-sm);padding:9px 11px;margin-top:10px">
+                  <span style="color:var(--faint)">⌕</span>
+                  <input value="{{ modelSearch }}" onInput="{{ setModelSearch }}" data-i18n-ph="workshop.model.search" placeholder="Buscar un modelo…" style="border:none;background:none;outline:none;width:100%;font-size:13px;color:var(--ink)">
+                </div>
+              </div>
+              <div style="max-height:296px;overflow:auto;padding:11px 11px 12px;margin-top:4px">
+                <sc-for list="{{ modelList }}" as="m" hint-placeholder-count="4">
+                  <div style="margin-bottom:6px">
+                    <button onClick="{{ m.pick }}" style="{{ m.rowStyle }}" style-hover="border-color:var(--accent)">
+                      <span style="width:30px;height:30px;border-radius:var(--r-sm);flex:none;display:flex;align-items:center;justify-content:center;font-size:14px;background:{{ m.iconBg }}">{{ m.icon }}</span>
+                      <span style="flex:1;min-width:0;text-align:left">
+                        <span style="display:flex;align-items:center;gap:7px"><span style="font-size:13.5px;font-weight:500;color:var(--ink)">{{ m.name }}</span><sc-if value="{{ m.rec }}" hint-placeholder-val="{{ false }}"><span data-i18n="workshop.model.recommended" style="font-size:10px;color:var(--accent-deep);background:var(--accent-soft);border-radius:999px;padding:1px 7px;font-weight:500">recomendado</span></sc-if></span>
+                        <span style="display:block;font-size:11.5px;color:var(--faint);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ m.desc }}</span>
+                      </span>
+                      <span style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex:none">
+                        <span style="font-size:10px;letter-spacing:1px">{{ m.speed }}</span>
+                        <span style="font-size:10px;letter-spacing:1px">{{ m.brain }}</span>
+                      </span>
+                      <span style="display:flex;flex-direction:column;align-items:flex-end;gap:1px;flex:none;min-width:74px">
+                        <span style="font-size:12px">{{ m.state }}</span>
+                        <span style="font-size:10px;color:var(--faint);white-space:nowrap">{{ m.estadoTexto }}</span>
+                      </span>
+                    </button>
+                    <!-- inline key field -->
+                    <sc-if value="{{ m.askKey }}" hint-placeholder-val="{{ false }}">
+                      <div style="margin:7px 4px 2px;border:1px solid var(--line2);background:var(--paper2);border-radius:var(--r-md);padding:11px 12px;animation:fadeUp .16s ease both">
+                        <div style="font-size:12px;color:var(--muted);line-height:1.45;margin-bottom:8px"><span data-i18n="workshop.model.own_access">🔒 Usa tu propio acceso: pega tu llave y queda listo.</span><button class="qmark" type="button" data-guia="cerebros#origen" data-i18n-title="workshop.help.model.title" data-i18n-aria="workshop.help.model.aria" title="De dónde sale el modelo" aria-label="Ayuda: De dónde sale el modelo">?</button></div>
+                        <div style="display:flex;gap:7px">
+                          <input value="{{ keyDraft }}" onInput="{{ setKeyDraft }}" data-i18n-ph="workshop.model.key_placeholder" placeholder="Pega tu API key…" type="password" style="flex:1;border:1px solid var(--line2);background:var(--paper2);border-radius:var(--r-sm);padding:8px 10px;font-size:12px;color:var(--ink);outline:none" style-focus="border-color:var(--accent)">
+                          <button onClick="{{ m.saveKey }}" disabled="{{ keyBusy }}" data-i18n="workshop.model.save_test" style="border:none;background:var(--accent);color:var(--on-accent);border-radius:var(--r-sm);padding:0 14px;font:inherit;font-size:12.5px;font-weight:500;cursor:pointer">Guardar y probar</button>
+                        </div>
+                        <!-- [F7·B] EL RESULTADO SE DICE. Antes la llave se «guardaba» en
+                             silencio (en un array local) y no había nada que mostrar. -->
+                        <sc-if value="{{ keyMsg }}" hint-placeholder-val="{{ false }}">
+                          <div style="margin-top:8px;font-size:11.5px;line-height:1.45;color:{{ keyMsgColor }}">{{ keyMsg.texto }}</div>
+                        </sc-if>
+                      </div>
+                    </sc-if>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+
+        <!-- CARACTER / framing -->
+        <div style="background:var(--paper);border:1px solid var(--line);border-radius:var(--r-lg);padding:17px 18px">
+          <button onClick="{{ secCaracterToggle }}" style="display:flex;align-items:center;gap:8px;width:100%;border:none;background:none;cursor:pointer;font:inherit;padding:0;text-align:left">
+            <span data-i18n="workshop.identity.character" style="font-family:var(--font-display);font-weight:500;font-size:16px;color:var(--ink)">Su carácter</span>
+            <span data-i18n="workshop.identity.character_subtitle" style="font-size:12px;color:var(--faint)">— cómo encara las cosas</span>
+            <span style="margin-left:auto;font-size:12px;color:var(--faint)">{{ secCaracterCaret }}</span>
+          </button>
+          <sc-if value="{{ secCaracterOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top:11px"></div>
+          <div>
+            <div style="display:flex;flex-wrap:wrap;gap:7px;margin:11px 0 11px">
+              <sc-for list="{{ framings }}" as="f" hint-placeholder-count="4">
+                <button onClick="{{ f.pick }}" style="{{ f.style }}">{{ f.label }}</button>
+              </sc-for>
+            </div>
+            <div data-i18n="workshop.identity.character_hint" style="font-size:11.5px;color:var(--faint);margin-bottom:5px">Así encara las cosas (edítalo con tus palabras):</div>
+            <textarea value="{{ framingLine }}" onInput="{{ setFramingLine }}" rows="2" style="width:100%;border:1px solid var(--line);background:var(--paper2);border-radius:var(--r-md);padding:10px 12px;font-size:13.5px;line-height:1.5;color:var(--ink);outline:none;resize:vertical" style-focus="border-color:var(--accent)"></textarea>
+          </div>
+          <!-- el system prompt crudo: el mismo campo que pedía el "Modo técnico", ahora a un toque -->
+          <div style="margin-top:12px;border-top:1px solid var(--line);padding-top:10px">
+            <button onClick="{{ secPromptToggle }}" style="display:flex;align-items:center;gap:7px;border:none;background:none;cursor:pointer;font:inherit;padding:0;text-align:left"><span data-i18n="workshop.identity.write_prompt" style="font-size:11.5px;color:var(--muted);font-weight:500">Escribirlo yo, en crudo</span><span style="font-size:11px;color:var(--faint)">{{ secPromptCaret }}</span></button>
+            <sc-if value="{{ secPromptOpen }}" hint-placeholder-val="{{ false }}">
+              <div data-i18n="workshop.identity.prompt_help" style="font-size:11px;color:var(--faint);margin:7px 0 6px;line-height:1.45">Es el system prompt tal cual: lo que escribas aquí tiene prioridad sobre lo anterior.</div>
+              <textarea value="{{ systemPrompt }}" onInput="{{ setSystemPrompt }}" rows="5" style="width:100%;border:1px solid var(--line2);background:var(--paper2);border-radius:var(--r-md);padding:11px 12px;font-size:12.5px;line-height:1.55;color:var(--ink);outline:none;resize:vertical;font-family:var(--font-mono)" style-focus="border-color:var(--accent)"></textarea>
+            </sc-if>
+          </div>
+          </sc-if>
+        </div>
+
+        <!-- MEMORIA -->
+        <div style="background:var(--paper);border:1px solid var(--line);border-radius:var(--r-lg);padding:17px 18px">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+          <button onClick="{{ secMemoriaToggle }}" style="display:flex;align-items:center;gap:8px;border:none;background:none;cursor:pointer;font:inherit;padding:0;text-align:left;flex:1"><span data-i18n="workshop.memory.title" style="font-family:var(--font-display);font-weight:500;font-size:16px;color:var(--ink)">Su memoria</span><span style="font-size:12px;color:var(--faint)">{{ secMemoriaCaret }}</span></button>
+            <button onClick="{{ toggleMemory }}" style="{{ memToggleStyle }}"><span style="{{ memKnobStyle }}"></span></button>
+          </div>
+          <sc-if value="{{ secMemoriaOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:12px;color:var(--faint);margin-top:8px;line-height:1.5">{{ memHint }}</div>
+
+          <sc-if value="{{ memory }}" hint-placeholder-val="{{ true }}">
+            <div style="margin-top:13px">
+              <div data-i18n="workshop.memory.facts" style="font-size:11.5px;color:var(--muted);font-weight:500;margin-bottom:8px">Lo que sabe de ti</div>
+              <div style="display:flex;flex-wrap:wrap;gap:7px">
+                <sc-for list="{{ knowsList }}" as="k" hint-placeholder-count="3">
+                  <span style="display:inline-flex;align-items:center;gap:6px;background:var(--paper2);border:1px solid var(--line);border-radius:999px;padding:5px 8px 5px 11px;font-size:12px;color:var(--ink)">{{ k.text }}<button onClick="{{ k.remove }}" style="border:none;background:none;color:var(--faint);cursor:pointer;font-size:14px;line-height:1;padding:0" style-hover="color:var(--ink)">×</button></span>
+                </sc-for>
+              </div>
+              <!-- agregar un fact (editable, se inyecta al framing) -->
+              <div style="display:flex;gap:7px;margin-top:9px">
+                <input value="{{ knowsDraft }}" onInput="{{ setKnowsDraft }}" data-i18n-ph="workshop.memory.fact_placeholder" placeholder="Ej.: mi negocio es una cafetería de barrio" style="flex:1;border:1px solid var(--line);background:var(--paper2);border-radius:var(--r-sm);padding:8px 11px;font-size:12.5px;color:var(--ink);outline:none" style-focus="border-color:var(--accent)">
+                <button onClick="{{ addKnow }}" data-i18n="workshop.memory.add_fact" style="border:none;background:var(--accent);color:var(--on-accent);border-radius:var(--r-sm);padding:0 14px;font:inherit;font-size:12.5px;font-weight:500;cursor:pointer" style-hover="background:var(--accent-deep)">+ dato</button>
+              </div>
+              <!-- docs subidos (DOC-RAG): cada uno con su × para borrar -->
+              <sc-if value="{{ hasDocs }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;flex-direction:column;gap:6px;margin-top:10px">
+                  <sc-for list="{{ ragDocsList }}" as="d" hint-placeholder-count="2">
+                    <div style="display:flex;align-items:center;gap:8px;background:var(--paper2);border:1px solid var(--line);border-radius:var(--r-sm);padding:7px 10px">
+                      <span style="font-size:13px">📄</span>
+                      <span style="flex:1;font-size:12.5px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ d.name }}</span>
+                      <button onClick="{{ d.remove }}" style="border:none;background:none;color:var(--faint);cursor:pointer;font-size:14px;line-height:1;padding:0" style-hover="color:#E0897C">×</button>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-if>
+              <!-- subir doc real (.md/.txt) → carpeta del agente = rag_dir -->
+              <div onClick="{{ pickDoc }}" style="margin-top:11px;border:1.5px dashed var(--line2);border-radius:var(--r-md);padding:13px;display:flex;align-items:center;gap:10px;cursor:pointer" style-hover="border-color:var(--accent)">
+                <span style="font-size:17px">📎</span>
+                <span style="font-size:12.5px;color:var(--muted);line-height:1.4"><span data-i18n="workshop.memory.document_help">Adjunta un documento (.md/.txt) para tenerlo siempre a mano</span><sc-if value="{{ ragBusy }}" hint-placeholder-val="{{ false }}"><span data-i18n="workshop.memory.uploading"> · subiendo…</span></sc-if></span>
+              </div>
+            </div>
+          </sc-if>
+          </sc-if>
+        </div>
+      </div>
+
+      <!-- ============ CENTER: ESCENARIO ============ -->
+      <div style="display:flex;flex-direction:column;gap:14px">
+
+        <!-- segmented -->
+        <div style="display:flex;gap:4px;background:var(--paper2);border:1px solid var(--line);border-radius:999px;padding:4px;align-self:center">
+          <button onClick="{{ stageArmando }}" data-i18n="workshop.stage.build" style="{{ segArmandoStyle }}">Armar</button>
+          <button onClick="{{ stagePlan }}" data-i18n="workshop.stage.plan" style="{{ segPlanStyle }}">Plan de ejecución</button>
+        </div>
+
+        <div style="background:linear-gradient(180deg,var(--paper),var(--paper2));border:1px solid var(--line);border-radius:var(--r-xl);overflow:hidden">
+
+          <!-- STAGE: ARMANDO -->
+          <sc-if value="{{ stageIsArmando }}" hint-placeholder-val="{{ true }}">
+            <div style="padding:8px">
+              <div style="position:relative;width:380px;max-width:100%;height:340px;margin:0 auto">
+                <div style="position:absolute;left:50%;bottom:28px;width:300px;height:300px;transform:translateX(-50%);border-radius:50%;background:radial-gradient(circle,rgba(142,139,245,.45) 0%,rgba(142,139,245,0) 62%);animation:auraPulse 3.6s ease-in-out infinite;{{ auraStyle }}"></div>
+                <div style="position:absolute;left:50%;bottom:28px;width:188px;height:42px;transform:translateX(-50%);border-radius:50%;background:radial-gradient(circle,rgba(0,0,0,.5) 0%,rgba(0,0,0,0) 70%)"></div>
+                <div style="position:absolute;left:50%;bottom:40px;width:150px;height:14px;transform:translateX(-50%);border-radius:50%;border:1px solid var(--line2);background:rgba(255,255,255,.03)"></div>
+
+                <sc-for list="{{ orbit }}" as="b" hint-placeholder-count="0">
+                  <div style="{{ b.posStyle }}">
+                    <div style="{{ b.badgeStyle }}">{{ b.mono }}</div>
+                  </div>
+                </sc-for>
+
+                <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:1"><svg width="122" height="166" viewBox="0 0 128 128" fill="none" style="display:block;animation:badgeFloat 3.6s ease-in-out infinite"><g style="transform-origin:64px 64px;animation:spin 13s linear infinite"><g transform="rotate(0 64 64)"><ellipse cx="64" cy="64" rx="46" ry="17" stroke="var(--accent)" stroke-width="2.6" opacity="0.55"></ellipse><circle cx="110" cy="64" r="5" fill="var(--accent)"></circle></g><g transform="rotate(60 64 64)"><ellipse cx="64" cy="64" rx="46" ry="17" stroke="var(--accent)" stroke-width="2.6" opacity="0.55"></ellipse><circle cx="110" cy="64" r="5" fill="var(--accent)"></circle></g><g transform="rotate(120 64 64)"><ellipse cx="64" cy="64" rx="46" ry="17" stroke="var(--accent)" stroke-width="2.6" opacity="0.55"></ellipse><circle cx="110" cy="64" r="5" fill="var(--accent)"></circle></g></g><path d="M64 40 L85 52 L85 76 L64 88 L43 76 L43 52 Z" fill="var(--accent)" stroke="var(--accent)" stroke-width="7" stroke-linejoin="round"></path><path d="M53 65 q4.5 -5.5 9 0" stroke="#211E3A" stroke-width="3.6" fill="none" stroke-linecap="round"></path><path d="M66 65 q4.5 -5.5 9 0" stroke="#211E3A" stroke-width="3.6" fill="none" stroke-linecap="round"></path></svg></div>
+
+                <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ true }}">
+                  <div style="position:absolute;left:50%;top:18px;transform:translateX(-50%);text-align:center;width:240px"><div style="font-size:13px;color:var(--faint);line-height:1.5"><span data-i18n="workshop.stage.empty">Tu agente todavía no tiene piezas.</span><br><span data-i18n="workshop.stage.empty_help">Abre un armario y añádele lo que necesite →</span></div></div>
+                </sc-if>
+              </div>
+
+              <div style="padding:4px 18px 16px">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px">
+                  <span style="font-family:var(--font-display);font-weight:500;font-size:15px;color:var(--accent-deep)">{{ powerLabel }}</span>
+                  <span style="font-size:12px;color:var(--muted)">{{ equippedCountText }}</span>
+                </div>
+                <div style="height:7px;background:var(--paper2);border-radius:999px;overflow:hidden;margin-bottom:13px"><div style="height:100%;border-radius:999px;background:linear-gradient(90deg,#8E8BF5,#C9C6FF);transition:width .35s ease;{{ powerPctStyle }}"></div></div>
+                <div style="display:flex;gap:7px">
+                  <sc-for list="{{ beltSlots }}" as="sl" hint-placeholder-count="6">
+                    <div style="{{ sl.style }}"><sc-if value="{{ sl.filled }}" hint-placeholder-val="{{ false }}"><span style="font-size:9px;font-weight:500;color:#fff">{{ sl.mono }}</span></sc-if></div>
+                  </sc-for>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- STAGE: PLAN / CORRIENDO -->
+          <sc-if value="{{ stageIsPlan }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:20px 22px 22px">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+                <span style="font-family:var(--font-display);font-weight:500;font-size:18px">{{ planTitle }}</span>
+                <span style="{{ planBadgeStyle }}">{{ planBadge }}</span>
+              </div>
+              <div style="font-size:12.5px;color:var(--muted);line-height:1.5;margin-bottom:16px;max-width:48ch">{{ planSub }}</div>
+
+              <div style="position:relative">
+                <div style="position:absolute;left:14px;top:12px;bottom:14px;width:2px;background:var(--quiet)"></div>
+                <sc-for list="{{ planRows }}" as="p" hint-placeholder-count="4">
+                  <div style="display:flex;gap:13px;margin-bottom:13px;position:relative">
+                    <span style="{{ p.nodeStyle }}">{{ p.node }}</span>
+                    <div style="flex:1;background:{{ p.cardBg }};border:1px solid {{ p.cardBorder }};border-radius:var(--r-md);padding:11px 13px;transition:background .2s,border-color .2s">
+                      <div style="display:flex;align-items:center;gap:9px">
+                        <span style="font-size:13.5px;font-weight:500;color:{{ p.titleColor }}">{{ p.title }}</span>
+                        <sc-if value="{{ p.hasArmario }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;color:var(--muted);background:var(--paper2);border:1px solid var(--line);border-radius:999px;padding:2px 8px">{{ p.armario }}</span></sc-if>
+                      </div>
+                      <div style="display:flex;align-items:center;gap:9px;margin-top:6px">
+                        <sc-if value="{{ p.hasIo }}" hint-placeholder-val="{{ false }}"><span style="{{ p.ioStyle }}">{{ p.ioText }}</span></sc-if>
+                        <sc-if value="{{ p.stop }}" hint-placeholder-val="{{ false }}"><span data-i18n="workshop.stage.lock" style="font-size:11px;color:var(--amber);font-weight:500">🔒 Aquí se detiene para pedirte permiso</span></sc-if>
+                      </div>
+                      <sc-if value="{{ p.showApprove }}" hint-placeholder-val="{{ false }}">
+                        <div style="display:flex;gap:8px;margin-top:10px">
+                          <button onClick="{{ approveRun }}" data-i18n="workshop.stage.approve" style="border:none;background:var(--amber);color:#2B2113;border-radius:var(--r-sm);padding:8px 14px;font:inherit;font-size:12.5px;font-weight:500;cursor:pointer">Aprobar y continuar</button>
+                          <button onClick="{{ stageArmando }}" data-i18n="workshop.stage.not_now" style="border:1px solid var(--line2);background:none;color:var(--muted);border-radius:var(--r-sm);padding:8px 13px;font:inherit;font-size:12.5px;font-weight:500;cursor:pointer">Ahora no</button>
+                        </div>
+                      </sc-if>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+
+              <div style="display:flex;align-items:center;gap:13px;margin-top:18px">
+                <sc-if value="{{ planIdle }}" hint-placeholder-val="{{ true }}">
+                  <button onClick="{{ startRun }}" data-i18n="workshop.stage.approve_plan" style="border:none;background:var(--accent);color:var(--on-accent);border-radius:999px;padding:12px 24px;font:inherit;font-size:14.5px;font-weight:500;cursor:pointer" style-hover="background:var(--accent-deep)">Aprobar el plan y ejecutar →</button>
+                  <span data-i18n="workshop.stage.approve_hint" style="font-size:12.5px;color:var(--faint)">Tú lo apruebas; la ejecución empieza después.</span>
+                </sc-if>
+                <sc-if value="{{ planRunning }}" hint-placeholder-val="{{ false }}">
+                  <span style="display:inline-flex;align-items:center;gap:9px;font-size:13px;color:var(--accent-deep);font-weight:500"><span style="width:14px;height:14px;border:2px solid var(--accent);border-top-color:transparent;border-radius:50%;display:inline-block;animation:spin .7s linear infinite"></span><span data-i18n="workshop.plan.title.running">Trabajando…</span></span>
+                </sc-if>
+                <sc-if value="{{ planDone }}" hint-placeholder-val="{{ false }}">
+                  <a onClick="{{ launch }}" data-i18n="workshop.stage.done" style="text-decoration:none;border:none;background:var(--green);color:#10241A;border-radius:999px;padding:12px 22px;font:inherit;font-size:14px;font-weight:500;cursor:pointer">✓ Listo · verlo en La Sala →</a>
+                </sc-if>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+
+        <a onClick="{{ launch }}" data-i18n="workshop.action.bring_to_life" style="{{ ctaStyle }};cursor:pointer">Dar vida →</a>
+      </div>
+
+      <!-- ============ RIGHT: EQUIPAMIENTO ============ -->
+      <div style="display:flex;flex-direction:column;gap:14px">
+
+        <!-- ARMARIOS -->
+        <div style="background:var(--paper);border:1px solid var(--line);border-radius:var(--r-lg);padding:15px 14px">
+          <button onClick="{{ secArmariosToggle }}" style="display:flex;align-items:center;justify-content:space-between;width:100%;border:none;background:none;cursor:pointer;font:inherit;padding:0 3px 4px;text-align:left">
+            <span data-i18n="workshop.closets.title" style="font-family:var(--font-display);font-weight:500;font-size:17px;color:var(--ink)">Sus armarios</span>
+            <span style="font-size:13px;color:var(--faint)">{{ secArmariosCaret }}</span>
+          </button>
+          <sc-if value="{{ secArmariosOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:flex-start;gap:9px;background:var(--accent-soft);border:1px solid #463A66;border-radius:var(--r-md);padding:10px 12px;margin:6px 3px 12px">
+            <img src="assets/aleph-mascot-v2.png" alt="" width="26" height="26" style="display:block;flex:none">
+          </div>
+
+          <!-- FILTRO DE NICHO: elegir un nicho surfacea su belt REAL como cards repartidas en los armarios -->
+          <div style="margin:0 3px 12px">
+            <div data-i18n="workshop.closets.why" style="font-size:11px;color:var(--muted);font-weight:500;margin-bottom:6px">¿Para qué lo usarás? Elige un área para ver las herramientas disponibles.</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px">
+              <sc-for list="{{ nicheChips }}" as="nc" hint-placeholder-count="4"><button onClick="{{ nc.pick }}" style="{{ nc.style }}">{{ nc.label }}</button></sc-for>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <sc-for list="{{ closets }}" as="cl" hint-placeholder-count="6">
+              <div style="{{ cl.wrapStyle }}">
+                <button onClick="{{ cl.toggle }}" style="display:flex;align-items:center;gap:11px;width:100%;border:none;background:none;cursor:pointer;font:inherit;padding:10px 11px;text-align:left">
+                  <span style="{{ cl.iconStyle }}">{{ cl.icon }}</span>
+                  <div style="flex:1;min-width:0">
+                    <div style="display:flex;align-items:center;gap:7px"><span style="font-size:14px;font-weight:500;color:var(--ink)">{{ cl.label }}</span><sc-if value="{{ cl.glow }}" hint-placeholder-val="{{ false }}"><span data-i18n="workshop.closets.useful" style="font-size:10px;color:var(--accent-deep);background:var(--accent-soft);border-radius:999px;padding:1px 7px;font-weight:500;white-space:nowrap;flex:none">te sirve</span></sc-if></div>
+                    <div style="font-size:11.5px;color:var(--faint);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ cl.desc }}</div>
+                  </div>
+                  <sc-if value="{{ cl.hasCount }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;font-weight:500;color:#fff;background:var(--accent);border-radius:999px;min-width:20px;height:20px;display:flex;align-items:center;justify-content:center;padding:0 5px;flex:none">{{ cl.count }}</span></sc-if>
+                  <span style="font-size:11px;color:var(--faint);flex:none">{{ cl.caret }}</span>
+                </button>
+
+                <sc-if value="{{ cl.open }}" hint-placeholder-val="{{ false }}">
+                  <div style="padding:2px 9px 11px;display:flex;flex-direction:column;gap:7px">
+                    <!-- BUSCADOR + FILTROS en TODOS los armarios (Habilidades=categorías · resto=estado) -->
+                    <sc-if value="{{ cl.filterable }}" hint-placeholder-val="{{ true }}">
+                      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:2px">
+                        <div style="display:flex;align-items:center;gap:8px;border:1px solid var(--line2);background:var(--paper2);border-radius:var(--r-sm);padding:8px 10px">
+                          <span style="color:var(--faint)">⌕</span>
+                          <input value="{{ cl.q }}" onInput="{{ cl.setQ }}" placeholder="{{ cl.searchPh }}" style="border:none;background:none;outline:none;width:100%;font-size:12.5px;color:var(--ink)">
+                        </div>
+                        <div style="display:flex;flex-wrap:wrap;gap:6px">
+                          <sc-for list="{{ cl.chips }}" as="ct" hint-placeholder-count="6"><button onClick="{{ ct.pick }}" style="{{ ct.style }}">{{ ct.label }}</button></sc-for>
+                        </div>
+                      </div>
+                    </sc-if>
+                    <sc-for list="{{ cl.items }}" as="it" hint-placeholder-count="3">
+                      <div>
+                        <button onClick="{{ it.click }}" style="{{ it.style }}" style-hover="border-color:var(--accent)">
+                          <span style="width:28px;height:28px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:500;font-size:10.5px;flex:none;background:{{ it.color }}">{{ it.mono }}</span>
+                          <span style="flex:1;text-align:left;font-size:13px;font-weight:500;color:var(--ink)">{{ it.name }}</span>
+                          <sc-if value="{{ it.lockTag }}" hint-placeholder-val="{{ false }}"><span data-i18n="workshop.closets.permission" style="font-size:10.5px;color:var(--amber);background:var(--amber-bg);border-radius:999px;padding:2px 7px;font-weight:500;flex:none">🔒 permiso</span></sc-if>
+                          <sc-if value="{{ it.equipped }}" hint-placeholder-val="{{ false }}"><span style="width:20px;height:20px;border-radius:50%;background:var(--accent);color:var(--on-accent);font-size:11px;display:flex;align-items:center;justify-content:center;flex:none">✓</span></sc-if>
+                          <sc-if value="{{ it.plus }}" hint-placeholder-val="{{ true }}"><span style="width:20px;height:20px;border-radius:50%;border:1.5px solid var(--line2);color:var(--faint);font-size:14px;line-height:1;display:flex;align-items:center;justify-content:center;flex:none">+</span></sc-if>
+                          <sc-if value="{{ it.beltBadge }}" hint-placeholder-val="{{ false }}"><span style="{{ it.beltStyle }}">{{ it.beltText }}</span></sc-if>
+                        </button>
+                        <!-- INLINE GATE -->
+                        <sc-if value="{{ it.gateOpen }}" hint-placeholder-val="{{ false }}">
+                          <div style="margin:7px 2px 2px;border:1px solid #5A4A2E;background:var(--amber-bg);border-radius:var(--r-md);padding:12px 13px;animation:fadeUp .16s ease both">
+                              <div style="font-size:12.5px;font-weight:500;color:var(--amber)">{{ it.permissionTitle }}</div>
+                            <div style="font-size:12px;color:var(--ink);line-height:1.5;margin-top:5px">{{ it.gateWhat }}</div>
+                            <div style="display:flex;gap:7px;margin-top:7px;flex-wrap:wrap">
+                              <span style="font-size:11px;color:var(--muted);background:var(--paper2);border:1px solid var(--line);border-radius:999px;padding:3px 9px"><span data-i18n="workshop.gate.where">dónde:</span> {{ it.gateWhere }}</span>
+                              <span style="font-size:11px;color:var(--muted);background:var(--paper2);border:1px solid var(--line);border-radius:999px;padding:3px 9px">{{ it.gateScope }}</span>
+                            </div>
+                            <div style="display:flex;gap:8px;margin-top:11px">
+                              <button onClick="{{ it.confirmGate }}" data-i18n="workshop.gate.connect_allow" style="border:none;background:var(--accent);color:var(--on-accent);border-radius:var(--r-sm);padding:8px 15px;font:inherit;font-size:12.5px;font-weight:500;cursor:pointer" style-hover="background:var(--accent-deep)">Conectar y permitir</button>
+                              <button onClick="{{ it.closeGate }}" data-i18n="workshop.stage.not_now" style="border:1px solid var(--line2);background:none;color:var(--muted);border-radius:var(--r-sm);padding:8px 13px;font:inherit;font-size:12.5px;font-weight:500;cursor:pointer">Ahora no</button>
+                            </div>
+                          </div>
+                        </sc-if>
+                      </div>
+                    </sc-for>
+
+                    <sc-if value="{{ cl.more }}" hint-placeholder-val="{{ 0 }}"><div style="font-size:11.5px;color:var(--faint);padding:5px 4px 0;line-height:1.4">{{ cl.moreText }}</div></sc-if>
+                    <sc-if value="{{ cl.empty }}" hint-placeholder-val="{{ false }}"><div data-i18n="workshop.closets.empty" style="font-size:12px;color:var(--faint);padding:6px 4px 2px">No hay coincidencias. Prueba otra búsqueda o cambia el filtro.</div></sc-if>
+
+                    <sc-if value="{{ cl.isMcp }}" hint-placeholder-val="{{ false }}">
+                      <div style="border:1.5px dashed #4A3F60;background:var(--accent-soft);border-radius:var(--r-md);padding:11px 12px;margin-top:2px">
+                        <div data-i18n="workshop.closets.add_mcp" style="font-size:12.5px;font-weight:500;color:var(--accent-deep)">＋ Trae el tuyo</div>
+                        <div data-i18n="workshop.closets.add_mcp_help" style="font-size:11.5px;color:var(--muted);margin-top:3px;line-height:1.45">Pega tu conector (MCP) y aparecerá como una herramienta más.</div>
+                        <!-- la config MCP a mano: era exclusiva del "Modo técnico"; ahora cuelga de "más" -->
+                        <button onClick="{{ secMcpCrudoToggle }}" style="display:inline-flex;align-items:center;gap:6px;margin-top:8px;border:none;background:none;cursor:pointer;font:inherit;font-size:11px;color:var(--muted);font-weight:500;padding:0"><span data-i18n="workshop.closets.paste_config">Pegar la configuración a mano</span><span style="color:var(--faint)">{{ secMcpCrudoCaret }}</span></button>
+                        <sc-if value="{{ secMcpCrudoOpen }}" hint-placeholder-val="{{ false }}">
+                          <textarea rows="3" data-i18n-ph="workshop.closets.mcp_config_placeholder" placeholder='{ "mcp": "https://...", "auth": "tu-token" }' style="width:100%;margin-top:8px;border:1px solid #4A3F60;background:var(--paper2);border-radius:var(--r-sm);padding:9px 10px;font-size:11.5px;color:var(--ink);outline:none;resize:vertical;font-family:var(--font-mono)" style-focus="border-color:var(--accent)"></textarea>
+                        </sc-if>
+                        <div style="display:flex;gap:7px;margin-top:9px">
+                          <input data-i18n-ph="workshop.closets.mcp_url_placeholder" placeholder="https://… o tu configuración MCP" style="flex:1;border:1px solid #4A3F60;background:var(--paper2);border-radius:var(--r-sm);padding:8px 10px;font-size:12px;color:var(--ink);outline:none">
+                          <button onClick="{{ addOwn }}" data-i18n="workshop.closets.add" style="border:none;background:var(--accent);color:var(--on-accent);border-radius:var(--r-sm);padding:0 14px;font:inherit;font-size:12.5px;font-weight:500;cursor:pointer" style-hover="background:var(--accent-deep)">Añadir</button>
+                        </div>
+                      </div>
+                    </sc-if>
+                  </div>
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+          </sc-if>
+        </div>
+
+        <!-- PARAMETROS (once tools) -->
+        <sc-if value="{{ hasTools }}" hint-placeholder-val="{{ false }}">
+          <div style="background:var(--paper);border:1px solid var(--line);border-radius:var(--r-lg);padding:17px 18px;animation:fadeUp .25s ease both">
+            <button onClick="{{ secParamToggle }}" style="display:flex;align-items:center;justify-content:space-between;width:100%;border:none;background:none;cursor:pointer;font:inherit;padding:0;text-align:left"><span data-i18n="workshop.parameters.title" style="font-family:var(--font-display);font-weight:500;font-size:16px">Libertad y nivel de detalle</span><span style="font-size:12px;color:var(--faint)">{{ secParamCaret }}</span></button>
+            <sc-if value="{{ secParamOpen }}" hint-placeholder-val="{{ false }}">
+            <div data-i18n="workshop.parameters.subtitle" style="font-size:11.5px;color:var(--faint);margin:6px 0 15px">Viene con valores sensatos; cámbialos solo si quieres.</div>
+            <div style="display:flex;flex-direction:column;gap:16px">
+              <div>
+                <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px"><span data-i18n="workshop.parameters.autonomy" style="font-weight:500">Autonomía</span><span style="color:var(--muted)">{{ autonomyLabel }}</span></div>
+                <input type="range" min="0" max="100" value="{{ autonomy }}" onInput="{{ setAutonomy }}" style="width:100%;accent-color:var(--accent)">
+                <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--faint);margin-top:2px"><span data-i18n="workshop.parameters.ask_first">pregunta primero</span><span data-i18n="workshop.parameters.automatic">automático</span></div>
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px"><span data-i18n="workshop.parameters.detail" style="font-weight:500">Nivel de detalle</span><span style="color:var(--muted)">{{ detailLabel }}</span></div>
+                <input type="range" min="0" max="100" value="{{ detail }}" onInput="{{ setDetail }}" style="width:100%;accent-color:var(--accent)">
+                <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--faint);margin-top:2px"><span data-i18n="workshop.parameters.concise">breve</span><span data-i18n="workshop.parameters.detailed">detallado</span></div>
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px"><span data-i18n="workshop.parameters.max_steps" style="font-weight:500">Pasos máximos</span><span style="color:var(--accent-deep);font-weight:500">{{ maxSteps }}</span></div>
+                <input type="range" min="1" max="20" value="{{ maxSteps }}" onInput="{{ setMaxSteps }}" style="width:100%;accent-color:var(--accent)">
+                <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--faint);margin-top:2px"><span data-i18n="workshop.parameters.short">pocos</span><span data-i18n="workshop.parameters.long">muchos</span></div>
+              </div>
+            </div>
+          </sc-if>
+          </div>
+        </sc-if>
+
+        <!-- SU EQUIPO (multi-agente) -->
+        <div style="background:var(--paper);border:1px solid var(--line);border-radius:var(--r-lg);padding:17px 18px">
+          <button onClick="{{ secEquipoToggle }}" style="display:flex;align-items:center;gap:8px;width:100%;border:none;background:none;cursor:pointer;font:inherit;padding:0;text-align:left">
+            <span data-i18n="workshop.team.title_card" style="font-family:var(--font-display);font-weight:500;font-size:16px;color:var(--ink)">Su equipo</span>
+            <span data-i18n="workshop.team.subtitle" style="font-size:12px;color:var(--faint)">— agentes auxiliares que coordina</span>
+            <span style="margin-left:auto;font-size:12px;color:var(--faint)">{{ secEquipoCaret }}</span>
+          </button>
+          <sc-if value="{{ secEquipoOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:12px;color:var(--faint);margin-top:8px;line-height:1.5">{{ teamHint }}</div>
+
+          <div style="display:flex;gap:8px;margin-top:13px">
+            <sc-for list="{{ teamSlots }}" as="t" hint-placeholder-count="4">
+              <div style="{{ t.slotStyle }}">
+                <sc-if value="{{ t.filled }}" hint-placeholder-val="{{ false }}">
+                  <span style="width:30px;height:30px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:500;font-size:11px;background:{{ t.color }}">{{ t.mono }}</span>
+                  <button onClick="{{ t.remove }}" style="position:absolute;top:-5px;right:-5px;width:17px;height:17px;border-radius:50%;border:none;background:var(--quiet);color:var(--ink);font-size:11px;line-height:1;cursor:pointer">×</button>
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+
+          <div data-i18n="workshop.team.add" style="font-size:11.5px;color:var(--muted);font-weight:500;margin:14px 0 8px">Añadir un agente auxiliar</div>
+          <div style="display:flex;flex-wrap:wrap;gap:7px">
+            <sc-for list="{{ teamPool }}" as="a" hint-placeholder-count="4">
+              <button onClick="{{ a.add }}" style="{{ a.style }}"><span style="width:18px;height:18px;border-radius:var(--r-xs);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:500;font-size:8.5px;background:{{ a.color }}">{{ a.mono }}</span>{{ a.name }}</button>
+            </sc-for>
+          </div>
+          </sc-if>
+        </div>
+
+        <!-- PERMISOS consolidados -->
+        <div style="background:var(--paper);border:1px solid var(--line);border-radius:var(--r-lg);padding:17px 18px">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <button onClick="{{ secPermisosToggle }}" style="display:flex;align-items:center;gap:8px;border:none;background:none;cursor:pointer;font:inherit;padding:0;text-align:left;flex:1"><span data-i18n="workshop.permissions.title" style="font-family:var(--font-display);font-weight:500;font-size:16px;color:var(--ink)">Permisos</span><span style="font-size:12px;color:var(--faint)">{{ secPermisosCaret }}</span></button>
+          </div>
+          <sc-if value="{{ secPermisosOpen }}" hint-placeholder-val="{{ false }}">
+          <div data-i18n="workshop.permissions.what" style="font-size:12px;color:var(--faint);margin-top:8px;line-height:1.5">Qué puede hacer tu agente y cuándo te pide permiso.</div>
+
+          <div style="margin-top:13px">
+            <div data-i18n="workshop.permissions.auto" style="font-size:11.5px;color:var(--green);font-weight:500;display:flex;align-items:center;gap:6px;margin-bottom:8px">✓ Lo hace solo</div>
+            <div style="display:flex;flex-wrap:wrap;gap:7px">
+              <sc-for list="{{ permAuto }}" as="pa" hint-placeholder-count="3">
+                <span style="font-size:12px;color:var(--green);background:var(--green-bg);border:1px solid #2F4A38;border-radius:999px;padding:4px 11px">{{ pa.text }}</span>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="margin-top:15px">
+            <div data-i18n="workshop.permissions.ask" style="font-size:11.5px;color:var(--amber);font-weight:500;display:flex;align-items:center;gap:6px;margin-bottom:8px">🔒 Se detiene y te pide permiso</div>
+            <sc-if value="{{ hasAsk }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-direction:column;gap:7px">
+                <sc-for list="{{ permAsk }}" as="pk" hint-placeholder-count="2">
+                  <div style="display:flex;align-items:center;gap:9px;border:1px solid var(--line);background:var(--paper2);border-radius:var(--r-sm);padding:9px 11px">
+                    <span style="font-size:13px">{{ pk.icon }}</span>
+                    <span style="flex:1;font-size:13px;font-weight:500">{{ pk.text }}</span>
+                    <span style="font-size:10.5px;color:var(--amber);background:var(--amber-bg);border-radius:999px;padding:3px 9px;font-weight:500">{{ pk.tag }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+            <sc-if value="{{ noAsk }}" hint-placeholder-val="{{ true }}">
+              <div style="font-size:12.5px;color:var(--faint);line-height:1.5"><span data-i18n="workshop.permissions.nothing_external">Todavía no hay acciones externas.</span><button class="qmark" type="button" data-guia="sala#pasos-gate" data-i18n-title="workshop.help.gate.title" data-i18n-aria="workshop.help.gate.aria" title="La compuerta al mundo" aria-label="Ayuda: La compuerta al mundo">?</button></div>
+            </sc-if>
+          </div>
+
+          <div data-i18n="workshop.permissions.always_gate" style="border-top:1px solid var(--line);margin-top:14px;padding-top:11px;font-size:11.5px;color:var(--faint);line-height:1.5">Enviar mensajes fuera de Aleph siempre requiere tu aprobación, con cualquier ajuste.</div>
+          </sc-if>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#8E8BF5&quot;}}">
+class Component extends DCLogic {
+  state = {
+    name:'', purpose:'', equipped:[], connected:[], open:'mundo',
+    skillQ:'', skillCat:'todas',
+    niche:null, nicheCards:[], nicheActive:{}, nicheLoading:false,   // filtro de nicho explícito → cards del belt real
+    closetQ:{}, closetFilter:{},   // buscador + filtro POR-ARMARIO (todos los armarios, keyed por c.key)
+    folded:{caracter:true,memoria:true,armarios:true,parametros:true,equipo:true,permisos:true,prompt:true,mcpcrudo:true},  // paneles laterales colapsables — TODOS cerrados (limpio); el centro persiste
+    // [F7·B] `keyedModels` MURIÓ: era el array local donde la llave iba a morir. Lo que
+    // hay ahora es el estado REAL de cada fila, que llega del motor en `cargarModelos()`.
+    model:'opus', modelOpen:false, modelSearch:'', pendingKey:null, keyDraft:'',
+    keyBusy:false, keyMsg:null, modelosListos:false, modelosError:null,
+    framing:'cercano', framingLine:'Como un colega que te habla de tú y te acompaña.',
+    systemPrompt:'Eres un asistente claro y confiable. Trabajas en pasos, muestras lo que haces y frenas antes de cualquier acción que salga al mundo.',
+    memory:true, knows:[], knowsDraft:'', agentKey:'', ragDocs:[], ragDir:null, ragBusy:false,
+    autonomy:35, detail:55, maxSteps:8,
+    team:[],
+    stage:'armando', run:-1, runApproved:false, gate:null,
+  };
+
+  /* ══ EL CATÁLOGO DE MODELOS YA NO VIVE ACÁ ═══════════════════════════════════════════
+   *
+   * [F7·B] Hasta el 2026-08-06 esta pantalla tenía su PROPIA tabla de 12 modelos —con su
+   * `needsKey`, su `primary` y su `base_url` escritos a mano— y no le preguntaba a nadie si
+   * lo que estabas eligiendo existía, tenía llave o andaba. Medido: `grep -c
+   * "brains/status|modelos/selector|modelos/v2|cuarto.models" Cuarto.dc.html` → **0**.
+   * Ofrecía `o3-mini`, `claude-haiku`, `gpt-4o-mini`… que la fuente ni declara.
+   *
+   * Ahora la lista sale de **`GET /v1/modelos/selector?todos=1`** — la MISMA fuente que ya
+   * usan la Sala y `cuarto.models.js`—, que trae por fila: la config ejecutable
+   * (`model`/`base_url`/`byok_ref`/`brain_provider`, de `_PICKER_HOSTEADO`) y el estado
+   * REAL del motor (`estado`/`causa`/`hay_llave`/`prueba`).
+   *
+   * `MODELOS_FALLBACK` es lo único que queda escrito, y es UNA fila: la cognición incluida,
+   * para que el taller no quede sin nada que ofrecer si el sidecar no contesta. No es un
+   * catálogo: es el piso honesto, y se marca como tal.
+   */
+  models = [];
+  MODELOS_FALLBACK = [
+    {id:'opus', kind:'model', name:'Cognición incluida', nameKey:'workshop.model.included.name',
+     desc:'Viene con Aleph — no tienes que traer nada', descKey:'workshop.model.included.description',
+     speed:2, brain:3, rec:true, needsKey:false, icon:'✦', iconBg:'linear-gradient(150deg,#8E8BF5,#6E4ED0)',
+     primary:'anthropic/claude-opus-4.8', base_url:'https://openrouter.ai/api/v1',
+     slug:'incluido.cognicion', estado:null, sinSidecar:true},
+  ];
+
+  /* ── EL PICKER LEE LA FUENTE ────────────────────────────────────────────────────────
+   * Una llamada, la misma que usan la Sala y `cuarto.models.js`. `todos=1` trae también lo
+   * NO configurado: sin eso el usuario no tendría dónde poner la llave, y la pantalla
+   * volvería a inventarse una lista. */
+  async cargarModelos(){
+    try{
+      // [TANDA 1 · obra 1] SIN `contexto`: el cerebro de la casa es UNO. Con `contexto=cuarto`
+      // el sidecar resolvía `contextos.cuarto` —un almacén que ningún camino de ejecución
+      // lee— y el Cuarto pintaba una elección que no era la que iba a correr.
+      const r = await fetch('/v1/modelos/selector?todos=1');
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      const d = await r.json();
+      const filas = (d.modelos||[]).map(m=>({
+        id: m.picker_id || m.slug,
+        slug: m.slug,
+        kind: 'model',
+        name: m.label || m.slug,
+        desc: m.sub || '',
+        // la config EJECUTABLE viaja del backend; el front ya no la escribe
+        primary: m.model || '',
+        base_url: m.base_url || '',
+        byok_ref: m.byok_ref || null,
+        brain_provider: m.brain_provider || null,
+        alias: m.alias || null,
+        // el ESTADO real del motor — esto es lo que esta pantalla no tenía
+        estado: m.estado || null,
+        causa: m.causa || null,
+        conectado: m.conectado === true,
+        hayLlave: m.hay_llave === true,
+        prueba: m.prueba || null,
+        // sólo la vía API pide llave, y sólo si todavía no la tiene
+        needsKey: m.familia === 'api' && m.hay_llave !== true,
+        familia: m.familia,
+        rec: m.default === true,
+        speed: 2, brain: 3,
+        icon: m.familia === 'cli' ? '◈' : m.familia === 'api' ? '＠' : m.local ? '⌂' : '✦',
+        iconBg: m.conectado === true ? '#2F7A6A' : '#4B4DB0',
+      }));
+      if(!filas.length) throw new Error('el selector no devolvió modelos');
+      this.models = filas;
+      const vivo = filas.find(f=>f.id===this.state.model) ||
+                   filas.find(f=>f.rec && f.conectado) ||
+                   filas.find(f=>f.conectado) || filas[0];
+      this.setState({ model: vivo.id, modelosListos:true, modelosError:null });
+    }catch(e){
+      // FALLO VISIBLE, JAMÁS MUDO: se dice que la lista es el piso, no el catálogo.
+      this.models = this.MODELOS_FALLBACK;
+      this.setState({ model:'opus', modelosListos:true,
+                      modelosError:this.wt('workshop.model.load_error',
+                        'No pude leer tus modelos ({error}). Muestro solo los incluidos.',
+                        {error:e&&e.message||e}) });
+    }
+  }
+
+  /* ── EL ESTADO DE LA PIEZA, del diccionario ÚNICO ──────────────────────────────────
+   * Nada de copy propio: `window.CuartoSemaforo` lo publica el módulo del semáforo, que es
+   * el mismo que pintan Modelos, la Sala y los Conectores. */
+  estadoDe(m){
+    if(!m) return null;
+    if(m.sinSidecar) return {luz:'○', texto:this.wt('workshop.state.unverified','sin verificar'), cls:'tibia'};
+    const Sem = window.CuartoSemaforo;
+    if(m.conectado) return {luz:'●', texto:this.wt('workshop.state.ready','listo'), cls:'ok'};
+    if(m.needsKey) return {luz:'○', texto:this.wt('workshop.state.needs_key','falta tu llave'), cls:'tibia'};
+    if(m.estado === 'roto' && m.causa){
+      const c = Sem && Sem.CAUSAS && Sem.CAUSAS[m.causa];
+      const lang=window.AlephI18n&&window.AlephI18n.lang?window.AlephI18n.lang():'es';
+      return {luz:'●', texto:(c && (c[lang]||c.es)) || this.wt('workshop.state.broken','roto'), cls:'mal'};
+    }
+    if(m.estado === 'no_configurado') return {luz:'○', texto:this.wt('workshop.state.unconfigured','sin configurar'), cls:'tibia'};
+    return {luz:'○', texto:this.wt('workshop.state.untested','sin probar'), cls:'tibia'};
+  }
+
+  framingsList = [
+    {key:'directo', labelKey:'workshop.framing.direct', lineKey:'workshop.framing.direct.line', label:'Directo', line:'Va al grano, sin vueltas.'},
+    {key:'didactico', labelKey:'workshop.framing.teaching', lineKey:'workshop.framing.teaching.line', label:'Didáctico', line:'Te explica el porqué, paso a paso.'},
+    {key:'formal', labelKey:'workshop.framing.formal', lineKey:'workshop.framing.formal.line', label:'Formal', line:'Trato cuidado y profesional.'},
+    {key:'cercano', labelKey:'workshop.framing.friendly', lineKey:'workshop.framing.friendly.line', label:'Cercano', line:'Como un colega que te habla de tú y te acompaña.'},
+  ];
+
+  closets = [
+    { key:'mundo', label:'Conectores al mundo', labelKey:'workshop.closet.world', icon:'🌐', desc:'Web, email, agenda — su alcance', descKey:'workshop.closet.world.desc',
+      items:[
+        {id:'web', name:'Web', mono:'Wb', color:'#8E8BF5', needsKey:false},
+        {id:'email', name:'Email', mono:'Em', color:'#8E8BF5', needsKey:true, what:'Leer tu correo y preparar respuestas — enviar te lo pregunta antes.', where:'tu casilla', scope:'lee · envía con tu OK'},
+        {id:'calendario', name:'Calendario', mono:'Ca', color:'#E0A23C', needsKey:true, what:'Ver tu agenda y proponer horarios — escribir te lo pregunta antes.', where:'tu calendario', scope:'lee · escribe con tu OK'},
+      ]},
+    { key:'datos', label:'Datos', labelKey:'workshop.closet.data', icon:'📊', desc:'Planillas, bases, fuentes', descKey:'workshop.closet.data.desc',
+      items:[
+        {id:'planillas', name:'Planillas', mono:'Pl', color:'#8E8BF5', needsKey:false},
+        {id:'publicos', name:'Datos públicos', mono:'Dp', color:'#2E6FB0', needsKey:false},
+        {id:'db', name:'Base de datos', mono:'Bd', color:'#8E8BF5', needsKey:true, what:'Consultar tu base para traer datos — solo lectura salvo que lo permitas.', where:'tu base', scope:'lee'},
+      ]},
+    { key:'archivos', label:'Archivos', labelKey:'workshop.closet.files', icon:'🗂️', desc:'Tus documentos y carpetas', descKey:'workshop.closet.files.desc',
+      items:[
+        {id:'misarch', name:'Tus archivos', mono:'Ar', color:'#B07A2E', needsKey:false},
+        {id:'drive', name:'Google Drive', mono:'Dr', color:'#2E7D55', needsKey:true, what:'Abrir y guardar archivos en tu Drive.', where:'tu Drive', scope:'lee · escribe'},
+      ]},
+    { key:'apps', label:'Apps y servicios', labelKey:'workshop.closet.apps', icon:'🧩', desc:'Gmail, Slack, Notion… vía MCP', descKey:'workshop.closet.apps.desc',
+      items:[
+        {id:'gmail', name:'Gmail', mono:'Gm', color:'#8E8BF5', needsKey:true, what:'Leer y redactar correos — enviar te lo pregunta antes.', where:'tu Gmail', scope:'lee · envía con tu OK'},
+        {id:'slack', name:'Slack', mono:'Sl', color:'#8E8BF5', needsKey:true, what:'Leer canales y preparar mensajes — publicar te lo pregunta antes.', where:'tu workspace', scope:'lee · postea con tu OK'},
+        {id:'notion', name:'Notion', mono:'No', color:'#6E5A8C', needsKey:true, what:'Leer y crear páginas en tu Notion.', where:'tu Notion', scope:'lee · escribe'},
+        {id:'sheets', name:'Google Sheets', mono:'Sh', color:'#8E8BF5', needsKey:true, what:'Leer y escribir tus planillas.', where:'tus Sheets', scope:'lee · escribe'},
+      ]},
+    { key:'saberes', label:'Habilidades', labelKey:'workshop.closet.skills', icon:'✦', desc:'El pénsum de saberes y procedimientos · skills', descKey:'workshop.closet.skills.desc',
+      items:[
+        {id:'informe', name:'Armar un informe', mono:'In', color:'#8E8BF5', needsKey:false, cat:'escritura'},
+        {id:'limpiar', name:'Limpiar planillas', mono:'Li', color:'#8E8BF5', needsKey:false, cat:'analisis'},
+        {id:'resumir', name:'Redactar y resumir', mono:'Re', color:'#E0A23C', needsKey:false, cat:'escritura'},
+        {id:'investigar', name:'Investigar un tema', mono:'Iv', color:'#2E6FB0', needsKey:false, cat:'investigacion'},
+        {id:'citar', name:'Buscar y citar fuentes', mono:'Ci', color:'#2E6FB0', needsKey:false, cat:'investigacion'},
+        {id:'calcular', name:'Calcular y graficar', mono:'Cg', color:'#2E6FB0', needsKey:false, cat:'analisis'},
+        {id:'extraer', name:'Leer y extraer de PDFs', mono:'Pd', color:'#B07A2E', needsKey:false, cat:'investigacion'},
+        {id:'codigo', name:'Escribir y correr código', mono:'Co', color:'#8E8BF5', needsKey:false, cat:'codigo'},
+        {id:'revisar', name:'Revisar y corregir texto', mono:'Rv', color:'#E0A23C', needsKey:false, cat:'escritura'},
+        {id:'traducir', name:'Traducir', mono:'Tr', color:'#8E8BF5', needsKey:false, cat:'escritura'},
+        {id:'comparar', name:'Comparar y contrastar', mono:'Cp', color:'#2E6FB0', needsKey:false, cat:'investigacion'},
+        {id:'clasificar', name:'Clasificar y etiquetar', mono:'Cl', color:'#8E8BF5', needsKey:false, cat:'analisis'},
+        {id:'planificar', name:'Planificar tareas', mono:'Pf', color:'#E0A23C', needsKey:false, cat:'oficina'},
+        {id:'notas', name:'Tomar notas de reunión', mono:'Nt', color:'#8E8BF5', needsKey:false, cat:'oficina'},
+      ]},
+    { key:'mcp', label:'Tu propio conector', labelKey:'workshop.closet.custom', icon:'🔌', desc:'Trae o pega tu MCP', descKey:'workshop.closet.custom.desc',
+      items:[
+        {id:'micrm', name:'Tu CRM (MCP)', mono:'Cr', color:'#B0843A', needsKey:true, what:'Conectar tu CRM propio vía MCP.', where:'tu CRM', scope:'lee · escribe'},
+      ]},
+  ];
+
+  teamPoolData = [
+    {id:'invest', name:'Investigador', mono:'Iv', color:'#2E6FB0'},
+    {id:'redact', name:'Redactor', mono:'Re', color:'#E0A23C'},
+    {id:'verif', name:'Verificador', mono:'Vf', color:'#8E8BF5'},
+    {id:'analista', name:'Analista', mono:'An', color:'#8E8BF5'},
+  ];
+
+  EX1 = { name:'Reportero', purpose:'Que junte los números de la semana de mis planillas, los limpie y me arme un informe corto con lo importante.', nameKey:'workshop.sample.weekly_report.name', purposeKey:'workshop.sample.weekly_report.purpose', equip:['planillas','sheets','limpiar','informe','email'], conn:['sheets','email'], open:'datos' };
+  EX2 = { name:'Investigador', purpose:'Que busque en la web sobre un tema que le pida, contraste fuentes y me arme un resumen con los links.', nameKey:'workshop.sample.research.name', purposeKey:'workshop.sample.research.purpose', equip:['web','investigar','resumir'], conn:[], open:'saberes' };
+
+  componentDidMount(){
+    this.applyAccent();
+    const friendly=this.framingsList.find(f=>f.key===this.state.framing);
+    if(friendly) this.setState({framingLine:this.wt(friendly.lineKey,friendly.line)});
+    // [F7·B] La lista de modelos se PIDE al arrancar. Antes estaba escrita en el archivo:
+    // el taller ofrecía 12 modelos sin preguntarle a nadie si existían o andaban.
+    this.models = this.MODELOS_FALLBACK;
+    this.cargarModelos();
+    // el semáforo llega por módulo (otro <script>): cuando publica su diccionario, se
+    // repinta para que las causas dejen de verse como slugs.
+    this._onSem = () => this.setState({});
+    window.addEventListener('aleph:semaforo', this._onSem);
+  }
+  componentDidUpdate(prev){ if(prev.accent !== this.props.accent) this.applyAccent(); }
+  componentWillUnmount(){ clearTimeout(this._t); if(this._onSem) window.removeEventListener('aleph:semaforo', this._onSem); }
+  applyAccent(){ const a=this.props.accent; if(a) document.documentElement.style.setProperty('--accent', a); }
+
+  all(){ return this.closets.flatMap(c => c.items.map(i => ({...i, cl:c.key}))); }
+
+  itemClick(it){
+    const s=this.state;
+    if(s.equipped.includes(it.id)){ this.setState({ equipped:s.equipped.filter(x=>x!==it.id), connected:s.connected.filter(x=>x!==it.id), gate:null }); return; }
+    if(it.needsKey){ this.setState({ gate: s.gate===it.id ? null : it.id }); return; }
+    this.setState({ equipped:[...s.equipped, it.id] });
+  }
+  confirmGate(id){ this.setState(s=>({ equipped:[...s.equipped, id], connected:[...s.connected, id], gate:null })); }
+  toggleCloset(k){ this.setState(s=>({ open:s.open===k?null:k })); }
+  toggleFold(k){ this.setState(s=>({ folded:{...s.folded, [k]:!s.folded[k]} })); }   // colapsa/expande un panel lateral
+  apply(ex){
+    clearTimeout(this._t);
+    this.setState({ name:this.wt(ex.nameKey,ex.name), purpose:this.wt(ex.purposeKey,ex.purpose), equipped:ex.equip.slice(), connected:ex.conn.slice(), open:ex.open, stage:'armando', run:-1, runApproved:false, gate:null });
+  }
+
+  wt(key, fallback, vars){
+    const I=window.AlephI18n;
+    return I&&I.t?I.t(key,vars):(fallback||key);
+  }
+  localizeRuntimeText(value){
+    const I=window.AlephI18n;
+    return I&&I.text?I.text(value):value;
+  }
+
+  // ── NICHO: filtro explícito que surfacea el belt REAL como cards repartidas en los armarios ──
+  // El belt_ref por nicho (mismo mapa que launch). Las cards salen de GET /v1/belts/cards (el belt
+  // declara _meta.cards; el endpoint valida backed_by ∈ mcpServers → cero theater).
+  NICHE_BELT = {
+    research:'platform/assembler/fixtures/belt-research-live.mcp.json',  // belt REAL (Crossref/Python/Zotero, F1-probado), no el de catálogo fetch-based
+    finanzas:'platform/connectors/finanzas/belt-finanzas-data.mcp.json',
+    cowork:'catalog/templates/cowork/belt-cowork-gmail.mcp.json',
+  };
+  async pickNiche(n){
+    if(!n || this.state.niche===n){ this.setState({niche:null, nicheCards:[], nicheActive:{}}); return; }  // toggle/General → sin nicho
+    this.setState({niche:n, nicheCards:[], nicheActive:{}, nicheLoading:true});
+    const ref=this.NICHE_BELT[n];
+    if(!ref){ this.setState({nicheLoading:false}); return; }   // nicho sin belt con cards declaradas
+    try{
+      const u=this._user();
+      const url='/v1/belts/cards?ref='+encodeURIComponent(ref)+(u.id?('&user_id='+encodeURIComponent(u.id)):'');
+      const d=await (await fetch(url)).json();
+      const active={};
+      (d.cards||[]).forEach(c=>{ active[c.id]=true; });  // TODAS habilitadas (entran al belt; las BYOK sin llave degradan, no rompen)
+      this.setState({nicheCards:d.cards||[], nicheActive:active, nicheLoading:false});
+    }catch(e){ this.setState({nicheLoading:false}); }
+  }
+  // Conectar una card de auth → su connect-wizard (Conectar.dc.html). Al volver, re-elige el nicho
+  // para refrescar el estado (la card pasa a "Conectado").
+  connectCard(card){ if(card&&card.connector) window.open('Conectar.dc.html?c='+encodeURIComponent(card.connector),'_blank'); }
+  // tool_filters de las cards ACTIVAS → lo que el agente recibe == lo que se ve. tools null = todas
+  // las tools del server (tool_filters[srv]=null = allow-all en el assembler).
+  cardFilters(){
+    const s=this.state, tf={};
+    (s.nicheCards||[]).forEach(c=>{
+      // SOLO las usables entran al run: keyless (ya funcionan) o BYOK CONECTADA (con llave). Una
+      // BYOK SIN llave queda HABILITADA en la UI (verde) pero NO va al tool_filters: forzar un
+      // server sin key ROMPE el run (probado: 91s ok:False; control keyless 5s ok:True). Entra al
+      // conectar la llave. nicheActive sigue true (UI); la usabilidad la deciden auth/estado.
+      //
+      // MISMO PRECEDENTE para `local`: el backend midió que ESTE entorno no puede lanzar el
+      // server (falta node/uv, FreeCAD, el handler…). Mandarlo al tool_filters no lo hace
+      // arrancar — lo único que logra es que el run arranque con un server muerto adentro.
+      // La pieza NO se oculta ni se saca de la UI: sigue visible con su camino ("corre en tu
+      // máquina · requiere X"), y en cuanto el usuario instala lo que falta, el MISMO cálculo
+      // la devuelve como `ready` y entra sola. No se pierde nada; se deja de mentir.
+      const usable = (c.state!=='local') && (c.auth==='keyless' || c.state==='connected');
+      if(!usable || !s.nicheActive[c.id]) return;
+      const srv=c.backed_by; if(!srv) return;
+      tf[srv]=Array.from(new Set([...(tf[srv]||[]), ...(c.tools||[])]));
+    });
+    return tf;
+  }
+
+  // Resuelve el id seleccionado → la config EJECUTABLE que viaja a la receta.
+  // Ya no hay «variantes»: cada fila del selector ES un modelo con su config completa.
+  findModel(id){
+    return this.models.find(m=>m.id===id) || this.models[0] || this.MODELOS_FALLBACK[0];
+  }
+  pickModel(m){
+    // Sin llave no se puede elegir: se abre el campo. Antes alcanzaba con tener el id en un
+    // array local — o sea con haber tipeado cualquier cosa una vez.
+    if(m.needsKey){ this.setState({ pendingKey:m.id, model:m.id, keyDraft:'', keyMsg:null }); return; }
+    this.setState({ model:m.id, modelOpen:false, pendingKey:null, keyMsg:null });
+  }
+
+  /* ══ LA LLAVE VA AL VAULT, NO A UN ARRAY ═══════════════════════════════════════════
+   *
+   * [F7·B] EL BUG MEDIDO (2026-08-06): `saveKey` NO tenía fetch. La llave se escribía en
+   * `state.keyedModels` —estado local del componente—, el modelo quedaba «configurado», y
+   * al recargar la página no quedaba nada. Ni una llamada a `/v1/conexiones/key` ni a
+   * `/v1/keys` en todo el archivo. Censo de las 1.270 recetas reales de la DB: **cero** con
+   * un modelo BYOK de API.
+   *
+   * Ahora va por la MISMA puerta que Modelos y Conectores: valida contra el proveedor con
+   * el validador discriminante de F7, guarda cifrada, siembra el motor. Y el resultado se
+   * PINTA: si la llave no sirve, se dice y el modelo NO queda elegido.
+   */
+  async saveKey(id){
+    const secret=(this.state.keyDraft||'').trim();
+    const m=this.findModel(id);
+    const provider=(m && m.slug || '').replace(/^api\./,'') || id;
+    if(secret.length < 8){
+      this.setState({ keyMsg:{cls:'mal', texto:this.wt('workshop.model.key.too_short','Esa llave es demasiado corta.')} });
+      return;
+    }
+    this.setState({ keyBusy:true, keyMsg:{cls:'', texto:this.wt('workshop.model.key.validating','Validando la llave con el proveedor…')} });
+    try{
+      const r=await fetch('/v1/conexiones/key',{ method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({ provider, secret }) });
+      const d=await r.json().catch(()=>({}));
+      if(!r.ok || d.ok===false || d.estado==='roto'){
+        throw new Error(d.mensaje || d.detalle || this.wt('workshop.model.key.invalid','La llave no se pudo validar.'));
+      }
+      // El ESTADO lo dice el backend: `detectado` («la guardé, no la pude probar») es 🟡,
+      // no verde. Se recarga la lista para que la fila diga lo que el motor midió.
+      const ok = d.estado === 'probado';
+      this.setState({ keyBusy:false, keyDraft:'', pendingKey:null,
+                      keyMsg:{cls: ok?'ok':'tibia', texto:this.localizeRuntimeText(d.mensaje || (ok
+                        ? this.wt('workshop.model.key.validated','Llave validada y guardada.')
+                        : this.wt('workshop.model.key.saved_unverified','Llave guardada; todavía no está probada.')))} });
+      await this.cargarModelos();
+      this.setState({ model:id, modelOpen:false });
+    }catch(e){
+      this.setState({ keyBusy:false, keyMsg:{cls:'mal', texto:this.localizeRuntimeText(String(e&&e.message||e))} });
+    }
+  }
+
+  pickFraming(f){ this.setState({ framing:f.key, framingLine:this.wt(f.lineKey,f.line) }); }
+
+  // ── MEMORIA v0 — PROFILE FACTS (editables → framing) ──────────────────────
+  addKnow(){ const t=(this.state.knowsDraft||'').trim(); if(!t) return; this.setState(s=>({ knows:[...s.knows, t], knowsDraft:'' })); }
+  setKnowsDraft(e){ this.setState({ knowsDraft:e.target.value }); }
+
+  // ── MEMORIA v0 — DOC-RAG (upload → carpeta por-agente = rag_dir) ───────────
+  _user(){ try{ return JSON.parse(sessionStorage.getItem('puppet_user')||'{}'); }catch(e){ return {}; } }
+  ensureAgentKey(){ let k=this.state.agentKey; if(!k){ k='a'+Math.random().toString(36).slice(2,11); this.setState({agentKey:k}); } return k; }
+  pickDoc(){
+    // login suave: sin sesión NO se exige login — se levanta la sesión local anónima y se sigue
+    const u=this._user();
+    if(!u.id){
+      const A=window.AlephSession;
+      ((A&&A.ensureLocal)?A.ensureLocal():Promise.resolve(null)).then(nu=>{
+        if(nu&&nu.id) this.pickDoc(); else window.location.href='Auth.dc.html';
+      });
+      return;
+    }
+    const agentKey=this.ensureAgentKey();
+    const inp=document.createElement('input'); inp.type='file'; inp.accept='.md,.txt,text/markdown,text/plain';
+    inp.onchange=async()=>{
+      const f=inp.files&&inp.files[0]; if(!f) return;
+      this.setState({ragBusy:true});
+      try{
+        const content=await f.text();
+        const r=await fetch('/v1/users/'+u.id+'/rag/'+agentKey,{ method:'POST', headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({ name:f.name, content }) });
+        const out=await r.json();
+        if(r.ok){ this.setState({ ragDocs: out.docs||[], ragDir: out.rag_dir||null, ragBusy:false }); }
+        else { this.setState({ragBusy:false}); }
+      }catch(e){ this.setState({ragBusy:false}); }
+    };
+    inp.click();
+  }
+  removeDoc(name){
+    const u=this._user(); const agentKey=this.state.agentKey; if(!u.id||!agentKey) return;
+    fetch('/v1/users/'+u.id+'/rag/'+agentKey+'/'+encodeURIComponent(name),{ method:'DELETE' })
+      .then(r=>r.json()).then(out=>{ this.setState({ ragDocs: out.docs||[] }); }).catch(()=>{});
+  }
+
+  startRun(){ clearTimeout(this._t); this.setState({ stage:'plan', run:-1, runApproved:false }, ()=>{ this._t=setTimeout(()=>this.advance(),350); }); }
+  advance(){
+    const steps=this.planSteps();
+    this.setState(s=>({ run:s.run+1 }), ()=>{
+      const i=this.state.run;
+      if(i>=steps.length){ return; }
+      const cur=steps[i];
+      if(cur && cur.stop && !this.state.runApproved){ return; }
+      this._t=setTimeout(()=>this.advance(), 780);
+    });
+  }
+  approveRun(){ this.setState({ runApproved:true }, ()=>{ this._t=setTimeout(()=>this.advance(),320); }); }
+
+  planSteps(){
+    const eq=this.state.equipped; const has=id=>eq.includes(id);
+    const steps=[{title:'Entiende tu pedido', titleKey:'workshop.plan.step.understand', armario:null, io:null, node:'1'}];
+    if(has('planillas')||has('sheets')||has('misarch')||has('drive')||has('publicos')||has('db')||has('notion'))
+      steps.push({title:'Lee tus datos y archivos', titleKey:'workshop.plan.step.read', armario:'Datos', armarioKey:'workshop.plan.place.data', io:'lee lo tuyo', ioKey:'workshop.plan.io.yours', node:'2'});
+    if(has('web')||has('investigar'))
+      steps.push({title:'Busca en la web y contrasta', titleKey:'workshop.plan.step.research', armario:'Conectores', armarioKey:'workshop.plan.place.connectors', io:'lee la web', ioKey:'workshop.plan.io.web', node:'3'});
+    if(has('limpiar'))
+      steps.push({title:'Limpia y ordena', titleKey:'workshop.plan.step.clean', armario:'Habilidad', armarioKey:'workshop.plan.place.skill', io:null, node:'4'});
+    if(has('informe')||has('resumir'))
+      steps.push({title:'Arma el resultado', titleKey:'workshop.plan.step.prepare', armario:'Habilidad', armarioKey:'workshop.plan.place.skill', io:'escribe un archivo', ioKey:'workshop.plan.io.write_file', node:'5'});
+    if(has('email')||has('gmail')||has('slack'))
+      steps.push({title:'Manda el resultado', titleKey:'workshop.plan.step.send', armario:'Email', armarioKey:'workshop.plan.place.email', io:'sale al mundo', ioKey:'workshop.plan.io.external', external:true, stop:true, node:'🔒'});
+    if(steps.length===1) steps.push({title:'Trabaja con lo que le diste', titleKey:'workshop.plan.step.work', armario:null, io:null, node:'2'});
+    return steps;
+  }
+
+  // CABLEADO REAL: arma receta v1 desde el estado del taller universal → POST /v1/puppets → Sala.
+  // El belt_ref se elige por NICHO detectado (ver abajo: programación / finanzas / default genérico),
+  // NO es fijo. El mapeo equipado→belt completo (todos los armarios) sigue siendo follow-up de
+  // Tool-belt. Lo equipado se preserva en sessionStorage para el flywheel. Su carácter
+  // (systemPrompt) y propósito → framing.
+  async launch(){
+    const s=this.state;
+    if(!(s.purpose.trim() || s.equipped.length || s.name.trim())) return;
+    const user=JSON.parse(sessionStorage.getItem('puppet_user')||'{}');
+    if(!user.id){
+      // login suave: guardar el agente es LOCAL — la sesión anónima alcanza; Auth solo si no hay auth local
+      const A=window.AlephSession;
+      const nu=await ((A&&A.ensureLocal)?A.ensureLocal():Promise.resolve(null));
+      if(nu&&nu.id){ this.launch(); } else { window.location.href='Auth.dc.html'; }
+      return;
+    }
+    // CABLEADO DE BELT POR NICHO (catalog→belt): el belt_ref VIENE del nicho detectado del
+    // propósito/equipado, NO es fijo. Cada rama apunta a un belt runnable real (cruzado contra
+    // su tools/list viva). Hoy: PROGRAMACIÓN (filesystem + sandbox + github commit) y FINANZAS
+    // CON PROCEDENCIA (World Bank + ingestor BCE + writer xlsx, el número trae su fuente). El
+    // resto cae a un belt genérico excel (probado runnable). El mapeo equipado→belt completo
+    // (todos los armarios) sigue siendo follow-up de Tool-belt; esto cubre los nichos con belt.
+    const intent=((s.purpose||'')+' '+(s.name||'')).toLowerCase();
+    const esProg=/(c[oó]digo|program|repo\b|repos|github|\bgit\b|bug|tests?\b|pytest|script|python|javascript|typescript|funci[oó]n|refactor|commit|debug|\bapi\b)/.test(intent);
+    const esFinanzas=/(pib|banco mundial|world bank|banco central|bce|macro|serie|derivados|finanz|inflaci|desemple|tasa|fuente|procedencia|trazad)/.test(intent);
+    const esResearch=/(investig|paper|art[íi]culo cient|acad[ée]mic|\bcita\b|citas|literatura|\bdoi\b|crossref|estudio|tesis|bibliograf|journal|fuente cient)/.test(intent);
+    const esCowork=/(correo|mail|email|gmail|borrador|bandeja|agenda|calendar|reuni[óo]n|\bdrive\b|slack|oficina|asistente de oficina|recordatorio|\bnota\b|\bnotas\b)/.test(intent);
+    let nicho='general';
+    // default genérico runnable (no es un hardcode para todos: es la rama 'else')
+    let belt={ belt_ref:'catalog/templates/finanzas/belt-finanzas.mcp.json',
+               tool_filters:{ excel:['create_workbook','write_data_to_excel','read_data_from_excel'] } };
+    let framingInline=(s.systemPrompt&&s.systemPrompt.trim()) || s.purpose.trim() || 'Eres un asistente útil que usa sus herramientas.';
+    if(esProg){
+      nicho='programacion';
+      // belt de PROGRAMACIÓN: edita el repo (filesystem), ejecuta en sandbox (script_runner),
+      // y —cuando el usuario conecta GitHub (Familia 4 token)— commitea (github write).
+      belt={ belt_ref:'catalog/belts/programacion.md',
+             tool_filters:{ filesystem:['read_file','write_file','edit_file','list_directory'],
+                            script_runner:['run_python','run_shell'],
+                            github:['get_file_contents','create_or_update_file'] } };
+      framingInline=(s.systemPrompt&&s.systemPrompt.trim()) || 'Eres un ingeniero de software riguroso. Trabajas en tu carpeta de trabajo (ruta absoluta en el system). REGLA DE ORO: solo declaras algo verde cuando lo EJECUTAS y el runner devuelve pass real, nunca porque "debería". Editas archivos con filesystem; ejecutas con script_runner.run_python (el sandbox está AISLADO del repo: pega el código inline, no uses import del repo); guardas la obra como archivos en tu carpeta de trabajo. Sé conciso.';
+    } else if(esFinanzas){
+      nicho='finanzas';
+      belt={ belt_ref:'platform/connectors/finanzas/belt-finanzas-data.mcp.json',
+             tool_filters:{ finanzas:['worldbank_series','bce_pdf_ingest','build_workbook'] } };
+      framingInline='Eres un analista de finanzas. Regla de oro: NÚMERO = FUENTE, NUNCA INVENTADO — no transcribes cifras; las herramientas traen los datos con su procedencia y tú solo orquestas. Pasos en orden: 1) worldbank_series (trae el PIB del país; guarda el handle). 2) bce_pdf_ingest (tabla del banco central; guarda el handle). 3) build_workbook con filename "finanzas_pais.xlsx" y handles=[los dos handles]; NO inventes números, pasa solo los handles. 4) Cierra en 2-3 líneas: qué archivo se generó, cuántas celdas de dato y que cada una traza a su fuente.';
+    } else if(esResearch){
+      nicho='research';
+      // belt RESEARCH (su backbone keyless: fetch + filesystem + pandoc). exa/huggingface/context7
+      // son BYOK por-usuario (el connect-wizard los suma); sin keys el belt degrada al backbone y
+      // sigue corriendo. Equipa el belt REAL del nicho — ya no cae al excel genérico.
+      belt={ belt_ref:'catalog/templates/research/belt-research.mcp.json',
+             tool_filters:{ fetch:['fetch'], filesystem:['read_file','write_file','list_directory'] } };
+      // FRAMING bloque C: el nicho research YA tiene Capa C (universal) + domain research en el
+      // assembler (_build_framing). El default rígido acá DUPLICABA esa rigor y railroadeaba
+      // ("dejas el reporte como archivo", "sé riguroso") — exactamente el over-framing que el
+      // bloque C elimina. Default vacío: si el usuario NO escribe su propio carácter, manda el
+      // framing del sistema; si lo escribe, se appendea como extensión del autor. (Otros nichos
+      // conservan su inline hasta que tengan su propio domain.)
+      framingInline=(s.systemPrompt&&s.systemPrompt.trim()) || '';
+    } else if(esCowork){
+      nicho='cowork';
+      // belt COWORK (verificado end-to-end: gmail draft + send-gate). El agente prepara
+      // BORRADORES; mandar pasa por el send-gate (tu OK por approve-by-HTTP). Equipa el belt
+      // REAL del nicho — ya no cae al excel genérico.
+      belt={ belt_ref:'catalog/templates/cowork/belt-cowork-gmail.mcp.json',
+             tool_filters:{ gmail:['create_draft'] } };
+      framingInline=(s.systemPrompt&&s.systemPrompt.trim()) || 'Eres un asistente de oficina (cowork). Preparas borradores de correo con create_draft — dejas el mensaje listo, NUNCA lo envías sin el OK explícito del usuario. Trabajas SOLO con las herramientas cableadas; no inventas destinatarios ni contenido. Cuando termines, resume en una frase qué dejaste armado.';
+    }
+    // NICHO EXPLÍCITO MANDA sobre la heurística (la regex de arriba quedó como SUGERENCIA, no
+    // decisor). Si el user eligió un nicho y se cargaron sus cards, el belt_ref + tool_filters
+    // salen de las CARDS ACTIVAS → lo que se ve en los armarios == lo que el agente recibe.
+    if(s.niche && this.NICHE_BELT[s.niche] && (s.nicheCards||[]).length){
+      nicho = s.niche;
+      const tf = this.cardFilters();
+      if(Object.keys(tf).length) belt = { belt_ref:this.NICHE_BELT[s.niche], tool_filters:tf };
+    }
+    // MODELO ELEGIDO POR EL USUARIO → a la receta (ya NO hardcodeado). Incluidos OSS corren hoy
+    // (Groq); BYOK setea el primary/base_url de tu proveedor (la cognición BYOK que rutea tu key
+    // es el follow-up #3). Si el modelo no trae endpoint (p.ej. 'propio' sin configurar), cae al OSS default.
+    const selModel = this.findModel(s.model);
+    // TYPE DE SALIDA declarado por el PRODUCTOR (slice 4): la Sala rutea sobre meta.output_type
+    // al renderer correcto. Por nicho; desconocido → informe (fallback seguro).
+    const outType = ({finanzas:'planilla', cowork:'documento', research:'informe', programacion:'informe'})[nicho] || 'informe';
+    // MEMORIA v0 — PROFILE FACTS: los facts editables del widget se INYECTAN al framing (system
+    // prompt) → el agente los tiene presentes en CADA run. Solo si memoria está ON.
+    const facts=(s.knows||[]).map(f=>(f||'').trim()).filter(Boolean);
+    if(s.memory && facts.length){
+      framingInline += '\n\nLo que sé de ti (tenlo presente y úsalo cuando aplique):\n' + facts.map(f=>'- '+f).join('\n');
+    }
+    // MEMORIA v0 — DOC-RAG: si hay docs subidos + memoria ON, pasamos su carpeta como rag.dir →
+    // el assembler la lee con _load_rag (intacto). Sin docs: enabled pero sin dir (no RAG). OFF: disabled.
+    let ragObj = { enabled:false };
+    if(s.memory){
+      ragObj = { enabled:true, mode:'manual' };
+      if((s.ragDocs||[]).length && s.ragDir) ragObj.dir = s.ragDir;
+    }
+    const recipe={
+      schema_version:'v1',
+      meta:{ name:s.name.trim()||'Mi agente', nicho:nicho, descripcion:s.purpose.trim(), output_type:outType },
+      // ⚠️ [F7·B] `byok_ref` VIAJA. Sin él, el turno NO manda la credencial: medido contra
+      // el datadir real — `stream_chat._resolve_llm_key` sólo mira `model.byok_ref`, y sin
+      // él cae a la cognición incluida, que en el bundle son **0 chars**. O sea que elegir
+      // «Claude con tu llave» acá producía un turno SIN llave, y el 401 se leía «te la
+      // rechazaron». Con `byok_ref` el resolver la encuentra (medido: 71 chars).
+      // Los cuatro campos salen del backend (`_PICKER_HOSTEADO`), no de esta pantalla.
+      model:Object.assign({
+              primary: selModel.primary || 'anthropic/claude-opus-4.8',
+              fallback:'openai/gpt-oss-20b',
+              base_url: selModel.base_url || 'https://openrouter.ai/api/v1',
+              temperature:+(0.2+(Number(s.detail)||50)/100*0.5).toFixed(2),
+              max_tokens:1024, max_turns:Math.max(4, Math.min(12, Number(s.maxSteps)||8)) },
+            selModel.byok_ref ? { byok_ref: selModel.byok_ref } : {},
+            selModel.brain_provider ? { brain_provider: selModel.brain_provider } : {},
+            selModel.alias ? { alias: selModel.alias } : {}),
+      belt:belt,
+      framing:{ inline:'' },   // FRAMING ELIMINADO: agente crudo (especialización = belt + RAG). Nota: los PROFILE FACTS de MEMORIA v0 iban acá → con framing fuera, ya no llegan al modelo (re-rutear como contexto no-framing si se quiere conservar).
+      rag: ragObj,
+      keys:{}, gates:{ money_touch:'needs_ok', send:'needs_ok' }
+    };
+    try{
+      const r=await fetch('/v1/puppets',{ method:'POST', headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({ owner_id:user.id, name:recipe.meta.name, nicho:nicho, config:recipe }) });
+      if(!r.ok) throw new Error('save');
+      const p=await r.json();
+      sessionStorage.setItem('puppet_purpose', s.purpose.trim());
+      try{ sessionStorage.setItem('puppet_equipped', JSON.stringify(s.equipped)); }catch(e){}
+      window.location.href='sala-v2/sala-v2.html?puppet='+encodeURIComponent(p.id);
+    }catch(e){ alert(this.wt('workshop.agent.save_error','No se pudo guardar tu agente. Prueba de nuevo en un momento.')); }
+  }
+
+  renderVals(){
+    const s=this.state;
+    const w=(key,fallback,vars)=>this.wt(key,fallback,vars);
+    const all=this.all();
+    const eqCount=s.equipped.length;
+
+    // relevance
+    const p=s.purpose.toLowerCase(); const rel=new Set();
+    if(/correo|mail|bandeja|escrib|responder|mensaje/.test(p)){ rel.add('apps'); rel.add('mundo'); }
+    if(/planilla|informe|dato|n[uú]mero|cierre|reporte|tabla|excel/.test(p)){ rel.add('datos'); rel.add('saberes'); }
+    if(/archivo|carpeta|documento|drive|pdf/.test(p)){ rel.add('archivos'); }
+    if(/busca|investig|web|fuente|noticia|tema|resum/.test(p)){ rel.add('mundo'); rel.add('saberes'); }
+    if(/agenda|reuni[oó]n|calendario|turno/.test(p)){ rel.add('mundo'); }
+
+    // model
+    const curModel=this.findModel(s.model);
+    const dots=(n,ch)=>ch.repeat(Math.max(0,n||0));
+    const q=s.modelSearch.trim().toLowerCase();
+    const rowStyleFor=(sel,indent)=>'display:flex;align-items:center;gap:11px;width:100%;border:1.5px solid '+(sel?'var(--accent)':'var(--line)')+';background:'+(sel?'var(--accent-soft)':'var(--paper2)')+';border-radius:var(--r-md);padding:9px 11px;cursor:pointer;font:inherit;transition:border-color .15s'+(indent?';margin-left:20px;width:calc(100% - 20px)':'');
+    // modelList = filas PLANAS. Cada fila del selector ES un modelo (la config ejecutable
+    // viene del backend), así que ya no hay cabeceras de proveedor ni sub-filas.
+    const modelList=[];
+    this.models.forEach(m=>{
+      if(q && !((m.name+' '+m.desc).toLowerCase().includes(q))) return;
+      const sel=s.model===m.id && !m.needsKey;
+      const est=this.estadoDe(m) || {};
+      modelList.push({
+        name:m.nameKey?w(m.nameKey,m.name):m.name, desc:m.descKey?w(m.descKey,m.desc):m.desc,
+        rec:!!m.rec, icon:m.icon, iconBg:m.iconBg,
+        speed:dots(m.speed,'⚡'), brain:dots(m.brain,'🧠'),
+        // el estado ya no es un candado inventado: sale del motor
+        state: sel ? '✓' : (est.cls==='ok' ? '●' : est.cls==='mal' ? '🔴' : '○'),
+        estadoTexto: est.texto || '',
+        askKey: s.pendingKey===m.id,
+        rowStyle: rowStyleFor(sel, false),
+        pick:()=>this.pickModel(m), saveKey:()=>this.saveKey(m.id),
+      });
+    });
+
+    // framings
+    const framings=this.framingsList.map(f=>({ label:w(f.labelKey,f.label), pick:()=>this.pickFraming(f),
+      style:'border:1.5px solid '+(s.framing===f.key?'var(--accent)':'var(--line)')+';background:'+(s.framing===f.key?'var(--accent-soft)':'var(--paper2)')+';color:'+(s.framing===f.key?'var(--accent-deep)':'var(--muted)')+';border-radius:999px;padding:6px 13px;font:inherit;font-size:12.5px;font-weight:500;cursor:pointer' }));
+
+    // knows (facts editables) + docs RAG subidos
+    const knowsList=s.knows.map((t,i)=>({ text:t, remove:()=>this.setState(st=>({knows:st.knows.filter((_,j)=>j!==i)})) }));
+    const ragDocsList=(s.ragDocs||[]).map(d=>({ name:d.name, remove:()=>this.removeDoc(d.name) }));
+
+    // closets
+    const SKILL_CATS=[{k:'todas',key:'workshop.filter.all',label:'Todas'},{k:'investigacion',key:'workshop.filter.research',label:'Investigación'},{k:'analisis',key:'workshop.filter.analysis',label:'Análisis'},{k:'escritura',key:'workshop.filter.writing',label:'Escritura'},{k:'codigo',key:'workshop.filter.code',label:'Código'},{k:'oficina',key:'workshop.filter.office',label:'Oficina'}];
+    const toolKeys={web:'web',email:'email',calendario:'calendar',planillas:'spreadsheets',publicos:'public_data',db:'database',misarch:'files',drive:'drive',gmail:'gmail',slack:'slack',notion:'notion',sheets:'sheets',informe:'make_report',limpiar:'clean_sheets',resumir:'write_summarize',investigar:'research',citar:'cite',calcular:'calculate',extraer:'read_pdfs',codigo:'code',revisar:'proofread',traducir:'translate',comparar:'compare',clasificar:'classify',planificar:'plan',notas:'meeting_notes',micrm:'custom_crm'};
+    const detailKeys={email:{what:'workshop.tool.read_email.what',where:'workshop.tool.read_email.where',scope:'workshop.tool.read_send.scope'},calendario:{what:'workshop.tool.calendar.what',where:'workshop.tool.calendar.where',scope:'workshop.tool.read_write.scope'},db:{what:'workshop.tool.database.what',where:'workshop.tool.database.where',scope:'workshop.tool.read.scope'},drive:{what:'workshop.tool.drive.what',where:'workshop.tool.drive.where',scope:'workshop.tool.read_write.scope'},gmail:{what:'workshop.tool.gmail.what',where:'workshop.tool.gmail.where',scope:'workshop.tool.read_send.scope'},slack:{what:'workshop.tool.slack.what',where:'workshop.tool.slack.where',scope:'workshop.tool.slack.scope'},notion:{what:'workshop.tool.notion.what',where:'workshop.tool.notion.where',scope:'workshop.tool.read_write.scope'},sheets:{what:'workshop.tool.sheets.what',where:'workshop.tool.sheets.where',scope:'workshop.tool.read_write.scope'},micrm:{what:'workshop.tool.custom_crm.what',where:'workshop.tool.custom_crm.where',scope:'workshop.tool.read_write.scope'}};
+    const localizeItem=(i)=>{ const itemKey=toolKeys[i.id], fieldKeys=detailKeys[i.id]||{};
+      return Object.assign({},i,{name:itemKey?w('workshop.tool.'+itemKey,i.name):i.name,
+        what:fieldKeys.what?w(fieldKeys.what,i.what):i.what,where:fieldKeys.where?w(fieldKeys.where,i.where):i.where,
+        scope:fieldKeys.scope?w(fieldKeys.scope,i.scope):i.scope}); };
+    const closets=this.closets.map(c=>{
+      // CARDS DEL BELT DEL NICHO que caen en ESTE armario (card.armario===c.key) — del belt real.
+      const beltCards = s.niche ? (s.nicheCards||[]).filter(cd=>cd.armario===c.key) : [];
+      const beltActive = beltCards.length;  // TODAS las cards del nicho entran al belt (habilitadas)
+      // Al elegir un nicho, los armarios que reciben herramientas se AUTO-ABREN (varios a la vez)
+      // para que las cards (OpenAlex/Exa/etc.) se VEAN al toque, no escondidas en cajones cerrados.
+      const open=beltCards.length>0 || s.open===c.key, glow=rel.has(c.key) || beltCards.length>0;
+      const count=c.items.filter(i=>s.equipped.includes(i.id)).length + beltActive;  // equipado + tools del nicho activas
+      // BUSCADOR + FILTRO EN TODOS LOS ARMARIOS (generalizado). Habilidades filtra por CATEGORÍA
+      // de contenido (sus 5 cats); el resto filtra POR ESTADO (Listos/Por conectar/Equipados). El
+      // buscador (por nombre) va en los 5. Estado per-armario en closetQ/closetFilter (keyed c.key).
+      const isSkills=c.key==='saberes';
+      const q=((s.closetQ&&s.closetQ[c.key])||'').trim().toLowerCase();
+      const filt=(s.closetFilter&&s.closetFilter[c.key]) || (isSkills?'todas':'todos');
+      const genTag=(i)=>{ const eq=s.equipped.includes(i.id), conn=s.connected.includes(i.id);
+        return eq?'equipado':((i.needsKey&&!conn)?'porconectar':'listo'); };
+      // Cards del belt del nicho (arriba) con su badge + stateTag: keyless="Ya funciona"(listo) ·
+      // token conectada="✓ Conectado"(equipado) · token sin conectar="Conectar"(porconectar→wizard).
+      const beltItems = beltCards.map(cd=>{
+        // `local` = el backend midió que ESTE entorno no puede lanzar el server (falta node/uv,
+        // FreeCAD, el handler…). No se oculta la pieza: se dice la verdad y se ofrece el camino.
+        // Se calcula ANTES que `ready` porque una pieza keyless igual puede necesitar software.
+        const isLocal=cd.state==='local';
+        const ready=!isLocal&&cd.auth==='keyless', connd=cd.state==='connected', needsKey=!ready&&!connd&&!isLocal;
+        // TODAS quedan HABILITADAS (borde verde): entran al belt. Las BYOK sin llave entran igual y
+        // DEGRADAN si no hay key (el assembler las dropea reportado y el agente sigue) → badge ámbar
+        // "Conecta tu llave" = opcional, para que funcionen full; igual están habilitadas.
+        return { name:cd.label, mono:(cd.label.replace(/[^A-Za-zÁÉÍÓÚ]/g,'').slice(0,2)||'··').toUpperCase(),
+          color:'#2E7A5E', stateTag: (needsKey||isLocal)?'porconectar':(connd?'equipado':'listo'), beltCard:true,
+          equipped:false, plus:false, lockTag:false, gateOpen:false,
+          // El TEXTO lo manda el backend (`badge`), que es quien MIDIÓ el entorno. Acá se
+          // hardcodeaba 'Ya funciona · sin llave' derivándolo de `auth` — por eso la vitrina
+          // seguía mintiendo aunque el server dijera la verdad. El fallback es para catálogos
+          // viejos sin `badge`.
+          beltBadge:true, beltText: cd.badge || (ready?w('workshop.belt.ready.server','Listo · servidor'):(connd?w('workshop.belt.ready.key','Listo · solo tu API key'):w('workshop.belt.connect','Conectar'))),
+          beltStyle:'font-size:10.5px;font-weight:500;flex:none;border-radius:999px;padding:2px 8px;'+((needsKey||isLocal)?'color:var(--amber);background:var(--amber-bg)':'color:var(--green);background:var(--green-bg)'),
+          click: needsKey?(()=>this.connectCard(cd)):(()=>{}),
+          style:'display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--r-md);cursor:'+(needsKey?'pointer':'default')+';width:100%;font:inherit;border:1.5px solid #2F4A38;background:'+(needsKey?'var(--paper2)':'var(--green-bg)')+';' };
+      });
+      const genItems=c.items.map(localizeItem).map(i=>{
+        const eq=s.equipped.includes(i.id);
+        const conn=s.connected.includes(i.id);
+        return { name:i.name, mono:i.mono, color:i.color, cat:i.cat, stateTag:genTag(i),
+          equipped:eq, plus:!eq, lockTag: i.needsKey && !eq && !conn,
+          gateOpen: s.gate===i.id,
+          permissionTitle:w('workshop.gate.permission_title','Permiso · {service}',{service:i.name}),
+          gateWhat:i.what||'', gateWhere:i.where||'', gateScope:i.scope||'',
+          click:()=>this.itemClick(i), confirmGate:()=>this.confirmGate(i.id), closeGate:()=>this.setState({gate:null}),
+          style:'display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--r-md);cursor:pointer;width:100%;font:inherit;transition:border-color .15s,background .15s;border:1.5px solid '+(eq?'var(--accent)':'var(--line)')+';background:'+(eq?'var(--accent-soft)':'var(--paper2)')+';' };
+      });
+      // buscador (todos) + filtro (cat en Habilidades; estado en el resto). Las belt cards NO se
+      // filtran por categoría de skill (no son skills) — solo por búsqueda/estado.
+      let pool=[...beltItems, ...genItems].filter(it=>{
+        if(q && !(it.name||'').toLowerCase().includes(q)) return false;
+        if(isSkills){ if(filt!=='todas' && !it.beltCard && it.cat!==filt) return false; }
+        else { if(filt!=='todos' && it.stateTag!==filt) return false; }
+        return true;
+      });
+      // Habilidades: vista capada por defecto (Todas + sin búsqueda) para no saturar (14 skills).
+      const DEFAULT_N=6;
+      const capped = isSkills && filt==='todas' && !q;
+      const more = capped ? Math.max(0, pool.length - DEFAULT_N) : 0;
+      const items = capped ? pool.slice(0, DEFAULT_N) : pool;
+      const STATE_CHIPS=[{k:'todos',key:'workshop.filter.all_status',label:'Todos'},{k:'listo',key:'workshop.filter.ready',label:'Listos'},{k:'porconectar',key:'workshop.filter.connect',label:'Por conectar'},{k:'equipado',key:'workshop.filter.equipped',label:'Equipados'}];
+      const chips=(isSkills?SKILL_CATS:STATE_CHIPS).map(ct=>({ label:w(ct.key,ct.label), pick:()=>this.setState(st=>({closetFilter:{...st.closetFilter,[c.key]:ct.k}})),
+        style:'border:1.5px solid '+(filt===ct.k?'var(--accent)':'var(--line)')+';background:'+(filt===ct.k?'var(--accent-soft)':'var(--paper2)')+';color:'+(filt===ct.k?'var(--accent-deep)':'var(--muted)')+';border-radius:999px;padding:4px 11px;font:inherit;font-size:11.5px;font-weight:500;cursor:pointer' }));
+      const searchPh = isSkills?w('workshop.search.skill','Busca una habilidad…'):
+        w('workshop.search.tool','Busca una herramienta…');
+      const closetName=w(c.labelKey,c.label), closetDesc=w(c.descKey,c.desc);
+      const moreText=more?w(isSkills?'workshop.search.more.skills':'workshop.search.more.tools',
+        isSkills?'+{n} más — busca arriba o elige una categoría para verlas.':'+{n} más — busca arriba o elige una categoría para verlas.',{n:more}):'';
+      return { label:closetName, icon:c.icon, desc:closetDesc, glow, open, isMcp:c.key==='mcp',
+        filterable:true, q:(s.closetQ&&s.closetQ[c.key])||'', setQ:e=>{const v=e.target.value; this.setState(st=>({closetQ:{...st.closetQ,[c.key]:v}}));}, chips, searchPh, more, moreText, empty: open && items.length===0,
+        count, hasCount:count>0, caret:open?'▾':'▸', toggle:()=>this.toggleCloset(c.key), items,
+        wrapStyle:'border:1px solid '+(open?'var(--accent)':(glow?'#4A3F60':'var(--line)'))+';border-radius:var(--r-md);background:'+(open?'rgba(142,139,245,.08)':'transparent')+';overflow:hidden;transition:border-color .2s',
+        iconStyle:'width:34px;height:34px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-size:16px;flex:none;background:'+(glow||open?'var(--accent-soft)':'var(--paper2)')+';border:1px solid '+(glow||open?'#463A66':'var(--line)') };
+    });
+
+    // orbit + belt
+    const eqList=s.equipped.map(id=>all.find(x=>x.id===id)).filter(Boolean);
+    const vis=eqList.slice(0,8); const n=vis.length;
+    const cx=190, cy=150, R=118;   // centro de la órbita alineado con el muñequito centrado
+    const orbit=vis.map((b,i)=>{ const t=n===1?0.5:i/(n-1); const ang=(-104+208*t)*Math.PI/180;
+      const x=cx+R*Math.sin(ang), y=cy-R*Math.cos(ang)*0.72;
+      return { mono:b.mono, color:b.color, posStyle:'position:absolute;left:'+(x-19)+'px;top:'+(y-19)+'px;animation:badgeFloat '+(2.6+(i%3)*0.5)+'s ease-in-out infinite',
+        // la pieza FLOTA desde arriba y encaja, de a una (stagger por índice) — la metáfora del títere
+        badgeStyle:'width:38px;height:38px;border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:500;font-size:12px;box-shadow:0 8px 20px -6px rgba(0,0,0,.6),0 0 0 3px rgba(43,39,35,.9);background:'+b.color+';animation:pieceIn .55s cubic-bezier(.34,1.56,.64,1) both;animation-delay:'+(i*0.07).toFixed(2)+'s' }; });
+    const beltSlots=Array.from({length:6},(_,i)=>{ const it=eqList[i];
+      return it ? { filled:true, mono:it.mono, style:'flex:1;height:26px;border-radius:var(--r-xs);display:flex;align-items:center;justify-content:center;background:'+it.color }
+                : { filled:false, mono:'', style:'flex:1;height:26px;border-radius:var(--r-xs);border:1.5px dashed var(--line2);background:rgba(255,255,255,.02)' }; });
+
+    let powerKey='workshop.power.empty';
+    if(eqCount>=6) powerKey='workshop.power.strong'; else if(eqCount>=3) powerKey='workshop.power.equipped'; else if(eqCount>=1) powerKey='workshop.power.forming';
+    const powerLabel=w(powerKey,'En blanco');
+    const equippedCountText=w(eqCount===1?'workshop.power.count.one':'workshop.power.count.many',
+      eqCount===1?'{n} pieza equipada':'{n} piezas equipadas',{n:eqCount});
+    const pct=Math.min(100,Math.round(eqCount/8*100));
+    const auraScale=0.55+Math.min(eqCount,8)*0.055, auraOp=Math.min(1,0.25+eqCount*0.09);
+
+
+    // params labels
+    const autonomyLabel=s.autonomy<33?w('workshop.params.autonomy.ask','pregunta primero'):
+      (s.autonomy<67?w('workshop.params.autonomy.check','avanza y comprueba'):w('workshop.params.autonomy.full','automático'));
+    const detailLabel=s.detail<33?w('workshop.params.detail.concise','escueto'):
+      (s.detail<67?w('workshop.params.detail.just_right','lo justo'):w('workshop.params.detail.detailed','detallado'));
+
+    // team
+    const team=s.team.map(id=>this.teamPoolData.find(a=>a.id===id)).filter(Boolean);
+    const teamSlots=Array.from({length:4},(_,i)=>{ const a=team[i];
+      return a ? { filled:true, mono:a.mono, color:a.color, remove:()=>this.setState(st=>({team:st.team.filter(x=>x!==a.id)})),
+            slotStyle:'position:relative;width:46px;height:46px;border-radius:var(--r-md);border:1px solid var(--line);background:var(--paper2);display:flex;align-items:center;justify-content:center' }
+        : { filled:false, slotStyle:'width:46px;height:46px;border-radius:var(--r-md);border:1.5px dashed var(--line2);background:rgba(255,255,255,.02)' }; });
+    const teamNameKeys={invest:'workshop.team.name.researcher',redact:'workshop.team.name.writer',verif:'workshop.team.name.checker',analista:'workshop.team.name.analyst'};
+    const teamPool=this.teamPoolData.filter(a=>!s.team.includes(a.id)).map(a=>({ name:w(teamNameKeys[a.id],a.name), mono:a.mono, color:a.color,
+      add:()=>this.setState(st=>st.team.length<4?{team:[...st.team,a.id]}:{}),
+      style:'display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--paper2);color:var(--ink);border-radius:999px;padding:5px 11px 5px 6px;font:inherit;font-size:12.5px;font-weight:500;cursor:pointer' }));
+      const teamHint=team.length>0
+        ? w(team.length===1?'workshop.team.hint.one':'workshop.team.hint.many',team.length===1?'1 agente auxiliar · {agent} lo coordina.':'{n} agentes auxiliares · {agent} los coordina.',{n:team.length,agent:s.name||w('workshop.agent_name.default','tu agente')})
+        : w('workshop.team.hint.none','Sin agentes auxiliares.');
+
+    // permisos
+    const has=id=>s.equipped.includes(id);
+    const permAuto=[{text:w('workshop.permission.read_analyze','Leer y analizar')},{text:w('workshop.permission.web','Navegar la web')},{text:w('workshop.permission.files','Armar y editar archivos')}];
+    const permAsk=[];
+    if(has('email')||has('gmail')) permAsk.push({icon:'✉️',text:w('workshop.permission.send_email','Enviar un correo'),tag:w('workshop.permission.needs_ok','pide tu OK')});
+    if(has('slack')) permAsk.push({icon:'💬',text:w('workshop.permission.post_slack','Publicar en Slack'),tag:w('workshop.permission.needs_ok','pide tu OK')});
+    if(has('calendario')) permAsk.push({icon:'📅',text:w('workshop.permission.calendar','Escribir en tu calendario'),tag:w('workshop.permission.needs_ok','pide tu OK')});
+    if(has('notion')||has('sheets')||has('drive')) permAsk.push({icon:'📝',text:w('workshop.permission.save_apps','Guardar cambios en tus apps'),tag:w('workshop.permission.needs_ok','pide tu OK')});
+
+    // plan rows
+    const steps=this.planSteps();
+    const planRows=steps.map((st,i)=>{
+      const done=i<s.run, active=i===s.run;
+      const isStopActive=active && st.stop && !s.runApproved;
+      let node=st.node, nodeBg='var(--paper2)', nodeColor='var(--faint)', nodeBorder='var(--line2)';
+      if(done){ node='✓'; nodeBg='var(--green-bg)'; nodeColor='var(--green)'; nodeBorder='#2F4A38'; }
+      else if(isStopActive){ nodeBg='var(--amber-bg)'; nodeColor='var(--amber)'; nodeBorder='var(--amber)'; }
+      else if(active){ nodeBg='var(--accent-soft)'; nodeColor='var(--accent-deep)'; nodeBorder='var(--accent)'; }
+      const dim = s.run>=0 && !done && !active;
+      return {
+        title:w(st.titleKey,st.title), armario:st.armarioKey?w(st.armarioKey,st.armario):'', hasArmario:!!st.armario,
+        hasIo:!!st.io, ioText:st.ioKey?w(st.ioKey,st.io):'', stop:!!st.stop,
+        ioStyle:'font-size:11px;color:'+(st.external?'var(--amber)':'var(--muted)')+';background:'+(st.external?'var(--amber-bg)':'var(--paper2)')+';border:1px solid '+(st.external?'#5A4A2E':'var(--line)')+';border-radius:999px;padding:2px 8px',
+        node, nodeStyle:'width:30px;height:30px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;z-index:1;border:2px solid var(--paper);background:'+nodeBg+';color:'+nodeColor+';box-shadow:0 0 0 1px '+nodeBorder,
+        cardBg: active? (isStopActive?'var(--amber-bg)':'rgba(142,139,245,.09)') : 'var(--paper2)',
+        cardBorder: active? (isStopActive?'#5A4A2E':'var(--accent)') : 'var(--line)',
+        titleColor: dim?'var(--faint)':'var(--ink)',
+        showApprove:isStopActive,
+        approveRun:()=>this.approveRun(), stageArmando:()=>this.setState({stage:'armando'}),
+      };
+    });
+    const planIdle=s.run<0, planRunning=s.run>=0 && s.run<steps.length && !(steps[s.run]&&steps[s.run].stop&&!s.runApproved), planDone=s.run>=steps.length;
+    const planTitle=w(planDone?'workshop.plan.title.done':(planIdle?'workshop.plan.title.idle':'workshop.plan.title.running'),planDone?'Listo':(planIdle?'El plan, antes de actuar':'Trabajando…'));
+    const planSub=w(planIdle?'workshop.plan.subtitle.idle':(planDone?'workshop.plan.subtitle.done':'workshop.plan.subtitle.running'),planIdle?'Los pasos en orden y dónde se detiene para pedirte permiso.':(planDone?'Terminó lo que podía hacer solo; lo que salía al mundo pasó por tu aprobación.':'Va marcando los pasos y se detiene solo cuando algo sale al mundo.'));
+
+    const canLaunch=s.purpose.trim().length>0 || eqCount>0;
+    const ctaStyle='text-decoration:none;align-self:flex-start;display:inline-flex;align-items:center;border-radius:999px;padding:12px 24px;font-size:14.5px;font-weight:500;transition:background .15s;'+(canLaunch?'background:var(--accent);color:var(--on-accent);':'background:#3A3450;color:#8E84A8;pointer-events:none;');
+
+    // NICHO — chips explícitos. La regex del propósito SUGIERE (pre-marca con ·sug) pero NO
+    // decide: el chip elegido manda. 'General' = sin nicho (launch cae a su heurística).
+      const pl=s.purpose.toLowerCase();
+    let suggested=null;
+    if(/investig|paper|art[íi]culo cient|acad[ée]mic|\bcita\b|citas|literatura|\bdoi\b|crossref|tesis|bibliograf|journal|fuente cient/.test(pl)) suggested='research';
+    else if(/pib|banco mundial|world bank|banco central|bce|macro|finanz|inflaci|desemple|tasa|derivados/.test(pl)) suggested='finanzas';
+    else if(/correo|mail|gmail|bandeja|agenda|calendar|reuni[óo]n|slack|borrador|oficina/.test(pl)) suggested='cowork';
+    const NICHE_DEFS=[{k:null,key:'workshop.niche.general',label:'General'},{k:'research',key:'workshop.niche.research',label:'Investigación'},{k:'finanzas',key:'workshop.niche.finance',label:'Finanzas'},{k:'cowork',key:'workshop.niche.office',label:'Oficina'}];
+    const nicheChips=NICHE_DEFS.map(n=>{
+      const active = s.niche===n.k || (n.k===null && !s.niche);
+      const sug = !s.niche && n.k && suggested===n.k;
+      return { label:w(n.key,n.label)+(sug?' '+w('workshop.niche.suggested','· sugerido'):''), pick:()=>this.pickNiche(n.k),
+        style:'border-radius:999px;padding:5px 13px;font:inherit;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;border:1.5px solid '
+          +(active?'var(--accent)':(sug?'#6E5AB0':'var(--line)'))+';background:'+(active?'var(--accent)':(sug?'var(--accent-soft)':'var(--paper2)'))
+          +';color:'+(active?'#fff':(sug?'var(--accent-deep)':'var(--muted)')) };
+    });
+
+    return {
+      // mode
+      // identity
+      name:s.name, purpose:s.purpose,
+      setName:e=>this.setState({name:e.target.value}), setPurpose:e=>this.setState({purpose:e.target.value}),
+      applyEx1:()=>this.apply(this.EX1), applyEx2:()=>this.apply(this.EX2),
+      // model
+      modelName:curModel.name, modelCaret:s.modelOpen?'▴':'▾',
+      // «configurado» = lo que el motor midió, no lo que el usuario tipeó una vez
+      modelConfigured: !curModel.needsKey && curModel.conectado === true,
+      modelEstado: (this.estadoDe(curModel)||{}).texto || '',
+      keyBusy: s.keyBusy, keyMsg: s.keyMsg, modelosError: s.modelosError,
+      keyMsgColor: s.keyMsg && s.keyMsg.cls==='mal' ? 'var(--red)'
+                 : s.keyMsg && s.keyMsg.cls==='ok' ? 'var(--green)' : 'var(--muted)',
+      toggleModel:()=>this.setState(st=>({modelOpen:!st.modelOpen})), closeModel:()=>this.setState({modelOpen:false,pendingKey:null,keyMsg:null}),
+      modelOpen:s.modelOpen, modelSearch:s.modelSearch, setModelSearch:e=>this.setState({modelSearch:e.target.value}),
+      modelList, keyDraft:s.keyDraft, setKeyDraft:e=>this.setState({keyDraft:e.target.value}),
+      // framing
+      framings, framingLine:s.framingLine, setFramingLine:e=>this.setState({framingLine:e.target.value}),
+      systemPrompt:s.systemPrompt, setSystemPrompt:e=>this.setState({systemPrompt:e.target.value}),
+      // memory
+      memory:s.memory, toggleMemory:()=>this.setState(st=>({memory:!st.memory})),
+      memHint: s.memory?w('workshop.memory.enabled_hint','Recuerda lo que han venido haciendo y lo que sabe de ti, entre tareas.'):
+        w('workshop.memory.disabled_hint','Arranca de cero cada vez, sin guardar nada entre tareas.'),
+      memToggleStyle:'position:relative;width:44px;height:25px;border-radius:999px;border:none;cursor:pointer;transition:background .2s;flex:none;background:'+(s.memory?'var(--accent)':'var(--line2)'),
+      memKnobStyle:'position:absolute;top:3px;left:3px;width:19px;height:19px;border-radius:50%;background:#fff;transition:transform .2s;transform:translateX('+(s.memory?'19px':'0')+')',
+      knowsList,
+      knowsDraft:s.knowsDraft, setKnowsDraft:(e)=>this.setKnowsDraft(e), addKnow:()=>this.addKnow(),
+      ragDocsList, hasDocs:ragDocsList.length>0, pickDoc:()=>this.pickDoc(), ragBusy:s.ragBusy,
+      // closets / stage
+      closets, orbit, beltSlots, nicheChips, nicheLoading:s.nicheLoading,
+      // paneles colapsables (caret ▸ cerrado / ▾ abierto). Default todos cerrados → limpio.
+      secCaracterOpen:!s.folded.caracter, secCaracterToggle:()=>this.toggleFold('caracter'), secCaracterCaret:s.folded.caracter?'▸':'▾',
+      secMemoriaOpen:!s.folded.memoria, secMemoriaToggle:()=>this.toggleFold('memoria'), secMemoriaCaret:s.folded.memoria?'▸':'▾',
+      secArmariosOpen:!s.folded.armarios, secArmariosToggle:()=>this.toggleFold('armarios'), secArmariosCaret:s.folded.armarios?'▸':'▾',
+      secParamOpen:!s.folded.parametros, secParamToggle:()=>this.toggleFold('parametros'), secParamCaret:s.folded.parametros?'▸':'▾',
+      secEquipoOpen:!s.folded.equipo, secEquipoToggle:()=>this.toggleFold('equipo'), secEquipoCaret:s.folded.equipo?'▸':'▾',
+      secPermisosOpen:!s.folded.permisos, secPermisosToggle:()=>this.toggleFold('permisos'), secPermisosCaret:s.folded.permisos?'▸':'▾',
+      // lo que era "Modo técnico": no un modo, dos pliegues que se abren donde hacen falta
+      secPromptOpen:!s.folded.prompt, secPromptToggle:()=>this.toggleFold('prompt'), secPromptCaret:s.folded.prompt?'▸':'▾',
+      secMcpCrudoOpen:!s.folded.mcpcrudo, secMcpCrudoToggle:()=>this.toggleFold('mcpcrudo'), secMcpCrudoCaret:s.folded.mcpcrudo?'▸':'▾',
+      isEmpty:eqCount===0, equippedCount:eqCount, equippedCountText, powerLabel, powerPctStyle:'width:'+pct+'%',
+      auraStyle:'transform:translateX(-50%) scale('+auraScale.toFixed(2)+');opacity:'+auraOp.toFixed(2),
+      hasTools:eqCount>0,
+      // segmented / stage mode
+      stageArmando:()=>this.setState({stage:'armando'}), stagePlan:()=>this.setState({stage:'plan',run:-1,runApproved:false}),
+      stageIsArmando:s.stage==='armando', stageIsPlan:s.stage==='plan',
+      segArmandoStyle:'border:none;border-radius:999px;padding:7px 16px;font:inherit;font-size:13px;font-weight:500;cursor:pointer;'+(s.stage==='armando'?'background:var(--accent);color:var(--on-accent)':'background:none;color:var(--muted)'),
+      segPlanStyle:'border:none;border-radius:999px;padding:7px 16px;font:inherit;font-size:13px;font-weight:500;cursor:pointer;'+(s.stage==='plan'?'background:var(--accent);color:var(--on-accent)':'background:none;color:var(--muted)'),
+      // params
+      autonomy:s.autonomy, setAutonomy:e=>this.setState({autonomy:+e.target.value}), autonomyLabel,
+      detail:s.detail, setDetail:e=>this.setState({detail:+e.target.value}), detailLabel,
+      maxSteps:s.maxSteps, setMaxSteps:e=>this.setState({maxSteps:+e.target.value}),
+      // team
+      teamSlots, teamPool, teamHint,
+      // permisos
+      permAuto, permAsk, hasAsk:permAsk.length>0, noAsk:permAsk.length===0,
+      // plan
+      planRows, planIdle, planRunning, planDone, planTitle, planSub,
+      planBadge:w(planDone?'workshop.plan.badge.done':(planIdle?'workshop.plan.badge.idle':'workshop.plan.badge.running'),planDone?'completado':(planIdle?'a tu aprobación':'en curso')),
+      planBadgeStyle:'font-size:11px;font-weight:500;border-radius:999px;padding:3px 10px;'+(planDone?'color:var(--green);background:var(--green-bg)':(planIdle?'color:var(--accent-deep);background:var(--accent-soft)':'color:var(--amber);background:var(--amber-bg)')),
+      startRun:()=>this.startRun(), approveRun:()=>this.approveRun(),
+      // misc
+      addOwn:()=>this.setState(st=>st.equipped.includes('micrm')?{}:{equipped:[...st.equipped,'micrm'],connected:[...st.connected,'micrm']}),
+      ctaStyle, launch:()=>this.launch(),
+    };
+  }
+}
+</script>
+<!-- [T6 · §10 LEY MINIMALISTA] EL [?]: esta pantalla también saca sus párrafos a docs/guia, así
+     que monta el MISMO componente (mismo botón, mismo popover, misma fuente). Sin copiloto acá:
+     `onGuia` va sin definir y el pie "Preguntale al Guía" no se ofrece — un camino que no existe
+     en esta superficie no se dibuja. El listener es delegado: cubre lo que el template re-pinta. -->
+<script type="module">
+  import { montarAyuda } from "./cuarto/cuarto.ayuda.js";
+  montarAyuda({ getLang: () => (window.AlephI18n && window.AlephI18n.lang && window.AlephI18n.lang()) || "es" });
+
+  /* [F7·B] EL DICCIONARIO ÚNICO, al alcance del componente.
+   * El taller es un `.dc` (script clásico) y no puede importar módulos por sí mismo. En vez
+   * de escribirle copy propio —que sería otra tabla más en esta pantalla— se importa el
+   * semáforo, que al cargarse publica `window.CuartoSemaforo`: la misma `CAUSAS`/`CAMINOS`
+   * que pintan Modelos, la Sala y los Conectores. Regla sellada: ninguna causa llega a una
+   * superficie sin copy. El evento avisa al taller de que ya puede repintar. */
+  import "./cuarto/cuarto.semaforo.js";
+  window.dispatchEvent(new CustomEvent("aleph:semaforo"));
+</script>
+</body>
+</html>

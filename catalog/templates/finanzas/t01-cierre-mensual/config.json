@@ -1,0 +1,36 @@
+{
+  "belt_path": "catalog/templates/finanzas/belt-finanzas.mcp.json",
+  "framing_path": "catalog/templates/finanzas/t01-cierre-mensual/framing.md",
+  "framing_fallback": "Eres un agente de contabilidad. Tomas el archivo Excel de transacciones, lo limpias y produces un Estado de Resultados con fórmulas SUMIFS vivas en formato NIIF. Nunca inventas números.",
+  "rag_dir": null,
+  "base_url": "http://127.0.0.1:11434/v1",
+  "model": "qwen3:8b",
+  "max_turns": 12,
+  "max_tokens": 4096,
+  "temperature": 0,
+  "tool_filters": {
+    "excel": [
+      "create_workbook",
+      "create_worksheet",
+      "read_data_from_excel",
+      "write_data_to_excel",
+      "apply_formula",
+      "validate_formula_syntax",
+      "format_range",
+      "get_workbook_metadata",
+      "copy_range",
+      "insert_rows",
+      "delete_range"
+    ]
+  },
+  "surgery_params": {
+    "input_file": "__REQUIRED__",
+    "output_file": "__AUTO__",
+    "mes_label": "",
+    "columna_fecha": "Fecha",
+    "columna_monto": "Monto",
+    "columna_categoria": "Categoría",
+    "estructura": "NIIF"
+  },
+  "api_key": {}
+}

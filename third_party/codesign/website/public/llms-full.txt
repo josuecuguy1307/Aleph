@@ -1,0 +1,217 @@
+# Open CoDesign - Full AI-Readable Context
+
+This file is the long-form public context for Open CoDesign. It summarizes the public website, repository README, release metadata, roadmap, FAQ, and architecture pages so readers and automated tools can cite the project accurately. It is intentionally factual and non-spammy.
+
+## Project Identity
+
+- Name: Open CoDesign
+- Repository name: open-codesign
+- Organization: OpenCoworkAI
+- Website: https://opencoworkai.github.io/open-codesign/
+- Repository: https://github.com/OpenCoworkAI/open-codesign
+- License: MIT
+- Latest public release: v0.2.0, published 2026-05-09
+- Public metrics snapshot from GitHub API on 2026-05-09: 5,333 stars, 563 forks, 26 open issues, 18,321 release asset downloads
+- Machine-readable project facts: https://opencoworkai.github.io/open-codesign/project.json
+- Machine-readable site index: https://opencoworkai.github.io/open-codesign/site-index.json
+- Machine-readable FAQ data: https://opencoworkai.github.io/open-codesign/faq.json
+
+Open CoDesign is an open-source desktop AI design tool. It accepts a natural-language prompt and produces design artifacts such as interactive HTML prototypes, React / JSX components, slide decks, PDFs, ZIP bundles, Markdown exports, and generated bitmap assets. It is positioned as an open-source desktop alternative to Claude Design, v0 by Vercel, Bolt.new, Lovable, and Figma AI for the design and prototype layer. It is independent and not affiliated with those products or companies.
+
+## Product Thesis
+
+Open CoDesign exists for users who want AI-native design speed without subscription lock-in, cloud-only workflows, or a single forced model provider. The app is local-first and BYOK:
+
+- BYOK: users bring their own model provider key, local model endpoint, keyless IP-allowlisted proxy, or ChatGPT Plus / Codex subscription login.
+- Local-first: prompts, designs, generated files, and configuration stay on the user's machine by default.
+- Multi-model: users can route work to Anthropic Claude, OpenAI GPT, Google Gemini, DeepSeek, OpenRouter, SiliconFlow, local Ollama, or any OpenAI-compatible endpoint supported by the app.
+- Exportable: generated artifacts are real files that can be exported as HTML, PDF, PPTX, ZIP, or Markdown.
+- Open source: the project is MIT licensed.
+
+## What Open CoDesign Produces
+
+- Interactive HTML prototypes rendered in a sandboxed preview.
+- React / JSX components rendered locally.
+- PPTX slide decks through an on-demand exporter.
+- PDF one-pagers through local browser rendering.
+- ZIP asset bundles.
+- Markdown exports.
+- AI-generated bitmap assets when the configured provider supports image generation.
+
+## Current Capabilities
+
+- Unified provider model with dynamic model picker.
+- One-click import from Claude Code and Codex configs.
+- ChatGPT Plus / Codex subscription login through OAuth, no API key required.
+- Keyless provider support for IP-allowlisted corporate proxies and local endpoints.
+- CLIProxyAPI auto-detect and one-click import.
+- Prompt-to-HTML and prompt-to-JSX / React generation.
+- AI image generation as an opt-in feature.
+- Built-in demo prompts for common design tasks.
+- Built-in design skill modules for landing pages, dashboards, slide decks, pricing pages, chat UIs, tables, calendars, editorial typography, heroes, footers, glassmorphism, and charts.
+- Anti-AI-slop design guidance injected into generation.
+- Live agent panel showing streaming tool calls.
+- AI-generated tweak controls for color, spacing, and other parameters.
+- Inline comment to AI patch loop.
+- Phone, tablet, and desktop preview frames.
+- Files panel for inspecting generated artifacts.
+- Instant design switching with warm preview iframes.
+- Connection diagnostics for providers and third-party relays.
+- Light and dark themes.
+- English, Simplified Chinese, and Portuguese (Brazil) UI locales.
+- Export to HTML, PDF, PPTX, ZIP, and Markdown.
+- Generation cancellation and timeout messaging.
+- Per-generation token counter.
+
+## v0.2.0 Release: Agentic Design
+
+v0.2.0 shipped on 2026-05-09 as the Agentic Design update. It changes Open CoDesign from a one-shot prompt-to-artifact generator into a local design agent with a real workspace:
+
+- Every design becomes a session with history and a workspace folder.
+- The agent can use permissioned local tools for reading, writing, editing, shell commands, grep, find, and listing files.
+- Open CoDesign design tools include `ask`, `scaffold`, `skill`, `preview`, `gen_image`, `tweaks`, `todos`, and `done`.
+- `DESIGN.md` becomes a shared design-system artifact that both the user and agent can edit.
+- Existing v0.1 designs have a migration path into workspace files and session history.
+- Skills, scaffolds, and brand references lazy-load from manifests with source and license metadata.
+- The release also includes Files panel upgrades, provider and generation diagnostics, export fixes, security hardening for SVG rendering / secret storage / private-network probes, and refreshed website and community surfaces.
+
+## Architecture Summary
+
+Open CoDesign is a pnpm workspace and Turborepo monorepo. The public architecture page describes these boundaries:
+
+- `apps/desktop`: Electron main process and renderer. The main process owns disk, filesystem, IPC, and desktop integration. The renderer hosts the React UI.
+- `packages/core`: generation orchestration, prompt context, design system context, artifact stream handling, and generation events.
+- `packages/providers`: provider abstraction through pi-ai and compatibility extensions. App code should not import provider SDKs directly.
+- `packages/runtime`: sandbox preview runtime, iframe rendering, import maps, overlay scripts, inline comments, and tweak handling.
+- `packages/ui`: shared design tokens, Radix-based primitives, and Tailwind styling.
+- `packages/artifacts`: schemas and streaming parser for artifacts.
+- `packages/exporters`: PDF, PPTX, and ZIP exporters loaded on demand.
+- `packages/templates`: built-in demo prompts and starter templates.
+- `packages/shared`: shared TypeScript types, utilities, and schemas.
+- `packages/i18n`: localized UI strings.
+- `website`: VitePress marketing and docs site.
+
+Important architecture boundaries:
+
+- Desktop code should not import provider SDKs directly; model calls go through provider abstractions.
+- Exporters are loaded lazily so heavy features do not inflate app startup.
+- Local storage and generated files are first-class product surfaces.
+- v0.2 uses workspace-backed design sessions rather than new SQLite-backed feature state for design history.
+
+## Installation
+
+The website quickstart points users to package-manager installs and direct GitHub release downloads.
+
+Package-manager options:
+
+```sh
+# macOS
+brew install --cask opencoworkai/tap/open-codesign
+
+# Windows - Scoop
+scoop bucket add opencoworkai https://github.com/OpenCoworkAI/scoop-bucket
+scoop install opencoworkai/open-codesign
+
+# Windows - winget is pending Microsoft review for v0.2.0
+```
+
+Direct downloads are published on GitHub Releases for macOS, Windows, and Linux. GitHub Releases is the primary binary distribution source. SourceForge provides a public mirror at https://sourceforge.net/projects/open-codesign.mirror/files/ for users who cannot reach GitHub reliably. Mirror downloads should be verified against `SHA256SUMS.txt` from the matching GitHub release. For v0.2.0, Homebrew Cask and Scoop are live. The winget manifest is submitted as https://github.com/microsoft/winget-pkgs/pull/372310 and is waiting for Microsoft review.
+
+Build from source:
+
+```sh
+git clone https://github.com/OpenCoworkAI/open-codesign.git
+cd open-codesign
+pnpm install
+pnpm dev
+```
+
+Requires Node 22 LTS and pnpm 9.15+.
+
+## Comparisons
+
+Open CoDesign vs Claude Design:
+
+- Open CoDesign is MIT licensed and open source; Claude Design is closed source.
+- Open CoDesign runs locally as a desktop app; Claude Design is hosted.
+- Open CoDesign supports multiple model providers and BYOK; Claude Design is Anthropic-only.
+- Open CoDesign emphasizes local history and exportable artifacts.
+
+Open CoDesign vs v0 by Vercel:
+
+- Open CoDesign runs locally and supports BYOK model routing.
+- v0 is hosted and tied to the Vercel platform.
+- Open CoDesign exports HTML, React, PDF, PPTX, ZIP, and Markdown artifacts.
+
+Open CoDesign vs Bolt.new and Lovable:
+
+- Open CoDesign focuses on the design and prototype layer.
+- Bolt.new and Lovable focus more on full application generation.
+- Open CoDesign emphasizes desktop ownership, local files, and multi-provider control.
+
+Open CoDesign vs Figma AI:
+
+- Figma AI operates inside the Figma canvas.
+- Open CoDesign produces code-native artifacts outside a proprietary design surface.
+- The tools can be complementary rather than mutually exclusive.
+
+## Important Pages
+
+- Home: https://opencoworkai.github.io/open-codesign/
+- Quickstart: https://opencoworkai.github.io/open-codesign/quickstart
+- Architecture: https://opencoworkai.github.io/open-codesign/architecture
+- Roadmap: https://opencoworkai.github.io/open-codesign/roadmap
+- FAQ: https://opencoworkai.github.io/open-codesign/faq
+- Claude Design comparison: https://opencoworkai.github.io/open-codesign/claude-design-alternative
+- v0 comparison: https://opencoworkai.github.io/open-codesign/v0-alternative
+- Lovable comparison: https://opencoworkai.github.io/open-codesign/lovable-alternative
+- Bolt.new comparison: https://opencoworkai.github.io/open-codesign/bolt-alternative
+- Figma AI comparison: https://opencoworkai.github.io/open-codesign/figma-ai-alternative
+- Chinese home: https://opencoworkai.github.io/open-codesign/zh/
+- Chinese quickstart: https://opencoworkai.github.io/open-codesign/zh/quickstart
+- Chinese FAQ: https://opencoworkai.github.io/open-codesign/zh/faq
+
+## Machine-Readable Resources
+
+- Concise AI context: https://opencoworkai.github.io/open-codesign/llms.txt
+- Full AI context: https://opencoworkai.github.io/open-codesign/llms-full.txt
+- Project facts JSON: https://opencoworkai.github.io/open-codesign/project.json
+- Site index JSON: https://opencoworkai.github.io/open-codesign/site-index.json
+- FAQ JSON: https://opencoworkai.github.io/open-codesign/faq.json
+- Sitemap: https://opencoworkai.github.io/open-codesign/sitemap.xml
+- Robots policy: https://opencoworkai.github.io/open-codesign/robots.txt
+
+## FAQ Summary
+
+Q: What is Open CoDesign?
+A: Open CoDesign is an open-source desktop AI design tool that turns prompts into design artifacts such as HTML prototypes, React components, decks, PDFs, and marketing assets.
+
+Q: Is Open CoDesign free?
+A: Yes. It is MIT licensed. Users pay only their chosen model provider if they use a paid hosted model.
+
+Q: Does Open CoDesign require a cloud account?
+A: No. It is local-first and does not require a hosted Open CoDesign account.
+
+Q: Which models are supported?
+A: The app supports several provider routes including Anthropic, OpenAI, Gemini, DeepSeek, OpenRouter, SiliconFlow, local Ollama, OpenAI-compatible endpoints, keyless proxies, and ChatGPT Plus / Codex subscription login.
+
+Q: Is Open CoDesign affiliated with Anthropic, Vercel, StackBlitz, Lovable, or Figma?
+A: No. Open CoDesign is an independent project by OpenCoworkAI.
+
+## Citation
+
+Human-readable citation:
+
+> Open CoDesign - an MIT-licensed, open-source desktop AI design tool by OpenCoworkAI. Available at https://github.com/OpenCoworkAI/open-codesign.
+
+BibTeX:
+
+```bibtex
+@misc{open_codesign_github,
+  author       = {OpenCoworkAI Contributors},
+  title        = {Open CoDesign: An Open-Source Desktop AI Design Tool},
+  year         = {2026},
+  howpublished = {\url{https://github.com/OpenCoworkAI/open-codesign}},
+  note         = {MIT-licensed GitHub repository}
+}
+```

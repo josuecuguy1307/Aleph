@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inspección — Aleph</title>
+<link rel="stylesheet" href="../vendor/fonts.css">
+<script src="../auth.js"></script>
+<script src="../i18n.js"></script>
+<script src="../theme.js"></script>
+<script src="../nav.js"></script>
+<link rel="stylesheet" href="../aleph-tokens.css"><!-- [identidad visual] la piel: tokens, forma y tipografía en un solo lugar -->
+<style>
+  /* [C · Cuarto limpio · item 7] INSPECCIÓN — sección propia.
+     El modal "Suma tu software / Conectar y forjar" dejó de vivir ENCIMA del diorama: acá tiene su
+     pantalla, como Métodos. El flujo es inspeccionar/armar → guardar → aparece en tu arsenal; y
+     DESDE EL CUARTO sólo se EQUIPA (cada fila del arsenal enlaza a cuarto.pixi.html?equip=<key>,
+     el mismo contrato que ya usa la pantalla de Conexiones).
+     Cero teatro: los 3 transportes pegan a los MISMOS endpoints reales que el modal
+     (/v1/inspect/byo para MCP url/stdio · /v1/inspect/forge vía cuarto.inspect.js para API cruda)
+     y el log narra los eventos SSE GENUINOS del Motor B, no una animación. */
+  /* [sistema 2026-07-31] Inspección entra al sistema "Híbrido Spatial + Soft futurism".
+     Las primitivas (.ds-plane/.ds-well/.ds-track/.ds-card/.ds-item/.ds-title/.ds-sub/…) llegan
+     solas por aleph-tokens.css → @import aleph-ds.css; acá NO se redeclara ningún token — el
+     `--bad` local MURIÓ, el sistema ya tiene `--red` para lo mismo. El comportamiento del
+     Vertical Sliding Focus lo carga nav.js (aleph-ds.js).
+     Lo que cambia es la PIEL: cero bordes, cero relieves, cero hundidos — la jerarquía es
+     sombra + radio. Color 90/8/2: neutros casi todo, el violeta sólo en el transporte elegido
+     y en el elemento en foco de la pista, verde/ámbar/rojo sólo como estado.
+     Lo que NO cambia: ni un id (#transporte #fUrl #fCmd #fFgUrl #fForma #fCreds #go #msg #log
+     #arsList #arsCount #arsReload …), ni una clase que lea el módulo o verify_cuarto_limpio.mjs
+     (.campos/.seg/.ars/.an/.ak/.aeq/.vacio/.msg), ni una acción, ni un texto, ni un estado. */
+  *{box-sizing:border-box} html,body{margin:0} [hidden]{display:none!important}
+  body{background:var(--page-bg);min-height:100vh;font-family:var(--font-ui);
+    color:var(--ink);-webkit-font-smoothing:antialiased}
+  a{text-decoration:none;color:inherit} button{font-family:inherit}
+  .wrap{max-width:1180px;margin:0 auto;padding:26px 20px 60px}
+  h1{margin:0 0 10px}
+  .lede{margin:0 0 22px;max-width:62ch}
+  .cols{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:20px;align-items:start}
+  @media (max-width:900px){ .cols{grid-template-columns:1fr} }
+  /* el PLANO DE CONTENIDO (r30 + sombra ambiental): una columna, un plano */
+  .card{border:0}
+  .card h2{font:400 var(--fs-xs) var(--font-ui);letter-spacing:.09em;text-transform:uppercase;
+    color:var(--muted);margin:0 0 14px}
+  .seg{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:16px}
+  .seg button{flex:1 1 auto;padding:9px 14px;border:0;border-radius:var(--r-full);background:var(--paper2);
+    color:var(--muted);font:400 var(--fs-sm) var(--font-ui);cursor:pointer;white-space:nowrap}
+  .seg button:hover{color:var(--ink)}
+  /* el destino activo se tiñe con el acento — no se enmarca */
+  .seg button.on{background:var(--accent-soft);border:0;color:var(--accent-deep)}
+  label{display:block;font:400 12px var(--font-ui);margin:13px 0 6px;color:var(--ink)}
+  .hint{font-weight:300;color:var(--muted)}
+  input,textarea,select{width:100%;padding:11px 14px;border:0;border-radius:var(--r-md);
+    background:var(--paper2);color:var(--ink);font:300 13px var(--font-ui)}
+  textarea{font-family:var(--font-mono);font-size:12px}
+  /* el foco NO se marca con línea: se tiñe con el acento */
+  input:focus,textarea:focus,select:focus{outline:0;background:var(--accent-soft)}
+  .row2{display:flex;gap:8px} .row2>*{flex:1;min-width:0}
+  .nota{font:300 12px/1.5 var(--font-ui);color:var(--muted);margin:12px 0 0}
+  .nota b{color:var(--ink);font-weight:400}
+  .foot{display:flex;align-items:center;gap:12px;margin-top:20px}
+  /* la acción primaria INVIERTE el campo; el acento queda reservado al 8% */
+  .go{padding:12px 20px;border:0;border-radius:var(--r-md);background:var(--ink);color:var(--paper);
+    font:400 12.5px var(--font-ui);cursor:pointer;white-space:nowrap}
+  .go:hover{filter:brightness(1.12)}
+  .go:disabled{opacity:.5;cursor:default}
+  .msg{flex:1;min-width:0;font:300 12.5px/1.45 var(--font-ui)}
+  .msg b{font-weight:400}
+  .msg.bad{color:var(--red)} .msg.ok{color:var(--green)} .msg.work{color:var(--muted)}
+  /* LOG del Motor B: eventos SSE reales, uno por línea. Es la evidencia de que forjó de verdad. */
+  #log{margin-top:16px;max-height:230px;overflow:auto;border:0;border-radius:var(--r-lg);
+    background:var(--paper2);padding:12px 15px;font:300 11.5px/1.55 var(--font-ui);
+    color:var(--muted);display:none}
+  #log.on{display:block} #log div{padding:1px 0} #log code{font-family:var(--font-mono)}
+  /* ARSENAL — la lista natural de la pantalla: Vertical Sliding Focus */
+  .arsFoot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
+  .arsFoot button{border:0;background:var(--paper2);color:var(--muted);border-radius:var(--r-full);
+    padding:6px 13px;font:400 var(--fs-sm) var(--font-ui);cursor:pointer}
+  .arsFoot button:hover{color:var(--ink)}
+  #arsList{display:flex;flex-direction:column;gap:10px}
+  /* la fila es un .ds-card .ds-item: la forma la pone el sistema, acá sólo su reparto */
+  .ars{display:flex;align-items:center;gap:11px;border:0}
+  .ars .an{flex:1;min-width:0;font:400 13.5px var(--font-ui);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .ars .ak{font:300 var(--fs-xs) var(--font-ui);color:var(--muted);flex:none}
+  .ars .aeq{flex:none;border:0;background:var(--ink);color:var(--paper);
+    border-radius:var(--r-md);padding:7px 15px;font:400 var(--fs-sm) var(--font-ui);cursor:pointer}
+  .ars .aeq:hover{filter:brightness(1.12)}
+  .vacio{font:300 12.5px/1.5 var(--font-ui);color:var(--muted);margin:0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1 class="ds-title">Inspección</h1>
+  <p class="lede ds-sub">Conecta tu software y lo abro de verdad: leo sus tools reales y las guardo en tu arsenal.
+    Después, en el Cuarto sólo lo equipas. Si no conecta, te lo digo — nada de piezas de mentira.</p>
+
+  <div class="cols">
+    <!-- ── inspeccionar / armar ─────────────────────────────────────────── -->
+    <div class="card ds-plane">
+      <h2>Inspeccionar o armar</h2>
+      <div class="seg" id="transporte">
+        <button data-v="http" class="on">MCP · URL (HTTP)</button>
+        <button data-v="stdio">MCP · comando (stdio)</button>
+        <button data-v="forge">API cruda (URL + key)</button>
+      </div>
+
+      <div class="campos" data-mode="http">
+        <label>URL del MCP <span class="hint">(Streamable HTTP — p.ej. https://mcp.deepwiki.com/mcp)</span></label>
+        <input id="fUrl" type="text" placeholder="https://tu-servidor/mcp" autocomplete="off">
+        <label>Credencial <span class="hint">(opcional — header de auth)</span></label>
+        <div class="row2">
+          <input id="fHdrName" type="text" placeholder="Authorization" autocomplete="off">
+          <input id="fHdrVal" type="text" placeholder="Bearer tu-token (opcional)" autocomplete="off">
+        </div>
+      </div>
+
+      <div class="campos" data-mode="stdio" hidden>
+        <label>Comando <span class="hint">(el ejecutable de tu MCP local)</span></label>
+        <input id="fCmd" type="text" placeholder="npx" autocomplete="off">
+        <label>Argumentos <span class="hint">(uno por línea)</span></label>
+        <textarea id="fArgs" rows="3" data-i18n-ph="inspect.args_ph" placeholder="-y&#10;@tu/mcp-server"></textarea>
+        <label>Variables de entorno <span class="hint">(opcional — NOMBRE=valor, una por línea)</span></label>
+        <textarea id="fEnv" rows="2" placeholder="API_KEY=…"></textarea>
+      </div>
+
+      <div class="campos" data-mode="forge" hidden>
+        <label>Forma de sesión <span class="hint">(cómo se entra al software)</span></label>
+        <select id="fForma" title="cómo se autentica el software">
+          <option value="open">Abierto · sin credencial</option>
+          <option value="token" selected>Token / API key</option>
+          <option value="login">Login · usuario y clave (API)</option>
+        </select>
+        <label>URL del API <span class="hint">(la base REST — p.ej. https://api.themoviedb.org/3)</span></label>
+        <input id="fFgUrl" type="text" placeholder="https://api.tu-servicio.com/v1" autocomplete="off">
+
+        <div id="wrapToken">
+          <label>API key / token <span class="hint">(se cifra en el vault, nunca en claro)</span></label>
+          <input id="fKey" type="password" data-i18n-ph="inspect.api_key_ph" placeholder="tu-api-key" autocomplete="off">
+          <div class="row2">
+            <select id="fWhere" title="dónde viaja la key">
+              <option value="query">en la URL (?param=key)</option>
+              <option value="header">en un header (Bearer)</option>
+            </select>
+            <input id="fParam" type="text" placeholder="api_key" autocomplete="off" title="nombre del parámetro o header">
+          </div>
+        </div>
+
+        <div id="wrapLogin" hidden>
+          <label>Endpoint de login <span class="hint">(p.ej. /auth/login)</span></label>
+          <input id="fLoginPath" type="text" placeholder="/login" autocomplete="off">
+          <label>Credenciales <span class="hint">(NOMBRE=valor, una por línea — se cifran en el vault)</span></label>
+          <textarea id="fCreds" rows="2" placeholder="username=tu-usuario&#10;password=tu-clave"></textarea>
+          <div class="row2">
+            <select id="fTokWhere" title="de dónde sale el token que devuelve el login">
+              <option value="json">token en el cuerpo (JSON)</option>
+              <option value="header">token en un header</option>
+              <option value="cookie">token en una cookie</option>
+            </select>
+            <input id="fTokKey" type="text" placeholder="access_token" autocomplete="off">
+          </div>
+          <p class="nota">El motor POSTea tus credenciales y reusa la sesión que la API devuelve.
+            <b>Si el login pide 2FA, este camino no va: el segundo factor lo haces tú, nunca el motor.</b></p>
+        </div>
+
+        <label>Ruta para validar <span class="hint" id="fValHint">(un endpoint que describa el servicio — p.ej. /configuration)</span></label>
+        <input id="fValidate" type="text" placeholder="/configuration" autocomplete="off">
+        <label>Pista de forma <span class="hint">(opcional — qué lecturas proponer)</span></label>
+        <textarea id="fHint" rows="2" placeholder="GET /items → lista; GET /items/{id} → detalle (sample id=1)"></textarea>
+        <p class="nota">Inspecciono tu API en vivo con el <b>Motor B</b>: observa, propone,
+          <b>valida cada tool contra el target</b> y guarda sólo las que pasan.</p>
+      </div>
+
+      <label>Nombre <span class="hint">(opcional)</span></label>
+      <input id="fLabel" type="text" placeholder="cómo quieres llamarlo" autocomplete="off">
+
+      <div class="foot">
+        <div class="msg" id="msg"></div>
+        <button class="go" id="go">Conectar y guardar</button>
+      </div>
+      <div id="log"></div>
+    </div>
+
+    <!-- ── tu arsenal ───────────────────────────────────────────────────── -->
+    <div class="card ds-plane">
+      <h2>Tu arsenal</h2>
+      <div class="arsFoot">
+        <span class="hint" id="arsCount">—</span>
+        <button id="arsReload" type="button">Actualizar</button>
+      </div>
+      <!-- el POZO (r22, plano, sin sombra propia) es la PISTA: exactamente una pieza del
+           arsenal en foco a tamaño real con su acción; el resto retrocede legible.
+           #arsList sigue siendo el único host de lista y el módulo le sigue escribiendo
+           adentro; el pozo sólo lo envuelve para que el control ^ˇ tenga dónde vivir. -->
+      <div class="ds-well ds-track" data-ds-track style="padding:18px 20px">
+        <div id="arsList"><p class="vacio">cargando tu arsenal…</p></div>
+      </div>
+      <p class="nota">Lo que guardas aquí aparece en el catálogo del Cuarto. Desde el Cuarto sólo se
+        <b>equipa</b>: toca <b>Equipar</b> y te deja la pieza puesta en el diorama.</p>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { loadCapabilityCatalog } from "../cuarto/cuarto.catalog.js";
+  import { inspectAndEquip } from "../cuarto/cuarto.inspect.js";
+
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s == null ? "" : s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const _L = (es, en) => ((window.AlephI18n && window.AlephI18n.lang && window.AlephI18n.lang()) === "en" ? en : es);
+  const msg = (t, cls) => { const m = $("msg"); m.className = "msg" + (cls ? " " + cls : ""); m.innerHTML = t || ""; };
+  const logLine = (html) => {
+    const l = $("log"); l.classList.add("on");
+    const d = document.createElement("div"); d.innerHTML = html; l.appendChild(d); l.scrollTop = l.scrollHeight;
+  };
+
+  // ── transporte ──────────────────────────────────────────────────────────
+  let modo = "http";
+  const setModo = (v) => {
+    modo = v;
+    [...$("transporte").children].forEach((b) => b.classList.toggle("on", b.dataset.v === v));
+    document.querySelectorAll(".campos").forEach((f) => { f.hidden = f.dataset.mode !== v; });
+    $("go").textContent = v === "forge" ? _L("Inspeccionar y guardar", "Inspect and save")
+                                        : _L("Conectar y guardar", "Connect and save");
+  };
+  $("transporte").addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) setModo(b.dataset.v); });
+
+  const syncForma = () => {
+    const f = $("fForma").value || "token";
+    $("wrapToken").hidden = f !== "token";
+    $("wrapLogin").hidden = f !== "login";
+    $("fValHint").textContent = f === "login" ? _L("(endpoint PROTEGIDO que confirma la sesión — p.ej. /auth/me)", "(PROTECTED endpoint confirming the session — e.g. /auth/me)")
+      : f === "open" ? _L("(endpoint que describe el servicio SIN login — p.ej. / )", "(endpoint describing the service with NO login — e.g. / )")
+      : _L("(un endpoint que describa el servicio — p.ej. /configuration)", "(an endpoint describing the service — e.g. /configuration)");
+  };
+  $("fForma").addEventListener("change", syncForma);
+
+  // handoff desde el Cuarto: ?forma=login&url=… abre "API cruda" con la forma ya elegida.
+  {
+    const qs = new URLSearchParams(location.search);
+    const forma = qs.get("forma"), url = qs.get("url");
+    if (forma || url) {
+      setModo("forge");
+      if (url) $("fFgUrl").value = url;
+      if (forma && [...$("fForma").options].some((o) => o.value === forma)) $("fForma").value = forma;
+    } else setModo("http");
+    syncForma();
+  }
+
+  const parseKeyVals = (text) => {
+    const o = {};
+    (text || "").split("\n").map((s) => s.trim()).filter(Boolean).forEach((line) => {
+      const i = line.indexOf("="); if (i > 0) o[line.slice(0, i).trim()] = line.slice(i + 1).trim();
+    });
+    return o;
+  };
+
+  // ── ARSENAL: el catálogo REAL del usuario (mismo loader que la paleta del Cuarto) ─────────
+  function userId() {
+    try {
+      const raw = sessionStorage.getItem("puppet_user") || localStorage.getItem("puppet_user");
+      return raw ? (JSON.parse(raw).id || null) : null;
+    } catch (e) { return null; }
+  }
+  async function pintarArsenal(force) {
+    const host = $("arsList");
+    try {
+      const cat = await loadCapabilityCatalog({ userId: userId(), force: !!force });
+      const list = (cat && cat.list) || [];
+      $("arsCount").textContent = list.length + " " + _L("en tu arsenal", "in your arsenal");
+      if (!list.length) {
+        host.innerHTML = `<p class="vacio">${esc(_L("Tu arsenal está vacío. Conecta un MCP o inspecciona un API y va a aparecer aquí.", "Your arsenal is empty. Connect an MCP or inspect an API and it will show up here."))}</p>`;
+        return;
+      }
+      // [sistema] PIEL, no lógica: la fila toma las clases del sistema (.ds-card .ds-item) y su
+      // acción viaja envuelta en .ds-actions. Mismo botón, mismo data-eq, mismo delegado de
+      // click — cambia cómo se ALCANZA la acción, no cuál es.
+      host.innerHTML = list.map((e) => {
+        const key = e.key || e.id || "";
+        return `<div class="ars ds-card ds-item"><span class="an">${esc(e.label || key)}</span>` +
+               `<span class="ak">${esc(e.kind || "")}</span>` +
+               `<span class="ds-actions"><button class="aeq" data-eq="${esc(key)}">${esc(_L("Equipar", "Equip"))}</button></span></div>`;
+      }).join("");
+      refrescarPista(host);
+    } catch (e) {
+      // FALLO VISIBLE, JAMÁS MUDO + camino al arreglo (mandamiento 1)
+      host.innerHTML = `<p class="vacio" style="color:var(--red)">${esc(_L("No pude leer tu arsenal", "Couldn't read your arsenal"))}: ${esc(e.message)}` +
+        ` · <button id="arsRetry" style="border:0;background:transparent;color:var(--accent);cursor:pointer;font:inherit">${esc(_L("Reintentar", "Retry"))}</button></p>`;
+      const r = $("arsRetry"); if (r) r.onclick = () => pintarArsenal(true);
+      refrescarPista(host);
+    }
+  }
+  // el Vertical Sliding Focus lo maneja aleph-ds.js (lo carga nav.js). Como la lista se pinta
+  // asincrónica, hay que avisarle cuando cambia; si el sistema no cargó, la lista se ve igual.
+  function refrescarPista(host) {
+    const tr = host.closest("[data-ds-track]");
+    if (tr && window.AlephDS) { window.AlephDS.init(document); window.AlephDS.refresh(tr); }
+  }
+  $("arsReload").onclick = () => pintarArsenal(true);
+  $("arsList").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-eq]"); if (!b) return;
+    // desde el Cuarto SÓLO se equipa: mismo contrato ?equip= que ya usa la pantalla de Conexiones.
+    location.href = "../cuarto/cuarto.pixi.html?equip=" + encodeURIComponent(b.dataset.eq);
+  });
+  pintarArsenal(false);
+
+  // ── SUBMIT ──────────────────────────────────────────────────────────────
+  // El Motor B narra por SSE; en el diorama eso era coreografía 3D. Acá los MISMOS eventos se
+  // escriben como log. `api.forge.*` sólo dibuja, así que un no-op es suficiente y honesto.
+  const noopApi = { forge: new Proxy({}, { get: () => () => {} }) };
+
+  $("go").addEventListener("click", async () => {
+    const label = ($("fLabel").value || "").trim() || null;
+    $("log").innerHTML = ""; $("log").classList.remove("on");
+
+    if (modo === "forge") {
+      const forma = $("fForma").value || "token";
+      const url = ($("fFgUrl").value || "").trim();
+      if (!url) { msg(_L("Pega la URL del API.", "Paste the API URL."), "bad"); return; }
+      const validatePath = ($("fValidate").value || "").trim() || (forma === "login" ? "/auth/me" : forma === "open" ? "/" : "/configuration");
+      const args = { api: noopApi, service: url, url, label, forma, validatePath,
+                     onState: (t) => { logLine(t); } };
+      const hint = ($("fHint").value || "").trim(); if (hint) args.apiShapeHint = hint;
+      if (forma === "token") {
+        const cred = ($("fKey").value || "").trim();
+        if (!cred) { msg(_L("Pon tu API key / token.", "Enter your API key / token."), "bad"); return; }
+        const where = $("fWhere").value || "query";
+        const param = ($("fParam").value || "").trim() || (where === "header" ? "Authorization" : "api_key");
+        args.cred = cred; args.authIn = where;
+        if (where === "header") { args.authHeader = param; args.authTemplate = "Bearer {token}"; }
+        else { args.authParam = param; }
+      } else if (forma === "login") {
+        const creds = parseKeyVals($("fCreds").value);
+        if (!Object.keys(creds).length) { msg(_L("Pon las credenciales del login.", "Enter the login credentials."), "bad"); return; }
+        args.loginPath = ($("fLoginPath").value || "").trim() || "/login";
+        args.loginCredentials = creds;
+        args.loginTokenWhere = $("fTokWhere").value || "json";
+        args.loginTokenKey = ($("fTokKey").value || "").trim() || "access_token";
+      }
+      $("go").disabled = true;
+      msg(_L("inspeccionando en vivo (observa · valida · guarda)…", "inspecting live (observe · validate · save)…"), "work");
+      let res;
+      try { res = await inspectAndEquip(args); }
+      catch (e) { res = { ok: false, reason: e.message }; }
+      window.__lastForge = res;                       // hook de verificación
+      if (res && res.ok && res.piece) {
+        const tn = (res.tools || []).length;
+        msg(`✓ <b>${esc(res.piece.label)}</b> ${res.path === "registry" ? _L("traído del registry", "brought from the registry") : _L("forjado", "forged")} — ` +
+            `${tn} tool${tn === 1 ? "" : "s"} ${_L("reales", "real")} (server <code>${esc(res.server || "")}</code>). ` +
+            _L("Guardado en tu arsenal.", "Saved to your arsenal."), "ok");
+        pintarArsenal(true);
+      } else {
+        msg("✗ " + esc(String((res && res.reason) || _L("no se pudo forjar", "couldn't forge"))), "bad");
+      }
+      $("go").disabled = false;
+      return;
+    }
+
+    let payload;
+    if (modo === "http") {
+      const url = ($("fUrl").value || "").trim();
+      if (!url) { msg(_L("Pega la URL pública de tu MCP.", "Paste your MCP's public URL."), "bad"); return; }
+      const hN = ($("fHdrName").value || "").trim(), hV = ($("fHdrVal").value || "").trim();
+      payload = { transport: "http", url, headers: (hN && hV) ? { [hN]: hV } : undefined, label };
+    } else {
+      const command = ($("fCmd").value || "").trim();
+      if (!command) { msg(_L("Pon el comando de tu MCP local.", "Enter your local MCP's command."), "bad"); return; }
+      const env = parseKeyVals($("fEnv").value);
+      payload = { transport: "stdio", command,
+                  args: ($("fArgs").value || "").split("\n").map((s) => s.trim()).filter(Boolean),
+                  env: Object.keys(env).length ? env : undefined, label };
+    }
+    $("go").disabled = true;
+    msg(_L("conectando a tu MCP y leyendo sus tools…", "connecting to your MCP and reading its tools…"), "work");
+    try {
+      const r = await fetch("/v1/inspect/byo", { method: "POST",
+        headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+      const d = await r.json().catch(() => null);
+      window.__lastByo = d;                            // hook de verificación
+      if (!r.ok || !d || !d.ok) {
+        const det = d && d.detail;
+        const m = (det && typeof det === "object") ? (det.detail || det.error || JSON.stringify(det))
+          : (typeof det === "string" ? det : _L(`no validó (HTTP ${r.status})`, `didn't validate (HTTP ${r.status})`));
+        msg("✗ " + esc(String(m)), "bad"); $("go").disabled = false; return;
+      }
+      const tn = (d.tools || []).length, cn = (d.cards || []).length;
+      msg(`✓ <b>${esc(d.label || d.server)}</b> ${_L("conectado", "connected")} — ${cn} ${cn === 1 ? _L("pieza", "piece") : _L("piezas", "pieces")} ` +
+          `${_L("con", "with")} ${tn} tool${tn === 1 ? "" : "s"} ${_L("reales. Guardado en tu arsenal.", "real. Saved to your arsenal.")}`, "ok");
+      pintarArsenal(true);
+    } catch (e) { msg("✗ " + esc(e.message), "bad"); }
+    $("go").disabled = false;
+  });
+</script>
+</body>
+</html>

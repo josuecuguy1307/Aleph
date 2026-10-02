@@ -1,0 +1,110 @@
+{
+  "_meta": {
+    "purpose": "$/1M tokens (input/output) for inference providers relevant to Puppet AI's ladder. Prices fetched by hand and pasted; compare.py READS this file, never the web.",
+    "fetched_on": "2026-06-11",
+    "currency": "USD",
+    "unit": "per_1M_tokens",
+    "ladder": {
+      "constructor-code": "groq/openai/gpt-oss-120b",
+      "explorer-reason": "groq/qwen/qwen3-32b",
+      "premium": "groq/llama-3.3-70b-versatile (fallback openrouter llama-3.3-70b:free)",
+      "specialist": "ollama_chat/qwen3:8b (local, $0)"
+    },
+    "note_groq_free_planning": "On Groq free tier, the binding constraint is tokens-per-day (TPD) / tokens-per-minute (TPM), NOT requests-per-day. Plan by tokens, not RPD."
+  },
+
+  "providers": {
+
+    "groq": {
+      "tier": "paid_on_demand_and_free",
+      "models": {
+        "llama-3.3-70b-versatile": {
+          "lane": "premium",
+          "input": 0.59,
+          "output": 0.79,
+          "free_tier": { "rpm": 30, "rpd": 1000, "tpm": 12000, "tpd": 100000 },
+          "source_url": "https://groq.com/pricing",
+          "free_limits_source_url": "https://console.groq.com/docs/rate-limits",
+          "fetched_on": "2026-06-11"
+        },
+        "openai/gpt-oss-120b": {
+          "lane": "constructor-code",
+          "input": 0.15,
+          "output": 0.60,
+          "free_tier": { "rpm": 30, "rpd": 1000, "tpm": 8000, "tpd": 200000 },
+          "source_url": "https://groq.com/pricing",
+          "free_limits_source_url": "https://console.groq.com/docs/rate-limits",
+          "fetched_on": "2026-06-11"
+        },
+        "qwen/qwen3-32b": {
+          "lane": "explorer-reason",
+          "input": 0.29,
+          "output": 0.59,
+          "free_tier": { "rpm": 60, "rpd": 1000, "tpm": 6000, "tpd": 500000 },
+          "source_url": "https://groq.com/pricing",
+          "free_limits_source_url": "https://console.groq.com/docs/rate-limits",
+          "fetched_on": "2026-06-11"
+        }
+      }
+    },
+
+    "openrouter": {
+      "tier": "paid_and_free",
+      "free_rate_limits_note": "Free (:free) endpoints share a global cap: ~20 req/min; 50 req/day under 10 purchased credits, 1000 req/day at >=10 credits. Subject to upstream availability.",
+      "free_rate_limits_source_url": "https://openrouter.ai/docs/api-reference/limits",
+      "models": {
+        "meta-llama/llama-3.3-70b-instruct:free": {
+          "lane": "premium-fallback",
+          "input": 0.0,
+          "output": 0.0,
+          "source_url": "https://openrouter.ai/meta-llama/llama-3.3-70b-instruct:free",
+          "fetched_on": "2026-06-11"
+        },
+        "openai/gpt-oss-120b": {
+          "lane": "constructor-code-paid-alt",
+          "input": 0.039,
+          "output": 0.18,
+          "source_url": "https://openrouter.ai/openai/gpt-oss-120b",
+          "fetched_on": "2026-06-11"
+        },
+        "qwen/qwen3-32b": {
+          "lane": "explorer-reason-paid-alt",
+          "input": 0.08,
+          "output": 0.28,
+          "source_url": "https://openrouter.ai/qwen/qwen3-32b",
+          "fetched_on": "2026-06-11"
+        }
+      }
+    },
+
+    "deepseek": {
+      "tier": "paid",
+      "note": "deepseek-chat / deepseek-reasoner are deprecated aliases (sunset 2026-07-24) mapping to deepseek-v4-flash non-thinking / thinking. Prices below are for v4-flash.",
+      "models": {
+        "deepseek-v4-flash": {
+          "lane": "external-cheap-reason",
+          "input": 0.14,
+          "input_cache_hit": 0.0028,
+          "output": 0.28,
+          "source_url": "https://api-docs.deepseek.com/quick_start/pricing",
+          "fetched_on": "2026-06-11"
+        }
+      }
+    },
+
+    "ollama_local": {
+      "tier": "local_self_hosted",
+      "note": "Runs on the Mac host (Metal). Dollar cost per token = $0; the real cost is latency and quality. Measured live by compare.py.",
+      "models": {
+        "qwen3:8b": {
+          "lane": "specialist",
+          "input": 0.0,
+          "output": 0.0,
+          "cost_model": "latency_and_quality",
+          "source_url": "http://localhost:11434 (local Ollama, qwen3:8b Q4_K_M)",
+          "fetched_on": "2026-06-11"
+        }
+      }
+    }
+  }
+}

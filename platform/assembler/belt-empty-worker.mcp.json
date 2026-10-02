@@ -1,0 +1,7 @@
+{
+  "_meta": {
+    "name": "belt-empty-worker",
+    "descripcion": "OLA 4 · §2 · Belt VACÍO para los WORKERS efímeros: cero MCP servers → cero tools de mundo. Es la forma más fuerte del 'subset read-only del belt' (§2.3): write-world/dinero/envío no existen porque no hay ninguna tool. El worker corre pura-cognición sobre el contexto curado que le pasa el Núcleo."
+  },
+  "mcpServers": {}
+}

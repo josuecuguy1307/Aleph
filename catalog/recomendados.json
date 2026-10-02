@@ -1,0 +1,372 @@
+{
+  "investigacion": [
+    {
+      "id": "huggingface-mcp",
+      "nombre": "Hugging Face",
+      "tipo": "remoto",
+      "descripcion_1linea": {
+        "es": "Busca modelos, conjuntos de datos y artículos desde el servicio oficial.",
+        "en": "Searches models, datasets, and papers through the official service."
+      },
+      "official": true,
+      "confianza": 0.98,
+      "checklist": {
+        "es": [
+          "Crea un token de lectura en Hugging Face.",
+          "Pega tu llave aquí.",
+          "Prueba una búsqueda de modelos."
+        ],
+        "en": [
+          "Create a read-only Hugging Face token.",
+          "Paste your key here.",
+          "Test a model search."
+        ]
+      },
+      "fuente": "https://huggingface.co/mcp"
+    },
+    {
+      "id": "context7",
+      "nombre": "Context7",
+      "tipo": "hibrido",
+      "descripcion_1linea": {
+        "es": "Trae documentación actualizada de bibliotecas de programación.",
+        "en": "Retrieves current documentation for software libraries."
+      },
+      "official": true,
+      "confianza": 0.96,
+      "checklist": {
+        "es": [
+          "Crea una llave en el panel de Context7.",
+          "Pega tu llave aquí.",
+          "Prueba una consulta de documentación."
+        ],
+        "en": [
+          "Create a key in the Context7 dashboard.",
+          "Paste your key here.",
+          "Test a documentation query."
+        ]
+      },
+      "fuente": "https://github.com/upstash/context7"
+    },
+    {
+      "id": "zotero-mcp",
+      "nombre": "Zotero",
+      "tipo": "paquete",
+      "descripcion_1linea": {
+        "es": "Lee y organiza referencias bibliográficas de una biblioteca Zotero.",
+        "en": "Reads and organizes references from a Zotero library."
+      },
+      "official": false,
+      "confianza": 0.9,
+      "checklist": {
+        "es": [
+          "Crea una llave de solo lectura en Zotero.",
+          "Pega tu llave aquí.",
+          "Prueba el listado de referencias."
+        ],
+        "en": [
+          "Create a read-only Zotero key.",
+          "Paste your key here.",
+          "Test the reference list."
+        ]
+      },
+      "fuente": "https://github.com/54yyyu/zotero-mcp"
+    }
+  ],
+  "programacion": [
+    {
+      "id": "github-mcp-server",
+      "nombre": "GitHub",
+      "tipo": "hibrido",
+      "descripcion_1linea": {
+        "es": "Consulta repositorios, incidencias y cambios con el servidor oficial de GitHub.",
+        "en": "Works with repositories, issues, and changes through GitHub's official server."
+      },
+      "official": true,
+      "confianza": 0.99,
+      "checklist": {
+        "es": [
+          "Elige los repositorios y permisos necesarios.",
+          "Autoriza la conexión con GitHub.",
+          "Prueba la lectura de un repositorio."
+        ],
+        "en": [
+          "Choose the required repositories and permissions.",
+          "Authorize the GitHub connection.",
+          "Test reading a repository."
+        ]
+      },
+      "fuente": "https://github.com/github/github-mcp-server"
+    },
+    {
+      "id": "filesystem",
+      "nombre": "Archivos locales",
+      "tipo": "paquete",
+      "descripcion_1linea": {
+        "es": "Lee y escribe solo dentro de las carpetas locales permitidas.",
+        "en": "Reads and writes only within explicitly allowed local folders."
+      },
+      "official": true,
+      "confianza": 0.97,
+      "checklist": {
+        "es": [
+          "Elige una carpeta de trabajo.",
+          "Confirma que no contenga secretos.",
+          "Prueba la lectura de un archivo."
+        ],
+        "en": [
+          "Choose a working folder.",
+          "Confirm that it contains no secrets.",
+          "Test reading a file."
+        ]
+      },
+      "fuente": "https://github.com/modelcontextprotocol/servers/tree/main/src/filesystem"
+    },
+    {
+      "id": "context7",
+      "nombre": "Context7",
+      "tipo": "hibrido",
+      "descripcion_1linea": {
+        "es": "Trae ejemplos y documentación actualizada de bibliotecas de programación.",
+        "en": "Retrieves current software library documentation and examples."
+      },
+      "official": true,
+      "confianza": 0.96,
+      "checklist": {
+        "es": [
+          "Crea una llave en el panel de Context7.",
+          "Pega tu llave aquí.",
+          "Prueba una consulta de documentación."
+        ],
+        "en": [
+          "Create a key in the Context7 dashboard.",
+          "Paste your key here.",
+          "Test a documentation query."
+        ]
+      },
+      "fuente": "https://github.com/upstash/context7"
+    }
+  ],
+  "finanzas": [
+    {
+      "id": "alphavantage",
+      "nombre": "Alpha Vantage",
+      "tipo": "hibrido",
+      "descripcion_1linea": {
+        "es": "Consulta precios, series de mercado e indicadores desde el servicio oficial.",
+        "en": "Queries market prices, time series, and indicators through the official service."
+      },
+      "official": true,
+      "confianza": 0.96,
+      "checklist": {
+        "es": [
+          "Crea una llave en Alpha Vantage.",
+          "Pega tu llave aquí.",
+          "Revisa los límites del plan antes de usar datos comerciales."
+        ],
+        "en": [
+          "Create an Alpha Vantage key.",
+          "Paste your key here.",
+          "Review plan limits before using commercial data."
+        ]
+      },
+      "fuente": "https://mcp.alphavantage.co"
+    },
+    {
+      "id": "coingecko-mcp",
+      "nombre": "CoinGecko",
+      "tipo": "paquete",
+      "descripcion_1linea": {
+        "es": "Consulta precios y datos de mercado de criptoactivos con el paquete oficial.",
+        "en": "Queries cryptocurrency prices and market data through the official package."
+      },
+      "official": true,
+      "confianza": 0.94,
+      "checklist": {
+        "es": [
+          "Crea una llave de demostración en CoinGecko.",
+          "Pega tu llave aquí.",
+          "Prueba una consulta de precio."
+        ],
+        "en": [
+          "Create a CoinGecko demo key.",
+          "Paste your key here.",
+          "Test a price query."
+        ]
+      },
+      "fuente": "https://www.npmjs.com/package/@coingecko/coingecko-mcp"
+    },
+    {
+      "id": "sec-edgar-mcp",
+      "nombre": "SEC EDGAR",
+      "tipo": "paquete",
+      "descripcion_1linea": {
+        "es": "Lee presentaciones y estados financieros públicos de empresas registradas en Estados Unidos.",
+        "en": "Reads public filings and financial statements from companies registered in the United States."
+      },
+      "official": false,
+      "confianza": 0.93,
+      "checklist": {
+        "es": [
+          "Define un nombre y correo de contacto para la SEC.",
+          "Respeta el límite de solicitudes del servicio.",
+          "Prueba la búsqueda de una empresa."
+        ],
+        "en": [
+          "Set a contact name and email for the SEC.",
+          "Respect the service request limit.",
+          "Test a company search."
+        ]
+      },
+      "fuente": "https://pypi.org/project/sec-edgar-mcp"
+    }
+  ],
+  "ingenieria": [
+    {
+      "id": "freecad-mcp",
+      "nombre": "FreeCAD",
+      "tipo": "paquete",
+      "descripcion_1linea": {
+        "es": "Controla modelos paramétricos en una instalación local de FreeCAD.",
+        "en": "Controls parametric models in a local FreeCAD installation."
+      },
+      "official": false,
+      "confianza": 0.9,
+      "checklist": {
+        "es": [
+          "Instala el complemento en FreeCAD.",
+          "Inicia el servidor local desde FreeCAD.",
+          "Prueba la lectura de un documento vacío."
+        ],
+        "en": [
+          "Install the FreeCAD add-on.",
+          "Start the local server from FreeCAD.",
+          "Test reading an empty document."
+        ]
+      },
+      "fuente": "https://github.com/neka-nat/freecad-mcp"
+    },
+    {
+      "id": "materials-project-mcp",
+      "nombre": "Materials Project",
+      "tipo": "paquete",
+      "descripcion_1linea": {
+        "es": "Consulta estructuras y propiedades de materiales desde Materials Project.",
+        "en": "Queries material structures and properties from Materials Project."
+      },
+      "official": false,
+      "confianza": 0.86,
+      "checklist": {
+        "es": [
+          "Crea una llave en Materials Project.",
+          "Pega tu llave aquí.",
+          "Prueba la búsqueda de un material conocido."
+        ],
+        "en": [
+          "Create a Materials Project key.",
+          "Paste your key here.",
+          "Test a search for a known material."
+        ]
+      },
+      "fuente": "https://github.com/benedict2002/materials-project-mcp"
+    },
+    {
+      "id": "filesystem",
+      "nombre": "Archivos locales",
+      "tipo": "paquete",
+      "descripcion_1linea": {
+        "es": "Lee y escribe archivos de proyecto solo dentro de carpetas permitidas.",
+        "en": "Reads and writes project files only within allowed folders."
+      },
+      "official": true,
+      "confianza": 0.97,
+      "checklist": {
+        "es": [
+          "Elige la carpeta del proyecto.",
+          "Confirma los límites de escritura.",
+          "Prueba la lectura de un archivo."
+        ],
+        "en": [
+          "Choose the project folder.",
+          "Confirm write boundaries.",
+          "Test reading a file."
+        ]
+      },
+      "fuente": "https://github.com/modelcontextprotocol/servers/tree/main/src/filesystem"
+    }
+  ],
+  "medicina": [
+    {
+      "id": "biomcp",
+      "nombre": "BioMCP",
+      "tipo": "paquete",
+      "descripcion_1linea": {
+        "es": "Busca literatura, ensayos y datos biomédicos públicos para investigación.",
+        "en": "Searches public biomedical literature, trials, and research data."
+      },
+      "official": true,
+      "confianza": 0.95,
+      "checklist": {
+        "es": [
+          "Instala el paquete en un entorno aislado.",
+          "Mantén el uso en investigación, sin diagnóstico.",
+          "Prueba una búsqueda bibliográfica."
+        ],
+        "en": [
+          "Install the package in an isolated environment.",
+          "Keep usage limited to research, not diagnosis.",
+          "Test a literature search."
+        ]
+      },
+      "fuente": "https://github.com/genomoncology/biomcp"
+    },
+    {
+      "id": "openfda-mcp",
+      "nombre": "openFDA",
+      "tipo": "paquete",
+      "descripcion_1linea": {
+        "es": "Consulta etiquetas, eventos adversos y retiros publicados por la FDA.",
+        "en": "Queries labels, adverse events, and recalls published by the FDA."
+      },
+      "official": false,
+      "confianza": 0.91,
+      "checklist": {
+        "es": [
+          "Instala el paquete en un entorno aislado.",
+          "Mantén el uso en investigación, sin diagnóstico.",
+          "Prueba una consulta de etiqueta."
+        ],
+        "en": [
+          "Install the package in an isolated environment.",
+          "Keep usage limited to research, not diagnosis.",
+          "Test a label query."
+        ]
+      },
+      "fuente": "https://www.npmjs.com/package/@cyanheads/openfda-mcp-server"
+    },
+    {
+      "id": "dicom-mcp",
+      "nombre": "DICOM",
+      "tipo": "paquete",
+      "descripcion_1linea": {
+        "es": "Consulta metadatos de estudios en un servidor de imágenes médicas controlado.",
+        "en": "Queries study metadata from a controlled medical imaging server."
+      },
+      "official": false,
+      "confianza": 0.84,
+      "checklist": {
+        "es": [
+          "Configura un servidor de prueba sin datos personales.",
+          "Verifica la conexión local.",
+          "Prueba una consulta de estudios."
+        ],
+        "en": [
+          "Configure a test server without personal data.",
+          "Verify the local connection.",
+          "Test a study query."
+        ]
+      },
+      "fuente": "https://github.com/ChristianHinge/dicom-mcp"
+    }
+  ]
+}

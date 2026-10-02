@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conexiones → Conectores · Aleph</title>
+<!--
+  EL CENTRO DE CONEXIONES MURIÓ, Y ESTA PÁGINA ES SU REDIRECCIÓN.
+
+  Por qué: sus tres familias de cognición —incluido · cli · api— eran EXACTAMENTE las que
+  Modelos ya lista. Dos pantallas para las mismas filas es la duplicación que hacía que
+  cualquier cosa (un MCP, un banner) se colara al lado de los modelos. Lo que se hizo:
+
+    · las CAPACIDADES se mudaron a Modelos — ＋ Agregar llave (validada en vivo), Probar
+      todas, Probar las seleccionadas, quitar la llave, y el deep-link por proveedor;
+    · las familias que NO son cognición —cuenta y mcp— son CONECTORES y viven en Conectores;
+    · «Conexiones» salió del nav.
+
+  No se borra el archivo: hay deep-links viejos vivos. Sin familia explícita, la ruta cae
+  en Conectores; `api.*` y `cli.*` conservan su destino correcto en Modelos.
+-->
+<script>
+  (function () {
+    try {
+      var q = new URLSearchParams(location.search);
+      var out = new URLSearchParams();
+      var svc = (q.get("svc") || q.get("slug") || "").trim();
+      var volver = q.get("volver") || q.get("return");
+      var p = svc.split(".");
+      var fam = p.length > 1 ? p[0] : "";
+      var ref = p.length > 1 ? p.slice(1).join(".") : svc;
+      var cognicion = fam === "api" || fam === "cli" || fam === "incluido";
+      if (cognicion) {
+        if (fam) out.set("modo", fam);
+        if (ref) out.set("m", ref);
+        if (volver) out.set("return", volver);
+        location.replace("Modelos.dc.html" + (out.toString() ? "?" + out : ""));
+        return;
+      }
+      var conector = fam === "mcp" ? ref.split("#").pop() : ref;
+      if (conector) out.set("q", conector);
+      if (volver) out.set("return", volver);
+      var qs = out.toString();
+      location.replace("Conectores.dc.html" + (qs ? "?" + qs : ""));
+    } catch (e) {
+      location.replace("Conectores.dc.html");
+    }
+  })();
+</script>
+</head>
+<body>
+<!-- §4h · si el replace no corriera (JS apagado), el camino sigue estando a la vista. -->
+<noscript><a href="Conectores.dc.html">Conectores</a></noscript>
+</body>
+</html>

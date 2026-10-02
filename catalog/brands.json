@@ -1,0 +1,91 @@
+{
+  "_doc": "Marcas declaradas por el catálogo, por NOMBRE DE SERVER del belt. La UI consume esto verbatim y NUNCA adivina. Si un server no tiene logo oficial embebible, logo=null y la UI dibuja un monograma con el color de marca. 'conexion_humana' es el nombre humano de lo que el usuario tendría que conectar (para el copy del gate: 'disponible cuando conectes X'). 'tools_capability' = los nombres de tool que el server expone; el backend (brands.py) los corre por el enforcer de Security (platform/gates/recipe_enforcer.py) y DERIVA el campo 'gate' (money_touch|send|null) — la UI lo consume verbatim, jamás clasifica. PARAMETRIZABLE: agregar un nicho = agregar sus servers aquí; cero hardcode en la UI.",
+  "_version": "1.1.0",
+  "tools": {
+    "echo": {
+      "label": "Eco de prueba",
+      "monogram": "Ec",
+      "color": "#6B3FA0",
+      "logo": null,
+      "conexion_humana": null,
+      "tools_capability": ["echo"],
+      "que_hace": "Repite lo que le mandas. Sirve para probar que el agente responde de verdad."
+    },
+    "excel": {
+      "label": "Excel",
+      "monogram": "Xl",
+      "color": "#1E7A4E",
+      "logo": null,
+      "conexion_humana": null,
+      "tools_capability": ["read_sheet", "write_workbook", "create_sheet"],
+      "que_hace": "Lee y arma planillas .xlsx en tu carpeta, sin nube ni cuenta."
+    },
+    "secedgar": {
+      "label": "Reportes SEC (EDGAR)",
+      "monogram": "ED",
+      "color": "#2B5E8A",
+      "logo": null,
+      "conexion_humana": null,
+      "tools_capability": ["get_filing", "list_filings", "get_facts"],
+      "que_hace": "Lee reportes públicos de empresas (10-K, 10-Q, 8-K) directo de la SEC. Sin clave."
+    },
+    "jupyter": {
+      "label": "Cuaderno de análisis",
+      "monogram": "Ju",
+      "color": "#B5651D",
+      "logo": null,
+      "conexion_humana": "tu cuaderno de análisis",
+      "tools_capability": ["run_cell", "save_notebook"],
+      "que_hace": "Corre análisis en un cuaderno aislado de Puppet y guarda el notebook."
+    },
+    "fred": {
+      "label": "Datos macro (FRED)",
+      "monogram": "FR",
+      "color": "#1A4F8A",
+      "logo": null,
+      "conexion_humana": "tu clave gratis de FRED",
+      "tools_capability": ["get_series", "search_series"],
+      "que_hace": "Trae series macro (inflación, desempleo, tasas) de la Reserva Federal."
+    },
+    "alphavantage": {
+      "label": "Datos de mercado",
+      "monogram": "Mk",
+      "color": "#0F6E5C",
+      "logo": null,
+      "conexion_humana": "tu clave gratis de datos de mercado",
+      "tools_capability": ["get_quote", "get_fundamentals", "list_symbols"],
+      "que_hace": "Trae precios y fundamentals de acciones en vivo."
+    },
+    "sheets": {
+      "label": "Google Sheets",
+      "monogram": "GS",
+      "color": "#1E7A4E",
+      "logo": null,
+      "conexion_humana": "tu cuenta de Google",
+      "tools_capability": ["read_values", "batch_update_cells", "write_to_sheet"],
+      "que_hace": "Lee y escribe en tu hoja de Google compartida (te pregunta antes de escribir)."
+    },
+    "stata": {
+      "label": "Stata",
+      "monogram": "St",
+      "color": "#8A3A8A",
+      "logo": null,
+      "conexion_humana": "tu licencia de Stata",
+      "tools_capability": ["run_do", "regress"],
+      "que_hace": "Ejecuta econometría en tu Stata. Si no lo tienes, degrada a un cuaderno de análisis."
+    }
+  },
+  "_gates_doc": "Copy de gate por template, en lenguaje de persona promedio (P010 threat-model §2). nivel: trabaja-solo | te-avisa-una-vez | te-pregunta-siempre. Si un template no aparece aquí, la UI cae al copy derivado de friccion/friccion_detalle. PARAMETRIZABLE: nichos sin gate (ej. demo-test) no necesitan entrada.",
+  "gates": {
+    "t01-cierre-mensual": { "nivel": "te-avisa-una-vez", "copy": "Tu agente guarda el cierre en un archivo nuevo de tu carpeta. Te avisa la primera vez; después guarda solo." },
+    "t02-regresion-panel-stata": { "nivel": "te-avisa-una-vez", "copy": "Tu agente ejecuta el análisis en tu Stata y guarda los resultados. Te avisa una vez." },
+    "t03-tabla-comparables": { "nivel": "te-avisa-una-vez", "copy": "Guarda la tabla de comparables en un archivo; si la compartes, te la muestra antes de enviarla." },
+    "t04-brief-macro-fred": { "nivel": "te-avisa-una-vez", "copy": "Ejecuta el análisis en un cuaderno seguro de Puppet y guarda el notebook. Conectas tu clave de FRED una sola vez." },
+    "t05-varianza-fp-a": { "nivel": "te-pregunta-siempre", "copy": "Cada vez que vaya a escribir en tu hoja de Google compartida, te pregunta primero y te muestra qué va a cambiar." },
+    "t06-monitor-mercado": { "nivel": "te-avisa-una-vez", "copy": "Arma el reporte solo; pero nada sale por mensaje sin que tú lo veas y le des OK." },
+    "t07-screener-fundamentals": { "nivel": "te-avisa-una-vez", "copy": "Guarda el screener en un archivo; si lo compartes, lo ves antes de enviarlo." },
+    "t08-notebook-backtesting": { "nivel": "te-avisa-una-vez", "copy": "Convierte tu estrategia en código, lo ejecuta en un cuaderno aislado y guarda el notebook. Conectas tu clave de mercado una sola vez." },
+    "t09-resumen-filing-edgar": { "nivel": "trabaja-solo", "copy": "Tu agente lee el reporte de 200 páginas y te lo resume solo. Si lo reenvías, te lo muestra antes." },
+    "t10-dashboard-macro": { "nivel": "te-avisa-una-vez", "copy": "Actualiza tu tablero reemplazando el archivo anterior; te avisa la primera vez que lo va a pisar." }
+  }
+}

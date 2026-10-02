@@ -1,0 +1,103 @@
+{
+  "connector": "github",
+  "auth_method": "personal_token",
+  "tier": "good",
+  "needs_base_url": false,
+  "deep_link": "https://github.com/settings/personal-access-tokens/new",
+  "api_base": "https://api.github.com",
+  "credential_fields": [
+    {
+      "id": "token",
+      "label": "Tu token de GitHub",
+      "shape": "github_pat_… (fine-grained) o ghp_… (classic)",
+      "secret": true
+    }
+  ],
+  "auth": {
+    "scheme": "bearer",
+    "token": "{token}"
+  },
+  "steps": [
+    {
+      "txt": "Te llevo a crear un token en GitHub. Elige «Fine-grained token», pon un nombre (ej. 'Mi agente'), una expiración, y en «Repository access» elige el repo (o «All repositories») donde quieres que trabaje.",
+      "emphasis": [
+        "Fine-grained token",
+        "Repository access"
+      ]
+    },
+    {
+      "txt": "En «Permissions» → «Repository permissions», concede «Contents: Read and write» (para leer y commitear código). Si solo quieres que lea, déjalo en «Read-only». Después toca «Generate token».",
+      "emphasis": [
+        "Contents: Read and write",
+        "Generate token"
+      ]
+    },
+    {
+      "txt": "Copia el token (lo ves UNA sola vez) y pega tu llave aquí."
+    }
+  ],
+  "validate": {
+    "method": "GET",
+    "path": "/user",
+    "headers": {
+      "User-Agent": "PuppetAI-Connect",
+      "X-GitHub-Api-Version": "2022-11-28",
+      "Accept": "application/vnd.github+json"
+    },
+    "identity_field": "login"
+  },
+  "permissions": [
+    "leer código de tus repos",
+    "crear/actualizar archivos (commits) en los repos que autorices"
+  ],
+  "requires_sharing": false,
+  "errors": {
+    "invalid": "Ese token no funcionó o expiró — genera uno nuevo en GitHub (Settings → Developer settings → Personal access tokens) y pégalo.",
+    "wrong_account": "Ese token es de otra cuenta de GitHub.",
+    "network": "No pude verificar ahora — prueba de nuevo en un momento."
+  },
+  "escape_hatch": true,
+  "capability_line": "Listo — ya puedo leer tus repos y, en los que autorices con escritura, crearte commits.",
+  "trust_line": "Tu token se guarda cifrado · lo quitas cuando quieras.",
+  "verification": {
+    "deep_link_ok": true,
+    "anchor_ok": false,
+    "validated_with_test_key": false,
+    "notes": "[T5 2026-06-16] Connector creado para el connect-wizard genérico (Familia 4, personal_token). validate = GET https://api.github.com/user con User-Agent OBLIGATORIO (GitHub 403ea sin UA). Bearer acepta fine-grained (github_pat_) y classic (ghp_). NO validado con token real (el usuario lo pega manual); el motor mapea 200→connected / 401→invalid / transporte→network. Para commits, el token necesita Contents:write y la receta debe filtrar github:[create_or_update_file] (la receta v1 default es read-only)."
+  },
+  "en": {
+    "steps": [
+      {
+        "txt": "I'll take you to create a token on GitHub. Choose «Fine-grained token», give it a name (e.g. 'My agent'), an expiration, and under «Repository access» pick the repo (or «All repositories») where you want it to work.",
+        "emphasis": [
+          "Fine-grained token",
+          "Repository access"
+        ]
+      },
+      {
+        "txt": "Under «Permissions» → «Repository permissions», grant «Contents: Read and write» (to read and commit code). If you only want it to read, leave it on «Read-only». Then tap «Generate token».",
+        "emphasis": [
+          "Contents: Read and write",
+          "Generate token"
+        ]
+      },
+      {
+        "txt": "Copy the token (you see it only ONCE) and paste it here."
+      }
+    ],
+    "trust_line": "Your token is stored encrypted · remove it anytime.",
+    "capability_line": "Done — I can now read your repos and, in the ones you authorize with write access, create commits for you.",
+    "errors": {
+      "invalid": "That token didn't work or expired — generate a new one on GitHub (Settings → Developer settings → Personal access tokens) and paste it.",
+      "wrong_account": "That token belongs to a different GitHub account.",
+      "network": "I couldn't verify right now — try again in a moment."
+    },
+    "credential_fields": [
+      {
+        "id": "token",
+        "label": "Your GitHub token",
+        "shape": "github_pat_… (fine-grained) or ghp_… (classic)"
+      }
+    ]
+  }
+}

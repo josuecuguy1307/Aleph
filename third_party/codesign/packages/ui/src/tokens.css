@@ -1,0 +1,305 @@
+/**
+ * Design tokens for open-codesign.
+ * Anthropic Claude Design aesthetic: warm cream surfaces, serif display type,
+ * terracotta accent, editorial warmth meets technical precision.
+ * All values are CSS custom properties — never hardcode.
+ */
+
+/* [Aleph · 2026-08-11] LA PIEL DE LA CASA, TEMA CLARO.
+ *
+ * Los valores salen de `product/app/design/aleph-tokens.css`, la fuente única del sistema.
+ * Diseño corre en su propio proceso (Electron) y no puede linkear esa hoja: los hex se
+ * copian, igual que ya se copió la letra a `aleph-fonts.css`. Si la casa cambia un token,
+ * este bloque se re-copia.
+ *
+ * Se pasa de `oklch` a hex a propósito: no es un capricho de formato. Los tokens de Aleph
+ * están MEDIDOS en hex contra su piso AA de 4.5:1 (ver la cabecera de `aleph-tokens.css`),
+ * y reescribirlos en otro espacio de color obliga a reconvertir a mano cada vez que se
+ * comparan. El mismo hex a los dos lados es lo que hace verificable la alineación.
+ *
+ * EL ACENTO NO ES EL BOTÓN: el sistema es 90/8/2 y la acción primaria INVIERTE el campo
+ * (tinta de fondo, papel de letra). El violeta queda para el 8% — el chip activo, el punto
+ * de estado, el foco. La regla del primario está al final de este archivo.
+ */
+:root {
+  /* Surface — campo → plano → pozo */
+  --color-background: #f4f4f5;
+  --color-background-secondary: #f4f4f5;
+  --color-surface: #ffffff;
+  --color-surface-hover: #f4f4f5;
+  --color-surface-active: #f2f1fe;
+  --color-surface-muted: #f4f4f5;
+  /* alias used by some components */
+  --color-surface-elevated: #ffffff;
+  /* Artifact iframe background — user-generated content defaults to white in
+     both themes; artifacts ship their own styles and should not inherit app theme. */
+  --color-artifact-bg: #ffffff;
+
+  /* Border — CERO BORDES es regla del sistema: la jerarquía es sombra + radio, nunca línea.
+     Los tokens no se borran (los referencian decenas de componentes): se vuelven
+     transparentes, así el borde desaparece sin romper una sola regla. */
+  --color-border: transparent;
+  --color-border-muted: transparent;
+  --color-border-subtle: transparent;
+  --color-border-strong: transparent;
+
+  /* Accent — el violeta de la mascota, el 8% del color */
+  --color-accent: #5a4fd6;
+  --color-accent-hover: #4f45c4;
+  --color-accent-muted: #f2f1fe;
+  --color-accent-soft: #f2f1fe;
+  --color-accent-tint: color-mix(in srgb, var(--color-accent) 4%, var(--color-surface));
+  --color-focus-ring: rgba(90, 79, 214, 0.22);
+  --color-on-accent: #ffffff;
+
+  /* Text — un solo gris de apoyo, el medido en 4.5:1 sobre el plano */
+  --color-text-primary: #0a0a0a;
+  --color-text-secondary: #65656a;
+  --color-text-muted: #65656a;
+
+  /* Semantic — los valores AA que la casa ya midió contra sus propios fondos */
+  --color-success: #26734e;
+  --color-warning: #8a5d0c;
+  --color-error: #b23a2e;
+  --color-mcp: #366d84;
+
+  /* Feedback */
+  --color-toast-success: #26734e;
+  --color-toast-error: #b23a2e;
+  --color-overlay: rgba(10, 10, 10, 0.42);
+
+  /* Shadow — warm-tinted, three discrete levels */
+  /* [Aleph] Las tres sombras de la casa. En este sistema son la ÚNICA herramienta de
+     jerarquía (no hay bordes): soft = elemento sobre el pozo, card = plano de contenido,
+     elevated = elemento en foco. */
+  --shadow-soft: 0 3px 12px rgba(10, 10, 10, 0.05);
+  --shadow-card: 0 10px 34px rgba(10, 10, 10, 0.06);
+  --shadow-elevated: 0 18px 48px rgba(10, 10, 10, 0.14);
+  --shadow-inset-soft: inset 0 0 0 1px var(--color-border-subtle);
+
+  /* Typography — LA LETRA ES LA DE LA CASA (ley 3 · inmersión 3.8). Outfit está vendorizada
+     en `apps/desktop/src/renderer/src/aleph-fonts.css`, con los mismos woff2 que sirven las
+     ~24 pantallas de Aleph. Las que estaban —Fraunces, Geist y JetBrains Mono— eran las tres
+     familias del proyecto de origen; la mono pasa al stack de sistema, igual que en la casa,
+     porque sólo aparece donde hay código o un identificador que se copia. */
+  --font-display: "Outfit", system-ui, -apple-system, sans-serif;
+  --font-sans: "Outfit", system-ui, -apple-system, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* Extended type scale */
+  --font-size-display-2xl: 48px;
+  --font-size-display-xl: 36px;
+  --font-size-display-lg: 28px;
+  --font-size-body-lg: 17px;
+  --font-size-body: 15px;
+  --font-size-body-sm: 13px;
+  --font-size-body-xs: 11px;
+  --font-size-mono: 13px;
+
+  /* Type scale — strict 8 sizes (kept for back-compat) */
+  --text-2xs: 10px;
+  --text-xs: 12px;
+  --text-sm: 13px;
+  --text-base: 15px;
+  --text-md: 17px;
+  --text-lg: 20px;
+  --text-xl: 28px;
+  --text-2xl: 36px;
+
+  /* Line height */
+  --leading-heading: 1.2;
+  --leading-ui: 1.4;
+  --leading-body: 1.6;
+  --leading-snug: 1.5;
+
+  /* Letter spacing */
+  --tracking-heading: -0.01em;
+  --tracking-tight: -0.005em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.04em;
+  --tracking-label: 0.08em;
+
+  /* Control sizes */
+  --size-control-xs: 30px;
+  --size-control-sm: 32px;
+  --size-control-md: 40px;
+  --size-control-lg: 48px;
+  --size-accent-stripe: 3px;
+
+  /* Spacing — strict 4-px scale */
+  --space-0_5: 2px;
+  --space-0-5: var(--space-0_5);
+  --space-1: 4px;
+  --space-1_5: 6px;
+  --space-1-5: var(--space-1_5);
+  --space-2: 8px;
+  --space-2_5: 10px;
+  --space-2-5: var(--space-2_5);
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-content: 24px;
+
+  /* Icon sizes */
+  --size-icon-xs: 12px;
+  --size-icon-sm: 14px;
+  --size-icon-md: 16px;
+  --size-input-height: 40px;
+
+  /* Titlebar (Electron frameless window) */
+  --size-titlebar-height: 72px;
+  --size-titlebar-pad-left: 72px; /* clears macOS traffic-light buttons */
+
+  /* Chip / file-token max width */
+  --size-chip-max: 180px;
+
+  /* Minimum width for menus, popovers, and stage panels */
+  --size-stage-min: 200px;
+
+  /* Compact menu width (zoom dropdown, narrow option pickers) */
+  --size-menu-compact: 6rem;
+
+  /* Hub sidebar (Designs hub left rail) */
+  --size-hub-sidebar: 360px;
+
+  /* Modal widths */
+  --size-modal-md: 560px;
+
+  /* Grid card minimum (project / artifact cards) */
+  --size-card-min: 240px;
+
+  /* Reading-width caps for prose / descriptions */
+  --size-prose-narrow: 60ch;
+
+  /* Card hover lift offset */
+  --lift-card-hover: 1px;
+
+  /* Press feedback scale */
+  --scale-hover-up: 1.04;
+  --scale-press-down: 0.96;
+
+  /* Radius — slightly larger, friendlier */
+  /* [Aleph] La geometría de CÁPSULA del sistema (`--r-*` de aleph-tokens.css). Eran
+     6/10/14/14/18: la escala de otro sistema. Acá el control es 13, la fila 18, el panel 22
+     y el plano de contenido 30. `--radius-phone` NO se toca: es la esquina de un teléfono
+     dibujado, o sea un objeto del oficio, no un control de la interfaz. */
+  --radius-sm: 13px;
+  --radius-md: 18px;
+  --radius-lg: 22px;
+  --radius-xl: 22px;
+  --radius-2xl: 30px;
+  --radius-full: 9999px;
+  --radius-phone: 44px;
+
+  /* Border width */
+  --border-width-strong: 8px;
+  --border-width-phone-bezel: 3px;
+
+  /* Phone body — deep space gray, intentionally distinct from app cream bg
+     so the device reads as a physical object, not melting into the canvas. */
+  --color-phone-body: oklch(0.22 0.005 280);
+  --color-phone-island: oklch(0.08 0 0);
+
+  /* Preview viewport sizes */
+  --size-preview-mobile-width: 375px;
+  --size-preview-mobile-height: 812px;
+  --size-preview-mobile-island-width: 95px;
+  --size-preview-mobile-island-height: 28px;
+  --size-preview-mobile-home-indicator-width: 134px;
+  --size-preview-mobile-home-indicator-height: 5px;
+  --size-preview-tablet-width: 768px;
+  --size-preview-tablet-height: 1024px;
+  --size-preview-desktop-width: 1440px;
+  --size-preview-desktop-height: 900px;
+
+  /* Motion — subtle, editorial */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-fast: 120ms;
+  --duration-faster: 150ms;
+  --duration-base: 200ms;
+  --duration-slow: 300ms;
+  --transition-base: all var(--duration-base) var(--ease-out);
+  --transition-fast: all var(--duration-fast) var(--ease-out);
+}
+
+/* Los títulos usan la sans de la casa. En este sistema NO hay serif de titular: Aleph
+   reserva su serif (Newsreader) para el wordmark, y el wordmark es de la casa, no del
+   lienzo — acá adentro no va nunca. */
+h1,
+h2,
+h3,
+.display {
+  font-family: var(--font-sans);
+  font-weight: 600;
+}
+
+/* Monospaced numbers and code */
+code,
+kbd,
+pre,
+.mono,
+.num {
+  font-family: var(--font-mono);
+  font-feature-settings: "tnum";
+}
+
+.dark {
+  /* [Aleph] El bloque decía «Warm dark — not blue-black», que era justamente la decisión
+     contraria: el oscuro de Aleph es un campo plano casi negro, y su calidez no está en el
+     fondo sino en el acento. Mismos hex que `aleph-tokens.css`, tema oscuro. */
+  --color-background: #0b0b0c;
+  --color-background-secondary: #1c1c1f;
+  --color-surface: #141416;
+  --color-surface-hover: #1c1c1f;
+  --color-surface-active: #262636;
+  --color-surface-muted: #1c1c1f;
+  --color-surface-elevated: #141416;
+  --color-artifact-bg: #ffffff;
+
+  --color-border: transparent;
+  --color-border-muted: transparent;
+  --color-border-subtle: transparent;
+  --color-border-strong: transparent;
+
+  --color-accent: #8d8bee;
+  --color-accent-hover: #a09ef1;
+  --color-accent-muted: #262636;
+  --color-accent-soft: #262636;
+  --color-accent-tint: color-mix(in srgb, var(--color-accent) 8%, var(--color-surface));
+  --color-focus-ring: rgba(141, 139, 238, 0.28);
+  --color-on-accent: #0a0a0a;
+
+  --color-text-primary: #f5f5f6;
+  --color-text-secondary: #a0a0a6;
+  --color-text-muted: #a0a0a6;
+
+  /* Los de estado suben de brillo en oscuro, como en la casa */
+  --color-success: #4e9e77;
+  --color-warning: #d9a445;
+  --color-error: #e08a7c;
+  --color-mcp: #86b6cc;
+
+  --color-toast-success: #4e9e77;
+  --color-toast-error: #e08a7c;
+  --color-overlay: oklch(0 0 0 / 0.6);
+
+  /* Phone body — slightly lighter than dark bg so the device still reads as an object. */
+  --color-phone-body: oklch(0.32 0.005 280);
+  --color-phone-island: oklch(0.05 0 0);
+
+  --shadow-soft: 0 4px 14px rgba(0, 0, 0, 0.4);
+  --shadow-card: 0 12px 38px rgba(0, 0, 0, 0.5);
+  --shadow-elevated: 0 26px 70px rgba(0, 0, 0, 0.62);
+  --shadow-inset-soft: inset 0 0 0 1px var(--color-border-subtle);
+}
+
+/* Global focus-visible style — every interactive element inherits unless overridden. */
+:where(button, a, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}

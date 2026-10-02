@@ -1,0 +1,183 @@
+import { tool } from "@opencode-ai/plugin"
+import { existsSync } from "node:fs"
+import path from "node:path"
+import { docxodus } from "../lib/docxodus"
+import { recordRedaction, scrubDocxPackage, docxPackageResidue } from "../lib/redactions"
+import { pendingRedlinesForDoc, supersedeRedlines } from "../lib/redlines"
+
+// doc.haus redact tool. TRUE redaction: removes the sensitive text from the
+// .docx itself — every body/header/footer/footnote/endnote/comment occurrence
+// via Docxodus, plus the package metadata Docxodus cannot address (docProps
+// title/creator/keywords, comment author attributes, textbox and field text) via
+// a raw OOXML scrub — and verifies zero residue before writing. This is the
+// opposite of an overlay "redaction" (a black box drawn over intact text), the
+// recurring data-breach vector this tool exists to prevent.
+//
+// Removal is destructive and irreversible, so it is all-or-nothing: any
+// occurrence the engine cannot remove (text spanning a paragraph boundary,
+// residue surviving the scrub) aborts the whole operation before the file is
+// touched, and the user approves via permission "redact" before anything is
+// removed. Every redaction is recorded in the matter's redaction log.
+
+const ingestUrl = process.env.INGEST_URL ?? "http://127.0.0.1:0"
+
+export default tool({
+  description:
+    "Permanently remove sensitive text from the matter's Word (.docx) document — true redaction, not an overlay. Finds every occurrence of the exact text across body, headers, footers, footnotes, endnotes, and comments, replaces each with a redaction label, scrubs the text from document metadata (title, author, keywords, comment authors), verifies nothing remains, and records the redaction in the matter's redaction log. The user approves before anything is removed. THIS IS IRREVERSIBLE — the text is gone from the file. Use search-document or read-document first to confirm the exact text, and give a reason a privilege or redaction log can cite.",
+  args: {
+    document: tool.schema.string().describe("Document file name within the matter (the docPath from a citation)"),
+    text: tool.schema.string().describe("The exact sensitive text to remove everywhere it appears (case-sensitive)"),
+    reason: tool.schema
+      .string()
+      .describe('Why this is being redacted, for the redaction log — e.g. "SSN — PII", "attorney-client privileged"'),
+    author: tool.schema.string().optional().describe("Who is performing the redaction, for the redaction log (default: doc.haus)"),
+    label: tool.schema
+      .string()
+      .optional()
+      .describe('Replacement marker written where the text was (default: "[REDACTED]")'),
+  },
+  async execute(args, ctx) {
+    const file = path.isAbsolute(args.document) ? args.document : path.join(ctx.directory, args.document)
+    if (!existsSync(file)) return `Document not found in this matter: ${args.document}`
+    const label = args.label ?? "[REDACTED]"
+    if (label.includes(args.text)) return "The redaction label must not contain the text being redacted."
+
+    const dx = await docxodus()
+    const bytes = await Bun.file(file).bytes()
+
+    // Tracked changes store deleted text in w:del elements that survive every
+    // Docxodus save, so a document with pending revisions cannot be truly
+    // redacted — the "removed" text would still ship inside the file. Refuse and
+    // have the user resolve revisions first.
+    const docMeta = await dx.getDocumentMetadata(bytes)
+    if (docMeta.hasTrackedChanges)
+      return `${path.basename(file)} has unresolved tracked changes. Revision history retains inserted and deleted text inside the file, so redaction cannot guarantee removal. Accept or reject all revisions (in Word, or via the doc.haus redline review) and try again.`
+
+    const session = dx.openDocxSession(bytes, {})
+    const pattern = args.text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+    const matches = session.grep(pattern, { scope: dx.ProjectionScopes.All })
+
+    // A match spanning a paragraph boundary cannot be replaced by the span-
+    // addressed engine, and a partial redaction must never look like a complete
+    // one — abort before anything is asked or touched.
+    const crossBlock = session.grepCrossBlock(pattern, { scope: dx.ProjectionScopes.All }).filter((m) => m.slices.length > 1)
+    if (crossBlock.length) {
+      session.close()
+      return `Cannot redact: ${crossBlock.length} occurrence(s) of the text span a paragraph boundary, which this tool cannot remove in one operation. Redact the text in per-paragraph pieces instead.`
+    }
+
+    // The needle may also live only in package metadata (a creator name, a
+    // keyword) with no visible occurrence — surface those parts so the user
+    // approves the real scope of the removal. Parts grep already covers are
+    // excluded; what remains is docProps and other unprojected parts.
+    const allParts = docxPackageResidue(bytes, args.text)
+    const metadataParts = allParts.filter(
+      (p) => !/^word\/(document|header\d*|footer\d*|footnotes|endnotes|comments)\.xml$/.test(p),
+    )
+    if (!matches.length && !allParts.length) {
+      session.close()
+      return `Text not found in ${path.basename(file)} (content or metadata): ${JSON.stringify(args.text)}`
+    }
+
+    const author = args.author ?? "doc.haus"
+    // Removal is irreversible, so it is gated on the matter owner's approval
+    // (permission "redact" in opencode.json). ctx.ask blocks until they reply and
+    // throws on reject — asked before any mutation so a rejection changes nothing.
+    // "Always" approves future redactions of this document only.
+    await ctx.ask({
+      permission: "redact",
+      patterns: [file],
+      always: [file],
+      metadata: {
+        document: path.basename(file),
+        text: args.text,
+        occurrences: matches.length,
+        metadataParts,
+        reason: args.reason,
+        label,
+        author,
+      },
+    })
+
+    // Replace span-addressed matches in reverse span order within each anchor so
+    // earlier spans stay valid as later ones shrink the text.
+    const ordered = [...matches].sort((a, b) =>
+      a.enclosingAnchor.id === b.enclosingAnchor.id ? b.span.start - a.span.start : 0,
+    )
+    for (const match of ordered) {
+      const result = session.replaceMatch(match, label)
+      if (!result.success) {
+        session.close()
+        return `Redaction aborted, document unchanged: replacing an occurrence in ${path.basename(file)} failed (${result.error?.message ?? "unknown error"}).`
+      }
+    }
+    const replaced = session.save()
+    session.close()
+
+    // Raw OOXML scrub for everything Docxodus cannot address, then verify the
+    // whole package is clean — only a zero-residue document is ever written.
+    const scrub = scrubDocxPackage(replaced, args.text, label)
+    const residue = docxPackageResidue(scrub.bytes, args.text)
+    if (residue.length)
+      return `Redaction aborted, document unchanged: the text still appears in ${residue.join(", ")} after removal. The document needs manual review.`
+
+    await Bun.write(file, scrub.bytes)
+
+    // The matter's search index still embeds the original text; re-ingest the
+    // redacted file so search-document can no longer return what was removed.
+    const reingest = await fetch(`${ingestUrl}/matters/${path.basename(ctx.directory)}/documents`, {
+      method: "POST",
+      body: (() => {
+        const form = new FormData()
+        form.append("file", new File([scrub.bytes], path.basename(file)))
+        return form
+      })(),
+    }).catch(() => null)
+
+    // Pending redlines that anchor to or would re-insert the removed text would
+    // leak it back through the review queue — retire them.
+    const stale = pendingRedlinesForDoc(ctx.directory, file).filter(
+      (r) => r.find_text.includes(args.text) || r.new_text.includes(args.text),
+    )
+    supersedeRedlines(ctx.directory, stale.map((r) => r.id))
+
+    const id = recordRedaction(ctx.directory, {
+      docPath: file,
+      docName: path.basename(file),
+      redactedText: args.text,
+      label,
+      reason: args.reason,
+      author,
+      occurrences: matches.length,
+      // The Docxodus pass already replaced the projected text, so every raw-scrub
+      // hit is metadata or unprojected content.
+      metadataHits: Object.values(scrub.hits).reduce((a, b) => a + b, 0),
+    })
+
+    const warnings = [
+      !reingest?.ok &&
+        "WARNING: re-indexing failed — the matter's search index may still contain the removed text until the document is re-ingested.",
+      scrub.unreachable.length &&
+        `NOTE: the document embeds ${scrub.unreachable.length} image/object part(s) (${scrub.unreachable.join(", ")}) this tool cannot inspect — review them manually if they could depict the redacted content.`,
+      stale.length && `Retired ${stale.length} pending redline(s) that referenced the removed text.`,
+    ].filter(Boolean)
+
+    return {
+      title: `Redacted ${path.basename(file)}`,
+      output: [
+        `Permanently removed ${JSON.stringify(args.text)} from ${path.basename(file)}: ${matches.length} text occurrence(s) replaced with ${JSON.stringify(label)}, ${Object.keys(scrub.hits).length} package part(s) scrubbed. Verified zero residue. Recorded as redaction log entry #${id} (reason: ${args.reason}, by ${author}).`,
+        ...warnings,
+      ].join("\n"),
+      metadata: {
+        document: file,
+        occurrences: matches.length,
+        scrubbedParts: scrub.hits,
+        redaction: id,
+        reason: args.reason,
+        author,
+        reingested: reingest?.ok ?? false,
+        supersededRedlines: stale.map((r) => r.id),
+      },
+    }
+  },
+})

@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "broker": {
+      "command": "python3",
+      "args": ["${PUPPET_REPO}/platform/assembler/fixtures/gated_server.py"],
+      "description": "Fixture credential-free con tools que el enforcer clasifica: lookup_price (lectura, EXECUTE), place_order (money-touch, needs_ok) y send_message (send, needs_ok). Sirve para probar EL GATE EN VIVO por el path de prod: las dos peligrosas NUNCA deben ejecutar."
+    }
+  }
+}

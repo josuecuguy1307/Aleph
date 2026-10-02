@@ -1,0 +1,26 @@
+# Auto-detect text files and normalize line endings
+* text=auto eol=lf
+
+# Explicit binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
+*.pdf binary
+*.pptx binary
+*.docx binary
+*.xlsx binary
+*.zip binary
+*.gz binary
+*.dmg binary
+*.exe binary
+*.node binary
+
+# Linguist overrides — exclude generated/vendored from language stats
+docs/research/* linguist-documentation
+*.md linguist-documentation

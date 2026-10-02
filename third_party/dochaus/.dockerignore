@@ -1,0 +1,15 @@
+.git
+.opencode
+.sst
+.turbo
+.wrangler
+node_modules
+**/node_modules
+**/.output
+**/dist
+**/.turbo
+**/.vite
+**/coverage
+workspace
+.playwright-mcp
+sandbox/fresh.tar

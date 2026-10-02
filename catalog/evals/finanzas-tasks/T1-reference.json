@@ -1,0 +1,18 @@
+{
+  "filas_unicas": 507,
+  "totales_por_categoria": {
+    "Costo de ventas": -336800.27,
+    "Marketing": -51295.97,
+    "N\u00f3mina": -138919.72,
+    "Otros gastos": -9594.81,
+    "Otros ingresos": 5322.36,
+    "Renta": -26100.0,
+    "Servicios": -9165.03,
+    "Software": -6782.52,
+    "Ventas": 587756.59,
+    "Viajes": -17478.83
+  },
+  "ingresos_totales": 593078.95,
+  "utilidad_bruta": 256278.68,
+  "utilidad_neta": -3058.2
+}

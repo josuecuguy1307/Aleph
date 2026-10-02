@@ -1,0 +1,672 @@
+.atlas-file-view {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--color-surface-solid);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  /* The narrow-layout rules below were written as viewport media queries, back
+     when this view only ever filled the window. The Files pane now mounts it in
+     a ~390px column of a wide window, where those queries never fire and the
+     toolbar overflows a container that clips it — putting Download out of
+     reach. Naming a container lets the same rules key on the width that
+     actually applies. */
+  container: atlas-file-view / inline-size;
+}
+
+.atlas-file-toolbar {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  min-width: 0;
+  min-height: 48px;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface-solid);
+}
+
+.atlas-file-identity {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  align-items: center;
+  gap: 8px;
+}
+
+.atlas-file-identity > svg {
+  flex: none;
+  color: var(--color-text-faint);
+}
+
+.atlas-file-heading {
+  min-width: 0;
+}
+
+.atlas-file-name {
+  overflow: hidden;
+  color: var(--color-text);
+  font-size: 14px;
+  font-weight: 550;
+  letter-spacing: -0.006em;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.atlas-file-meta {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 6px;
+  margin-top: 1px;
+  color: var(--color-text-faint);
+  font-size: 11px;
+  line-height: 1.3;
+}
+
+.atlas-file-type {
+  flex: none;
+}
+
+.atlas-file-meta-separator {
+  color: var(--color-border-strong);
+}
+
+.atlas-file-location {
+  overflow: hidden;
+  min-width: 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.atlas-file-controls,
+.atlas-file-changes {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 5px;
+}
+
+.atlas-file-modes {
+  display: flex;
+  flex: none;
+  align-items: center;
+  padding: 2px;
+  border: 1px solid var(--color-border);
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--color-bg-subtle) 78%, transparent);
+}
+
+.atlas-file-mode,
+.atlas-file-button,
+.atlas-file-action,
+.atlas-file-close {
+  appearance: none;
+  border: 0;
+  border-radius: 7px;
+  font: inherit;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    border-color 120ms ease,
+    background-color 120ms ease,
+    color 120ms ease;
+}
+
+.atlas-file-mode {
+  min-height: 30px;
+  padding: 0 9px;
+  background: transparent;
+  color: var(--color-text-faint);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.atlas-file-mode:hover:not(:disabled) {
+  color: var(--color-text);
+}
+
+.atlas-file-mode.is-active {
+  background: var(--color-surface-solid);
+  box-shadow: 0 0 0 1px var(--color-border);
+  color: var(--color-text);
+}
+
+.atlas-file-button,
+.atlas-file-action {
+  min-height: 32px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-solid);
+  color: var(--color-text-muted);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.atlas-file-button {
+  padding: 0 10px;
+}
+
+.atlas-file-button.is-primary {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+.atlas-file-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 9px;
+}
+
+.atlas-file-button:hover:not(:disabled),
+.atlas-file-action:hover:not(:disabled),
+.atlas-file-close:hover:not(:disabled) {
+  border-color: var(--color-border-strong);
+  background: var(--color-bg-elevated);
+  color: var(--color-text);
+}
+
+.atlas-file-button.is-primary:hover:not(:disabled) {
+  border-color: var(--color-accent-hover);
+  background: var(--color-accent-hover);
+  color: var(--color-on-accent);
+}
+
+.atlas-file-close {
+  display: inline-grid;
+  width: 32px;
+  height: 32px;
+  flex: none;
+  place-items: center;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--color-text-faint);
+}
+
+.atlas-file-mode:disabled,
+.atlas-file-button:disabled,
+.atlas-file-action:disabled,
+.atlas-file-close:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+.atlas-file-save-error {
+  flex: none;
+  padding: 8px 10px;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-error) 28%, var(--color-border));
+  background: var(--color-error-muted);
+  color: var(--color-text);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.atlas-file-body {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex: 1;
+  overflow: hidden;
+  background: var(--color-bg);
+}
+
+.atlas-file-scroll {
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+}
+
+.atlas-file-loading {
+  width: min(100%, 820px);
+  padding: clamp(24px, 5vw, 48px) clamp(18px, 5vw, 48px);
+  margin: 0 auto;
+  color: var(--color-text-faint);
+  font-size: 13px;
+}
+
+.atlas-file-loading-heading,
+.atlas-file-loading-line {
+  overflow: hidden;
+  height: 12px;
+  margin-bottom: 13px;
+  border-radius: var(--radius);
+  background: var(--color-bg-elevated);
+}
+
+.atlas-file-loading-heading {
+  width: 42%;
+  height: 24px;
+  margin-bottom: 28px;
+}
+
+.atlas-file-loading-line {
+  width: 100%;
+}
+
+.atlas-file-loading-line.is-short {
+  width: 68%;
+  margin-bottom: 20px;
+}
+
+.atlas-file-loading-heading::after,
+.atlas-file-loading-line::after {
+  display: block;
+  width: 45%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--color-text-faint) 10%, transparent),
+    transparent
+  );
+  content: "";
+  animation: atlas-file-loading 1.25s ease-in-out infinite;
+}
+
+@keyframes atlas-file-loading {
+  from {
+    transform: translateX(-120%);
+  }
+
+  to {
+    transform: translateX(320%);
+  }
+}
+
+.atlas-file-error,
+.atlas-file-empty {
+  display: grid;
+  width: 100%;
+  min-height: 100%;
+  place-content: center;
+  justify-items: center;
+  padding: 28px 20px;
+  text-align: center;
+}
+
+.atlas-file-error {
+  color: var(--color-text-faint);
+}
+
+.atlas-file-error h2 {
+  margin: 9px 0 4px;
+  color: var(--color-text);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.atlas-file-error p {
+  max-width: 440px;
+  margin: 0 0 10px;
+  color: var(--color-text-muted);
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+
+.atlas-file-empty > div {
+  max-width: 320px;
+  color: var(--color-text-muted);
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+
+.atlas-file-document {
+  box-sizing: border-box;
+  width: min(100%, 820px);
+  min-height: 100%;
+  padding: clamp(30px, 5vw, 52px) clamp(24px, 5vw, 48px) 64px;
+  margin: 0 auto;
+  background: var(--color-surface-solid);
+}
+
+.atlas-file-document .atlas-md {
+  color: var(--color-text);
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.atlas-file-document .atlas-md h1,
+.atlas-file-document .atlas-md h2,
+.atlas-file-document .atlas-md h3,
+.atlas-file-document .atlas-md h4 {
+  scroll-margin-top: 24px;
+  color: var(--color-text);
+  font-weight: 600;
+  letter-spacing: -0.022em;
+}
+
+.atlas-file-document .atlas-md h1 {
+  margin: 0 0 22px;
+  font-size: clamp(24px, 3vw, 30px);
+  line-height: 1.18;
+}
+
+.atlas-file-document .atlas-md h2 {
+  margin: 32px 0 11px;
+  font-size: 19px;
+  line-height: 1.25;
+}
+
+.atlas-file-document .atlas-md h3 {
+  margin: 26px 0 9px;
+  font-size: 16px;
+  line-height: 1.3;
+}
+
+.atlas-file-document .atlas-md h4 {
+  margin: 22px 0 7px;
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.atlas-file-document .atlas-md p {
+  margin: 0 0 13px;
+}
+
+.atlas-file-document .atlas-md ul,
+.atlas-file-document .atlas-md ol {
+  margin: 0 0 14px;
+  padding-left: 22px;
+}
+
+.atlas-file-document .atlas-md li {
+  margin: 3px 0;
+  line-height: 1.6;
+}
+
+.atlas-file-document .atlas-md blockquote {
+  margin: 18px 0;
+  padding: 2px 0 2px 14px;
+}
+
+.atlas-file-document .atlas-md hr {
+  margin: 26px 0;
+}
+
+.atlas-file-document .atlas-md pre,
+.atlas-file-document .atlas-md pre.atlas-code-block {
+  margin: 17px 0;
+  padding: 12px 14px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.atlas-file-document .atlas-md code {
+  font-size: 13px;
+}
+
+.atlas-file-document .atlas-md img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 22px auto;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-bg);
+}
+
+.atlas-file-document .atlas-md table {
+  display: block;
+  max-width: 100%;
+  margin: 17px 0;
+  overflow-x: auto;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.atlas-file-document .atlas-md th,
+.atlas-file-document .atlas-md td {
+  padding: 8px 10px;
+}
+
+.atlas-file-pdf,
+.atlas-file-science {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 100%;
+  padding: 14px;
+}
+
+.atlas-file-science {
+  min-height: 420px;
+}
+
+.atlas-file-image {
+  display: grid;
+  width: 100%;
+  min-height: 100%;
+  place-items: center;
+  padding: clamp(18px, 4vw, 38px);
+}
+
+.atlas-file-image img {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface-solid);
+  box-shadow: var(--shadow-xs);
+}
+
+.atlas-file-html {
+  display: flex;
+  width: 100%;
+  min-height: 100%;
+}
+
+.atlas-file-html-frame {
+  flex: 1;
+  width: 100%;
+  min-height: 480px;
+  border: 0;
+  background: var(--color-surface-solid, #ffffff);
+}
+
+.atlas-file-source,
+.atlas-file-source-editor {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 100%;
+  padding: 17px 19px 40px;
+  color: var(--color-text);
+  font-family: var(--font-code);
+  font-size: 13px;
+  line-height: 1.65;
+  tab-size: 2;
+}
+
+.atlas-file-source-editor {
+  display: block;
+  resize: none;
+  border: 0;
+  outline-offset: -3px;
+  background: var(--color-surface-solid);
+  white-space: pre;
+}
+
+.atlas-file-truncated pre {
+  margin: 0;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.atlas-file-notice {
+  padding: 9px 11px;
+  margin-bottom: 13px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-surface-solid);
+  color: var(--color-text-muted);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  line-height: 1.5;
+  white-space: normal;
+}
+
+.atlas-file-code {
+  min-width: max-content;
+  padding: 17px 19px 40px;
+}
+
+.atlas-file-code .atlas-md pre,
+.atlas-file-code .atlas-md pre.atlas-code-block {
+  margin: 0;
+}
+
+@media (max-width: 760px) {
+  .atlas-file-toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px 12px;
+  }
+
+  .atlas-file-identity {
+    width: 100%;
+    padding-right: 38px;
+  }
+
+  .atlas-file-controls {
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 1px;
+  }
+
+  .atlas-file-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+  }
+
+  .atlas-file-document {
+    padding: 28px 20px 52px;
+  }
+}
+
+@media (max-width: 520px) {
+  .atlas-file-meta-separator,
+  .atlas-file-location {
+    display: none;
+  }
+
+  .atlas-file-mode,
+  .atlas-file-button,
+  .atlas-file-action {
+    min-height: 34px;
+  }
+
+  .atlas-file-action span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .atlas-file-action {
+    width: 34px;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .atlas-file-document {
+    padding-inline: 18px;
+  }
+}
+
+/* Same two breakpoints, measured against the view's own width so they hold
+   inside the Files pane as well as in a narrow window. */
+@container atlas-file-view (max-width: 760px) {
+  .atlas-file-toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px 12px;
+  }
+
+  .atlas-file-identity {
+    width: 100%;
+    padding-right: 38px;
+  }
+
+  .atlas-file-controls {
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 1px;
+  }
+
+  .atlas-file-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+  }
+
+  .atlas-file-document {
+    padding: 28px 20px 52px;
+  }
+}
+
+@container atlas-file-view (max-width: 520px) {
+  .atlas-file-meta-separator,
+  .atlas-file-location {
+    display: none;
+  }
+
+  .atlas-file-mode,
+  .atlas-file-button,
+  .atlas-file-action {
+    min-height: 34px;
+  }
+
+  .atlas-file-action span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .atlas-file-action {
+    width: 34px;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .atlas-file-document {
+    padding-inline: 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .atlas-file-mode,
+  .atlas-file-button,
+  .atlas-file-action,
+  .atlas-file-close {
+    transition: none;
+  }
+
+  .atlas-file-loading-heading::after,
+  .atlas-file-loading-line::after {
+    animation: none;
+  }
+}

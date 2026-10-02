@@ -1,0 +1,157 @@
+#!/usr/bin/env python3
+"""Lanzador de Diseño para el ciclo de vida de packs de Aleph.
+
+Lee sólo el puntero 0600 que entrega el pack. Escribe la config propia de
+Diseño y levanta su motor Electron headless; el HTTP local sirve el renderer
+para que la webview de Aleph sea la única superficie de trabajo.
+"""
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import os
+import shutil
+import signal
+import subprocess
+import sys
+from pathlib import Path
+
+
+def quote(value: object) -> str:
+    return json.dumps(str(value), ensure_ascii=False)
+
+
+def space_for(cfg: dict) -> str:
+    """Espacio estable de esta entrada, como el plugin de Legal por cada sesión."""
+    raw = str(cfg.get("sid") or cfg.get("chat_id") or cfg.get("user_id") or cfg["workspace"])
+    safe = "".join(char for char in raw if char.isalnum() or char in ". _:-").replace(" ", "")
+    return "space-ws-" + (safe[-24:] or "diseno")
+
+
+def write_config(cfg: dict) -> tuple[Path, Path]:
+    config_home = Path(os.environ["XDG_CONFIG_HOME"])
+    config_dir = config_home / "open-codesign"
+    config_dir.mkdir(parents=True, exist_ok=True)
+    destination = config_dir / "config.toml"
+    # X-Aleph-Space es el único header certificado: identifica el sobre donde el
+    # borde archiva cada workspace_step (molde Legal).
+    headers = {"X-Aleph-Space": space_for(cfg)}
+    if cfg.get("token"):
+        headers["Authorization"] = "Bearer " + str(cfg["token"])
+    if cfg.get("user_id"):
+        headers["X-Aleph-User"] = str(cfg["user_id"])
+    # [convergencia · superficie 1] EL HILO. `chat_id` ya viajaba en el puntero que escribe
+    # el pack (`pack.py:349`) y este launcher no lo bajaba: la pantalla de Diseño creaba su
+    # hilo, lo bautizaba «Diseño» y el borde no tenía a dónde anotar. Medido antes: 0
+    # mensajes. El header es el mismo que ya certificó Legal, no un canal nuevo.
+    if cfg.get("chat_id"):
+        headers["X-Aleph-Chat"] = str(cfg["chat_id"])
+    # El nombre del cerebro lo declara el REGISTRO de Aleph y viaja en el puntero. Estaba
+    # escrito a mano acá mientras la fila declaraba el mismo string, y la copia de abajo
+    # ganaba: cambiarlo arriba no se veía. El respaldo es para un puntero viejo, no para
+    # el caso normal.
+    cerebro = str(cfg.get("cerebro_label") or "Cerebro de Aleph")
+    lines = [
+        "version = 3",
+        'activeProvider = "aleph-brain"',
+        'activeModel = "aleph-workspace"',
+        "",
+        "[providers.aleph-brain]",
+        'id = "aleph-brain"',
+        "name = " + quote(cerebro),
+        "builtin = false",
+        'wire = "openai-chat"',
+        "baseUrl = " + quote(str(cfg["base"]).rstrip("/") + "/v1/workspaces/brain/openai"),
+        'defaultModel = "aleph-workspace"',
+        "modelsHint = [\"aleph-workspace\"]",
+        "requiresApiKey = false",
+        "httpHeaders = { " + ", ".join(f"{k} = {quote(v)}" for k, v in headers.items()) + " }",
+        "",
+        "[providers.aleph-brain.capabilities]",
+        "supportsKeyless = true",
+        "supportsModelsEndpoint = false",
+        'modelDiscoveryMode = "static-hint"',
+    ]
+    temporary = destination.with_suffix(".toml.tmp")
+    temporary.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    os.chmod(temporary, 0o600)
+    os.replace(temporary, destination)
+    data_dir = Path(os.environ.get("ALEPH_CODESIGN_DATA_DIR", str(config_home.parent / "data")))
+    data_dir.mkdir(parents=True, exist_ok=True)
+    return destination, data_dir
+
+
+def electron_binary(desktop: Path, data_dir: Path) -> Path:
+    candidates = [
+        desktop / "release" / "mac-arm64" / "Aleph Diseno.app" / "Contents" / "MacOS" / "Aleph Diseno",
+        desktop / "node_modules" / "electron" / "dist" / "Electron.app" / "Contents" / "MacOS" / "Electron",
+        desktop / "node_modules" / "electron" / "dist" / "electron",
+    ]
+    for candidate in candidates:
+        if candidate.is_file():
+            return candidate
+
+    # PyInstaller firma los Mach-O que encuentra dentro de un data directory. Un .app
+    # Electron anidado deja de ser un dato y falla al re-firmar sus frameworks; por eso el
+    # runtime viaja como ZIP opaco y se expande sólo en el dato privado de este dueño.
+    archive = desktop / "release" / "aleph-diseno-mac-arm64.zip"
+    if not archive.is_file():
+        raise RuntimeError("No hay runtime empaquetado de Diseño para este pack")
+    digest = hashlib.sha256(archive.read_bytes()).hexdigest()
+    runtime = data_dir / "electron-runtime" / digest
+    binary = runtime / "Aleph Diseno.app" / "Contents" / "MacOS" / "Aleph Diseno"
+    if binary.is_file():
+        return binary
+
+    staging = runtime.with_name(runtime.name + ".partial")
+    if staging.exists():
+        shutil.rmtree(staging)
+    staging.mkdir(parents=True)
+    try:
+        subprocess.run(["/usr/bin/ditto", "-x", "-k", str(archive), str(staging)], check=True)
+        staged_binary = staging / "Aleph Diseno.app" / "Contents" / "MacOS" / "Aleph Diseno"
+        if not staged_binary.is_file():
+            raise RuntimeError("El runtime empaquetado de Diseño no contiene su ejecutable")
+        runtime.parent.mkdir(parents=True, exist_ok=True)
+        os.replace(staging, runtime)
+    except Exception:
+        shutil.rmtree(staging, ignore_errors=True)
+        raise
+    return binary
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(add_help=False)
+    parser.add_argument("--port", type=int, required=True)
+    args = parser.parse_args()
+    pack_path = os.environ.get("ALEPH_PACK_CONFIG", "")
+    if not pack_path:
+        raise RuntimeError("ALEPH_PACK_CONFIG ausente")
+    cfg = json.loads(Path(pack_path).read_text(encoding="utf-8"))
+    _, data_dir = write_config(cfg)
+    desktop = Path(__file__).resolve().parents[1] / "apps" / "desktop"
+    child = subprocess.Popen(
+        [
+            str(electron_binary(desktop, data_dir)),
+            str(desktop),
+            f"--user-data-dir={data_dir}",
+            "--aleph-headless",
+            f"--aleph-port={args.port}",
+        ],
+        cwd=desktop,
+        start_new_session=False,
+    )
+
+    def stop(_signal: int, _frame: object) -> None:
+        if child.poll() is None:
+            child.terminate()
+        raise SystemExit(0)
+
+    signal.signal(signal.SIGTERM, stop)
+    signal.signal(signal.SIGINT, stop)
+    return child.wait()
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

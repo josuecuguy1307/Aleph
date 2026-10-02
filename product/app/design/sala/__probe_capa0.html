@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>sonda Capa 0</title>
+<!--
+  Página MÍNIMA para qa/verify_capa0_offline.mjs. Monta SOLO los dos renderers, con el
+  mismo cableado que sala.html (render.js clásico + AlephRender como módulo) — sin
+  backend, sin sesión, sin el resto de La Sala. Lo que se prueba acá es si la obra se
+  renderiza sin internet; meter la app entera agregaría motivos de fallo ajenos.
+-->
+<style>html,body{margin:0;background:#0b0b0f;color:#ddd;font:14px system-ui}#host{padding:12px}</style>
+</head>
+<body>
+<div id="host"></div>
+<script src="./render.js"></script>
+<script type="module" src="../render/render.js"></script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+node_modules
+package-lock.json
+
+# Retrieval benchmark artifacts (eval/retrieval-eval.ts): the ingested corpus is
+# rebuildable from harvey-labs, results are per-run measurements.
+eval/.retrieval-corpus/
+eval/results/
+
+# Runtime-mutable firm registries (written by services/ingest) — present on disk,
+# never tracked. Readers tolerate the files being absent.
+agents.json
+workflows.json
+
+# Firm-created agents are written at runtime as agent/<name>.md, in the same
+# namespace as the repo-shipped specialists. Ignore the directory and whitelist
+# the shipped roster; add a `!agent/<name>.md` line when shipping a new agent.
+agent/*.md
+!agent/agent-builder.md
+!agent/assumption-challenger.md
+!agent/compare.md
+!agent/drafter.md
+!agent/extract.md
+!agent/legal-review.md
+!agent/legal-reviewer.md
+!agent/obligations.md
+!agent/playbook-importer.md
+!agent/playbook-reviewer.md
+!agent/qa.md
+!agent/redactor.md
+!agent/redliner.md
+!agent/research.md
+!agent/router.md
+!agent/skill-builder.md
+!agent/summarizer.md
+!agent/template-builder.md
+!agent/workflow-builder.md

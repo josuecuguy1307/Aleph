@@ -1,0 +1,16 @@
+{
+  "name": "aleph-shell",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "Apache-2.0",
+  "type": "commonjs",
+  "dependencies": {
+    "@tauri-apps/cli": "^2.11.4"
+  }
+}

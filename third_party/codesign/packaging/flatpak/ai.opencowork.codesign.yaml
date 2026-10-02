@@ -1,0 +1,53 @@
+# Flathub submission template — manual process; Flathub does not accept
+# auto-bumps via PR from external repos. When we cut a release:
+#   1. Fork flathub/flathub and create a branch `new-pr/ai.opencowork.codesign`.
+#   2. Copy this manifest there as `ai.opencowork.codesign.yaml`.
+#   3. Update `tag` + `commit` under `sources` to the new v*.*.* tag SHA.
+#   4. Update sha256 of the AppImage under `modules.sources` (the
+#      extra-data hash; use `sha256sum` on the AppImage).
+#   5. Open PR to flathub/flathub; respond to reviewer feedback in the PR.
+#
+# Docs: https://docs.flathub.org/docs/for-app-authors/submission
+app-id: ai.opencowork.codesign
+runtime: org.freedesktop.Platform
+runtime-version: '23.08'
+sdk: org.freedesktop.Sdk
+base: org.electronjs.Electron2.BaseApp
+base-version: '23.08'
+command: open-codesign
+separate-locales: false
+finish-args:
+  - --share=ipc
+  - --socket=x11
+  - --socket=wayland
+  - --socket=pulseaudio
+  - --share=network
+  - --device=dri
+  - --filesystem=home
+  - --filesystem=xdg-config/open-codesign:create
+  - --talk-name=org.freedesktop.Notifications
+modules:
+  - name: open-codesign
+    buildsystem: simple
+    build-commands:
+      - install -Dm755 apply_extra /app/bin/apply_extra
+      - install -Dm755 open-codesign.sh /app/bin/open-codesign
+      - install -Dm644 ai.opencowork.codesign.desktop /app/share/applications/ai.opencowork.codesign.desktop
+      - install -Dm644 ai.opencowork.codesign.png /app/share/icons/hicolor/512x512/apps/ai.opencowork.codesign.png
+    sources:
+      - type: extra-data
+        filename: open-codesign.AppImage
+        url: https://github.com/OpenCoworkAI/open-codesign/releases/download/v0.2.0/open-codesign-0.2.0-x64.AppImage
+        sha256: 5a8c9b82454559244d6b1db16f2e1f5250009d049a96c3f4735b0f253f2f210d
+        size: 114028936
+      - type: script
+        dest-filename: apply_extra
+        commands:
+          - chmod +x open-codesign.AppImage
+          - ./open-codesign.AppImage --appimage-extract
+          - mv squashfs-root/* .
+          - rm open-codesign.AppImage
+      - type: script
+        dest-filename: open-codesign.sh
+        commands:
+          - 'exec zypak-wrapper /app/extra/open-codesign "$@"'

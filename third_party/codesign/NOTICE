@@ -1,0 +1,12 @@
+open-codesign
+Copyright 2026 OpenCoworkAI Contributors
+
+This product includes software developed by:
+- The pi-ai project (https://github.com/badlogic/pi-mono) — MIT License
+- The Electron project (https://www.electronjs.org/) — MIT License
+- The pptxgenjs project (https://github.com/gitbrent/PptxGenJS) — MIT License
+- The dom-to-pptx project (https://github.com/atharva9167j/dom-to-pptx) — MIT License
+- The esbuild project (https://github.com/evanw/esbuild) — MIT License
+
+Full third-party license texts are bundled in the application under
+`resources/THIRD_PARTY_LICENSES.txt` at build time.

@@ -1,0 +1,152 @@
+/* aleph-ds.css — PRIMITIVAS del sistema "Híbrido Spatial + Soft futurism".
+ *
+ * Fuente: Claude Design · proyecto "Aleph Sistema Final".
+ *
+ * Acá NO viven tokens: viven en aleph-tokens.css y son los de siempre (--paper, --paper2,
+ * --ink, --muted, --accent, --sh-1..3, --r-*, --glass, --font-ui, --font-brand). Un solo
+ * vocabulario. Este archivo solo compone esos tokens en las formas del sistema, y se importa
+ * desde aleph-tokens.css para que las ~17 pantallas lo reciban sin tocar 17 HTML.
+ *
+ * REGLAS (del brief, no negociables):
+ *   · Cero relieves, cero hundidos, cero bordes. La jerarquía es SOMBRA + RADIO, nunca línea.
+ *   · Tres planos: campo → plano de contenido (r30, sombra ambiental) → pozo (r22-26, SIN
+ *     sombra propia: un pozo es un hueco, no un objeto).
+ *   · Nav y utilidades flotan en cristal por encima del campo.
+ *   · Color 90/8/2. Tipografía Outfit 200-400; Newsreader solo para la marca.
+ */
+
+/* ── Planos ────────────────────────────────────────────────────────────────── */
+
+/* el plano de contenido: el ÚNICO que lleva sombra ambiental */
+.ds-plane { background: var(--paper); border-radius: var(--r-xl);
+            box-shadow: var(--sh-2); padding: 28px 32px; }
+
+/* el pozo: plano, sin sombra propia */
+.ds-well  { background: var(--paper2); border-radius: var(--r-lg); overflow: hidden;
+            position: relative; }
+
+/* un elemento dentro del pozo */
+.ds-card  { background: var(--paper); border-radius: var(--r-lg);
+            box-shadow: var(--sh-1); padding: 14px 18px; box-sizing: border-box; }
+
+/* cristal flotante */
+.ds-glass { background: var(--glass); -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(16px); box-shadow: var(--sh-1);
+            border-radius: var(--r-pill); }
+
+/* ── Tipografía del sistema ────────────────────────────────────────────────── */
+/* El título es el gesto más característico: 34px en peso 200 con tracking negativo.
+ * Nada de serif ni de 600 — eso era el sistema anterior. */
+.ds-title { font: 200 var(--fs-3xl)/1.1 var(--font-ui); letter-spacing: var(--tracking-title);
+            color: var(--ink); margin: 0; }
+.ds-sub   { font: 300 13px var(--font-ui); color: var(--muted); }
+.ds-name  { font: 400 13.5px var(--font-ui); color: var(--ink); }
+.ds-meta  { font: 300 var(--fs-xs) var(--font-ui); color: var(--muted); }
+.ds-brand { font: 500 17px var(--font-brand); color: var(--ink); }
+
+/* la mascota va SIN MARCO, sobre un halo radial */
+.ds-mark     { width: 28px; height: 28px; border-radius: 10px; flex: none;
+               background: radial-gradient(circle, var(--accent-soft) 0%, transparent 76%);
+               display: flex; align-items: center; justify-content: center; }
+.ds-mark img { width: 18px; height: 18px; flex: none; }
+
+/* ── Acciones ──────────────────────────────────────────────────────────────── */
+/* la primaria INVIERTE el campo; el acento queda reservado al 8% */
+.ds-btn       { background: var(--ink); color: var(--paper); font: 400 12px var(--font-ui);
+                padding: 10px 18px; border-radius: var(--r-md); border: 0; white-space: nowrap;
+                cursor: pointer; text-align: center; text-decoration: none; }
+.ds-btn-ghost { background: transparent; color: var(--muted); font: 400 12px var(--font-ui);
+                padding: 10px 18px; border-radius: var(--r-md); border: 0; cursor: pointer;
+                text-align: center; text-decoration: none; }
+
+/* puntos de estado — el 2% */
+.ds-dot        { width: 5px; height: 5px; border-radius: 50%; flex: none; display: inline-block; }
+.ds-dot-ok     { background: var(--green); }
+.ds-dot-warn   { background: var(--amber); }
+.ds-dot-err    { background: var(--red); }
+.ds-dot-accent { background: var(--accent); }
+
+/* ── Vertical Sliding Focus ────────────────────────────────────────────────── */
+/* Exactamente UN elemento en foco por pista: tamaño real, tinte de mascota, acciones
+ * visibles. El resto retrocede conservando nombre y metadato legibles. */
+
+/* La ALTURA de la pista es responsive, no un número copiado del lienzo.
+ * El modelo de Claude Design está dibujado sobre un canvas de 1180px, donde la pista mide
+ * 332px. Clavar ese 332 en la app hacía que en una pantalla real de 1400+ la lista quedara
+ * como una ventanita apretada con un montón de aire desperdiciado abajo. Acá se toma el alto
+ * de la ventana: nunca menos de 300px (para que entren ~3 filas y el patrón se lea), nunca
+ * más de 720px (más allá deja de ser una pista y pasa a ser scroll infinito).
+ * Las pantallas NO deben declarar `height` inline en la pista — el inline le gana a esto. */
+/* MAX-height, no height: una pista de 3 filas no debe abrir un pozo de 568px con 280px de
+ * aire adentro. Con `height` fijo, toda lista corta dejaba ese hueco (medido en el centro de
+ * notificaciones de Estados y en Home con 4 filas). Con `max-height` la pista se encoge hasta
+ * su contenido y solo scrollea cuando de verdad sobra lista. */
+.ds-track           { position: relative; overflow-y: auto; scrollbar-width: none;
+                      height: auto; max-height: clamp(300px, 58vh, 720px); }
+.ds-track::-webkit-scrollbar { display: none; }
+
+/* con poca altura de ventana la pista cede primero */
+@media (max-height: 720px) { .ds-track { max-height: clamp(240px, 46vh, 420px); } }
+
+.ds-track .ds-item  { transition: transform .34s cubic-bezier(.22,.61,.36,1),
+                                  opacity .34s ease, box-shadow .34s ease, background .34s ease;
+                      transform-origin: top center; }
+.ds-track .ds-item[data-focus="0"] { transform: scale(0.965); opacity: .58; }
+
+/* CONTRASTE DEL ELEMENTO RETROCEDIDO.
+ * El 0.58 de opacidad es del modelo y se respeta, pero atenúa el TEXTO junto con todo lo
+ * demás: --muted al 58% da 2.25:1 en claro y 3.09:1 en oscuro — muy por debajo del piso de
+ * 4.5 que este proyecto se puso, y en contra de lo que el propio modelo pide ("conservando
+ * nombre y metadato legibles"). Un metadato ilegible no es un metadato retrocedido.
+ * Se compensa en el ORIGEN: dentro de un elemento retrocedido el texto arranca en --ink, así
+ * que al atenuarse aterriza cerca del gris de apoyo en vez de desaparecer. El gesto visual
+ * es el mismo —la fila se va para atrás— pero se sigue leyendo. */
+.ds-track .ds-item[data-focus="0"],
+.ds-track .ds-item[data-focus="0"] * { color: var(--ink); }
+.ds-track .ds-item[data-focus="1"] { transform: scale(1); opacity: 1;
+                      box-shadow: var(--sh-3); background: var(--accent-soft); }
+
+/* las acciones solo se alcanzan en el elemento en foco */
+.ds-track .ds-actions               { transition: opacity .2s ease; }
+.ds-track .ds-item[data-focus="0"] .ds-actions { opacity: 0; pointer-events: none; }
+.ds-track .ds-item[data-focus="1"] .ds-actions { opacity: 1; }
+
+/* el control ^ˇ en cristal que desliza el foco por la pista */
+.ds-slider          { position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+                      display: flex; flex-direction: column; gap: 1px; padding: 4px;
+                      border-radius: var(--r-md); z-index: 3; }
+.ds-slider button   { width: 26px; height: 26px; border: 0; background: transparent;
+                      color: var(--muted); border-radius: var(--r-sm); cursor: pointer;
+                      font: 400 12px var(--font-ui); line-height: 1; }
+.ds-slider button:hover:not(:disabled) { color: var(--ink); }
+.ds-slider button:disabled { opacity: .3; cursor: default; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-track .ds-item, .ds-track .ds-actions { transition: none; }
+}
+
+/* [rediseño · fase 1] `<b>` Y `<strong>` TAMBIÉN TIENEN TECHO.
+ * 194 apariciones en el front, y el default del navegador es 700 — o sea que el barrido de
+ * pesos las habría dejado afuera y la regla del estándar («nunca 600 en la UI») se habría
+ * roto en cada párrafo con énfasis. Una regla acá alcanza para las 194: es el mismo criterio
+ * que hizo que el barrido tocara tokens y no 194 etiquetas a mano. */
+b, strong { font-weight: var(--fw-activo, 500); }
+
+/* ── LA CABECERA DE LAS PANTALLAS DEL RIEL ─────────────────────────────────────────
+   El wordmark a la izquierda y, a la derecha, tema e idioma. Es la fila que el diseño
+   pone arriba de Inicio y de Agentes.
+
+   VIVE ACÁ Y NO EN CADA PANTALLA porque el LOOK es uno solo; el DOM sí lo escribe cada
+   pantalla, y eso no es un descuido: el runtime DC monta React sobre `<x-dc>` y vuelve a
+   pintar en cada `setState`, así que un nodo inyectado desde fuera —como el riel, que por
+   eso vive en `document.body`— no sobreviviría adentro de la plantilla. Una definición de
+   estilo, un DOM por pantalla, cero copias del aspecto. */
+.ds-cabecera   { display: flex; align-items: center; gap: 10px; flex: none; }
+.ds-cabecera-marca { font: 400 26px/1 var(--font-brand); color: var(--ink); }
+.ds-pill       { background: var(--paper); border: 1px solid var(--hairline); color: var(--muted);
+                 cursor: pointer; display: flex; align-items: center; justify-content: center;
+                 flex: none; border-radius: var(--r-full);
+                 transition: border-color .14s, color .14s; }
+.ds-pill:hover { border-color: var(--accent); color: var(--ink); }
+.ds-pill-ico   { width: 34px; height: 34px; font-size: 14px; padding: 0; }
+.ds-pill-lang  { height: 34px; padding: 0 13px; font: 500 12px var(--font-mono); letter-spacing: .04em; }

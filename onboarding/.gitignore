@@ -1,0 +1,3 @@
+__pycache__/
+*.pyc
+# seed_result.json is committed as verified evidence (kept)

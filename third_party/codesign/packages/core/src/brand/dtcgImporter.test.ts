@@ -1,0 +1,216 @@
+import { readFileSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { describe, expect, it } from 'vitest';
+import type { CoreLogger } from '../logger.js';
+import { importDtcgJson } from './dtcgImporter.js';
+
+const __dir = dirname(fileURLToPath(import.meta.url));
+const FIXTURE_PATH = resolve(__dir, '__fixtures__/tokens.json');
+const FIXTURE_JSON: unknown = JSON.parse(readFileSync(FIXTURE_PATH, 'utf-8'));
+
+describe('importDtcgJson()', () => {
+  it('flattens nested DTCG structure into DesignToken array', () => {
+    const tokens = importDtcgJson(FIXTURE_JSON);
+    expect(tokens.length).toBeGreaterThan(0);
+  });
+
+  it('extracts color tokens with dot-path names', () => {
+    const tokens = importDtcgJson(FIXTURE_JSON);
+    const colorTokens = tokens.filter((t) => t.type === 'color');
+    const names = colorTokens.map((t) => t.name);
+
+    expect(names).toContain('color.brand.primary');
+    expect(names).toContain('color.brand.secondary');
+  });
+
+  it('uses $type: color for explicitly typed color tokens', () => {
+    const tokens = importDtcgJson(FIXTURE_JSON);
+    const primary = tokens.find((t) => t.name === 'color.brand.primary');
+
+    expect(primary).toBeDefined();
+    expect(primary?.type).toBe('color');
+    expect(primary?.value).toBe('#D97757');
+  });
+
+  it('inherits group $type for children without explicit $type', () => {
+    const tokens = importDtcgJson(FIXTURE_JSON);
+    // neutral.100 and neutral.900 have no explicit $type but are under color group
+    const neutral100 = tokens.find((t) => t.name === 'color.neutral.100');
+    expect(neutral100).toBeDefined();
+    expect(neutral100?.type).toBe('color');
+  });
+
+  it('extracts fontFamily tokens', () => {
+    const tokens = importDtcgJson(FIXTURE_JSON);
+    const fontFamilyTokens = tokens.filter((t) => t.type === 'fontFamily');
+
+    expect(fontFamilyTokens.length).toBeGreaterThan(0);
+    const sansToken = fontFamilyTokens.find((t) => t.name === 'typography.fontFamily.sans');
+    expect(sansToken).toBeDefined();
+    expect(sansToken?.value).toContain('Inter');
+  });
+
+  it('maps $type: dimension to spacing for spacing tokens', () => {
+    const tokens = importDtcgJson(FIXTURE_JSON);
+    const spacingTokens = tokens.filter((t) => t.type === 'spacing');
+    const names = spacingTokens.map((t) => t.name);
+
+    expect(names).toContain('spacing.1');
+    expect(names).toContain('spacing.4');
+  });
+
+  it('extracts shadow tokens', () => {
+    const tokens = importDtcgJson(FIXTURE_JSON);
+    const shadowTokens = tokens.filter((t) => t.type === 'shadow');
+
+    expect(shadowTokens.length).toBeGreaterThan(0);
+    expect(shadowTokens[0]?.name).toBe('shadow.sm');
+  });
+
+  it('sets group from parent path segments', () => {
+    const tokens = importDtcgJson(FIXTURE_JSON);
+    const primary = tokens.find((t) => t.name === 'color.brand.primary');
+
+    expect(primary?.group).toBe('color.brand');
+  });
+
+  it('sets top-level tokens group to parent key', () => {
+    const tokens = importDtcgJson(FIXTURE_JSON);
+    const spacing1 = tokens.find((t) => t.name === 'spacing.1');
+    expect(spacing1?.group).toBe('spacing');
+  });
+
+  it('sets origin to dtcg-json on every token', () => {
+    const tokens = importDtcgJson(FIXTURE_JSON);
+    for (const token of tokens) {
+      expect(token.origin).toBe('dtcg-json');
+    }
+  });
+
+  it('sets schemaVersion to 1 on every token', () => {
+    const tokens = importDtcgJson(FIXTURE_JSON);
+    for (const token of tokens) {
+      expect(token.schemaVersion).toBe(1);
+    }
+  });
+
+  it('classifies $type: dimension under typography.fontSize.* as fontSize, not spacing', () => {
+    const tokens = importDtcgJson(FIXTURE_JSON);
+    const sm = tokens.find((t) => t.name === 'typography.fontSize.sm');
+    const base = tokens.find((t) => t.name === 'typography.fontSize.base');
+
+    expect(sm?.type).toBe('fontSize');
+    expect(base?.type).toBe('fontSize');
+    const spacingNames = tokens.filter((t) => t.type === 'spacing').map((t) => t.name);
+    expect(spacingNames).not.toContain('typography.fontSize.sm');
+  });
+
+  it('classifies $type: dimension under radius.* as radius, not spacing', () => {
+    const tokens = importDtcgJson(FIXTURE_JSON);
+    const radiusSm = tokens.find((t) => t.name === 'radius.sm');
+    expect(radiusSm?.type).toBe('radius');
+  });
+
+  it('does not coerce border-width style dimension tokens into spacing', () => {
+    const tokens = importDtcgJson({
+      border: {
+        width: {
+          thin: { $value: '1px', $type: 'dimension' },
+        },
+      },
+    });
+    // Schema has no `borderWidth`; we must NOT silently bucket it as spacing.
+    const thin = tokens.find((t) => t.name === 'border.width.thin');
+    expect(thin?.type).not.toBe('spacing');
+  });
+
+  it('does not promote a generic $type: dimension (no path hint) into spacing', () => {
+    const tokens = importDtcgJson({
+      misc: {
+        thingy: { $value: '12px', $type: 'dimension' },
+      },
+    });
+    const spacingNames = tokens.filter((t) => t.type === 'spacing').map((t) => t.name);
+    expect(spacingNames).not.toContain('misc.thingy');
+  });
+
+  it('handles non-object input gracefully (returns empty array)', () => {
+    expect(importDtcgJson(null)).toEqual([]);
+    expect(importDtcgJson('not-an-object')).toEqual([]);
+    expect(importDtcgJson(42)).toEqual([]);
+    expect(importDtcgJson([])).toEqual([]);
+  });
+
+  describe('unresolved type inference', () => {
+    function makeLogger(): {
+      logger: CoreLogger;
+      calls: Array<{ event: string; data?: Record<string, unknown> }>;
+    } {
+      const calls: Array<{ event: string; data?: Record<string, unknown> }> = [];
+      const logger: CoreLogger = {
+        info: () => {},
+        warn: (event, data) => {
+          if (data === undefined) {
+            calls.push({ event });
+          } else {
+            calls.push({ event, data });
+          }
+        },
+        error: () => {},
+      };
+      return { logger, calls };
+    }
+
+    it('preserves tokens with unresolvable type as `unknown`', () => {
+      const tokens = importDtcgJson({
+        misc: {
+          mystery: { $value: '42deg', $type: 'angle' },
+        },
+      });
+
+      const mystery = tokens.find((t) => t.name === 'misc.mystery');
+      expect(mystery).toBeDefined();
+      expect(mystery?.type).toBe('unknown');
+      expect(mystery?.value).toBe('42deg');
+    });
+
+    it('routes unresolved-token warnings through the injected logger', () => {
+      const { logger, calls } = makeLogger();
+      importDtcgJson(
+        {
+          misc: {
+            mystery: { $value: '42deg', $type: 'angle' },
+          },
+        },
+        { logger },
+      );
+
+      expect(calls.length).toBe(1);
+      expect(calls[0]?.event).toContain('dtcg');
+      expect(calls[0]?.data).toMatchObject({
+        unresolvedCount: 1,
+        tokens: ['misc.mystery'],
+      });
+    });
+
+    it('drops the warning silently when no logger is injected', () => {
+      expect(() =>
+        importDtcgJson({
+          misc: { mystery: { $value: '42deg', $type: 'angle' } },
+        }),
+      ).not.toThrow();
+    });
+
+    it('does not warn when every token resolves to a known type', () => {
+      const { logger, calls } = makeLogger();
+      importDtcgJson(
+        {
+          color: { brand: { $value: '#fff', $type: 'color' } },
+        },
+        { logger },
+      );
+      expect(calls.length).toBe(0);
+    });
+  });
+});

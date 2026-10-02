@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:#DED6C7;font-family:'Hanken Grotesk',system-ui,-apple-system,sans-serif;color:#2B2925;-webkit-font-smoothing:antialiased}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+  @keyframes twk{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.6)}}
+  @keyframes flo{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+  @keyframes beam{0%,100%{opacity:.16}50%{opacity:.34}}
+  .orbit{transform-origin:110px 46px}
+  .ctr{transform-box:fill-box;transform-origin:center}
+</style>
+</helmet>
+
+<div style="min-height:100vh;padding:42px 40px 72px">
+  <div style="max-width:1180px;margin:0 auto">
+
+    <div style="font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#9A9082">Mascota · interactuar sin brazos</div>
+    <h1 style="font-family:'Spectral',Georgia,serif;font-weight:600;font-size:31px;margin:8px 0 6px;letter-spacing:-.015em">Otras formas de hacer la tarea</h1>
+    <p style="margin:0 0 36px;color:#6F6A60;font-size:14.5px;max-width:74ch;line-height:1.6">Sin bracitos. Cuatro maneras de que actúe sobre las cosas — más mágicas y «de IA». Mismo gesto: teclear. Decime cuál te gusta más.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:20px">
+
+      <!-- 1 · TELEQUINESIS -->
+      <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+        <div style="background:#16172A;display:flex;align-items:center;justify-content:center;padding:6px">
+          <svg width="300" height="200" viewBox="0 0 220 150" fill="none">
+            <rect x="60" y="98" width="100" height="24" rx="6" fill="#1E2030" stroke="#2E3048" stroke-width="1.4"></rect>
+            <g fill="#3A3C58">
+              <rect x="66" y="102" width="11" height="6" rx="2"><animate attributeName="fill" values="#3A3C58;#8E8BF5;#3A3C58" dur="1.6s" begin="0s" repeatCount="indefinite"></animate></rect>
+              <rect x="80" y="102" width="11" height="6" rx="2"></rect><rect x="94" y="102" width="11" height="6" rx="2"><animate attributeName="fill" values="#3A3C58;#8E8BF5;#3A3C58" dur="1.6s" begin="0.5s" repeatCount="indefinite"></animate></rect>
+              <rect x="108" y="102" width="11" height="6" rx="2"></rect><rect x="122" y="102" width="11" height="6" rx="2"><animate attributeName="fill" values="#3A3C58;#8E8BF5;#3A3C58" dur="1.6s" begin="1s" repeatCount="indefinite"></animate></rect>
+              <rect x="136" y="102" width="16" height="6" rx="2"></rect>
+              <rect x="70" y="111" width="11" height="6" rx="2"></rect><rect x="84" y="111" width="11" height="6" rx="2"></rect><rect x="98" y="111" width="24" height="6" rx="2"></rect><rect x="126" y="111" width="20" height="6" rx="2"></rect>
+            </g>
+            <line x1="110" y1="60" x2="110" y2="96" stroke="#8E8BF5" stroke-width="1.2" stroke-dasharray="1.5 3" opacity="0.45"></line>
+            <path class="ctr" style="animation:flo 2.6s ease-in-out infinite" d="M95 78 l1.2 -3 l1.2 3 l3 1.2 l-3 1.2 l-1.2 3 l-1.2 -3 l-3 -1.2 Z" fill="#C9C6FF"></path>
+            <path class="ctr" style="animation:flo 2.6s ease-in-out infinite .8s" d="M128 82 l1 -2.4 l1 2.4 l2.4 1 l-2.4 1 l-1 2.4 l-1 -2.4 l-2.4 -1 Z" fill="#C9C6FF"></path>
+            <g class="orbit" style="animation:spin 12s linear infinite">
+              <g transform="rotate(0 110 46)"><ellipse cx="110" cy="46" rx="18" ry="6.5" stroke="#6E6BD0" stroke-width="1.5"></ellipse><circle cx="128" cy="46" r="2.4" fill="#C9C6FF"></circle></g>
+              <g transform="rotate(60 110 46)"><ellipse cx="110" cy="46" rx="18" ry="6.5" stroke="#6E6BD0" stroke-width="1.5"></ellipse><circle cx="128" cy="46" r="2.4" fill="#C9C6FF"></circle></g>
+              <g transform="rotate(120 110 46)"><ellipse cx="110" cy="46" rx="18" ry="6.5" stroke="#6E6BD0" stroke-width="1.5"></ellipse><circle cx="128" cy="46" r="2.4" fill="#C9C6FF"></circle></g>
+            </g>
+            <g style="animation:bob 3s ease-in-out infinite">
+              <path d="M110 36 L120 42 L120 52 L110 58 L100 52 L100 42 Z" fill="#8E8BF5" stroke="#8E8BF5" stroke-width="4" stroke-linejoin="round"></path>
+              <path d="M105.6 46 q1.7 -2.3 3.4 0" stroke="#211E3A" stroke-width="2" fill="none" stroke-linecap="round"></path>
+              <path d="M111 46 q1.7 -2.3 3.4 0" stroke="#211E3A" stroke-width="2" fill="none" stroke-linecap="round"></path>
+            </g>
+          </svg>
+        </div>
+        <div style="padding:14px 16px;border-top:1px solid #F0E8D8"><div style="font-family:'Spectral',serif;font-weight:600;font-size:16px">1 · Telequinesis</div><div style="font-size:12.5px;color:#7C766B;line-height:1.5;margin-top:3px">No toca nada: las teclas se encienden solas y flotan chispitas. Pura mente.</div></div>
+      </div>
+
+      <!-- 2 · HAZ DE LUZ -->
+      <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+        <div style="background:#16172A;display:flex;align-items:center;justify-content:center;padding:6px">
+          <svg width="300" height="200" viewBox="0 0 220 150" fill="none">
+            <defs><linearGradient id="bm" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8E8BF5" stop-opacity="0.55"></stop><stop offset="1" stop-color="#8E8BF5" stop-opacity="0"></stop></linearGradient></defs>
+            <polygon points="110,56 142,96 78,96" fill="url(#bm)" style="animation:beam 2.4s ease-in-out infinite"></polygon>
+            <rect x="60" y="98" width="100" height="24" rx="6" fill="#1E2030" stroke="#2E3048" stroke-width="1.4"></rect>
+            <g fill="#3A3C58">
+              <rect x="66" y="102" width="11" height="6" rx="2"></rect><rect x="80" y="102" width="11" height="6" rx="2"></rect>
+              <rect x="94" y="102" width="11" height="6" rx="2" fill="#8E8BF5"></rect><rect x="108" y="102" width="11" height="6" rx="2" fill="#8E8BF5"></rect><rect x="122" y="102" width="11" height="6" rx="2" fill="#8E8BF5"></rect>
+              <rect x="136" y="102" width="16" height="6" rx="2"></rect>
+              <rect x="70" y="111" width="11" height="6" rx="2"></rect><rect x="84" y="111" width="11" height="6" rx="2"></rect><rect x="98" y="111" width="24" height="6" rx="2" fill="#8E8BF5"></rect><rect x="126" y="111" width="20" height="6" rx="2"></rect>
+            </g>
+            <g class="orbit" style="animation:spin 12s linear infinite">
+              <g transform="rotate(0 110 46)"><ellipse cx="110" cy="46" rx="18" ry="6.5" stroke="#6E6BD0" stroke-width="1.5"></ellipse><circle cx="128" cy="46" r="2.4" fill="#C9C6FF"></circle></g>
+              <g transform="rotate(60 110 46)"><ellipse cx="110" cy="46" rx="18" ry="6.5" stroke="#6E6BD0" stroke-width="1.5"></ellipse><circle cx="128" cy="46" r="2.4" fill="#C9C6FF"></circle></g>
+              <g transform="rotate(120 110 46)"><ellipse cx="110" cy="46" rx="18" ry="6.5" stroke="#6E6BD0" stroke-width="1.5"></ellipse><circle cx="128" cy="46" r="2.4" fill="#C9C6FF"></circle></g>
+            </g>
+            <g style="animation:bob 3s ease-in-out infinite">
+              <path d="M110 36 L120 42 L120 52 L110 58 L100 52 L100 42 Z" fill="#8E8BF5" stroke="#8E8BF5" stroke-width="4" stroke-linejoin="round"></path>
+              <path d="M105.6 46 q1.7 -2.3 3.4 0" stroke="#211E3A" stroke-width="2" fill="none" stroke-linecap="round"></path>
+              <path d="M111 46 q1.7 -2.3 3.4 0" stroke="#211E3A" stroke-width="2" fill="none" stroke-linecap="round"></path>
+            </g>
+          </svg>
+        </div>
+        <div style="padding:14px 16px;border-top:1px solid #F0E8D8"><div style="font-family:'Spectral',serif;font-weight:600;font-size:16px">2 · Haz de luz</div><div style="font-size:12.5px;color:#7C766B;line-height:1.5;margin-top:3px">Proyecta un cono de luz y lo que toca se activa. Tipo proyector / holograma.</div></div>
+      </div>
+
+      <!-- 3 · ELECTRÓN OBRERO -->
+      <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+        <div style="background:#16172A;display:flex;align-items:center;justify-content:center;padding:6px">
+          <svg width="300" height="200" viewBox="0 0 220 150" fill="none">
+            <rect x="60" y="98" width="100" height="24" rx="6" fill="#1E2030" stroke="#2E3048" stroke-width="1.4"></rect>
+            <g fill="#3A3C58">
+              <rect x="66" y="102" width="11" height="6" rx="2"></rect><rect x="80" y="102" width="11" height="6" rx="2"></rect><rect x="94" y="102" width="11" height="6" rx="2"></rect><rect x="108" y="102" width="11" height="6" rx="2"></rect><rect x="122" y="102" width="11" height="6" rx="2"></rect><rect x="136" y="102" width="16" height="6" rx="2"></rect>
+              <rect x="70" y="111" width="11" height="6" rx="2"></rect><rect x="84" y="111" width="11" height="6" rx="2"></rect><rect x="98" y="111" width="24" height="6" rx="2"></rect><rect x="126" y="111" width="20" height="6" rx="2"></rect>
+            </g>
+            <g class="orbit" style="animation:spin 12s linear infinite">
+              <g transform="rotate(0 110 46)"><ellipse cx="110" cy="46" rx="18" ry="6.5" stroke="#6E6BD0" stroke-width="1.5"></ellipse><circle cx="128" cy="46" r="2.4" fill="#C9C6FF"></circle></g>
+              <g transform="rotate(60 110 46)"><ellipse cx="110" cy="46" rx="18" ry="6.5" stroke="#6E6BD0" stroke-width="1.5"></ellipse><circle cx="128" cy="46" r="2.4" fill="#C9C6FF"></circle></g>
+            </g>
+            <circle r="3" fill="#C9C6FF"><animateMotion dur="1.3s" repeatCount="indefinite" keyPoints="0;0.5;1" keyTimes="0;0.5;1" calcMode="linear" path="M96,60 L96,99 L96,60"></animateMotion></circle>
+            <circle r="2.6" fill="#E2DEFF"><animateMotion dur="1.3s" begin="0.65s" repeatCount="indefinite" keyPoints="0;0.5;1" keyTimes="0;0.5;1" calcMode="linear" path="M124,60 L124,99 L124,60"></animateMotion></circle>
+            <g style="animation:bob 3s ease-in-out infinite">
+              <path d="M110 36 L120 42 L120 52 L110 58 L100 52 L100 42 Z" fill="#8E8BF5" stroke="#8E8BF5" stroke-width="4" stroke-linejoin="round"></path>
+              <path d="M105.6 46 q1.7 -2.3 3.4 0" stroke="#211E3A" stroke-width="2" fill="none" stroke-linecap="round"></path>
+              <path d="M111 46 q1.7 -2.3 3.4 0" stroke="#211E3A" stroke-width="2" fill="none" stroke-linecap="round"></path>
+            </g>
+          </svg>
+        </div>
+        <div style="padding:14px 16px;border-top:1px solid #F0E8D8"><div style="font-family:'Spectral',serif;font-weight:600;font-size:16px">3 · Electrón obrero</div><div style="font-size:12.5px;color:#7C766B;line-height:1.5;margin-top:3px">Sus propios electrones bajan a apretar las teclas. La órbita ES la mano.</div></div>
+      </div>
+
+      <!-- 4 · ONDAS / AURA -->
+      <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+        <div style="background:#16172A;display:flex;align-items:center;justify-content:center;padding:6px">
+          <svg width="300" height="200" viewBox="0 0 220 150" fill="none">
+            <rect x="60" y="98" width="100" height="24" rx="6" fill="#1E2030" stroke="#2E3048" stroke-width="1.4"></rect>
+            <g fill="#3A3C58">
+              <rect x="66" y="102" width="11" height="6" rx="2"></rect><rect x="80" y="102" width="11" height="6" rx="2"></rect><rect x="94" y="102" width="11" height="6" rx="2"></rect><rect x="108" y="102" width="11" height="6" rx="2"></rect><rect x="122" y="102" width="11" height="6" rx="2"></rect><rect x="136" y="102" width="16" height="6" rx="2"></rect>
+              <rect x="70" y="111" width="11" height="6" rx="2"></rect><rect x="84" y="111" width="11" height="6" rx="2"></rect><rect x="98" y="111" width="24" height="6" rx="2"></rect><rect x="126" y="111" width="20" height="6" rx="2"></rect>
+            </g>
+            <circle cx="110" cy="47" r="14" fill="none" stroke="#8E8BF5" stroke-width="1.4"><animate attributeName="r" values="14;34" dur="2.2s" repeatCount="indefinite"></animate><animate attributeName="opacity" values="0.5;0" dur="2.2s" repeatCount="indefinite"></animate></circle>
+            <circle cx="110" cy="47" r="14" fill="none" stroke="#8E8BF5" stroke-width="1.4"><animate attributeName="r" values="14;34" dur="2.2s" begin="1.1s" repeatCount="indefinite"></animate><animate attributeName="opacity" values="0.5;0" dur="2.2s" begin="1.1s" repeatCount="indefinite"></animate></circle>
+            <g class="orbit" style="animation:spin 12s linear infinite">
+              <g transform="rotate(0 110 46)"><ellipse cx="110" cy="46" rx="18" ry="6.5" stroke="#6E6BD0" stroke-width="1.5"></ellipse><circle cx="128" cy="46" r="2.4" fill="#C9C6FF"></circle></g>
+              <g transform="rotate(60 110 46)"><ellipse cx="110" cy="46" rx="18" ry="6.5" stroke="#6E6BD0" stroke-width="1.5"></ellipse><circle cx="128" cy="46" r="2.4" fill="#C9C6FF"></circle></g>
+              <g transform="rotate(120 110 46)"><ellipse cx="110" cy="46" rx="18" ry="6.5" stroke="#6E6BD0" stroke-width="1.5"></ellipse><circle cx="128" cy="46" r="2.4" fill="#C9C6FF"></circle></g>
+            </g>
+            <g style="animation:bob 3s ease-in-out infinite">
+              <path d="M110 36 L120 42 L120 52 L110 58 L100 52 L100 42 Z" fill="#8E8BF5" stroke="#8E8BF5" stroke-width="4" stroke-linejoin="round"></path>
+              <path d="M105.6 46 q1.7 -2.3 3.4 0" stroke="#211E3A" stroke-width="2" fill="none" stroke-linecap="round"></path>
+              <path d="M111 46 q1.7 -2.3 3.4 0" stroke="#211E3A" stroke-width="2" fill="none" stroke-linecap="round"></path>
+            </g>
+          </svg>
+        </div>
+        <div style="padding:14px 16px;border-top:1px solid #F0E8D8"><div style="font-family:'Spectral',serif;font-weight:600;font-size:16px">4 · Ondas / aura</div><div style="font-size:12.5px;color:#7C766B;line-height:1.5;margin-top:3px">Emite ondas y el entorno reacciona. Sutil, elegante, muy «energía».</div></div>
+      </div>
+
+    </div>
+
+    <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:38px;padding-top:24px;border-top:1px solid #CFC6B5">
+      <span style="font-size:13.5px;color:#6F6A60">¿Cuál te gusta más para que «haga» las cosas? Lo llevo a las otras escenas.</span>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

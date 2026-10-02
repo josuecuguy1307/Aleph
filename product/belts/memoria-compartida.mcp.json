@@ -1,0 +1,15 @@
+{
+  "_meta": {
+    "belt": "memoria-compartida",
+    "que_es": "Memoria COMPARTIDA de primera clase (recipe.memory, NO belt-hack): UN solo archivo de knowledge-graph (${PUPPET_SHARED_MEMORY}, que el runtime fija en <workdir del PADRE>/shared-memory.json) que el agente y sus sub-agentes de la MISMA cadena de delegacion leen y escriben. No es un belt de nicho: lo compone el runtime cuando la receta declara memory.shared=true, y la delegacion propaga el MISMO path a los hijos por parametro explicito (jamas via os.environ global).",
+    "base_matrix": "product/belts/memoria-base-matrix.json"
+  },
+  "mcpServers": {
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"],
+      "env": { "MEMORY_FILE_PATH": "${PUPPET_SHARED_MEMORY}" },
+      "description": "Grafo de conocimiento COMPARTIDO entre el agente y sus sub-agentes: un solo archivo en el workdir del padre. GATE (historia honesta, no escondida): estas tools son estado LOCAL — no mandan nada afuera ni tocan plata — asi que el enforcer no las clasifica send/money y salen SIN gate; las escrituras locales (create/add/delete) las marca auto-ejecuta la base_matrix de ESTE belt (sin ella, el default fail-closed del gate las retendria en needs_ok). Los gates mandatorios money/send siguen forzados por encima de esta base."
+    }
+  }
+}

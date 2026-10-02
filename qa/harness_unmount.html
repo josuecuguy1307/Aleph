@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>arnés · montar/desmontar sin fugas (Gate 4 · Fase 2 · 2.4)</title>
+<!--
+  Arnés de la vara `qa/verify_unmount_sin_fugas.mjs`. Vive en qa/ y NO en design/ a
+  propósito: es instrumento de medición, no producto — no viaja en el bundle.
+
+  La instrumentación va ANTES de los módulos: se envuelven setInterval/clearInterval
+  para poder contar TIMERS VIVOS, que es la señal determinística de la fuga (el heap
+  se mueve por mil razones; un timer vivo después de desmontar es un hecho).
+-->
+<style>
+  body { background:#0e1118; color:#e6eaf4; font:14px system-ui; margin:0; padding:12px }
+  #host { height:420px; border:1px solid #222838; border-radius:8px; overflow:auto }
+</style>
+<script>
+  window.__timers = new Set();
+  (function () {
+    var si = window.setInterval, ci = window.clearInterval;
+    window.setInterval = function () {
+      var id = si.apply(window, arguments); window.__timers.add(id); return id;
+    };
+    window.clearInterval = function (id) { window.__timers.delete(id); return ci.call(window, id); };
+  })();
+  window.__gl = 0;                       // avisos de "too many WebGL contexts" (los cuenta la vara)
+</script>
+</head>
+<body>
+<div id="host"></div>
+
+<script src="/product/app/design/render/sala-render.js"></script>
+<script type="module">
+  import * as AR from "/product/app/design/render/render.js";
+  import { SAMPLES } from "/product/app/design/render/samples.js";
+  window.AR = AR;
+  window.SAMPLES = SAMPLES;
+
+  /** Un ciclo = montar cada tipo de `types` y sacarlo.
+   *  modo "unmount"  → el ciclo simétrico de 2.4 (mount desmonta lo anterior)
+   *  modo "viejo"    → lo que hacía el módulo ANTES: innerHTML="" + appendChild
+   *  Devuelve cuántos montajes hizo. */
+  /* El sample de `convergence` trae `autoplay:false` porque el done-bar stepea
+   * determinístico. El DEFAULT DEL PRODUCTO es autoplay ON (`a.autoplay !== false`)
+   * y eso es lo que recibe un convergence.json real salido del executor — que es
+   * justo el caso que prende el timer. La vara mide el camino del producto. */
+  function payloadDe(t) {
+    const p = SAMPLES[t];
+    return t === "convergence" ? Object.assign({}, p, { autoplay: true }) : p;
+  }
+
+  window.__cycle = async function (types, cycles, modo) {
+    const host = document.getElementById("host");
+    let n = 0;
+    for (let i = 0; i < cycles; i++) {
+      for (const t of types) {
+        const payload = payloadDe(t);
+        if (modo === "unmount") {
+          AR.mount(host, t, payload);
+        } else {
+          const node = AR.render(t, payload);
+          host.innerHTML = "";                 // ← el camino viejo, tal cual era
+          host.appendChild(node);
+        }
+        n++;
+        try { await AR.ready(host.lastChild); } catch (e) {}
+      }
+    }
+    // los dos caminos terminan con el host vacío, para que la comparación sea justa
+    if (modo === "unmount") AR.unmount(host); else host.innerHTML = "";
+    return n;
+  };
+
+  /* ── EL CASO REACT, sin React ────────────────────────────────────────────
+   * «con React pesado es fuga» (plan OSS 2.5). La fuga de una pantalla pesada no
+   * es el nodo: es el REGISTRO GLOBAL que la apunta (un store, una suscripción,
+   * un mapa de instancias). Un Map —no WeakMap— retiene la clave, así que el
+   * nodo entero y su estado quedan vivos aunque el DOM ya no los tenga.
+   * Es exactamente lo que un `componentWillUnmount` suelta… si alguien lo llama.
+   * Acá se simula con la MISMA pieza que 2.4 le da a esos consumidores:
+   * `AR.onTeardown(node, fn)`. Sin desmontaje, `fn` no corre nunca. */
+  const REGISTRO = new Map();
+  //: El estado retenido tiene que vivir EN EL HEAP DE JS o la medición no lo ve:
+  //: la primera pasada usó `new Uint8Array(1MB)` y el heap no se movió ni un KB,
+  //: porque el backing store de un typed array es memoria EXTERNA y
+  //: `Runtime.getHeapUsage` no la cuenta. Con objetos y strings sí se ve.
+  function estadoPesado(i) {
+    const a = new Array(12000);
+    for (let k = 0; k < a.length; k++) a[k] = { i: i, k: k, s: "estado-" + i + "-" + k };
+    return a;                                     // ≈ 1,5 MB de heap por pantalla
+  }
+
+  window.__cicloPesado = async function (cycles, modo) {
+    const host = document.getElementById("host");
+    for (let i = 0; i < cycles; i++) {
+      const node = AR.render("informe", { content: "# pantalla pesada\n\ncuerpo\n" });
+      REGISTRO.set(node, estadoPesado(i));        // el registro global: acá vive la fuga
+      AR.onTeardown(node, function () { REGISTRO.delete(node); });
+      if (modo === "unmount") { AR.unmount(host); host.appendChild(node); }
+      else { host.innerHTML = ""; host.appendChild(node); }
+      try { await AR.ready(node); } catch (e) {}
+    }
+    if (modo === "unmount") AR.unmount(host); else host.innerHTML = "";
+    return REGISTRO.size;
+  };
+
+  /* ── EL SEGUNDO REGISTRO (la Sala) ───────────────────────────────────────
+   * El canvas que el usuario ve no es AlephRender directo: es SalaRender, que
+   * delega los tipos ricos. En «viejo» se reproduce el cuerpo exacto de
+   * `richDelegate` de antes de 2.4 (innerHTML="" + appendChild, sin desmontar);
+   * en «unmount», la puerta real: `SalaRender.renderArtifact`, que ahora desmonta
+   * lo anterior antes de dibujar. */
+  window.__cicloSala = async function (cycles, modo) {
+    const host = document.getElementById("host");
+    const conv = payloadDe("convergence");
+    for (let i = 0; i < cycles; i++) {
+      if (modo === "unmount") {
+        await window.SalaRender.renderArtifact(host, conv);
+      } else {
+        host.innerHTML = "";
+        host.appendChild(AR.render("convergence", conv));
+      }
+    }
+    if (modo === "unmount") window.SalaRender.unmount(host); else host.innerHTML = "";
+    return cycles;
+  };
+
+  /** Lo que se mide, en el mismo instante para los dos caminos. */
+  window.__medir = function () {
+    return {
+      timersVivos: window.__timers.size,
+      iframes: document.querySelectorAll("iframe").length,
+      nodosRender: document.querySelectorAll(".aleph-render").length,
+      registroPesado: REGISTRO.size,
+    };
+  };
+
+  window.__ready = true;
+</script>
+</body>
+</html>

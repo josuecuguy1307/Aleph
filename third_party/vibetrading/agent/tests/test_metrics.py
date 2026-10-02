@@ -1,0 +1,580 @@
+"""Tests for backtest metrics calculation.
+
+Validates:
+  - bars_per_year annualization
+  - win_rate_and_stats
+  - by_symbol_stats / by_exit_reason_stats
+  - calc_metrics (Sharpe, drawdown, Sortino, Calmar, etc.)
+"""
+
+from __future__ import annotations
+
+import math
+
+import numpy as np
+import pandas as pd
+import pytest
+
+from backtest.metrics import (
+    by_exit_reason_stats,
+    by_symbol_stats,
+    calc_bars_per_year,
+    calc_metrics,
+    calc_turnover_series,
+    win_rate_and_stats,
+)
+from backtest.models import TradeRecord
+
+
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+
+
+def _trade(
+    symbol: str = "X",
+    pnl: float = 100.0,
+    direction: int = 1,
+    exit_reason: str = "signal",
+    holding_bars: int = 5,
+) -> TradeRecord:
+    return TradeRecord(
+        symbol=symbol,
+        direction=direction,
+        entry_price=100.0,
+        exit_price=100.0 + pnl / 100,
+        entry_time=pd.Timestamp("2025-01-01"),
+        exit_time=pd.Timestamp("2025-01-06"),
+        size=100.0,
+        leverage=1.0,
+        pnl=pnl,
+        pnl_pct=pnl / 100,
+        exit_reason=exit_reason,
+        holding_bars=holding_bars,
+        commission=1.0,
+    )
+
+
+# ---------------------------------------------------------------------------
+# calc_bars_per_year
+# ---------------------------------------------------------------------------
+
+
+class TestBarsPerYear:
+    def test_daily_tushare(self) -> None:
+        assert calc_bars_per_year("1D", "tushare") == 252
+
+    def test_daily_okx(self) -> None:
+        assert calc_bars_per_year("1D", "okx") == 365
+
+    def test_minute_tushare(self) -> None:
+        # 252 trading days × 240 minutes/day = 60480
+        assert calc_bars_per_year("1m", "tushare") == 252 * 240
+
+    def test_hourly_okx(self) -> None:
+        # 365 days × 24 hours/day = 8760
+        assert calc_bars_per_year("1H", "okx") == 365 * 24
+
+    def test_minute_mootdx(self) -> None:
+        # mootdx is A-share: 252 trading days × 240 minutes/day (regression —
+        # previously fell back to bars_per_day=1, mis-annualising intraday vol)
+        assert calc_bars_per_year("1m", "mootdx") == 252 * 240
+
+    def test_minute_futu(self) -> None:
+        # futu is equity (HK + A-share): same equity annualisation as akshare
+        assert calc_bars_per_year("1m", "futu") == 252 * 240
+
+    def test_unknown_source(self) -> None:
+        # Falls back to 252 trading days
+        assert calc_bars_per_year("1D", "unknown") == 252
+
+    def test_unknown_interval(self) -> None:
+        # Falls back to 1 bar/day
+        assert calc_bars_per_year("2H", "tushare") == 252
+
+    # ── newly covered sources (#884) ──
+
+    # resampling sources (local files / paid data, default to US equity session)
+    def test_resampling_local(self) -> None:
+        assert calc_bars_per_year("1D", "local") == 252
+        assert calc_bars_per_year("1m", "local") == 252 * 390
+
+    # crypto (365-day) sources
+    def test_crypto_binance(self) -> None:
+        assert calc_bars_per_year("1D", "binance") == 365
+        assert calc_bars_per_year("1m", "binance") == 365 * 1440
+        assert calc_bars_per_year("1H", "binance") == 365 * 24
+
+    # A-share equity (252-day, 240-min session) sources
+    def test_ashare_baostock(self) -> None:
+        assert calc_bars_per_year("1D", "baostock") == 252
+        assert calc_bars_per_year("1m", "baostock") == 252 * 240
+
+    def test_ashare_tencent(self) -> None:
+        assert calc_bars_per_year("1D", "tencent") == 252
+        assert calc_bars_per_year("1m", "tencent") == 252 * 240
+
+    def test_ashare_eastmoney(self) -> None:
+        assert calc_bars_per_year("1D", "eastmoney") == 252
+        assert calc_bars_per_year("1m", "eastmoney") == 252 * 240
+
+    def test_ashare_sina(self) -> None:
+        assert calc_bars_per_year("1D", "sina") == 252
+        assert calc_bars_per_year("1m", "sina") == 252 * 240
+
+    # US equity (252-day, 390-min session) sources
+    def test_us_yahoo(self) -> None:
+        assert calc_bars_per_year("1D", "yahoo") == 252
+        assert calc_bars_per_year("1m", "yahoo") == 252 * 390
+        # same as yfinance
+        assert calc_bars_per_year("1m", "yahoo") == calc_bars_per_year("1m", "yfinance")
+
+    def test_us_finnhub(self) -> None:
+        assert calc_bars_per_year("1D", "finnhub") == 252
+        assert calc_bars_per_year("1m", "finnhub") == 252 * 390
+
+    def test_us_alphavantage(self) -> None:
+        assert calc_bars_per_year("1D", "alphavantage") == 252
+        assert calc_bars_per_year("1m", "alphavantage") == 252 * 390
+
+    def test_us_tiingo(self) -> None:
+        assert calc_bars_per_year("1D", "tiingo") == 252
+        assert calc_bars_per_year("1m", "tiingo") == 252 * 390
+
+    def test_us_fmp(self) -> None:
+        assert calc_bars_per_year("1D", "fmp") == 252
+        assert calc_bars_per_year("1m", "fmp") == 252 * 390
+
+    def test_us_stooq(self) -> None:
+        assert calc_bars_per_year("1D", "stooq") == 252
+        assert calc_bars_per_year("1m", "stooq") == 252 * 390
+
+    def test_us_longbridge(self) -> None:
+        assert calc_bars_per_year("1D", "longbridge") == 252
+        assert calc_bars_per_year("1m", "longbridge") == 252 * 390
+
+    # Indian equity (252-day, 375-min session)
+    def test_india_broker(self) -> None:
+        assert calc_bars_per_year("1D", "india_broker") == 252
+        assert calc_bars_per_year("1m", "india_broker") == 252 * 375
+        assert calc_bars_per_year("5m", "india_broker") == 252 * 75
+        assert calc_bars_per_year("1H", "india_broker") == 252 * 7
+
+    # Verify the default for every VALID_SOURCES entry is not the misleading 252×1 at intraday
+    def test_no_intraday_source_falls_to_default(self) -> None:
+        """Every entry in VALID_SOURCES must have a trading-days lookup."""
+        from backtest.loaders.registry import VALID_SOURCES
+        from backtest.metrics import _TRADING_DAYS, _BARS_PER_DAY
+
+        # A source is "covered" if it has an entry in _TRADING_DAYS AND in at
+        # least one _BARS_PER_DAY interval layer.  Both tables must be kept in
+        # sync when new loaders are registered.
+        trading_covered = set(_TRADING_DAYS)
+        bars_covered = set()
+        for interval_layer in _BARS_PER_DAY.values():
+            bars_covered |= set(interval_layer)
+        covered = trading_covered & bars_covered
+
+        unregistered = (VALID_SOURCES - {"auto"}) - covered
+        assert not unregistered, (
+            f"sources missing annualisation entries: {sorted(unregistered)}"
+        )
+
+        for src in sorted(VALID_SOURCES - {"auto"}):
+            bp = calc_bars_per_year("1D", src)
+            assert bp > 0, f"source {src!r} 1D returned {bp}"
+            bp_1m = calc_bars_per_year("1m", src)
+            assert bp_1m > 0, f"source {src!r} 1m returned {bp_1m}"
+
+    def test_lowercase_hour_matches_uppercase(self) -> None:
+        # Loaders accept 1h/4h after interval-map fixes; annualisation must too.
+        assert calc_bars_per_year("1h", "okx") == calc_bars_per_year("1H", "okx")
+        assert calc_bars_per_year("4h", "ccxt") == calc_bars_per_year("4H", "ccxt")
+        assert calc_bars_per_year("1h", "okx") == 365 * 24
+
+    def test_lowercase_day_matches_uppercase(self) -> None:
+        assert calc_bars_per_year("1d", "tushare") == calc_bars_per_year("1D", "tushare")
+
+    def test_yahoo_source_aliases_yfinance(self) -> None:
+        # Runner primary source for US equity is often "yahoo".
+        assert calc_bars_per_year("1H", "yahoo") == calc_bars_per_year("1H", "yfinance")
+        assert calc_bars_per_year("1H", "yahoo") == 252 * 7
+
+    def test_source_is_case_insensitive(self) -> None:
+        # source is normalised to lowercase before lookup, mirroring interval
+        # normalisation — regression guard for the alias layer that used to
+        # skip .strip().lower() on the fallback path.
+        assert calc_bars_per_year("1m", "Yahoo") == calc_bars_per_year("1m", "yahoo")
+        assert calc_bars_per_year("1m", "OKX") == calc_bars_per_year("1m", "okx")
+        assert calc_bars_per_year("1m", "Yahoo") == 252 * 390
+        assert calc_bars_per_year("1m", "OKX") == 365 * 1440
+
+
+# ---------------------------------------------------------------------------
+# win_rate_and_stats
+# ---------------------------------------------------------------------------
+
+
+class TestWinRateAndStats:
+    def test_all_winners(self) -> None:
+        trades = [_trade(pnl=100), _trade(pnl=200), _trade(pnl=50)]
+        stats = win_rate_and_stats(trades)
+        assert stats["win_rate"] == 1.0
+        assert stats["max_consecutive_loss"] == 0
+
+    def test_all_losers(self) -> None:
+        trades = [_trade(pnl=-100), _trade(pnl=-200)]
+        stats = win_rate_and_stats(trades)
+        assert stats["win_rate"] == 0.0
+        assert stats["max_consecutive_loss"] == 2
+
+    def test_mixed(self) -> None:
+        trades = [_trade(pnl=100), _trade(pnl=-50), _trade(pnl=200)]
+        stats = win_rate_and_stats(trades)
+        assert stats["win_rate"] == pytest.approx(2 / 3)
+        assert stats["max_consecutive_loss"] == 1
+
+    def test_profit_factor(self) -> None:
+        trades = [_trade(pnl=300), _trade(pnl=-100)]
+        stats = win_rate_and_stats(trades)
+        assert stats["profit_factor"] == pytest.approx(3.0)
+
+    def test_profit_loss_ratio(self) -> None:
+        trades = [_trade(pnl=200), _trade(pnl=-100)]
+        stats = win_rate_and_stats(trades)
+        assert stats["profit_loss_ratio"] == pytest.approx(2.0)
+
+    def test_empty_trades(self) -> None:
+        stats = win_rate_and_stats([])
+        assert stats["win_rate"] == 0.0
+        assert stats["profit_factor"] == 0.0
+
+    def test_consecutive_losses(self) -> None:
+        trades = [
+            _trade(pnl=100),
+            _trade(pnl=-10),
+            _trade(pnl=-20),
+            _trade(pnl=-30),
+            _trade(pnl=50),
+            _trade(pnl=-5),
+        ]
+        stats = win_rate_and_stats(trades)
+        assert stats["max_consecutive_loss"] == 3
+
+    def test_avg_holding_bars(self) -> None:
+        trades = [_trade(holding_bars=5), _trade(holding_bars=10), _trade(holding_bars=15)]
+        stats = win_rate_and_stats(trades)
+        assert stats["avg_holding_bars"] == 10.0
+
+
+# ---------------------------------------------------------------------------
+# by_symbol_stats
+# ---------------------------------------------------------------------------
+
+
+class TestBySymbolStats:
+    def test_single_symbol(self) -> None:
+        trades = [_trade("AAPL", 100), _trade("AAPL", -50)]
+        stats = by_symbol_stats(trades)
+        assert "AAPL" in stats
+        assert stats["AAPL"]["count"] == 2
+        assert stats["AAPL"]["total_pnl"] == 50.0
+        assert stats["AAPL"]["win_rate"] == 0.5
+
+    def test_multiple_symbols(self) -> None:
+        trades = [_trade("A", 100), _trade("B", -50), _trade("A", 200)]
+        stats = by_symbol_stats(trades)
+        assert stats["A"]["count"] == 2
+        assert stats["B"]["count"] == 1
+
+    def test_empty(self) -> None:
+        assert by_symbol_stats([]) == {}
+
+
+# ---------------------------------------------------------------------------
+# by_exit_reason_stats
+# ---------------------------------------------------------------------------
+
+
+class TestByExitReasonStats:
+    def test_single_reason(self) -> None:
+        trades = [_trade(exit_reason="signal", pnl=100), _trade(exit_reason="signal", pnl=-50)]
+        stats = by_exit_reason_stats(trades)
+        assert stats["signal"]["count"] == 2
+        assert stats["signal"]["total_pnl"] == 50.0
+
+    def test_multiple_reasons(self) -> None:
+        trades = [
+            _trade(exit_reason="signal", pnl=100),
+            _trade(exit_reason="liquidation", pnl=-500),
+            _trade(exit_reason="end_of_backtest", pnl=50),
+        ]
+        stats = by_exit_reason_stats(trades)
+        assert len(stats) == 3
+        assert stats["liquidation"]["total_pnl"] == -500.0
+
+    def test_empty(self) -> None:
+        assert by_exit_reason_stats([]) == {}
+
+
+# ---------------------------------------------------------------------------
+# calc_metrics
+# ---------------------------------------------------------------------------
+
+
+class TestCalcMetrics:
+    def _flat_equity(self) -> pd.Series:
+        """Equity that stays flat at 1M (zero return)."""
+        dates = pd.bdate_range("2025-01-01", periods=252)
+        return pd.Series(1_000_000.0, index=dates)
+
+    def _growing_equity(self) -> pd.Series:
+        """Equity that grows linearly from 1M to 1.2M (20% return)."""
+        dates = pd.bdate_range("2025-01-01", periods=252)
+        return pd.Series(np.linspace(1_000_000, 1_200_000, 252), index=dates)
+
+    def _declining_equity(self) -> pd.Series:
+        """Equity that declines from 1M to 800K (-20%)."""
+        dates = pd.bdate_range("2025-01-01", periods=252)
+        return pd.Series(np.linspace(1_000_000, 800_000, 252), index=dates)
+
+    def test_total_return(self) -> None:
+        eq = self._growing_equity()
+        m = calc_metrics(eq, [], 1_000_000, 252)
+        assert m["total_return"] == pytest.approx(0.2, rel=0.01)
+
+    def test_negative_return(self) -> None:
+        eq = self._declining_equity()
+        m = calc_metrics(eq, [], 1_000_000, 252)
+        assert m["total_return"] < 0
+
+    def test_max_drawdown_negative(self) -> None:
+        eq = self._declining_equity()
+        m = calc_metrics(eq, [], 1_000_000, 252)
+        assert m["max_drawdown"] < 0
+
+    def test_flat_equity_zero_return(self) -> None:
+        eq = self._flat_equity()
+        m = calc_metrics(eq, [], 1_000_000, 252)
+        assert m["total_return"] == pytest.approx(0.0)
+
+    def test_sharpe_positive_for_growth(self) -> None:
+        eq = self._growing_equity()
+        m = calc_metrics(eq, [], 1_000_000, 252)
+        assert m["sharpe"] > 0
+
+    def test_trade_count(self) -> None:
+        eq = self._growing_equity()
+        trades = [_trade(pnl=100), _trade(pnl=-50)]
+        m = calc_metrics(eq, trades, 1_000_000, 252)
+        assert m["trade_count"] == 2
+        assert m["win_rate"] == 0.5
+
+    def test_benchmark_comparison(self) -> None:
+        eq = self._growing_equity()
+        dates = eq.index
+        bench_ret = pd.Series(0.0004, index=dates)  # ~10% annual
+        m = calc_metrics(eq, [], 1_000_000, 252, bench_ret=bench_ret)
+        assert m["benchmark_return"] > 0
+        assert "excess_return" in m
+        assert "information_ratio" in m
+
+    def test_empty_equity(self) -> None:
+        m = calc_metrics(pd.Series(dtype=float), [], 1_000_000, 252)
+        assert m["final_value"] == 1_000_000
+        assert m["total_return"] == 0
+
+    def test_single_bar_equity_metrics_finite(self) -> None:
+        # A one-bar backtest yields a single-observation return series.
+        # ``Series.std()`` (ddof=1) is NaN for a single element, which used
+        # to poison Sharpe and the information ratio (Sortino was already
+        # guarded). Every risk metric must stay finite.
+        eq = pd.Series([1_000_000.0], index=pd.bdate_range("2025-01-01", periods=1))
+        bench_ret = pd.Series([0.0], index=eq.index)
+        m = calc_metrics(eq, [], 1_000_000, 252, bench_ret=bench_ret)
+        for key in ("sharpe", "sortino", "information_ratio",
+                    "annual_return", "max_drawdown", "calmar"):
+            assert math.isfinite(m[key]), f"{key} is not finite: {m[key]!r}"
+        assert m["sharpe"] == 0.0
+        assert m["information_ratio"] == 0.0
+
+    def test_final_value(self) -> None:
+        eq = self._growing_equity()
+        m = calc_metrics(eq, [], 1_000_000, 252)
+        assert m["final_value"] == pytest.approx(1_200_000, rel=0.01)
+
+    def test_sortino_positive_for_growth(self) -> None:
+        eq = self._growing_equity()
+        m = calc_metrics(eq, [], 1_000_000, 252)
+        assert m["sortino"] > 0
+
+    def test_calmar_positive_for_drawdown(self) -> None:
+        """Growing equity with a dip should have positive Calmar."""
+        dates = pd.bdate_range("2025-01-01", periods=100)
+        values = np.concatenate([
+            np.linspace(1_000_000, 900_000, 30),  # dip
+            np.linspace(900_000, 1_200_000, 70),   # recovery
+        ])
+        eq = pd.Series(values, index=dates)
+        m = calc_metrics(eq, [], 1_000_000, 252)
+        assert m["max_drawdown"] < 0
+        # Calmar = annual_return / |max_drawdown|
+        if m["annual_return"] > 0:
+            assert m["calmar"] > 0
+
+    def test_calmar_and_drawdown_negative_equity(self) -> None:
+        """An all-negative curve uses initial cash as its high-water mark."""
+        dates = pd.bdate_range("2025-01-01", periods=3)
+        eq = pd.Series([-20.0, -50.0, -100.0], index=dates)
+        m = calc_metrics(eq, [], 100.0, 252)
+        assert m["max_drawdown"] == pytest.approx(-2.0)
+        assert m["calmar"] < 0
+
+    def test_drawdown_includes_first_bar_loss_from_initial_cash(self) -> None:
+        """The first observed equity point is not automatically a new peak."""
+        dates = pd.bdate_range("2025-01-01", periods=2)
+        eq = pd.Series([80.0, 90.0], index=dates)
+
+        m = calc_metrics(eq, [], 100.0, 252)
+
+        assert m["max_drawdown"] == pytest.approx(-0.2)
+
+    def test_drawdown_remains_defined_after_equity_crosses_zero(self) -> None:
+        """A positive high-water mark keeps zero-crossing losses meaningful."""
+        dates = pd.bdate_range("2025-01-01", periods=3)
+        eq = pd.Series([120.0, 0.0, -20.0], index=dates)
+
+        m = calc_metrics(eq, [], 100.0, 252)
+
+        assert m["max_drawdown"] == pytest.approx(-140.0 / 120.0)
+
+    def test_zero_final_equity(self) -> None:
+        """A full wipeout (equity reaches 0) annualises to -100%, not a crash."""
+        dates = pd.bdate_range("2025-01-01", periods=252)
+        eq = pd.Series(np.linspace(1_000_000, 0.0, 252), index=dates)
+        m = calc_metrics(eq, [], 1_000_000, 252)
+        assert m["total_return"] == pytest.approx(-1.0)
+        assert m["annual_return"] == pytest.approx(-1.0)
+
+    def test_negative_final_equity_does_not_crash(self) -> None:
+        """A leveraged/short book can end below zero equity (total_return < -1).
+
+        ``(1 + total_return) ** fractional`` would raise a negative base to a
+        fractional power (a ``complex``) and crash ``float(...)``; the metric
+        must instead report a -100% annualised return.
+        """
+        dates = pd.bdate_range("2025-01-01", periods=252)
+        eq = pd.Series(np.linspace(1_000_000, -500_000, 252), index=dates)
+        m = calc_metrics(eq, [], 1_000_000, 252)
+        assert m["total_return"] == pytest.approx(-1.5)
+        assert m["annual_return"] == pytest.approx(-1.0)
+        assert m["final_value"] == pytest.approx(-500_000)
+
+    def test_explosive_equity_annualization_does_not_overflow(self) -> None:
+        """A 1 → 1e6 two-bar path overflows ``growth ** factor`` on CPython.
+
+        Metrics must stay defined (non-finite annual_return is acceptable).
+        """
+        eq = pd.Series([1.0, 1_000_000.0])
+        m = calc_metrics(eq, [], 1.0, 252)
+        assert m["total_return"] == pytest.approx(999_999.0)
+        assert m["annual_return"] == float("inf")
+
+    def test_zero_crossing_equity_keeps_risk_ratios_finite(self) -> None:
+        """Equity that hits exactly 0 then recovers yields inf pct_change.
+
+        Options metrics already skip non-finite returns; equity calc_metrics
+        must keep Sharpe/Sortino/IR finite (0) instead of leaking NaN/inf.
+        """
+        dates = pd.bdate_range("2025-01-01", periods=3)
+        eq = pd.Series([100.0, 0.0, 50.0], index=dates)
+        bench = pd.Series([0.0, -1.0, 0.0], index=dates)
+        m = calc_metrics(eq, [], 100.0, 252, bench_ret=bench)
+        for key in ("sharpe", "sortino", "information_ratio", "calmar"):
+            assert math.isfinite(m[key]), f"{key} is not finite: {m[key]!r}"
+        assert m["sharpe"] == 0.0
+        assert m["sortino"] == 0.0
+        assert m["information_ratio"] == 0.0
+        assert m["total_return"] == pytest.approx(-0.5)
+        assert m["max_drawdown"] == pytest.approx(-1.0)
+
+
+# ---------------------------------------------------------------------------
+# turnover
+# ---------------------------------------------------------------------------
+
+
+class TestCalcTurnoverSeries:
+    def test_full_rotation_is_unit_turnover(self) -> None:
+        dates = pd.bdate_range("2025-01-01", periods=2)
+        pos = pd.DataFrame({"A": [1.0, 0.0], "B": [0.0, 1.0]}, index=dates)
+        s = calc_turnover_series(pos)
+        assert s.iloc[1] == pytest.approx(1.0)
+
+    def test_constant_weights_zero_after_entry(self) -> None:
+        dates = pd.bdate_range("2025-01-01", periods=4)
+        pos = pd.DataFrame({"A": [0.5] * 4, "B": [0.5] * 4}, index=dates)
+        s = calc_turnover_series(pos)
+        assert s.iloc[0] == pytest.approx(0.5)  # entry from cash: 0.5*(0.5+0.5)
+        assert s.iloc[1:].abs().max() == pytest.approx(0.0)
+
+    def test_first_bar_is_entry_from_cash(self) -> None:
+        dates = pd.bdate_range("2025-01-01", periods=1)
+        pos = pd.DataFrame({"A": [0.6], "B": [0.4]}, index=dates)
+        s = calc_turnover_series(pos)
+        assert s.iloc[0] == pytest.approx(0.5)
+
+    def test_empty_frame_returns_empty(self) -> None:
+        s = calc_turnover_series(pd.DataFrame())
+        assert s.empty
+
+    def test_nan_treated_as_zero(self) -> None:
+        dates = pd.bdate_range("2025-01-01", periods=2)
+        pos = pd.DataFrame({"A": [1.0, np.nan], "B": [0.0, 1.0]}, index=dates)
+        s = calc_turnover_series(pos)
+        assert s.iloc[1] == pytest.approx(1.0)
+
+
+class TestTurnoverMetrics:
+    def _equity(self) -> pd.Series:
+        dates = pd.bdate_range("2025-01-01", periods=4)
+        return pd.Series(np.linspace(1_000_000, 1_100_000, 4), index=dates)
+
+    def _positions(self) -> pd.DataFrame:
+        dates = pd.bdate_range("2025-01-01", periods=4)
+        return pd.DataFrame(
+            {"A": [1.0, 0.0, 1.0, 0.0], "B": [0.0, 1.0, 0.0, 1.0]}, index=dates
+        )
+
+    def test_turnover_keys_present(self) -> None:
+        m = calc_metrics(self._equity(), [], 1_000_000, 252, positions=self._positions())
+        assert "avg_turnover" in m and "total_turnover" in m
+
+    def test_total_equals_avg_times_bars(self) -> None:
+        pos = self._positions()
+        m = calc_metrics(self._equity(), [], 1_000_000, 252, positions=pos)
+        assert m["total_turnover"] == pytest.approx(m["avg_turnover"] * len(pos), rel=1e-6)
+
+    def test_positions_do_not_change_existing_metrics(self) -> None:
+        eq = self._equity()
+        without = calc_metrics(eq, [], 1_000_000, 252)
+        with_pos = calc_metrics(eq, [], 1_000_000, 252, positions=self._positions())
+        for key in without:
+            if key in ("avg_turnover", "total_turnover"):
+                continue
+            assert without[key] == with_pos[key]
+
+    def test_no_positions_zero_turnover(self) -> None:
+        m = calc_metrics(self._equity(), [], 1_000_000, 252)
+        assert m["avg_turnover"] == 0.0
+        assert m["total_turnover"] == 0.0
+
+    def test_empty_positions_zero_turnover(self) -> None:
+        m = calc_metrics(self._equity(), [], 1_000_000, 252, positions=pd.DataFrame())
+        assert m["avg_turnover"] == 0.0
+        assert m["total_turnover"] == 0.0
+
+    def test_empty_metrics_has_turnover_keys(self) -> None:
+        m = calc_metrics(pd.Series(dtype=float), [], 1_000_000, 252)
+        assert m["avg_turnover"] == 0.0
+        assert m["total_turnover"] == 0.0

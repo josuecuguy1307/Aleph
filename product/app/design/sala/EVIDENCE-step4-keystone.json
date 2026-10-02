@@ -1,0 +1,137 @@
+{
+  "layer_b_ok": true,
+  "gate_ok": true,
+  "compute_ok": true,
+  "layer_b": {
+    "checks": [
+      {
+        "name": "buildBody gains spaceId param",
+        "ok": true
+      },
+      {
+        "name": "space_id threaded in BOTH bodies",
+        "ok": true
+      },
+      {
+        "name": "newSpaceId() helper present",
+        "ok": true
+      },
+      {
+        "name": "openSpineConsumer() present",
+        "ok": true
+      },
+      {
+        "name": "consumer opens the space stream",
+        "ok": true
+      },
+      {
+        "name": "consumer uses ReadableStream",
+        "ok": true
+      },
+      {
+        "name": "consumer is NOT EventSource",
+        "ok": true
+      },
+      {
+        "name": "run site opens the consumer",
+        "ok": true
+      },
+      {
+        "name": "run site threads space_id to run",
+        "ok": true
+      },
+      {
+        "name": "consumer stopped at terminal out",
+        "ok": true
+      }
+    ]
+  },
+  "case_gate": {
+    "case": "gate    (belt-inline · write_xlsx → HELD por piso 'write')",
+    "mode": "gate",
+    "space_id": "sala-verify-gate-1783474916",
+    "disk_n": 6,
+    "snapshot_n": 6,
+    "event_types": {
+      "cost": 3,
+      "gate_waiting": 1,
+      "final": 1,
+      "closed": 1
+    },
+    "first_work_before_post": true,
+    "tcf_with_result": 0,
+    "gate_events": 1,
+    "model_final": "claude-code-opus-4.8",
+    "degraded": null,
+    "tool_calls": 1,
+    "held_actions": 1,
+    "ok": true,
+    "answer_head": "El archivo está listo para escribirse, pero **no se ejecutó**: tu agente tiene un gate de confirmación activo y me pide tu OK antes de tocar el disco.\n\nLo que va a escribir `write_xlsx` (exactamente l",
+    "checks": [
+      {
+        "name": "(1) events.jsonl populated (disk & snapshot)",
+        "ok": true
+      },
+      {
+        "name": "(2·S4) consumer got gate_waiting LIVE Frontera freeze (≤ POST resolve)",
+        "ok": true
+      },
+      {
+        "name": "(3) terminal out carries deliverable + held ledger",
+        "ok": true
+      },
+      {
+        "name": "(5) live gate == terminal held_actions (stream ≡ terminal truth)",
+        "ok": true
+      },
+      {
+        "name": "(A) anti-grift: !degraded & tools>0 & model_final∈opus-4.8∪BYOK",
+        "ok": true
+      }
+    ]
+  },
+  "case_compute": {
+    "case": "compute (belt declara calc→read → AUTO-EXEC · collapse)",
+    "mode": "compute",
+    "space_id": "sala-verify-compute-1783474958",
+    "disk_n": 6,
+    "snapshot_n": 6,
+    "event_types": {
+      "cost": 3,
+      "tool_call_finished": 1,
+      "final": 1,
+      "closed": 1
+    },
+    "first_work_before_post": true,
+    "tcf_with_result": 1,
+    "gate_events": 0,
+    "model_final": "claude-code-opus-4.8",
+    "degraded": null,
+    "tool_calls": 1,
+    "held_actions": 0,
+    "ok": true,
+    "answer_head": "1234 × 5678 = **7.006.652** (resultado de la herramienta `mul`).",
+    "checks": [
+      {
+        "name": "(1) events.jsonl populated (disk & snapshot)",
+        "ok": true
+      },
+      {
+        "name": "(2) consumer got tool_call_finished{result} LIVE (≤ POST resolve)",
+        "ok": true
+      },
+      {
+        "name": "(3) terminal out carries deliverable + held ledger",
+        "ok": true
+      },
+      {
+        "name": "(4) pure-compute → Frontera collapses (held==0)",
+        "ok": true
+      },
+      {
+        "name": "(A) anti-grift: !degraded & tools>0 & model_final∈opus-4.8∪BYOK",
+        "ok": true
+      }
+    ]
+  }
+}

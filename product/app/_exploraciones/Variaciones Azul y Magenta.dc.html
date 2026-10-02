@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:#DED6C7;font-family:'Hanken Grotesk',system-ui,-apple-system,sans-serif;color:#2B2925;-webkit-font-smoothing:antialiased}
+</style>
+</helmet>
+
+<div style="min-height:100vh;padding:42px 40px 72px">
+  <div style="max-width:1180px;margin:0 auto">
+
+    <div style="font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#9A9082">Logo · afinando el tono</div>
+    <h1 style="font-family:'Spectral',Georgia,serif;font-weight:600;font-size:31px;margin:8px 0 6px;letter-spacing:-.015em">Variaciones de Azul y Magenta</h1>
+    <p style="margin:0 0 38px;color:#6F6A60;font-size:14.5px;max-width:72ch;line-height:1.6">Tus dos favoritos, abiertos en abanico. Cada fila cambia la <strong>temperatura y la intensidad</strong> del acento — del más sobrio al más vibrante — manteniendo el par oscuro/claro. Cuando uno te frene, lo congelamos.</p>
+
+    <!-- ===== AZUL ===== -->
+    <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:16px">
+      <h2 style="font-family:'Spectral',serif;font-weight:600;font-size:20px;margin:0">Familia Azul</h2>
+      <span style="font-size:13px;color:#8A8378">de acero sobrio a cobalto vivo</span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:22px;margin-bottom:48px">
+      <sc-for list="{{ azul }}" as="p" hint-placeholder-count="5">
+        <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:13px 16px 12px">
+            <div>
+              <div style="font-family:'Spectral',serif;font-weight:600;font-size:16px">{{ p.name }}</div>
+              <div style="font-size:11.5px;color:#9A9082">{{ p.note }}</div>
+            </div>
+            <div style="display:flex;gap:5px">
+              <span style="width:15px;height:15px;border-radius:50%;border:1px solid rgba(0,0,0,.12);background:{{ p.accD }}"></span>
+              <span style="width:15px;height:15px;border-radius:50%;border:1px solid rgba(0,0,0,.12);background:{{ p.accL }}"></span>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;border-top:1px solid #F0E8D8">
+            <div style="position:relative;display:flex;align-items:center;justify-content:center;gap:11px;height:138px;background:{{ p.bgD }}">
+              <span style="position:absolute;top:11px;left:13px;font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:{{ p.inkD }};opacity:.55">Oscuro</span>
+              <svg width="34" height="43" viewBox="0 0 64 80" fill="none">
+                <rect x="16" y="6" width="32" height="5.5" rx="2.75" fill="{{ p.barD }}"></rect>
+                <line x1="24" y1="11.5" x2="24" y2="27" stroke="{{ p.strD }}" stroke-width="1.4"></line>
+                <line x1="40" y1="11.5" x2="40" y2="27" stroke="{{ p.strD }}" stroke-width="1.4"></line>
+                <path d="M20 70c0-12 5-19 12-19s12 7 12 19z" fill="{{ p.accD }}"></path>
+                <circle cx="32" cy="36" r="13" fill="#F2D7B0"></circle>
+                <circle cx="32" cy="24" r="2.4" fill="{{ p.accD }}"></circle>
+                <circle cx="27.5" cy="36" r="1.7" fill="#3A2E22"></circle>
+                <circle cx="36.5" cy="36" r="1.7" fill="#3A2E22"></circle>
+                <path d="M28 41q4 3.5 8 0" stroke="#3A2E22" stroke-width="1.6" fill="none" stroke-linecap="round"></path>
+              </svg>
+              <span style="font-family:'Spectral',Georgia,serif;font-weight:700;font-size:21px;color:{{ p.inkD }}">Puppet AI</span>
+            </div>
+            <div style="position:relative;display:flex;align-items:center;justify-content:center;gap:11px;height:138px;background:{{ p.bgL }};border-left:1px solid #EDE4D4">
+              <span style="position:absolute;top:11px;left:13px;font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:{{ p.inkL }};opacity:.5">Claro</span>
+              <svg width="34" height="43" viewBox="0 0 64 80" fill="none">
+                <rect x="16" y="6" width="32" height="5.5" rx="2.75" fill="{{ p.barL }}"></rect>
+                <line x1="24" y1="11.5" x2="24" y2="27" stroke="{{ p.strL }}" stroke-width="1.4"></line>
+                <line x1="40" y1="11.5" x2="40" y2="27" stroke="{{ p.strL }}" stroke-width="1.4"></line>
+                <path d="M20 70c0-12 5-19 12-19s12 7 12 19z" fill="{{ p.accL }}"></path>
+                <circle cx="32" cy="36" r="13" fill="#F2D7B0"></circle>
+                <circle cx="32" cy="24" r="2.4" fill="{{ p.accL }}"></circle>
+                <circle cx="27.5" cy="36" r="1.7" fill="#3A2E22"></circle>
+                <circle cx="36.5" cy="36" r="1.7" fill="#3A2E22"></circle>
+                <path d="M28 41q4 3.5 8 0" stroke="#3A2E22" stroke-width="1.6" fill="none" stroke-linecap="round"></path>
+              </svg>
+              <span style="font-family:'Spectral',Georgia,serif;font-weight:700;font-size:21px;color:{{ p.inkL }}">Puppet AI</span>
+            </div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+
+    <!-- ===== MAGENTA ===== -->
+    <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:16px">
+      <h2 style="font-family:'Spectral',serif;font-weight:600;font-size:20px;margin:0">Familia Magenta</h2>
+      <span style="font-size:13px;color:#8A8378">de ciruela suave a fucsia eléctrico</span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:22px">
+      <sc-for list="{{ magenta }}" as="p" hint-placeholder-count="5">
+        <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:13px 16px 12px">
+            <div>
+              <div style="font-family:'Spectral',serif;font-weight:600;font-size:16px">{{ p.name }}</div>
+              <div style="font-size:11.5px;color:#9A9082">{{ p.note }}</div>
+            </div>
+            <div style="display:flex;gap:5px">
+              <span style="width:15px;height:15px;border-radius:50%;border:1px solid rgba(0,0,0,.12);background:{{ p.accD }}"></span>
+              <span style="width:15px;height:15px;border-radius:50%;border:1px solid rgba(0,0,0,.12);background:{{ p.accL }}"></span>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;border-top:1px solid #F0E8D8">
+            <div style="position:relative;display:flex;align-items:center;justify-content:center;gap:11px;height:138px;background:{{ p.bgD }}">
+              <span style="position:absolute;top:11px;left:13px;font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:{{ p.inkD }};opacity:.55">Oscuro</span>
+              <svg width="34" height="43" viewBox="0 0 64 80" fill="none">
+                <rect x="16" y="6" width="32" height="5.5" rx="2.75" fill="{{ p.barD }}"></rect>
+                <line x1="24" y1="11.5" x2="24" y2="27" stroke="{{ p.strD }}" stroke-width="1.4"></line>
+                <line x1="40" y1="11.5" x2="40" y2="27" stroke="{{ p.strD }}" stroke-width="1.4"></line>
+                <path d="M20 70c0-12 5-19 12-19s12 7 12 19z" fill="{{ p.accD }}"></path>
+                <circle cx="32" cy="36" r="13" fill="#F2D7B0"></circle>
+                <circle cx="32" cy="24" r="2.4" fill="{{ p.accD }}"></circle>
+                <circle cx="27.5" cy="36" r="1.7" fill="#3A2E22"></circle>
+                <circle cx="36.5" cy="36" r="1.7" fill="#3A2E22"></circle>
+                <path d="M28 41q4 3.5 8 0" stroke="#3A2E22" stroke-width="1.6" fill="none" stroke-linecap="round"></path>
+              </svg>
+              <span style="font-family:'Spectral',Georgia,serif;font-weight:700;font-size:21px;color:{{ p.inkD }}">Puppet AI</span>
+            </div>
+            <div style="position:relative;display:flex;align-items:center;justify-content:center;gap:11px;height:138px;background:{{ p.bgL }};border-left:1px solid #EDE4D4">
+              <span style="position:absolute;top:11px;left:13px;font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:{{ p.inkL }};opacity:.5">Claro</span>
+              <svg width="34" height="43" viewBox="0 0 64 80" fill="none">
+                <rect x="16" y="6" width="32" height="5.5" rx="2.75" fill="{{ p.barL }}"></rect>
+                <line x1="24" y1="11.5" x2="24" y2="27" stroke="{{ p.strL }}" stroke-width="1.4"></line>
+                <line x1="40" y1="11.5" x2="40" y2="27" stroke="{{ p.strL }}" stroke-width="1.4"></line>
+                <path d="M20 70c0-12 5-19 12-19s12 7 12 19z" fill="{{ p.accL }}"></path>
+                <circle cx="32" cy="36" r="13" fill="#F2D7B0"></circle>
+                <circle cx="32" cy="24" r="2.4" fill="{{ p.accL }}"></circle>
+                <circle cx="27.5" cy="36" r="1.7" fill="#3A2E22"></circle>
+                <circle cx="36.5" cy="36" r="1.7" fill="#3A2E22"></circle>
+                <path d="M28 41q4 3.5 8 0" stroke="#3A2E22" stroke-width="1.6" fill="none" stroke-linecap="round"></path>
+              </svg>
+              <span style="font-family:'Spectral',Georgia,serif;font-weight:700;font-size:21px;color:{{ p.inkL }}">Puppet AI</span>
+            </div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:38px;padding-top:24px;border-top:1px solid #CFC6B5">
+      <span style="font-size:13.5px;color:#6F6A60">¿Cuál variación congelamos? Decime el nombre y la dejo oficial en sus dos modos.</span>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  azulRaw = [
+    {name:'Acero', note:'el más sobrio', bgD:'#1A2230', inkD:'#E8ECF3', accD:'#8FA6C2', bgL:'#EDF0F4', inkL:'#1F2733', accL:'#3F6088'},
+    {name:'Azul real', note:'el del par anterior', bgD:'#141A26', inkD:'#E6ECF6', accD:'#7B97F2', bgL:'#ECF0F8', inkL:'#1B2230', accL:'#2F5AA8'},
+    {name:'Cobalto vivo', note:'más eléctrico', bgD:'#12162A', inkD:'#E7E9F8', accD:'#6E8BFF', bgL:'#EBEDFA', inkL:'#191D33', accL:'#2540D6'},
+    {name:'Índigo', note:'profundo, nocturno', bgD:'#16172A', inkD:'#E9E8F6', accD:'#8E8BF5', bgL:'#EEEEF8', inkL:'#1E1D33', accL:'#3B3F9E'},
+    {name:'Cielo', note:'más fresco y claro', bgD:'#101D28', inkD:'#E5EFF7', accD:'#6FB8F0', bgL:'#E9F2FA', inkL:'#172734', accL:'#2477C0'},
+  ];
+  magentaRaw = [
+    {name:'Ciruela', note:'el más suave', bgD:'#1E1826', inkD:'#EFE8F4', accD:'#C58BE0', bgL:'#F4EBFA', inkL:'#271C30', accL:'#7E3CA8'},
+    {name:'Magenta', note:'el del par anterior', bgD:'#1E1722', inkD:'#F2E7F0', accD:'#E86BB0', bgL:'#FBEAF3', inkL:'#2E1F2A', accL:'#C13B86'},
+    {name:'Fucsia', note:'eléctrico, pop', bgD:'#221426', inkD:'#F4E6F2', accD:'#F25CC1', bgL:'#FCE8F6', inkL:'#2C1828', accL:'#C42A92'},
+    {name:'Frambuesa', note:'más cálido, rojizo', bgD:'#221619', inkD:'#F4E7EA', accD:'#E86B86', bgL:'#FCE9ED', inkL:'#2C181C', accL:'#C0395A'},
+    {name:'Rosa cálido', note:'amable, suave', bgD:'#241719', inkD:'#F5E8EB', accD:'#FF8FA8', bgL:'#FCEAEE', inkL:'#2E1B1F', accL:'#D14E6E'},
+  ];
+  renderVals(){
+    const azulN = {barD:'#48505E', strD:'#5A6373', barL:'#8A91A0', strL:'#C2C9D6'};
+    const magN  = {barD:'#574A57', strD:'#6E5E6C', barL:'#A88598', strL:'#DDBDD0'};
+    return {
+      azul: this.azulRaw.map(o => ({...o, ...azulN})),
+      magenta: this.magentaRaw.map(o => ({...o, ...magN})),
+    };
+  }
+}
+</script>
+</body>
+</html>

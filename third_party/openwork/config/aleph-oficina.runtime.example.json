@@ -1,0 +1,28 @@
+{
+  "provider": {
+    "aleph": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Cerebro de Aleph",
+      "options": {
+        "baseURL": "http://127.0.0.1:8765/v1/workspaces/brain/openai"
+      },
+      "models": {
+        "aleph-brain": {
+          "name": "Cerebro de Aleph"
+        }
+      }
+    }
+  },
+  "mcp": {
+    "officecli": {
+      "type": "local",
+      "command": "${ALEPH_OFFICECLI_BIN}",
+      "args": ["mcp"],
+      "environment": {
+        "OFFICECLI_SKIP_UPDATE": "1",
+        "OFFICECLI_NO_AUTO_INSTALL": "1"
+      },
+      "enabled": true
+    }
+  }
+}

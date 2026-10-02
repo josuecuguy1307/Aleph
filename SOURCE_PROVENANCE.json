@@ -1,0 +1,181 @@
+{
+  "schema_version": 1,
+  "version": "0.1.2",
+  "source_commit": "58121ccb8c9f780641d97ffb467d8d7f3cf88cfc",
+  "source_tree": "0e123c27d2ecf7ae427a7f7c9defd97b69f277ce",
+  "source_worktree_clean_at_export": true,
+  "history": "Fresh independent root commit; no private Git objects/history/remotes exported.",
+  "license": "Apache-2.0 for Aleph-owned source; branding excluded; third-party licenses retained.",
+  "retained_source_file_count": 23150,
+  "retained_source_inventory_sha256": "10ae575700fe18045a3868abc317112747872e4f985895310481db86bc7bf79f",
+  "inventory_policy": "Detailed original-blob comparison retained outside public source; the fresh public Git tree provides the published tracked-file inventory.",
+  "included_scope": [
+    "product",
+    "platform",
+    "catalog",
+    "deploy source/specifications",
+    "third_party source/notices",
+    "qa/eval/tools source and synthetic fixtures",
+    "i18n",
+    "onboarding templates",
+    "infra example configuration",
+    "docs/guia",
+    "docs/licencias",
+    "docs/THIRD-PARTY-MATRIX.json",
+    "ATTRIBUTIONS.md",
+    ".gitignore",
+    "conftest.py",
+    "h_helper.py"
+  ],
+  "excluded_scope": [
+    "private Git history/configuration",
+    "reports/private release and smoke evidence",
+    "personal/session/runtime data and databases",
+    "RAG/user indexes",
+    "real secrets/OAuth/local configuration",
+    "venvs/node_modules/caches",
+    "compiled binaries, guest images, build outputs, .app/.dmg",
+    "captured QA screenshots/results",
+    "upstream demo videos and large non-source assets",
+    "upstream publication automation and private/security baseline output"
+  ],
+  "excluded_counts": {
+    "outside-public-build-source-scope": 13,
+    "private-state-or-generated-runtime": 13,
+    "private-evidence-state-or-upstream-automation": 678,
+    "private-qa-report-or-captured-evidence": 13,
+    "generated-local-or-build-output": 2,
+    "large-non-source-asset": 3,
+    "upstream-demo-media": 13,
+    "binary-runtime-build-or-private-data": 8,
+    "precompiled-upstream-runtime": 3,
+    "environment-configuration": 1,
+    "captured-visual-baselines-and-upstream-security-baseline": 40
+  },
+  "snapshot_only_changes": [
+    {
+      "path": ".gitignore",
+      "source_git_blob": "4d052488a71f521166a6ebefee3d72d59eb24a4f",
+      "source_sha256": "e9256c94fe670616020247e53859f144c508eda436c528f30551b73d68cb3404",
+      "snapshot_sha256": "ae3b5d2a2ba2a30065244ded3b23db4d814932b5dcf98abfe99918513d972c08",
+      "reason": "Source-only snapshot exclusions added for compiled runtime inputs, private state and captured evidence."
+    },
+    {
+      "path": "deploy/fase4/aleph-shell/package-lock.json",
+      "source_git_blob": "ff387b39f36515f3abb1f89dbbdb7b0240359398",
+      "source_sha256": "44f91b6d55eadebff3e8c433e22109e7d4697437fea45146c43242d12bc498ae",
+      "snapshot_sha256": "d933d63f0aa37766a5eeda4ca6273c70cc9bed9d0934041b5b5fcb74660bdad5",
+      "reason": "Root package license metadata aligned to Apache-2.0; dependency resolutions unchanged."
+    },
+    {
+      "path": "deploy/fase4/aleph-shell/package.json",
+      "source_git_blob": "f374c8b18189b5c72978e4c1b7943a87b9287051",
+      "source_sha256": "72fef120bb3dd6b6e3ad443c2104cad7621a625ed9b934c1dcc58420332a7c25",
+      "snapshot_sha256": "0d2c41337daa3b17c2968c68af2bbaa8c62d78d3d409e089a16f8edd80c02544",
+      "reason": "First-party package license metadata changed from ISC to Apache-2.0."
+    },
+    {
+      "path": "deploy/fase4/aleph-shell/src-tauri/Cargo.toml",
+      "source_git_blob": "c57e5e61cfcc99c9ec411207d949053cf63bccec",
+      "source_sha256": "958ab6247e1dad81738f8745a3278c3ca566ff62aa5b0f6408ef077a6efad62c",
+      "snapshot_sha256": "9db0c39becbabe8b664fd371be2e9cba63da1acc0335e054aec849981e85adf8",
+      "reason": "First-party package license metadata declared Apache-2.0; dependencies unchanged."
+    },
+    {
+      "path": "platform/assembler/cli_brain/sesiones.py",
+      "source_git_blob": "d21ccbdec5f9e05839a67e9d51b54efa7f77cea1",
+      "source_sha256": "8ded133dff0622482af97ce8124be14c9742fdb2d4f8049641b90cf8febe267b",
+      "snapshot_sha256": "71567f0180f6d898fe431c67081d226bf34f45fef5490d6226f34846b23fe478",
+      "reason": "Personal project examples generalized in documentation only; executable statements unchanged."
+    },
+    {
+      "path": "product/backend/app/phase1/cuarto_guide.py",
+      "source_git_blob": "404fa6c7d43846f9b2dae4f89d95a99509becda9",
+      "source_sha256": "f92b8d008e00206eab1783a6990ca38f164ca493661415c2d81c0046486c6371",
+      "snapshot_sha256": "c2d4963c136fabf120fe089ad2549c3bd72ed1a9491fbf0bcea5c7eb86fd263a",
+      "reason": "Personal temporary-directory example generalized in documentation only; executable statements unchanged."
+    }
+  ],
+  "new_public_documents_and_validation": [
+    {
+      "path": "LICENSE",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    {
+      "path": "NOTICE",
+      "sha256": "39d92e5694358d58a314d5f80433f4ff4d938a20c7515f32c49787ea4de8e125"
+    },
+    {
+      "path": "README.md",
+      "sha256": "e9add5e9637b472ad08f353e705b5a7dff51a8dd36b9ad813144862c00adba7c"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "sha256": "24e5a86bec90f84213bd3a506e806e323b977ab1855f521109ec224bcc809d37"
+    },
+    {
+      "path": "TRADEMARKS.md",
+      "sha256": "01f4459694b599ff69a8d79803394ab647912d0909a1698dba038da235592309"
+    },
+    {
+      "path": "THIRD_PARTY_NOTICES",
+      "sha256": "d1378fd7e17289dacd1333d014507ec6dd84b3f4936e46c9138c825848117c14"
+    },
+    {
+      "path": "BUILDING.md",
+      "sha256": "587206cad4eb8bee88d7f7d23822f01e139581dc0614026096a614064137ce7e"
+    },
+    {
+      "path": "tools/oss/scan_secrets.py",
+      "sha256": "fb7d1bcfadb2442fc7a101ad8992040f80a227da3991e6b15a663120861d7b45"
+    },
+    {
+      "path": "tools/oss-reviewed-secret-matches.json",
+      "sha256": "d7f41d67a48db4ee6c54b319bf0f36757587e062f5f629f1a1304579e14c30ce"
+    }
+  ],
+  "omitted_build_inputs": [
+    {
+      "path": "third_party/officecli/bin/officecli-macos-arm64",
+      "source_sha256": "d66763a563bc844c3cc67036ebc7c4a9caa9319b9592814d9acd3706da231fc1",
+      "source_size": 33764912,
+      "included": false
+    },
+    {
+      "path": "third_party/gws/bin/gws-macos-arm64",
+      "source_sha256": "0f27b8b0815bf09cdf95da48d3c604f05ceb8f16bf5c9f0ba355b1f957cdd47e",
+      "source_size": 15371280,
+      "included": false
+    },
+    {
+      "path": "third_party/opencode/bin/opencode-darwin-arm64",
+      "source_sha256": "996fea55451be04cfa27c0d9dbbf0468cb611cde43075fe3dac799772d0b710f",
+      "source_size": 129461090,
+      "included": false
+    },
+    {
+      "path": "deploy/guest/runtime/aleph-guest-runner",
+      "source_sha256": "c909eded52e5dad11adee55da570d9f4c0eda2c7a364ecb2c3a3be37a08372ba",
+      "source_size": 106704,
+      "included": false
+    },
+    {
+      "path": "deploy/guest/runtime/Image.arm64",
+      "source_sha256": "e698a107e4d04117db1a7b0daee99bdae5f0647fba2af50f3cd020a666950ab9",
+      "source_size": 36241408,
+      "included": false
+    },
+    {
+      "path": "deploy/guest/runtime/rootfs.arm64.cpio.gz",
+      "source_sha256": "7115a4dc8d846e24fa1b3482d504b4f0dce234362323987a6c46b9cd6dcad141",
+      "source_size": 279676469,
+      "included": false
+    }
+  ],
+  "build_readiness_limitations": [
+    "No complete exact guest kernel/rootfs regeneration recipe in certified source.",
+    "Precompiled upstream inputs and phase6 prebuild outputs must be materialized independently.",
+    "No clean-host rebuild or bit-for-bit rebuild certification performed in this source-only task."
+  ],
+  "onshape": "OPTIONAL / NOT CERTIFIED"
+}

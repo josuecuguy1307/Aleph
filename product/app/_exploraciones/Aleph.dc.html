@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+  .a-orbit{transform-origin:32px 32px}
+</style>
+</helmet>
+
+<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;gap:{{ gap }};background:{{ bg }};padding:18px">
+  <svg width="{{ size }}" height="{{ size }}" viewBox="0 0 64 64" fill="none" style="animation:bob 4s ease-in-out infinite;flex:none">
+    <g class="a-orbit" style="animation:spin 12s linear infinite">
+      <g transform="rotate(0 32 32)"><ellipse cx="32" cy="32" rx="22" ry="8.5" stroke="{{ ring }}" stroke-width="1.7"></ellipse><circle cx="54" cy="32" r="2.8" fill="{{ elec }}"></circle></g>
+      <g transform="rotate(60 32 32)"><ellipse cx="32" cy="32" rx="22" ry="8.5" stroke="{{ ring }}" stroke-width="1.7"></ellipse><circle cx="54" cy="32" r="2.8" fill="{{ elec }}"></circle></g>
+      <g transform="rotate(120 32 32)"><ellipse cx="32" cy="32" rx="22" ry="8.5" stroke="{{ ring }}" stroke-width="1.7"></ellipse><circle cx="54" cy="32" r="2.8" fill="{{ elec }}"></circle></g>
+    </g>
+    <path d="M32 20 L42.4 26 L42.4 38 L32 44 L21.6 38 L21.6 26 Z" fill="{{ accent }}" stroke="{{ accent }}" stroke-width="4" stroke-linejoin="round"></path>
+    <path d="M26.6 33 q2.4 -3 4.8 0" stroke="#211E3A" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+    <path d="M33.6 33 q2.4 -3 4.8 0" stroke="#211E3A" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+  </svg>
+  <sc-if value="{{ showName }}" hint-placeholder-val="{{ true }}">
+    <span style="font-family:'Spectral',Georgia,serif;font-weight:700;font-size:{{ nameSize }};color:{{ nameColor }};letter-spacing:-.01em">Aleph</span>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:320,&quot;height&quot;:220},&quot;mode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;dark&quot;,&quot;light&quot;],&quot;default&quot;:&quot;dark&quot;},&quot;size&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:132,&quot;min&quot;:40,&quot;max&quot;:260},&quot;showName&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true},&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#8E8BF5&quot;}}">
+class Component extends DCLogic {
+  renderVals(){
+    const mode = this.props.mode || 'dark';
+    const dark = mode === 'dark';
+    const size = this.props.size || 132;
+    const showName = this.props.showName ?? false;
+    return {
+      size: size + 'px',
+      gap: showName ? '14px' : '0px',
+      showName,
+      nameSize: Math.round(size * 0.34) + 'px',
+      bg: this.props.bg || (dark ? '#16172A' : 'transparent'),
+      accent: this.props.accent || (dark ? '#8E8BF5' : '#6A57DC'),
+      ring: dark ? '#6E6BD0' : '#9A97E0',
+      elec: dark ? '#C9C6FF' : '#8E8BF5',
+      nameColor: this.props.nameColor || (dark ? '#F3ECE0' : '#241F45'),
+    };
+  }
+}
+</script>
+</body>
+</html>

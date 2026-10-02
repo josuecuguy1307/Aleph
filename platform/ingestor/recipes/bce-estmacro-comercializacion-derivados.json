@@ -1,0 +1,22 @@
+{
+  "recipe_id": "bce-estmacro-comercializacion-derivados-p15-t0",
+  "source_kind": "pdf",
+  "orientation": "matrix",
+  "page": 15,
+  "table_index": 0,
+  "table_settings": null,
+  "encoding": "utf-8",
+  "delimiter": ",",
+  "header_rows_to_skip": 1,
+  "skip_blank_value_rows": true,
+  "row_label_cleaner": "text",
+  "row_label_cleaner_opts": { "drop": ["xx"] },
+  "columns": [
+    { "label": "2021", "cleaner": "number_latin", "field": "valor_2021" },
+    { "label": "2022", "cleaner": "number_latin", "field": "valor_2022" },
+    { "label": "2023", "cleaner": "number_latin", "field": "valor_2023" }
+  ],
+  "source_url": "https://contenido.bce.fin.ec/documentos/Estadisticas/SectorReal/Previsiones/IndCoyuntura/EstMacro012024.pdf",
+  "notes": "Banco Central del Ecuador, Estadisticas Macroeconomicas (presentacion coyuntural, ene-2024), pagina 15: tabla 'COMERCIALIZACION INTERNA DE DERIVADOS IMPORTADOS', diferencia ingresos/egresos por derivado, 2021-2023. Orientacion matrix: fila=indicador, columnas=anios. Numeros en formato latino (punto=miles, coma=decimal). Header noise 'xx' eliminado del label. Filas-grupo (Nafta/Diesel/GLP) sin valores se saltan via skip_blank_value_rows. Receta autorada UNA vez sobre la extraccion real; el refresh la corre sin modelo.",
+  "schema_version": "ingestor-recipe/v1"
+}

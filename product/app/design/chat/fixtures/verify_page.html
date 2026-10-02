@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="es">
+<head><meta charset="utf-8"><title>smoke aleph-chat</title>
+<style>
+  html,body{height:100%;margin:0;background:#1B1814;color:#F3ECE0}
+  #host{width:360px;height:560px;border:1px solid #3A342D}
+  :root{--accent:#8B5CF6;--ink:#F3ECE0;--line:#3A342D;--line2:#4A433A;--paper2:#242120;--faint:#897F70;--muted:#A89C8B;--green:#34D399;--accent-soft:rgba(139,92,246,.15);--accent-deep:#B4B1FF}
+</style>
+</head>
+<body>
+<div id="host"></div>
+<script>
+  // brandface stub: un slug conocido para probar el logo inline sin backend
+  window.AlephBrand = {
+    _known: () => ["gmail", "stripe"],
+    faceHTML: (x, o) => '<span class="ac-face" style="width:'+(o&&o.size||16)+'px;height:'+(o&&o.size||16)+'px;background:#4a3">'+String(x).slice(0,2).toUpperCase()+'</span>',
+  };
+</script>
+<script>
+  window.SalaRender = {
+    renderMarkdown: (t) => Promise.resolve(
+      String(t).replace(/`([^`]+)`/g, '<code>$1</code>')
+               .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+               .replace(/\n/g, '<br>')),
+  };
+</script>
+<script type="module">
+  import { mount } from '/chat/aleph-chat.js';
+  let sink = null;
+  const chat = mount(document.getElementById('host'), {
+    surface: 'sala',
+    attachments: true,
+    intro: '<div class="ac-hello">Hola</div>',
+    suggestions: ['Arma un informe', 'Analiza este CSV'],
+    onSubmit(turn, signals) {
+      window.__turn = turn;                       // lo que llegó del composer
+      sink = signals;
+      // streaming simulado: deltas cada 60ms
+      const parts = ['Hola', ', ', 'esto ', 'llega ', 'en ', 'chunks', '.'];
+      let i = 0;
+      const iv = setInterval(() => {
+        if (i >= parts.length) { clearInterval(iv); signals.onClose(); return; }
+        signals.onResponse({ text: parts[i++] });   // onOpen lo dispara el wrapper al 1er chunk
+      }, 120);
+    },
+  });
+  window.__chat = chat;
+  await chat.ready;
+
+  // hooks del smoke
+  window.__vitals   = (t, s) => chat.vitals(t, s);
+  window.__clearV   = () => chat.clearVitals();
+  window.__action   = () => chat.action('Leyendo tu correo', { service: 'gmail', detail: 'gmail · list_messages' });
+  window.__err      = () => chat.errorCard('El CLI no está logueado.', { causa: 'cli_no_logueado', auto: true, onRetry: () => { window.__retried = true; }, actions: [{ label: 'Abrir ajustes', onClick: () => { window.__alt = true; } }] });
+  window.__offer    = () => chat.offer('No puedo ver imágenes: no hay modelo de visión conectado.', [{ label: 'Conectar un modelo de visión', onClick: () => { window.__offered = true; } }], { kind: 'vision' });
+  window.__say      = () => chat.say('Conecté **gmail** y stripe. Un `código` acá.');
+  window.__sugs     = () => chat.suggest(['Arma un informe', 'Analiza este CSV']);
+  window.__slot     = () => {
+    const d = document.createElement('div');
+    d.className = 'errcard'; d.dataset.causa = 'slot_vivo';
+    d.innerHTML = '<b>card viva</b><p>con handler imperativo</p><div class="acts"></div>';
+    const b = document.createElement('button');
+    b.textContent = 'Tocame';
+    b.onclick = () => { window.__slotClicked = true; b.textContent = 'tocado'; };
+    d.querySelector('.acts').appendChild(b);
+    chat.slot(d);
+  };
+  window.__gated    = (on) => chat.gated(on);
+  window.__ready = true;
+</script>
+</body></html>

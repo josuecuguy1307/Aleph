@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1280" height="640" viewBox="0 0 1280 640">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#faf8f3"/>
+      <stop offset="1" stop-color="#f3d9cf"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#c96442"/>
+      <stop offset="1" stop-color="#b75636"/>
+    </linearGradient>
+    <linearGradient id="feather" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#f3d9cf" stop-opacity="0.95"/>
+      <stop offset="1" stop-color="#f3d9cf" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="18" stdDeviation="24" flood-color="#1f1d18" flood-opacity="0.18"/>
+    </filter>
+    <clipPath id="screenClip">
+      <rect x="700" y="100" width="640" height="440" rx="16"/>
+    </clipPath>
+  </defs>
+
+  <rect width="1280" height="640" fill="url(#bg)"/>
+
+  <!-- Shadow platform for the screenshot -->
+  <rect x="700" y="100" width="640" height="440" rx="16" fill="#ffffff" filter="url(#shadow)"/>
+
+  <!-- Product screenshot, clipped with rounded corners -->
+  <g clip-path="url(#screenClip)">
+    <image xlink:href="screenshots/product-hero.png" x="700" y="100" width="640" height="440" preserveAspectRatio="xMinYMid slice"/>
+  </g>
+
+  <!-- Left-edge feather: blend screenshot into background -->
+  <rect x="700" y="100" width="160" height="440" fill="url(#feather)"/>
+
+  <!-- Logo lockup -->
+  <g transform="translate(80, 80)">
+    <image xlink:href="logo.png" x="0" y="0" width="40" height="40"/>
+    <text x="54" y="29" font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-weight="600" font-size="24" fill="#1f1d18" letter-spacing="-0.3">open-codesign</text>
+  </g>
+
+  <!-- Headlines -->
+  <text x="80" y="226" font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-weight="700" font-size="54" fill="#1f1d18" letter-spacing="-1.6">Design with any model.</text>
+  <text x="80" y="292" font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-weight="700" font-size="54" fill="url(#accent)" letter-spacing="-1.6">Ship from your laptop.</text>
+
+  <!-- Subtitle -->
+  <text x="80" y="350" font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-weight="400" font-size="21" fill="#57544c">Open-source desktop AI design tool — MIT, local-first, BYOK or ChatGPT login.</text>
+
+  <!-- Hook line -->
+  <text x="80" y="402" font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-weight="600" font-size="21" fill="#c96442">One-click import from Claude Code &amp; Codex  →</text>
+
+  <!-- Provider pills -->
+  <g transform="translate(80, 438)" font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-weight="500" font-size="15" fill="#57544c">
+    <g>
+      <rect x="0" y="0" width="74" height="32" rx="16" fill="#ffffff" stroke="#e6ddd1"/>
+      <text x="37" y="21" text-anchor="middle">Claude</text>
+    </g>
+    <g transform="translate(82,0)">
+      <rect x="0" y="0" width="56" height="32" rx="16" fill="#ffffff" stroke="#e6ddd1"/>
+      <text x="28" y="21" text-anchor="middle">GPT</text>
+    </g>
+    <g transform="translate(146,0)">
+      <rect x="0" y="0" width="74" height="32" rx="16" fill="#ffffff" stroke="#e6ddd1"/>
+      <text x="37" y="21" text-anchor="middle">Gemini</text>
+    </g>
+    <g transform="translate(228,0)">
+      <rect x="0" y="0" width="72" height="32" rx="16" fill="#ffffff" stroke="#e6ddd1"/>
+      <text x="36" y="21" text-anchor="middle">Ollama</text>
+    </g>
+    <g transform="translate(308,0)">
+      <rect x="0" y="0" width="102" height="32" rx="16" fill="#ffffff" stroke="#e6ddd1"/>
+      <text x="51" y="21" text-anchor="middle">OpenRouter</text>
+    </g>
+    <g transform="translate(418,0)">
+      <rect x="0" y="0" width="52" height="32" rx="16" fill="#faf0e8" stroke="#e6ddd1"/>
+      <text x="26" y="21" text-anchor="middle" fill="#8c887d">+20</text>
+    </g>
+  </g>
+
+  <!-- Repo URL -->
+  <text x="80" y="580" font-family="'JetBrains Mono', ui-monospace, SFMono-Regular, monospace" font-weight="500" font-size="19" fill="#8c887d">github.com/OpenCoworkAI/open-codesign</text>
+</svg>

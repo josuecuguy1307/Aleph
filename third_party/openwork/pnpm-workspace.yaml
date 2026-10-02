@@ -1,0 +1,26 @@
+# Aleph-owned workspace boundary. The upstream root is intentionally not imported:
+# it also enumerates ee/*, whose FSL code is excluded from Aleph Oficina.
+packages:
+  - "apps/*"
+  - "packages/*"
+
+# [Aleph · 2026-08-11] Esta sección estaba con el texto de PLANTILLA que escribe pnpm
+# («set this to true or false»), o sea sin decidir. pnpm 11 lo trata como no-aprobado y
+# aborta el install con ERR_PNPM_IGNORED_BUILDS, así que `pnpm run build:app` fallaba ANTES
+# de compilar nada. Decidido:
+#   · better-sqlite3 — SÍ: es un módulo nativo, sin su script de build no hay binario y el
+#     server no puede abrir su base.
+#   · esbuild — SÍ: descarga/coloca su ejecutable por plataforma; sin eso Vite no bundlea.
+#   · electron-winstaller — NO: fabrica instaladores de Windows. Oficina se distribuye
+#     dentro de Aleph y su empaquetado no pasa por acá; que no corra no le quita nada.
+allowBuilds:
+  better-sqlite3: true
+  electron-winstaller: false
+  esbuild: true
+
+catalog:
+  react: 19.2.8
+  react-dom: 19.2.8
+
+linkWorkspacePackages: true
+preferWorkspacePackages: true

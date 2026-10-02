@@ -1,0 +1,10 @@
+{
+  "rules": [
+    {
+      "id": "deleg-benign-tools",
+      "match": {"server": "*", "tool_name_contains": ["read_data", "write_note", "slow_op"]},
+      "level": "auto-ejecuta",
+      "what": "una tool local benigna del fixture de delegación (no toca plata ni manda afuera)"
+    }
+  ]
+}

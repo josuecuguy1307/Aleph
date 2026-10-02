@@ -1,0 +1,66 @@
+{
+  "schema_version": "v1",
+  "meta": {
+    "name": "Agente Finanzas",
+    "nicho": "finanzas",
+    "descripcion": "Analista que arma comparables con cita al filing primario y modelos Excel con formulas vivas, no numeros pegados."
+  },
+  "model": {
+    "primary": "openai/gpt-oss-120b",
+    "fallback": "openai/gpt-oss-20b",
+    "base_url": "https://api.groq.com/openai/v1",
+    "temperature": 0,
+    "max_tokens": 2048,
+    "max_turns": 12
+  },
+  "belt": {
+    "belt_ref": "catalog/belts/finanzas.md",
+    "tool_filters": {
+      "secedgar": [
+        "get_cik_by_ticker",
+        "get_financials",
+        "get_company_facts",
+        "get_key_metrics",
+        "compare_periods"
+      ],
+      "excel": [
+        "create_workbook",
+        "write_data_to_excel",
+        "apply_formula",
+        "validate_formula_syntax",
+        "read_data_from_excel",
+        "get_workbook_metadata"
+      ],
+      "fred_official": [
+        "fred_search",
+        "fred_get_series"
+      ],
+      "alphavantage": [
+        "TOOL_LIST",
+        "TOOL_GET",
+        "TOOL_CALL"
+      ]
+    }
+  },
+  "framing": {
+    "ref": "product/recipes/framing/finanzas.md",
+    "inline": null
+  },
+  "rag": {
+    "enabled": false,
+    "mode": "manual",
+    "dir": null
+  },
+  "keys": {
+    "fred": {
+      "byok_ref": "keys:fred"
+    },
+    "alpha_vantage": {
+      "byok_ref": "keys:alpha_vantage"
+    }
+  },
+  "gates": {
+    "money_touch": "needs_ok",
+    "send": "needs_ok"
+  }
+}

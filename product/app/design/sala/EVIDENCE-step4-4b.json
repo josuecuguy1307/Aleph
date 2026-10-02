@@ -1,0 +1,70 @@
+{
+  "ok": true,
+  "results": [
+    {
+      "name": "compute",
+      "pass": true,
+      "fails": []
+    },
+    {
+      "name": "gate",
+      "pass": true,
+      "fails": []
+    },
+    {
+      "name": "tint",
+      "pass": true,
+      "fails": []
+    },
+    {
+      "name": "notools",
+      "pass": true,
+      "fails": []
+    },
+    {
+      "name": "grift",
+      "pass": true,
+      "fails": []
+    },
+    {
+      "name": "gateonly",
+      "pass": true,
+      "fails": []
+    },
+    {
+      "name": "failed",
+      "pass": true,
+      "fails": []
+    },
+    {
+      "name": "degraded",
+      "pass": true,
+      "fails": []
+    },
+    {
+      "name": "errored",
+      "pass": true,
+      "fails": []
+    },
+    {
+      "name": "streamdown",
+      "pass": true,
+      "fails": []
+    },
+    {
+      "name": "terr-inline",
+      "pass": true,
+      "fails": []
+    },
+    {
+      "name": "terr-spatial",
+      "pass": true,
+      "fails": []
+    },
+    {
+      "name": "anti-grift-static",
+      "pass": true,
+      "fails": []
+    }
+  ]
+}

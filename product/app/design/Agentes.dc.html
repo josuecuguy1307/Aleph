@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./aleph-config.js"></script>
+<script src="./vendor/supabase.min.js"></script>
+<script src="./supabase-auth.js"></script>
+<script src="./support.js"></script>
+<script src="./auth.js"></script>
+<script src="./i18n.js"></script>
+<script>window.ALEPH_THEME_NOFLOAT=true;</script>
+<script src="./theme.js"></script>
+<script src="./nav.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="vendor/fonts.css">
+<link rel="stylesheet" href="aleph-tokens.css">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:var(--page-solid);min-height:100vh;font-family:var(--font-ui);color:var(--ink);-webkit-font-smoothing:antialiased}
+  a{text-decoration:none}
+  /* Las medidas son las del artboard 08: fila de radio 18 con hairline, avatar de 44 con
+     la inicial en la serif de marca, chips de 12px y cápsulas de 999. */
+  .ag-fila{display:flex;align-items:center;gap:20px;padding:16px 20px;border-radius:var(--r-md);
+    background:var(--paper);border:1px solid var(--hairline)}
+  .ag-fila + .ag-fila{margin-top:10px}
+  .ag-chip{font:300 12px var(--font-ui);color:var(--muted);background:var(--page-solid);
+    border-radius:var(--r-full);padding:5px 12px;white-space:nowrap}
+  .ag-filtro{font:300 12.5px var(--font-ui);border-radius:var(--r-full);padding:8px 15px;cursor:pointer;
+    background:var(--paper);border:1px solid var(--hairline);color:var(--muted);
+    transition:border-color .14s,color .14s}
+  .ag-filtro:hover{border-color:var(--accent);color:var(--ink)}
+  .ag-filtro.on{background:var(--ink);border-color:var(--ink);color:var(--paper);font-weight:400}
+  .ag-filtro .n{color:var(--faint);margin-left:5px}
+  .ag-filtro.on .n{color:var(--muted)}
+  /* El buscador es una CÁPSULA con lupa, no un campo pelado sobre el pozo. */
+  .ag-buscar{display:flex;align-items:center;gap:9px;width:300px;flex:none;background:var(--paper);
+    border:1px solid var(--hairline);border-radius:var(--r-full);padding:10px 16px;
+    transition:border-color .14s}
+  .ag-buscar:focus-within{border-color:var(--accent)}
+  .ag-buscar input{flex:1;min-width:0;background:none;border:0;outline:none;
+    font:300 13px var(--font-ui);color:var(--ink)}
+  .ag-buscar .lupa{color:var(--faint);font-size:13px;flex:none}
+  .ag-local{display:flex;align-items:center;gap:9px;background:var(--paper);border:1px solid var(--hairline);
+    border-radius:var(--r-full);padding:9px 16px;flex:none;font:300 12.5px var(--font-ui);color:var(--muted)}
+  .ag-usar{background:var(--ink);color:var(--paper);font:400 13px var(--font-ui);padding:9px 18px;
+    border-radius:var(--r-full);flex:none;display:flex;align-items:center;gap:8px}
+  .ag-delete{border:0;background:transparent;color:var(--faint);font:300 12.5px var(--font-ui);padding:7px 2px;
+    cursor:pointer;flex:none;transition:color .14s}
+  .ag-delete:hover{color:var(--danger,var(--red,#b64232))}
+  .ag-delete:disabled{opacity:.55;cursor:wait}
+  .ag-delete-error{margin:0 0 14px;padding:10px 13px;border:1px solid var(--danger,var(--red,#b64232));
+    border-radius:var(--r-sm);color:var(--danger,var(--red,#b64232));font-size:13px}
+  @media (max-width:900px){
+    .ag-buscar{width:auto;flex:1;min-width:180px}
+    .ag-fila{flex-wrap:wrap;gap:12px}
+  }
+  @media (max-width:760px){ .ag-acciones{flex-direction:column;align-items:stretch} }
+</style>
+</helmet>
+
+<!-- [rediseño · fase 2 · 2.2] LA PÁGINA AGENTES.
+     Sale del widget de `Home.dc.html:220-240`, que era su único lugar. Lo que había ahí
+     está entero acá —nombre, inicial, chips del cinturón, Usar, Editar— y lo que se suma es
+     lo que el mockup pide y el widget no podía dar: el buscador, los tres filtros y el orden
+     por último uso.
+     ⚠️ EL FILTRO NO SE DIBUJÓ HASTA QUE EL CABLE EXISTIÓ. `puppets.status` estaba en la DB
+     con 1.625 de 1.625 en `draft` y CERO llamantes de `set_status`; dibujar «Listos» sobre
+     eso habría dado 0 para siempre. El cable va en el commit anterior a éste. -->
+<div style="min-height:100vh;background:var(--page-bg);padding:22px 26px 34px">
+  <div style="max-width:1180px;margin:0 auto">
+
+    <!-- La MISMA cabecera de Inicio: el wordmark, el tema y el idioma. El estilo vive una
+         sola vez, en `aleph-ds.css`; acá va sólo el DOM, que es lo que el runtime DC monta. -->
+    <div class="ds-cabecera" style="margin-bottom:26px">
+      <span class="ds-cabecera-marca">Aleph</span>
+      <span style="flex:1"></span>
+      <button class="ds-pill ds-pill-ico" onClick="{{ toggleTheme }}" title="{{ temaTitulo }}" aria-label="{{ temaTitulo }}">{{ themeIcon }}</button>
+      <button class="ds-pill ds-pill-lang" onClick="{{ toggleLang }}" title="{{ idiomaTitulo }}" aria-label="{{ idiomaTitulo }}">{{ langLabel }}</button>
+    </div>
+
+    <div style="display:flex;align-items:flex-start;gap:16px;margin-bottom:22px;flex-wrap:wrap">
+      <h1 style="flex:1;min-width:0;margin:0;font:200 44px/1.04 var(--font-ui);color:var(--ink);letter-spacing:-.028em">{{ titulo }}</h1>
+      <!-- El aviso de sesión local. No es nuevo: es la misma frase que Inicio ya decía
+           (`home.local.pill`), en la cápsula que el artboard le da acá. -->
+      <sc-if value="{{ anonLocal }}" hint-placeholder-val="{{ true }}">
+        <a class="ag-local" href="Auth.dc.html?motivo=traer" style="margin-top:6px" style-hover="border-color:var(--accent)">
+          <span style="width:7px;height:7px;border-radius:999px;background:var(--green);flex:none"></span>
+          <span>{{ localPill }}</span>
+        </a>
+      </sc-if>
+      <a href="Cuarto.dc.html" style="background:var(--ink);color:var(--paper);border-radius:var(--r-full);padding:11px 20px;font:400 13.5px var(--font-ui);flex:none;margin-top:6px;display:flex;align-items:center;gap:9px" style-hover="filter:brightness(1.12)"><span aria-hidden="true">＋</span>{{ crearLabel }}</a>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px">
+      <label class="ag-buscar">
+        <span class="lupa" aria-hidden="true">⌕</span>
+        <input value="{{ q }}" onInput="{{ setQ }}" placeholder="{{ buscarPlaceholder }}" aria-label="{{ buscarPlaceholder }}">
+      </label>
+      <sc-for list="{{ filtros }}" as="f" hint-placeholder-count="3">
+        <button class="{{ f.clase }}" onClick="{{ f.click }}">{{ f.label }} <span class="n">{{ f.n }}</span></button>
+      </sc-for>
+      <span class="ds-meta" style="margin-left:auto;white-space:nowrap">{{ ordenLabel }}</span>
+    </div>
+
+    <sc-if value="{{ deleteError }}" hint-placeholder-val="{{ false }}">
+      <div class="ag-delete-error" role="alert" aria-live="polite">{{ deleteError }}</div>
+    </sc-if>
+
+    <!-- Las filas ya no van adentro de un pozo: en el artboard cada agente es una tarjeta
+         blanca con su hairline, sobre el lienzo. -->
+    <sc-if value="{{ hayAgentes }}" hint-placeholder-val="{{ true }}">
+      <div>
+        <sc-for list="{{ agents }}" as="a" hint-placeholder-count="4">
+          <div class="ag-fila">
+            <div style="{{ a.monoStyle }}">{{ a.mono }}</div>
+            <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:7px">
+              <span style="font:400 16.5px var(--font-ui);color:var(--ink);letter-spacing:-.008em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" data-no-tm>{{ a.name }}</span>
+              <div style="display:flex;flex-wrap:wrap;gap:7px;align-items:center">
+                <sc-for list="{{ a.chips }}" as="c" hint-placeholder-count="3"><span class="ag-chip" data-no-tm>{{ c.text }}</span></sc-for>
+              </div>
+            </div>
+            <div style="flex:none;display:flex;align-items:center;gap:8px;white-space:nowrap">
+              <span style="{{ a.puntoStyle }}"></span>
+              <span style="{{ a.estadoStyle }}">{{ a.estadoTexto }}</span>
+            </div>
+            <!-- «hace 3 d» no está en el artboard, y se queda: es un dato REAL que la casa
+                 ya tiene (`usado_at`) y el que ordena la lista — el rótulo de arriba dice
+                 «ordenados por lo último que usaste», así que sacarlo dejaría el criterio
+                 sin mostrar. Va en gris de etiqueta, que es el peso que le toca. -->
+            <div style="flex:none;white-space:nowrap;min-width:88px;text-align:right;font:300 12.5px var(--font-ui);color:var(--faint)">{{ a.usadoTexto }}</div>
+            <div class="ag-acciones" style="display:flex;align-items:center;gap:10px;flex:none">
+              <a class="ag-usar" href="{{ a.usarHref }}" style-hover="filter:brightness(1.12)">{{ usarLabel }} <span aria-hidden="true">→</span></a>
+              <a href="{{ a.editHref }}" style="font:400 13px var(--font-ui);color:var(--muted);flex:none" style-hover="color:var(--ink)">{{ editarLabel }}</a>
+              <button class="ag-delete" type="button" onClick="{{ a.deleteClick }}" disabled="{{ a.deleteDisabled }}" aria-label="{{ a.deleteLabel }}">{{ a.deleteLabel }}</button>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ vacio }}" hint-placeholder-val="{{ false }}">
+      <div class="ds-well" style="padding:56px 22px;text-align:center">
+        <div class="ds-name" style="font-size:16px">{{ vacioTitulo }}</div>
+        <div class="ds-meta" style="margin-top:8px">{{ vacioSub }}</div>
+      </div>
+    </sc-if>
+
+  </div>
+</div>
+</x-dc>
+
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  /* La MISMA paleta neutra del roster de Home: el avatar no lleva color de identidad
+     (el sistema pide neutros) y la inicial va en la serif de marca. */
+  state = { q:'', filtro:'todos', agents:[], cargado:false, anon:false, theme:'light', deletingId:null, deleteError:'' };
+
+  componentDidMount(){
+    this.cargar();
+    /* El tema y la sesión: los mismos dos cables que usa Inicio, leídos igual. */
+    try{
+      const A=window.AlephSession, u=(A&&A.get)?A.get():null;
+      this.setState({ theme:(window.AlephTheme&&window.AlephTheme.resolved())||'light',
+                      anon:!!(A&&A.isAnon&&A.isAnon(u)) });
+    }catch(e){}
+  }
+
+  toggleTheme(){ const t=this.state.theme==='dark'?'light':'dark';
+    if(window.AlephTheme) window.AlephTheme.set(t); this.setState({theme:t}); }
+
+  /* CABLEADO REAL — `GET /v1/users/{id}/puppets`, el mismo endpoint que el widget de Home.
+     Lo que cambia respecto del widget: ahora la respuesta trae `status` (que el commit del
+     cable hace escribir) y `usado_at` (que `list_puppets` resuelve con un LEFT JOIN sobre
+     `runs`). Sin esas dos, ni el filtro ni el orden podrían decir la verdad. */
+  async cargar(){
+    try{
+      const u=(window.AlephSession&&window.AlephSession.get)?window.AlephSession.get():null;
+      if(!u||!u.id){ this.setState({cargado:true}); return; }
+      const r=await fetch('/v1/users/'+u.id+'/puppets'); if(!r.ok){ this.setState({cargado:true}); return; }
+      const d=await r.json();
+      const agents=(d.puppets||[]).map(p=>{
+        const cfg=p.config||{}, tf=(cfg.belt&&cfg.belt.tool_filters)||{}, servers=Object.keys(tf);
+        return {
+          id:p.id, name:p.name||'Aleph',
+          mono:(p.name||'Al').replace(/[^A-Za-zÁÉÍÓÚáéíóúñ]/g,'').slice(0,2)||'Al',
+          status:p.status||'draft', usado:p.usado_at||null,
+          chips:servers.length?servers.slice(0,4).map(s=>({t:s})):[{t:'sin habilidades aún'}],
+        };
+      });
+      this.setState({agents, cargado:true});
+    }catch(e){ this.setState({cargado:true}); }
+  }
+
+  async borrar(id){
+    const index=this.state.agents.findIndex(a=>a.id===id);
+    if(index<0 || this.state.deletingId) return;
+    const agent=this.state.agents[index];
+    const T=window.t||(k=>k);
+    if(!window.confirm(T('agentes.borrar.confirm','¿Eliminar este agente? Esta acción no se puede deshacer.'))) return;
+
+    // Retirar primero de la vista hace que los contadores respondan en el mismo gesto.
+    // q y filtro no se tocan, así que la persona se queda exactamente en su búsqueda.
+    this.setState({agents:this.state.agents.filter(a=>a.id!==id),deletingId:id,deleteError:''});
+    try{
+      const r=await fetch('/v1/puppets/'+encodeURIComponent(id),{method:'DELETE'});
+      const d=await r.json().catch(()=>({}));
+      if(!r.ok || d.deleted!==true) throw new Error('delete_failed');
+      this.setState({deletingId:null});
+    }catch(e){
+      // Si la persistencia rechaza el borrado, restaurar la misma tarjeta en su lugar y
+      // explicar el fallo sin filtrar detalles internos del backend.
+      this.setState(s=>{
+        const agents=s.agents.slice();
+        if(!agents.some(a=>a.id===id)) agents.splice(Math.min(index,agents.length),0,agent);
+        return {agents,deletingId:null,deleteError:T('agentes.borrar.error','No se pudo eliminar el agente. Inténtalo de nuevo.')};
+      });
+    }
+  }
+
+  /* «hace 3 días» sin librería de fechas: son cinco ramas y una resta. */
+  hace(iso){
+    const T=window.t||(k=>k);
+    if(!iso) return T('agentes.sin_usar')==='agentes.sin_usar' ? 'sin usar' : T('agentes.sin_usar');
+    const ms=Date.now()-Date.parse(iso); if(!isFinite(ms)) return '—';
+    const m=Math.floor(ms/6e4), h=Math.floor(m/60), d=Math.floor(h/24);
+    if(m<1) return T('agentes.reciente');
+    const hace=(n,unidad)=>T('agentes.hace',{n,unidad});
+    if(m<60) return hace(m,'min'); if(h<24) return hace(h,'h');
+    if(d<30) return hace(d,'d'); return hace(Math.floor(d/30),'m');
+  }
+
+  setQ(e){ this.setState({q:(e&&e.target?e.target.value:'')||''}); }
+
+  renderVals(){
+    const T=window.t||(k=>k), t=(k,fb)=>{ const v=T(k); return (v&&v!==k)?v:fb; };
+    const S=this.state;
+    const _lang=(window.AlephI18n&&window.AlephI18n.lang&&window.AlephI18n.lang())||'es';
+    const listos=S.agents.filter(a=>a.status==='active').length;
+    const borradores=S.agents.filter(a=>a.status!=='active').length;
+
+    const q=S.q.trim().toLowerCase();
+    let vistos=S.agents.filter(a=>{
+      if(S.filtro==='listos' && a.status!=='active') return false;
+      if(S.filtro==='borradores' && a.status==='active') return false;
+      if(q && a.name.toLowerCase().indexOf(q)<0 && !a.chips.some(c=>String(c.t).toLowerCase().indexOf(q)>=0)) return false;
+      return true;
+    });
+
+    /* El filtro activo se marca con una CLASE, no con un `style` armado a mano: el artboard
+       le da al activo fondo de tinta y a los otros la cápsula blanca con hairline, y eso ya
+       está escrito una vez arriba (`.ag-filtro` / `.ag-filtro.on`). El contador va en su
+       propio `<span>` para poder ir en gris, como en el diseño. */
+    const filtro=(id,label,n)=>({ label, n:String(n),
+      clase:'ag-filtro'+(S.filtro===id?' on':''),
+      click:()=>this.setState({filtro:id}) });
+
+    const agents=vistos.map(a=>{
+      const listo=a.status==='active';
+      return {
+        id:a.id,
+        name:a.name, mono:a.mono,
+        monoStyle:'width:44px;height:44px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;color:var(--muted);font-family:var(--font-brand);font-weight:400;font-size:17px;flex:none;background:var(--paper2);border:1px solid var(--hairline)',
+        chips:a.chips.map(c=>({text:c.t})),
+        /* EL ESTADO SE DICE CON PUNTO **Y** CON PALABRA. El verde es el único color de
+           estado que el estándar deja para «en línea», y un punto solo no dice cuál de los
+           dos es para quien no distingue el color. */
+        puntoStyle:'width:7px;height:7px;border-radius:50%;flex:none;background:'+(listo?'var(--green)':'var(--quiet)'),
+        estadoStyle:'font:300 13px var(--font-ui);color:'+(listo?'var(--green)':'var(--faint)'),
+        estadoTexto:listo?t('agentes.listo','listo para usar'):t('agentes.borrador','borrador'),
+        usadoTexto:this.hace(a.usado),
+        usarHref:'sala-v2/sala-v2.html?puppet='+encodeURIComponent(a.id),
+        editHref:'Cuarto.dc.html?puppet='+encodeURIComponent(a.id),
+        deleteLabel:t('agentes.borrar','Eliminar'),
+        deleteDisabled:!!S.deletingId,
+        deleteClick:()=>this.borrar(a.id),
+      };
+    });
+
+    return {
+      titulo:t('agentes.titulo','Agentes'),
+      crearLabel:t('agentes.crear','Crear agente'),
+      buscarPlaceholder:t('agentes.buscar','Buscar entre tus agentes'),
+      ordenLabel:t('agentes.orden','Ordenados por lo último que usaste'),
+      usarLabel:t('home.usar','Usar'), editarLabel:t('home.editar','Editar'),
+      q:S.q, setQ:(e)=>this.setQ(e),
+      deleteError:S.deleteError,
+      filtros:[
+        filtro('todos', t('agentes.todos','Todos'), S.agents.length),
+        filtro('listos', t('agentes.listos','Listos'), listos),
+        filtro('borradores', t('agentes.borradores','Borradores'), borradores),
+      ],
+      anonLocal:S.anon, localPill:t('home.local.pill','Trabajas local en este equipo'),
+      temaTitulo:t('home.tema_titulo','Cambiar el tema'),
+      idiomaTitulo:t('home.idioma_titulo','Cambiar el idioma'),
+      langLabel:_lang.toUpperCase(),
+      toggleLang:()=>{ if(window.AlephI18n) window.AlephI18n.setLang(_lang==='es'?'en':'es'); },
+      toggleTheme:()=>this.toggleTheme(),
+      themeIcon: S.theme==='dark' ? '☀' : '☾',
+      agents, hayAgentes:agents.length>0, vacio:S.cargado&&agents.length===0,
+      vacioTitulo: S.agents.length===0
+        ? t('agentes.vacio.tit','Todavía no armaste ningún agente')
+        : t('agentes.filtro_vacio.tit','Ningún agente cae en este filtro'),
+      vacioSub: S.agents.length===0
+        ? t('agentes.vacio.sub','Arma el primero y va a aparecer aquí, con sus habilidades.')
+        : t('agentes.filtro_vacio.sub','Prueba con otro filtro o limpia la búsqueda.'),
+    };
+  }
+}
+</script>
+</body>
+</html>

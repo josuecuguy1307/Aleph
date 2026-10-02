@@ -1,0 +1,8 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "local-artifact-open",
+  "description": "Preserve existing artifact open and reveal commands for local Tauri content.",
+  "windows": ["main"],
+  "local": true,
+  "permissions": ["allow-open-artifact", "allow-reveal-artifact"]
+}

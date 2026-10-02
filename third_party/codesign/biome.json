@@ -1,0 +1,120 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.4.15/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "files": {
+    "includes": [
+      "**",
+      "!**/dist",
+      "!**/dist-electron",
+      "!**/.next",
+      "!**/node_modules",
+      "!**/coverage",
+      "!**/.turbo",
+      "!**/vendor",
+      "!**/packaging",
+      "!**/.github/scripts",
+      "!apps/desktop/resources/templates",
+      "!**/*.vue"
+    ]
+  },
+  "css": {
+    "parser": {
+      "cssModules": true,
+      "tailwindDirectives": true
+    }
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 100,
+    "lineEnding": "lf"
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single",
+      "trailingCommas": "all",
+      "semicolons": "always",
+      "arrowParentheses": "always"
+    }
+  },
+  "json": {
+    "formatter": {
+      "trailingCommas": "none"
+    }
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "suspicious": {
+        "noExplicitAny": "error",
+        "noArrayIndexKey": "off",
+        "noAssignInExpressions": "off",
+        "noPrototypeBuiltins": "off",
+        "noDuplicateObjectKeys": "warn",
+        "useIterableCallbackReturn": "off"
+      },
+      "style": {
+        "noNonNullAssertion": "warn",
+        "useImportType": "error",
+        "useLiteralEnumMembers": "off"
+      },
+      "complexity": {
+        "noExcessiveCognitiveComplexity": "off",
+        "noForEach": "off",
+        "useLiteralKeys": "off",
+        "noCommaOperator": "off"
+      },
+      "correctness": {
+        "useExhaustiveDependencies": "warn",
+        "noUnusedFunctionParameters": "off",
+        "noInnerDeclarations": "off",
+        "noUnusedVariables": "warn"
+      },
+      "a11y": {
+        "useButtonType": "off",
+        "useFocusableInteractive": "off",
+        "useSemanticElements": "off",
+        "noSvgWithoutTitle": "off",
+        "useKeyWithClickEvents": "off",
+        "useValidAnchor": "off",
+        "useAriaPropsForRole": "off",
+        "useAriaPropsSupportedByRole": "off",
+        "noStaticElementInteractions": "off"
+      }
+    }
+  },
+  "overrides": [
+    {
+      "includes": [
+        "**/apps/desktop/src/main/**",
+        "**/packages/core/src/**",
+        "**/packages/providers/src/**",
+        "**/packages/exporters/src/**",
+        "**/packages/shared/src/**"
+      ],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noConsole": "error"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["**/*.test.ts", "**/*.test.tsx", "**/packages/core/src/prompts/**"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noConsole": "off"
+          }
+        }
+      }
+    }
+  ]
+}

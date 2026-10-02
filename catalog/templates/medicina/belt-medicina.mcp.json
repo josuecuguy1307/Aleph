@@ -1,0 +1,158 @@
+{
+  "_meta": {
+    "belt": "medicina",
+    "slug": "medicina",
+    "que_es": "Cinturon MCP del agente de MEDICINA / RADIOLOGIA (DEV/TEST, NO uso clinico): consulta un PACS DICOM (Orthanc local) via dicom-mcp. Lista estudios/series/instancias y trae METADATA real por C-FIND. NO analiza imagen; solo metadata.",
+    "fuente": "INSTALL+smoke 2026-06-19 (ChristianHinge/dicom-mcp contra Orthanc orthancteam/orthanc por Docker). Patron de catalog/templates/ingenieria/belt-ingenieria.mcp.json (FreeCAD).",
+    "verificado": "dicom: query_studies -> metadata real del PACS (StudyDescription 'Test Study', PatientID TEST123, AccessionNumber ACC123, 1 serie/1 instancia CT) por mcp_smoke (mismo stdio que :8080), C-FIND real contra Orthanc en 127.0.0.1:4242. [batch a4 2026-07-04] biomcp: gene_getter('BRAF') -> anotacion real de MyGene.info (Symbol BRAF, 'B-Raf proto-oncogene', mutacion V600E en melanoma) via assembler.MCPServer, PASS-gate verify_catalog_batch (36 tools, handshake stdio limpio, keyless). openfda: openfda_get_drug_label(openfda.generic_name:'ibuprofen') -> prospecto real de la API openFDA (substance name IBUPROFEN, NSAID, 1166 labels) via assembler.MCPServer, PASS-gate (7 tools, keyless; primer boot lento por descarga npx, luego cache).",
+    "ADVERTENCIA": "DEV/TEST unicamente. NO conectar a un PACS con datos de pacientes reales. El belt es READ-ONLY: lee/analiza pixeles pero NO escribe, NO mueve, NO borra en el PACS, y NO diagnostica (solo mide geometria). El move_study/move_series (mover datos entre nodos) NO se lista por default.",
+    "read_only": true,
+    "badge": "READ-ONLY · DEV/TEST · no diagnostica",
+    "base_matrix": "catalog/templates/medicina/base-matrix-medicina.json",
+    "base_matrix_nota": "Declara windowing / extract_slice / segment_structure (lectura+analisis de imagen, sin escribir al PACS) como auto-ejecuta, patron del FEM. El legal-gate de medicina (platform/safety/legal_gates.py) fuerza require_human + bloquea prod (HIPAA, dev/test sin PHI real) por encima.",
+    "VISOR_DEPENDENCIA": "El visor/segmentacion (segmentacion_server.py) corre sobre el venv medseg (pydicom+numpy+scipy+pillow) y lee el VOLUMEN CT de Orthanc por REST (:8042). Volumen = CT de torax de prueba publico de 3D Slicer (anonimizado, NO paciente real), cargado como serie DICOM. Solo GET a Orthanc; jamas escribe.",
+    "DEPENDENCIA_ORTHANC": "Requiere un servidor DICOM vivo. Companion: Orthanc por Docker (docker compose -f _mcp_install/dicom-mcp/tests/docker-compose.yaml up; puertos 4242 DICOM + 8042 HTTP). El config apunta a 127.0.0.1:4242 AE ORTHANC, calling_aet MCPSCU. Sin Orthanc vivo, query_* falla con connection refused (honesto, no green).",
+    "cards": [
+      {
+        "id": "dicom-pacs",
+        "label": "Consulta PACS (DICOM)",
+        "sub": "imágenes médicas DICOM de un paciente en un PACS (estudios de imagen/radiología, NO literatura ni papers) · C-FIND · sin llave",
+        "auth": "keyless",
+        "armario": "mundo",
+        "backed_by": "dicom",
+        "read_only": true,
+        "tools": [
+          "list_dicom_nodes",
+          "verify_connection",
+          "query_patients",
+          "query_studies",
+          "query_series",
+          "query_instances"
+        ]
+      },
+      {
+        "id": "visor-segmentacion",
+        "label": "Visor + segmentación (CT)",
+        "sub": "windowing por presets (pulmón/hueso/mediastino) · 3 planos (axial/coronal/sagital) · segmenta pulmón o hueso → máscara · volumen 3D rotable · READ-ONLY, no diagnostica",
+        "auth": "keyless",
+        "armario": "apps",
+        "backed_by": "segmentacion",
+        "read_only": true,
+        "criticality": "high",
+        "tools": [
+          "windowing",
+          "extract_slice",
+          "segment_structure",
+          "render_volume_3d"
+        ]
+      },
+      {
+        "id": "biomcp",
+        "label": "Literatura biomédica (BioMCP)",
+        "sub": "busca artículos (PubMed/preprints), ensayos clínicos (ClinicalTrials.gov), variantes genéticas (MyVariant), genes/enfermedades/fármacos por fuente pública · solo lectura · información de referencia, NO consejo médico ni diagnóstico",
+        "auth": "keyless",
+        "armario": "mundo",
+        "backed_by": "biomcp",
+        "read_only": true,
+        "tools": [
+          "article_searcher",
+          "article_getter",
+          "trial_searcher",
+          "trial_getter",
+          "variant_searcher",
+          "variant_getter",
+          "gene_getter",
+          "disease_getter",
+          "drug_getter"
+        ]
+      },
+      {
+        "id": "openfda",
+        "label": "Datos abiertos FDA (openFDA)",
+        "sub": "prospectos de fármacos, eventos adversos reportados, retiros (recalls), aprobaciones y códigos NDC de la API pública de la FDA · solo lectura · información de referencia, NO consejo médico ni diagnóstico",
+        "auth": "keyless",
+        "armario": "mundo",
+        "backed_by": "openfda",
+        "read_only": true,
+        "tools": [
+          "openfda_get_drug_label",
+          "openfda_search_adverse_events",
+          "openfda_search_recalls",
+          "openfda_search_drug_approvals",
+          "openfda_search_device_clearances",
+          "openfda_lookup_ndc",
+          "openfda_count"
+        ]
+      }
+    ]
+  },
+  "mcpServers": {
+    "segmentacion": {
+      "command": "python3",
+      "args": [
+        "${PUPPET_BELTS}/medicina/segmentacion_server.py"
+      ],
+      "env": {
+        "ORTHANC_URL": "http://localhost:8042",
+        "MEDSEG_TIMEOUT": "60",
+        "MEDSEG_SERIES_UID": "",
+        "PUPPET_LANG": "${PUPPET_LANG}",
+        "PUPPET_WORKDIR": "${PUPPET_WORKDIR}"
+      },
+      "transport": "stdio",
+      "caso": 1,
+      "bucket": "B1-local",
+      "nichos": [
+        "medicina"
+      ],
+      "credenciales": "ninguna (lee el volumen CT de Orthanc por REST localhost:8042; sin auth dev/test).",
+      "read_only": true,
+      "requiere_app": "Python con pydicom+numpy+scipy+pillow+requests (env override: MEDSEG_PYTHON) + Orthanc vivo (:8042) con el volumen CT de prueba cargado. Env override: ORTHANC_URL, MEDSEG_SERIES_UID.",
+      "REGLA": "READ-ONLY: solo GET a Orthanc (nunca C-STORE/escritura). windowing/extract_slice/segment_structure son lectura+computo local de baja consecuencia -> auto-ejecuta. NO diagnostica: reporta mediciones geometricas (HU, dimensiones, voxels, volumen, area), nada clinico. Todo numero sale del volumen CT real. segment_structure escribe segmentation.imagen.json en ${PUPPET_WORKDIR} -> La Sala lo rinde como imagen (overlay de la mascara).",
+      "description": "Visor + segmentacion 2D sobre el volumen CT (sintetico/de-prueba de 3D Slicer en Orthanc): windowing (presets pulmon/hueso/mediastino), extract_slice (axial/coronal/sagittal reslicing del volumen 3D), segment_structure (umbral HU + componentes conexas + morfologia -> mascara de pulmon o hueso con voxels/volumen, overlay 2D). READ-ONLY, dev/test, no diagnostica. El volumen 3D rotable es 1C-2.",
+      "familia": 1,
+      "instalacion": {
+        "que": "Orthanc (servidor DICOM local)",
+        "link": "https://www.orthanc-server.com/download.php",
+        "verificar": "http://localhost:8042",
+        "rotulo": "Ya lo instalé · verificar"
+      }
+    },
+    "dicom": {
+      "command": "<mcp-install>/dicom-mcp/.venv/bin/dicom-mcp",
+      "args": [
+        "<mcp-install>/dicom-mcp/configuration.yaml"
+      ],
+      "transport": "stdio",
+      "credenciales": "ninguna (PACS de dev/test sin auth; nodo localhost:4242 AE ORTHANC).",
+      "REGLA": "Solo lectura/consulta (query_*, verify_connection, list_dicom_nodes). move_study/move_series (mover datos entre nodos) NO se listan en tool_filters por default.",
+      "description": "Consulta un PACS DICOM via dicom-mcp: verify_connection (C-ECHO), query_patients/query_studies/query_series/query_instances (C-FIND -> metadata real). Dev/test contra Orthanc local."
+    },
+    "biomcp": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "biomcp-python",
+        "biomcp",
+        "run"
+      ],
+      "transport": "stdio",
+      "credenciales": "ninguna (fuentes publicas keyless: PubMed/NCBI, ClinicalTrials.gov, MyVariant.info, MyGene.info, cBioPortal). Una API key opcional de NCI habilita las tools nci_* (no cardadas); sin ella el resto funciona.",
+      "read_only": true,
+      "REGLA": "READ-ONLY: solo busqueda/lectura de literatura y bases biomedicas publicas (article_*/trial_*/variant_*/gene_getter/disease_getter/drug_getter). NO diagnostica ni da consejo medico: devuelve informacion de referencia con su fuente. Las tools nci_* (requieren key), alphagenome_predictor y enrichr_analyzer NO se cardan. El server expone 'search'/'fetch'/'think' genericas del framework; la card lleva solo el subset biomedico curado.",
+      "description": "Literatura y datos biomedicos via BioMCP (genomoncology/biomcp): busca articulos (PubMed + preprints bioRxiv/medRxiv), ensayos clinicos (ClinicalTrials.gov), variantes geneticas (MyVariant), y trae genes (MyGene), enfermedades y farmacos de fuentes publicas. uvx --from biomcp-python; keyless; handshake stdio limpio con el cliente de PROD. READ-ONLY, no diagnostica."
+    },
+    "openfda": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@cyanheads/openfda-mcp-server"
+      ],
+      "transport": "stdio",
+      "credenciales": "ninguna (API publica openFDA de la FDA). OPENFDA_API_KEY es OPCIONAL: solo sube el rate-limit, no desbloquea datos -> keyless.",
+      "read_only": true,
+      "REGLA": "READ-ONLY: solo consulta la API abierta de la FDA (prospectos, eventos adversos reportados, recalls, aprobaciones, NDC). NO diagnostica ni recomienda tratamiento: informacion regulatoria/de referencia. Primer boot lento (npx descarga el paquete la 1ra vez) -> el cliente puede necesitar cache tibia; luego arranca rapido.",
+      "description": "Datos abiertos de la FDA via openFDA (@cyanheads/openfda-mcp-server): drug labels (prospectos), eventos adversos (FAERS), retiros de producto (recalls), aprobaciones de farmacos, clearances de dispositivos y lookup NDC. npx keyless (OPENFDA_API_KEY opcional = rate-limit). READ-ONLY, no diagnostica."
+    }
+  }
+}

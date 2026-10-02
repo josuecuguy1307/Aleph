@@ -1,0 +1,34 @@
+{
+  "connector": "classroom",
+  "auth_method": "oauth",
+  "tier": "average",
+  "provider": "google",
+  "scopes": [
+    "classroom.courses.readonly",
+    "classroom.coursework.me.readonly",
+    "classroom.rosters.readonly"
+  ],
+  "validate": {
+    "method": "GET",
+    "path": "/v1/courses",
+    "identity_field": "-"
+  },
+  "capability_line": "Listo — ya puedo ver tus cursos de Classroom y sus tareas.",
+  "trust_line": "Conectas con tu cuenta de Google · lo desconectas cuando quieras.",
+  "escape_hatch": true,
+  "restricted_fallback": "Tu Classroom es de una cuenta institucional y tu colegio controla qué apps se conectan. Si no te deja, lo habilita el admin de Google Workspace.",
+  "verification": {
+    "deep_link_ok": true,
+    "anchor_ok": false,
+    "validated_with_test_key": false,
+    "notes": "Google Classroom (cursos propios del docente) = OAuth Google (Caso A). REQUIERE app OAuth de Google registrada + verificación de Google para esos scopes. En Workspace EDU el admin puede gatear apps de terceros → restricted_fallback. Diferido hasta app registrada. Sin app, no validé."
+  },
+  "api_base": "https://classroom.googleapis.com",
+  "en": {
+    "capability_line": "Done — I can now see your Classroom courses and their assignments.",
+    "trust_line": "You connect with your Google account · disconnect it anytime."
+  },
+  "oauth": {
+    "revoke_url": "https://oauth2.googleapis.com/revoke"
+  }
+}

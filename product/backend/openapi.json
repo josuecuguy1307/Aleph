@@ -1,0 +1,1038 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "puppet-ai-core",
+    "description": "Backend API for Puppet AI — agent creation platform",
+    "version": "0.2.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health Check",
+        "operationId": "health_check_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/catalog/brands": {
+      "get": {
+        "summary": "Get Brands",
+        "description": "Declared brands per belt server + per-template gate copy.\nThe UI consumes this verbatim (label, monogram, color, logo, human connection\nname) and NEVER guesses. Registered before /catalog/{nicho} so 'brands' is\nnot matched as a nicho. PARAMETRIZABLE — see catalog/brands.json.",
+        "operationId": "get_brands_catalog_brands_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/catalog/{nicho}": {
+      "get": {
+        "summary": "Get Catalog",
+        "description": "List templates for a given nicho.\nnicho is a path parameter — fully parametrizable, zero hardcoded domain names.\nTemplates are filtered by tier based on the requesting user's tier.\nUnknown/absent user_id → free tier (most restrictive; for finanzas = 7 templates).",
+        "operationId": "get_catalog_catalog__nicho__get",
+        "parameters": [
+          {
+            "name": "nicho",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Nicho"
+            }
+          },
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "User ID for tier-based gating",
+              "title": "User Id"
+            },
+            "description": "User ID for tier-based gating"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CatalogResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/configs/validate": {
+      "post": {
+        "summary": "Validate Config Endpoint",
+        "description": "Validate a config.json against the assembler contract:\n- Required fields present\n- belt_path resolves to an existing file\n- framing_path resolves (if provided)\n- tool_filters keys must be real servers in the belt (phantom server keys FAIL)\n- tool_filters values (tool names) are validated against the sondado surface for\n  cero-friccion servers (excel/25 tools, secedgar/21 tools, jupyter/18 tools);\n  solo-spec servers (sheets, stata, alphavantage, fred) accept any tool name with\n  a 'no-sondado' warning — their surface was not verified via tools/list execution.",
+        "operationId": "validate_config_endpoint_configs_validate_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfigValidateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidateResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/agents": {
+      "post": {
+        "summary": "Create Agent",
+        "description": "Create an agent:\n1. Validate config against assembler contract\n2. Persist agent record to agents store\n3. Register in flywheel via platform/flywheel/capture.py\nReturns the created agent record.",
+        "operationId": "create_agent_agents_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgentCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentCreatedResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/agents/{agent_id}/try": {
+      "post": {
+        "summary": "Try Agent",
+        "description": "Run the REAL agent one-shot against a single user message and return the raw\ntranscript (final answer + summarized tool calls). Uses the assembler via the\nadditive run_once wrapper; the model lane is resolved server-side (see\ntry_runner). Generous timeout (180s). The agent's API key is never returned.\n\nPROHIBIDO: respuestas enlatadas. This executes the agent for real or returns\nan honest error.",
+        "operationId": "try_agent_agents__agent_id__try_post",
+        "parameters": [
+          {
+            "name": "agent_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Agent Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgentTryRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentTryResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/espacios": {
+      "post": {
+        "tags": [
+          "espacios"
+        ],
+        "summary": "Crear Espacio",
+        "description": "Crea un espacio. Si viene `arrancador_id`, copia la config del template del\ncatálogo (el catálogo como data source); `config` explícita la sobreescribe\n(espacio armado de cero). Sin ninguno, arranca con config mínima vacía.",
+        "operationId": "crear_espacio_espacios_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EspacioCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EspacioResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/espacios/{espacio_id}": {
+      "get": {
+        "tags": [
+          "espacios"
+        ],
+        "summary": "Obtener Espacio",
+        "operationId": "obtener_espacio_espacios__espacio_id__get",
+        "parameters": [
+          {
+            "name": "espacio_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Espacio Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EspacioResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/espacios/{espacio_id}/mensajes": {
+      "post": {
+        "tags": [
+          "espacios"
+        ],
+        "summary": "Encolar Mensaje",
+        "description": "Encola el mensaje en la cola durable del espacio. Si no hay sesión viva, la\ncrea vía session.py (carril local del config). En TESTS la fábrica de\nsesiones está stubbeada: NO corre inferencia (el test no espera 80s de\nqwen). El loop real de tool-use corre en el worker thread del SessionManager.",
+        "operationId": "encolar_mensaje_espacios__espacio_id__mensajes_post",
+        "parameters": [
+          {
+            "name": "espacio_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Espacio Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MensajeRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeEncoladoResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/espacios/{espacio_id}/stream": {
+      "get": {
+        "tags": [
+          "espacios"
+        ],
+        "summary": "Stream Espacio",
+        "description": "SSE esqueleto real: sirve los eventos del events.jsonl del espacio como\ntext/event-stream, con id incremental por evento + heartbeat. Soporta\nLast-Event-ID (header estándar o ?lastEventId=) para replay: arranca en el\nsiguiente evento. NO replay fingido — cada evento nace del events.jsonl real\n(que la Sesión persiste antes de emitir).",
+        "operationId": "stream_espacio_espacios__espacio_id__stream_get",
+        "parameters": [
+          {
+            "name": "espacio_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Espacio Id"
+            }
+          },
+          {
+            "name": "lastEventId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Lasteventid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/espacios/{espacio_id}/aprobaciones/{gate_id}": {
+      "post": {
+        "tags": [
+          "espacios"
+        ],
+        "summary": "Resolver Aprobacion",
+        "description": "Conecta el OK/NO del usuario al .approve()/.reject() de la Sesión viva (el\ncontrato de 0014). Si no hay sesión viva, o no hay gate pendiente, lo dice\nhonestamente (no inventa una aprobación). El gate_id se registra para\ntrazabilidad y se persiste como evento del hilo.",
+        "operationId": "resolver_aprobacion_espacios__espacio_id__aprobaciones__gate_id__post",
+        "parameters": [
+          {
+            "name": "espacio_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Espacio Id"
+            }
+          },
+          {
+            "name": "gate_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Gate Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AprobacionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AprobacionResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AgentCreateRequest": {
+        "properties": {
+          "config": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Config"
+          },
+          "nicho": {
+            "type": "string",
+            "title": "Nicho"
+          },
+          "agent_name": {
+            "type": "string",
+            "title": "Agent Name"
+          },
+          "mission": {
+            "type": "string",
+            "title": "Mission",
+            "default": "API"
+          },
+          "belt_version": {
+            "type": "string",
+            "title": "Belt Version",
+            "default": "1.0.0"
+          }
+        },
+        "type": "object",
+        "required": [
+          "config",
+          "nicho",
+          "agent_name"
+        ],
+        "title": "AgentCreateRequest"
+      },
+      "AgentCreatedResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "nicho": {
+            "type": "string",
+            "title": "Nicho"
+          },
+          "agent_name": {
+            "type": "string",
+            "title": "Agent Name"
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Created At"
+          },
+          "flywheel_warnings": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Flywheel Warnings",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "nicho",
+          "agent_name",
+          "created_at"
+        ],
+        "title": "AgentCreatedResponse",
+        "description": "Response shape for POST /agents (201 Created).\n\nid         — UUID of the created agent\nnicho      — domain nicho (e.g. 'finanzas')\nagent_name — human name given at creation\ncreated_at — ISO-8601 UTC timestamp\nflywheel_warnings — present only when flywheel capture had a non-fatal error"
+      },
+      "AgentTryRequest": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "message"
+        ],
+        "title": "AgentTryRequest"
+      },
+      "AgentTryResponse": {
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "title": "Ok"
+          },
+          "agent_id": {
+            "type": "string",
+            "title": "Agent Id"
+          },
+          "agent_name": {
+            "type": "string",
+            "title": "Agent Name"
+          },
+          "answer": {
+            "type": "string",
+            "title": "Answer"
+          },
+          "tool_calls": {
+            "items": {
+              "$ref": "#/components/schemas/ToolCallRecord"
+            },
+            "type": "array",
+            "title": "Tool Calls"
+          },
+          "model_lane": {
+            "type": "string",
+            "title": "Model Lane"
+          },
+          "tools_available": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Tools Available"
+          },
+          "turns_truncated": {
+            "type": "boolean",
+            "title": "Turns Truncated"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          }
+        },
+        "type": "object",
+        "required": [
+          "ok",
+          "agent_id",
+          "agent_name",
+          "answer",
+          "tool_calls",
+          "model_lane",
+          "tools_available",
+          "turns_truncated"
+        ],
+        "title": "AgentTryResponse",
+        "description": "Raw transcript of a REAL one-shot run of the agent (nothing faked)."
+      },
+      "AprobacionRequest": {
+        "properties": {
+          "aprueba": {
+            "type": "boolean",
+            "title": "Aprueba",
+            "default": true
+          },
+          "razon": {
+            "type": "string",
+            "title": "Razon",
+            "default": ""
+          }
+        },
+        "type": "object",
+        "title": "AprobacionRequest"
+      },
+      "AprobacionResponse": {
+        "properties": {
+          "espacio_id": {
+            "type": "string",
+            "title": "Espacio Id"
+          },
+          "gate_id": {
+            "type": "string",
+            "title": "Gate Id"
+          },
+          "resuelto": {
+            "type": "boolean",
+            "title": "Resuelto"
+          },
+          "aprobado": {
+            "type": "boolean",
+            "title": "Aprobado"
+          },
+          "detalle": {
+            "type": "string",
+            "title": "Detalle"
+          }
+        },
+        "type": "object",
+        "required": [
+          "espacio_id",
+          "gate_id",
+          "resuelto",
+          "aprobado",
+          "detalle"
+        ],
+        "title": "AprobacionResponse"
+      },
+      "CatalogResponse": {
+        "properties": {
+          "nicho": {
+            "type": "string",
+            "title": "Nicho"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "templates": {
+            "items": {
+              "$ref": "#/components/schemas/TemplateItem"
+            },
+            "type": "array",
+            "title": "Templates"
+          }
+        },
+        "type": "object",
+        "required": [
+          "nicho",
+          "total",
+          "templates"
+        ],
+        "title": "CatalogResponse",
+        "description": "Response shape for GET /catalog/{nicho}.\n\nDefault tier when user_id is absent: 'free' (most restrictive = 7 templates\nfor finanzas). Pass ?user_id=<uuid> to unlock higher tiers."
+      },
+      "ConfigValidateRequest": {
+        "properties": {
+          "config": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Config"
+          }
+        },
+        "type": "object",
+        "required": [
+          "config"
+        ],
+        "title": "ConfigValidateRequest"
+      },
+      "EspacioCreateRequest": {
+        "properties": {
+          "nombre": {
+            "type": "string",
+            "title": "Nombre"
+          },
+          "nicho": {
+            "type": "string",
+            "title": "Nicho"
+          },
+          "arrancador_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Arrancador Id"
+          },
+          "config": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Config"
+          }
+        },
+        "type": "object",
+        "required": [
+          "nombre",
+          "nicho"
+        ],
+        "title": "EspacioCreateRequest"
+      },
+      "EspacioResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "nombre": {
+            "type": "string",
+            "title": "Nombre"
+          },
+          "nicho": {
+            "type": "string",
+            "title": "Nicho"
+          },
+          "arrancador_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Arrancador Id"
+          },
+          "estado": {
+            "type": "string",
+            "title": "Estado"
+          },
+          "config": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Config"
+          },
+          "mensajes_encolados": {
+            "type": "integer",
+            "title": "Mensajes Encolados"
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "nombre",
+          "nicho",
+          "estado",
+          "config",
+          "mensajes_encolados",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "EspacioResponse"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "MensajeEncoladoResponse": {
+        "properties": {
+          "espacio_id": {
+            "type": "string",
+            "title": "Espacio Id"
+          },
+          "mensaje_id": {
+            "type": "string",
+            "title": "Mensaje Id"
+          },
+          "encolado": {
+            "type": "boolean",
+            "title": "Encolado"
+          },
+          "sesion_viva": {
+            "type": "boolean",
+            "title": "Sesion Viva"
+          },
+          "estado": {
+            "type": "string",
+            "title": "Estado"
+          }
+        },
+        "type": "object",
+        "required": [
+          "espacio_id",
+          "mensaje_id",
+          "encolado",
+          "sesion_viva",
+          "estado"
+        ],
+        "title": "MensajeEncoladoResponse"
+      },
+      "MensajeRequest": {
+        "properties": {
+          "texto": {
+            "type": "string",
+            "title": "Texto"
+          }
+        },
+        "type": "object",
+        "required": [
+          "texto"
+        ],
+        "title": "MensajeRequest"
+      },
+      "TemplateItem": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "nombre": {
+            "type": "string",
+            "title": "Nombre"
+          },
+          "descripcion": {
+            "type": "string",
+            "title": "Descripcion"
+          },
+          "tier": {
+            "type": "string",
+            "title": "Tier"
+          },
+          "friccion": {
+            "type": "string",
+            "title": "Friccion"
+          },
+          "friccion_detalle": {
+            "type": "string",
+            "title": "Friccion Detalle"
+          },
+          "belt_path": {
+            "type": "string",
+            "title": "Belt Path"
+          },
+          "tool_filters": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Tool Filters",
+            "default": {}
+          },
+          "surgery_params": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Surgery Params"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "nombre",
+          "descripcion",
+          "tier",
+          "friccion",
+          "friccion_detalle",
+          "belt_path",
+          "surgery_params"
+        ],
+        "title": "TemplateItem",
+        "description": "Single template as returned by GET /catalog/{nicho}.\n\nbelt_path is DECLARED by the catalog (read from the template's real\nconfig.json) — the UI consumes it verbatim and never derives it."
+      },
+      "ToolCallRecord": {
+        "properties": {
+          "tool": {
+            "type": "string",
+            "title": "Tool"
+          },
+          "args": {
+            "type": "string",
+            "title": "Args"
+          },
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        },
+        "type": "object",
+        "required": [
+          "tool",
+          "args",
+          "result"
+        ],
+        "title": "ToolCallRecord"
+      },
+      "ValidateResponse": {
+        "properties": {
+          "valid": {
+            "type": "boolean",
+            "title": "Valid"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Errors"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Warnings",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": [
+          "valid",
+          "errors"
+        ],
+        "title": "ValidateResponse",
+        "description": "Response shape for POST /configs/validate."
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}

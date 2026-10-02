@@ -1,0 +1,342 @@
+/* aleph-tokens.css — LA PIEL DE ALEPH. Fuente única de verdad del sistema visual.
+ *
+ * Antes de esto cada pantalla traía su propio bloque de tokens copiado a mano, y la copia
+ * DERIVÓ: nueve pantallas (Auth · Biblioteca · Cuarto.dc · Estados · Historial · Landing ·
+ * Onboarding · sala · canvas-preview) declaraban una paleta CÁLIDA en `:root` y la paleta
+ * VIOLETA en `html[data-theme="light"]`. O sea: la misma pantalla era sepia en oscuro y
+ * violeta en claro — dos mundos en un archivo. Peor: sus `body{background:…}` eran
+ * gradientes cálidos HARDCODEADOS, así que el tema claro nunca les daba vuelta el fondo y
+ * el texto oscuro quedaba escrito sobre un fondo oscuro (medido: 1.11:1 en Historial).
+ *
+ * ACÁ VIVEN LOS TOKENS. Las pantallas linkean este archivo y NO redeclaran `:root`.
+ * El estándar es la piel de Home · Conexiones · Métodos; todo lo demás se alineó a ella.
+ *
+ * CONTRASTE: cada valor de texto está elegido para cumplir WCAG AA (4.5:1 texto normal,
+ * 3:1 texto grande) contra TODOS los fondos del sistema en su tema — no contra uno solo.
+ * Los que fallaban y se corrigieron:
+ *     --faint  oscuro  #6E6B92 → #908EAC   (era 2.85:1 sobre --paper2)
+ *     --faint  claro   #9C99B8 → #63608A   (era 2.17:1 sobre el borde del --page-bg)
+ *     --muted  claro   #6A6790 → #565377   (era 4.21:1 — quedaba corto por poco)
+ *     --accent claro   #6A57DC → #634FDA   (como TEXTO sobre --accent-soft daba 4.15:1)
+ *     --green  claro   #2E8A5E → #26734E · --amber claro #B0760F → #8A5D0C
+ *     --cool   claro   #3E7C97 → #366D84
+ * Cambiar cualquiera de estos exige volver a correr `verify_identidad_visual.mjs`.
+ *
+ * SELECTORES: `:root` para oscuro y `[data-theme="light"]` a secas (no `html[…]`) porque
+ * varias .dc.html pintan el tema en un DIV interno, no en <html>. El atributo pelado cubre
+ * los dos casos y, al venir después en el archivo, gana por orden con igual especificidad.
+ */
+
+/* [sistema 2026-07-31] Las PRIMITIVAS del sistema entran por acá. Las ~17 pantallas ya
+ * linkean este archivo, así que un solo @import les da .ds-plane/.ds-well/.ds-track/etc.
+ * sin tocar 17 HTML. @import va antes de cualquier regla. */
+@import './aleph-ds.css';
+
+:root {
+  /* ── superficies ──────────────────────────────────────────────── */
+  /* [sistema 2026-07-31] Tres planos, no dos: campo → plano de contenido → pozo.
+   * --paper2 deja de significar "hundido" (el sistema prohíbe los hundidos) y pasa a ser
+   * EL POZO: la pista plana donde viven las listas. El fondo deja de ser un gradiente
+   * radial y pasa a ser campo plano. */
+  /* [rediseño · fase 1] EL OSCURO SE DERIVÓ DEL ESTÁNDAR, NO SE CONSERVÓ.
+   * El claro del estándar es CÁLIDO (fondos H40, texto H60, saturación mínima). El oscuro
+   * que había era FRÍO (todo H240): las dos mitades del mismo producto tenían temperatura
+   * opuesta. Se movió el oscuro al mismo eje, conservando su zona de luminancia —o sea el
+   * "cuánto oscuro" no cambia, sólo el "hacia dónde"—.
+   *   antes  page #0B0B0C L4.5 · paper #141416 L8.2 · paper2 #1C1C1F L11.6   (H240)
+   *   ahora  page #0f0e0d L5.5 · paper #1a1917 L9.6 · paper2 #141412 L7.5    (H40)
+   * ⚠️ Y EL POZO CAMBIA DE LADO. Antes `--paper2` era más CLARO que `--paper` en oscuro y
+   * más OSCURO en claro: el pozo se alejaba del lienzo en un tema y se acercaba en el otro.
+   * El estándar ordena lienzo → sidebar → tarjeta de menos a más en claro (#f4f3f1 →
+   * #f7f6f4 → #ffffff), así que en oscuro va el mismo orden. Ahora el pozo se acerca al
+   * lienzo en los dos temas, que es lo que hace que se lean como el mismo sistema. */
+  --paper:        #1a1917;   /* tarjeta — el plano de contenido        */
+  --paper2:       #141412;   /* el pozo / sidebar: listas, campos, chips */
+  --page-bg:      #0f0e0d;   /* lienzo                                  */
+  --page-solid:   #0f0e0d;   /* el mismo fondo (canvas/sidecar)         */
+  --hairline:     #2b2a27;   /* la línea de pelo del frame (su lector es el sidebar de la fase 2) */
+
+  /* ── texto ────────────────────────────────────────────────────── */
+  /* [rediseño · fase 1] LO QUE SE COPIÓ DEL CLARO NO SON LOS HEX: ES LA ESCALERA.
+   * Invertir hexes da un oscuro que "se parece" y contrasta distinto. Se midió la escalera
+   * del estándar contra su lienzo (#f4f3f1) y se reprodujo contra el nuestro (#0f0e0d):
+   *     tinta      15.39 → 15.42      apoyo       6.57 → 6.56
+   *     texto2     10.00 → 10.00      etiquetas   4.84 → 5.04
+   * Y vuelve la distinción que el estándar declara y el sistema viejo había fundido en un
+   * solo gris: `--muted` es el TEXTO DE APOYO y `--faint` son las ETIQUETAS (los rótulos
+   * monoespaciados tipo RECENT SESSIONS). Eran el mismo valor; son dos niveles distintos.
+   * `--faint` se subió de L48,4% a L49,5% porque contra la TARJETA —el fondo más claro del
+   * tema oscuro— L48,4 daba 4,41:1, debajo del piso de 4,5 que esta casa verifica. */
+  --ink:          #e6e6e3;   /* tinta      15.42 sobre el lienzo · 14.05 sobre la tarjeta */
+  --muted:        #97978f;   /* apoyo       6.56 sobre el lienzo ·  5.97 sobre la tarjeta */
+  --faint:        #838379;   /* etiquetas   5.04 sobre el lienzo ·  4.59 sobre la tarjeta */
+
+  /* ── bordes ───────────────────────────────────────────────────── */
+  /* CERO BORDES es regla del sistema. No se borran los tokens (los referencian ~40
+   * pantallas): se vuelven transparentes, así el borde desaparece sin romper nada. */
+  --line:         transparent;
+  --line2:        transparent;
+
+  /* GRIS SILENCIOSO — el reemplazo de --line cuando NO es un borde.
+   * Volver --line/--line2 transparentes mató los bordes (que es lo que el sistema pide) pero
+   * también dejó INVISIBLE todo lo que los usaba como relleno: el punto de estado de un agente
+   * en reposo, los separadores de la barra de cámara, la línea del espinazo, el ícono apagado.
+   * Un punto que no se ve no es "sin borde": es información perdida. Esto es un neutro tenue
+   * pero VISIBLE, para marcas y separadores que no son línea de contorno. */
+  --quiet:        rgba(151,151,143,.30);   /* el mismo gris de apoyo, al 30% */
+
+  /* ── acento · el violeta de la mascota, el 8% del color ───────── */
+  /* [rediseño · fase 1] EL ÍNDIGO Y LA LAVANDA DEL ESTÁNDAR, EN LOS DOS TEMAS.
+   * El estándar los da en claro: índigo #4747c9 (activo y enlaces) y lavanda #eceafd (fila
+   * seleccionada). MEDIDO: #4747c9 sobre el lienzo oscuro da 2,40:1 — ilegible. Así que lo
+   * que cruza no es el hex sino el TONO: mismo hue 240, misma saturación, la luz sube.
+   *     claro  #4747c9 sobre #f4f3f1 = 6,29      oscuro #9494e4 sobre #0f0e0d = 6,99
+   * Y la lavanda es un LAVADO, no texto (1,07:1 en claro): su equivalente oscuro es el
+   * mismo hue 246 al 41% de saturación y 16% de luz — 1,14:1, el mismo papel. */
+  --accent:       #9494e4;   /* activo y enlaces · 6.99 sobre el lienzo */
+  --accent-deep:  #b6b6ed;   /* acento como TEXTO sobre --accent-soft · 8.82 */
+  --accent-soft:  #1b1839;   /* lavanda oscura · fila seleccionada */
+  --on-accent:    #141412;   /* texto SOBRE --accent: el acento es claro → tinta oscura */
+
+  /* ── EL OBJETO AZUL ───────────────────────────────────────────────────────────────
+   * El diorama del tablero y la baldosa de La Sala. En el artboard —que es CLARO— los dos
+   * están pintados oscuros: no son «el tema», son OBJETOS, como una foto puesta sobre la
+   * página. Por eso tenían el color escrito a mano y por eso ahora tienen token: escrito a
+   * mano funcionaban en claro y DESAPARECÍAN en oscuro (#15131f contra el lienzo #0f0e0d da
+   * 1,05 — la nada).
+   *
+   * SE MANTIENEN LOS AZULES DEL CLARO, y eso quiere decir el TONO: hue 250 y su saturación,
+   * medidos del artboard uno por uno. Lo único que se mueve es la LUZ, +7 puntos, que es
+   * exactamente la regla que este archivo ya usa para los cuatro estados («el tono es uno y
+   * la luz es dos»). No es un azul nuevo: es el mismo azul, encendido.
+   *
+   * MEDIDO: el objeto contra el lienzo pasa de 1,05 a 1,23, y contra la tarjeta suma además
+   * una línea de pelo propia —que en claro no existe, porque en claro no hace falta—. La
+   * tinta encima sigue holgada: título 15,05 y subtítulo 6,50. */
+  --obj-azul:        #242135;   /* hsl(250, 24%, 16.8%) · claro 9.8% */
+  --obj-azul-line:   #3a3161;   /* la línea de pelo del objeto · en claro es transparente */
+  --obj-azul-losa-c: #302756;   /* hsl(251, 37%, 24.5%) · claro 17.5% */
+  --obj-azul-losa-i: #382f68;   /* hsl(250, 38%, 29.7%) · claro 22.7% */
+  --obj-azul-losa-d: #31295e;   /* hsl(249, 39%, 26.4%) · claro 19.4% */
+  --obj-azul-red:    rgba(160,145,240,.26);   /* la retícula · en claro .19 */
+  --obj-azul-halo:   rgba(168,141,245,.26);   /* el halo de La Sala · en claro .22 */
+  /* Estos cinco NO cambian con el tema: son lo que va ENCIMA del objeto, y el objeto es
+   * oscuro en los dos. Se declaran una sola vez y el bloque claro no los pisa. */
+  --obj-azul-ink:    #fbfaff;                 /* el título sobre el objeto */
+  --obj-azul-sub:    #a9a2cd;                 /* su bajada */
+  --obj-azul-vidrio: rgba(255,255,255,.08);   /* el avatar de La Sala */
+  --obj-azul-borde:  rgba(205,188,250,.22);   /* su aro */
+  --obj-azul-glifo:  #cdbcfa;                 /* el lavanda de la mascota, sobre el objeto */
+
+  /* ── estados · el 2% ──────────────────────────────────────────── */
+  /* [rediseño · fase 1 · decisión 3] LOS CUATRO ESTADOS SE QUEDAN, Y AHORA EL TONO ES UNO.
+   *
+   * El estándar traía UN solo color de estado (verde #16a34a). Los otros tres no se caen:
+   * detrás del ámbar hay 294 aprobaciones pendientes reales en la `aleph.db` de esta
+   * máquina (`held_actions`: 294 held · 133 executed · 94 rejected), y `--red` tiene 102
+   * usos en 23 archivos. Si algo deja de decirse no es una mejora.
+   *
+   * LO QUE SÍ CAMBIA ES QUE HAY UNA SOLA DEFINICIÓN. Antes cada tema traía su hex a mano y
+   * los tonos derivaban (el verde era H150,8 en oscuro y H154,2 en claro: dos verdes). Ahora
+   * el TONO —hue + saturación— se declara UNA vez acá y los dos temas sólo mueven la LUZ.
+   *
+   * ⚠️ POR QUÉ NO ALCANZA UN SOLO HEX, medido y no supuesto:
+   *     lienzo claro L=0,8969 · lienzo oscuro L=0,0044
+   *     para 4,5:1 contra el claro   hace falta L ≤ 0,1604
+   *     para 4,5:1 contra el oscuro  hace falta L ≥ 0,1950
+   *   ⇒ la intersección es VACÍA. Ningún hex del mundo es legible en los dos fondos. Por eso
+   *     el tono es uno y la luz es dos. (A 3:1 —punto, chip, borde— sí hay ventana:
+   *     L entre 0,1133 y 0,2656; el día que haga falta un valor único no-texto, va ahí.)
+   *
+   * ⚠️ Y EL VERDE DEL ESTÁNDAR NO PASA EN CLARO: #16a34a sobre #f4f3f1 da 2,97:1, por debajo
+   *   incluso de 3:1. Se conserva su tono (H142 S76%, que es exactamente el suyo) y se le
+   *   baja la luz hasta cumplir. En OSCURO el valor que sale es #17a64b — o sea, el verde
+   *   del estándar es el del tema oscuro. */
+  --tono-verde:  142 76%;
+  --tono-ambar:   38 72%;
+  --tono-rojo:     6 62%;
+  --tono-info:   199 42%;
+
+  --green:  hsl(var(--tono-verde) 37.4%);  --green-bg:  hsl(var(--tono-verde) 37.4% / .16);  --green-line:  transparent;
+  --amber:  hsl(var(--tono-ambar) 44.4%);  --amber-bg:  hsl(var(--tono-ambar) 44.4% / .16);  --amber-line:  transparent;
+  --red:    hsl(var(--tono-rojo)  63.7%);  --red-bg:    hsl(var(--tono-rojo)  63.7% / .16);  --red-line:    transparent;
+  --cool:   hsl(var(--tono-info)  53.5%);  --cool-bg:   hsl(var(--tono-info)  53.5% / .16);  --cool-line:   transparent;
+}
+
+[data-theme="light"] {
+  /* [rediseño · fase 1] LOS DOCE COLORES DEL ESTÁNDAR, TAL CUAL EL DOCUMENTO.
+   * Éste es el tema que el estándar dibuja, así que acá no hay derivación: se transcriben
+   * sus valores. El único que NO entra tal cual es el verde, y su motivo está abajo. */
+  --paper:        #ffffff;   /* tarjetas  */
+  --paper2:       #f7f6f4;   /* el pozo / sidebar */
+  --page-bg:      #f4f3f1;   /* lienzo    */
+  --page-solid:   #f4f3f1;
+  --hairline:     #e8e6e2;   /* la línea de pelo del frame */
+
+  /* Vuelven los cuatro niveles del estándar. `--ink` es la tinta, `--muted` el texto de
+   * apoyo y `--faint` las etiquetas; antes `--muted` y `--faint` eran el MISMO gris. El
+   * cuarto nivel del estándar (texto secundario #3c3c37) todavía no tiene lector en el
+   * árbol, así que no se declara: un token que nadie lee es una perilla pintada. Entra el
+   * día que el frame de la fase 2 lo use. */
+  --ink:          #1c1c1a;   /* tinta      15.39 sobre el lienzo · 17.07 sobre la tarjeta */
+  --muted:        #57574f;   /* apoyo       6.57 sobre el lienzo ·  7.29 sobre la tarjeta */
+  --faint:        #6b6b64;   /* etiquetas   4.84 sobre el lienzo ·  5.37 sobre la tarjeta */
+
+  /* ⚠️ `--line`/`--line2` SIGUEN TRANSPARENTES, y no es un olvido. El estándar nombra UNA
+   * línea de pelo —la del sidebar de 260 px— y no un regreso de los bordes; el sistema de
+   * julio los sacó a propósito y ~40 pantallas cuentan con eso. Volver `--line` visible acá
+   * dibujaría un borde en todo lo que alguna vez lo tuvo. La línea del estándar vive en
+   * `--hairline` y su lector es el frame de la fase 2. */
+  --line:         transparent;
+  --line2:        transparent;
+  --quiet:        rgba(87,87,79,.28);
+
+  --accent:       #4747c9;   /* índigo del estándar · activo y enlaces · 6.29 sobre el lienzo */
+  --accent-deep:  #4747c9;   /* como TEXTO sobre la lavanda: 5.89 */
+  --accent-soft:  #eceafd;   /* lavanda del estándar · fila seleccionada */
+  --on-accent:    #ffffff;   /* en claro el acento es oscuro → tinta blanca (6.97) */
+
+  /* EL OBJETO AZUL, tal cual lo pinta el artboard. Acá los valores son los del diseño sin
+   * tocar: es el tema para el que se dibujó. */
+  --obj-azul:        #15131f;
+  --obj-azul-line:   transparent;
+  --obj-azul-losa-c: #221c3d;
+  --obj-azul-losa-i: #2b2450;
+  --obj-azul-losa-d: #241e45;
+  --obj-azul-red:    rgba(160,145,240,.19);
+  --obj-azul-halo:   rgba(168,141,245,.22);
+
+  /* --glass NO va acá: se declara junto a los radios, más abajo. Este bloque viene ANTES del
+   * :root de forma/radios, y con igual especificidad gana el último — así que declararlo acá
+   * hacía que el tema CLARO se quedara con el cristal oscuro (control ^ˇ negro sobre el pozo
+   * claro, flechas ilegibles). Medido y corregido 2026-07-31. */
+
+  /* [rediseño · fase 1 · decisión 3] MISMO TONO QUE EN OSCURO, OTRA LUZ. El hue y la
+     saturación NO se repiten acá: se heredan de `--tono-*`, declarados una sola vez arriba.
+     Lo único que este bloque decide es cuánta luz hace falta para ser legible sobre un
+     fondo claro. Resultado medido, sobre el lienzo #f4f3f1 y sobre la tarjeta #ffffff:
+         verde  #107636  4.52        rojo   #b6392b  4.53
+         ámbar  #885e16  4.53        info   #376d87  4.50
+     ⚠️ ESE NÚMERO ES CONTRA EL PEOR FONDO DE LOS SEIS, Y EL PEOR NO ES NINGUNO DE LOS TRES
+     PLANOS: es **su propio tinte**. Un chip de estado es `--green` escrito sobre `--green-bg`,
+     y ese caso nadie lo había medido. Medido ahora, con los valores de la fase 1:
+         claro  sobre el lienzo 4.60 ✓  ·  sobre su tinte al 10%  **4.02** ✗
+         oscuro sobre la tarjeta 5.52 ✓ ·  sobre su tinte al 16%  **4.43** ✗
+     Los ocho valores bajaron (claro) o subieron (oscuro) lo mínimo para que el PEOR de los
+     seis fondos —los tres planos y los tres tintes— llegue a 4,5:1. El tono no se movió: es
+     el mismo `--tono-*` de siempre, sólo cambia la luz. */
+  --green:  hsl(var(--tono-verde) 26.4%);  --green-bg:  hsl(var(--tono-verde) 26.4% / .10);  --green-line:  transparent;
+  --amber:  hsl(var(--tono-ambar) 31.0%);  --amber-bg:  hsl(var(--tono-ambar) 31.0% / .10);  --amber-line:  transparent;
+  --red:    hsl(var(--tono-rojo)  44.1%);  --red-bg:    hsl(var(--tono-rojo)  44.1% / .10);  --red-line:    transparent;
+  --cool:   hsl(var(--tono-info)  37.2%);  --cool-bg:   hsl(var(--tono-info)  37.2% / .10);  --cool-line:   transparent;
+}
+
+/* ── FORMA · un solo sistema de radios, sombras y espaciados ──────────────────
+ * Antes había 18 radios distintos conviviendo (2 3 4 5 6 7 8 9 10 11 12 13 14 15
+ * 16 18 20 999) — ruido puro: nadie distingue 9 de 10, pero sí distingue "esta
+ * pantalla no es de la misma app". Seis escalones alcanzan.                    */
+/* [sistema 2026-07-31] Los radios suben a la geometría de CÁPSULA del sistema nuevo
+ * (16-24 en los cuerpos, 30 en el plano de contenido). Los seis escalones siguen
+ * siendo seis: no se agregó ninguno, se re-apuntaron. */
+:root {
+  --r-2xs:  3px;    /* barra fina, swatch de 4px        */
+  --r-xs:   6px;    /* chip diminuto                    */
+  --r-sm:   13px;   /* botón, input, ícono cuadrado     */
+  --r-md:   18px;   /* tarjeta chica, fila, control     */
+  --r-lg:   22px;   /* panel, tarjeta grande            */
+  --r-xl:   30px;   /* plano de contenido, modal, hoja  */
+  --r-pill: 20px;   /* cápsula de la marca en la barra  */
+  --r-full: 999px;  /* pill                             */
+
+  /* cristal: el material de la nav y las utilidades flotantes */
+  --glass:  rgba(20,20,22,.78);
+
+  --sp-1:  4px;   --sp-2:  8px;   --sp-3: 12px;
+  --sp-4: 16px;   --sp-5: 22px;   --sp-6: 32px;
+
+  /* Sombras: en el sistema nuevo son la ÚNICA herramienta de jerarquía — no hay bordes
+   * ni relieves. --sh-1 = elemento sobre el pozo · --sh-2 = plano de contenido ·
+   * --sh-3 = el elemento en foco de una pista. */
+  --sh-1: 0 4px 14px rgba(0,0,0,.4);
+  --sh-2: 0 12px 38px rgba(0,0,0,.5);
+  --sh-3: 0 26px 70px rgba(0,0,0,.62);
+  /* El sistema prohíbe el borde: --sh-line queda neutralizado en vez de borrado, para no
+   * romper las ~40 pantallas que lo referencian. */
+  --sh-line: none;
+}
+[data-theme="light"] {
+  --sh-1: 0 3px 12px rgba(10,10,10,.05);
+  --sh-2: 0 10px 34px rgba(10,10,10,.06);
+  --sh-3: 0 18px 48px rgba(10,10,10,.14);
+  --glass: rgba(255,255,255,.78);   /* acá sí: viene DESPUÉS del :root que lo define */
+}
+
+/* ── TIPOGRAFÍA · TRES FAMILIAS Y NADA MÁS ────────────────────────────────────
+ * [rediseño · fase 1 · 1.2] El estándar las nombra y les da oficio:
+ *
+ *     Instrument Serif   el LOGOTIPO. Nada más. (`--font-brand`)
+ *     Poppins 200-500    TODA la interfaz, títulos incluidos. (`--font-ui`, `--font-display`)
+ *     JetBrains Mono     lo que es DATO: números, IDs, atajos, rutas, versiones. (`--font-mono`)
+ *
+ * ⚠️ LA MONOESPACIADA DEJA DE SER LA DEL SISTEMA. Era `ui-monospace, SFMono-Regular…`, o sea
+ * que cada máquina dibujaba los IDs y los atajos con una letra distinta. El estándar le da
+ * un oficio propio al dato, y un oficio no se delega al sistema operativo.
+ *
+ * VENDORIZADAS, sin red: `vendor/fonts-estandar.css` + 20 woff2 en `vendor/fonts/`
+ * (293 KB, subsets con su `unicode-range` intacto). La app es offline-first.
+ *
+ * ⚠️ OUTFIT Y NEWSREADER SIGUEN CARGADAS, a propósito y por un rato. `--font-*` ya apunta a
+ * las nuevas, pero hay `font-family` escritos a mano en pantallas sueltas; sacar las viejas
+ * en el mismo commit los dejaría cayendo a la fuente del sistema EN SILENCIO, que es
+ * exactamente el defecto que esta casa persigue. Se sacan cuando el grep dé cero. */
+:root {
+  --font-ui:      'Poppins', system-ui, -apple-system, sans-serif;
+  --font-display: 'Poppins', system-ui, -apple-system, sans-serif;
+  --font-brand:   'Instrument Serif', Georgia, serif;
+  --font-mono:    'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* ── PESO · el techo es 500, y esto es una regla del estándar ─────────────────
+   * «Nunca negritas de 600 en la UI: el peso máximo es 500 y se reserva al estado activo.»
+   * Se barrieron 152 declaraciones de ≥600 en 28 archivos nuestros (`vendor/` queda afuera:
+   * ahí el `font-weight` de un `@font-face` DECLARA la cara, no la usa — cambiarlo rompe la
+   * carga de la fuente).
+   * ⚠️ EL BARRIDO MANDÓ TODO A 500, Y ESO ES UN PASO, NO EL DESTINO. Mecánicamente no se
+   * puede distinguir «negrita porque está activo» de «negrita para enfatizar»; mandarlas
+   * todas a 400 habría BORRADO distinciones que hoy dicen algo, y esta casa no borra
+   * información para cumplir una regla. Queda para la fase 2 bajar a 400 las que no marcan
+   * estado activo, pantalla por pantalla y mirándolas. */
+  --fw-suave:     200;   /* el saludo, y nada más */
+  --fw-apoyo:     300;   /* texto de apoyo */
+  --fw-normal:    400;   /* TODA la interfaz */
+  --fw-activo:    500;   /* el techo · el ítem activo */
+
+  --fs-xs:  11px;    --fs-sm:  11.5px;  --fs-md:  13.5px;
+  --fs-lg:  15px;    --fs-xl:  18px;    --fs-2xl: 22px;   --fs-3xl: 34px;
+  --tracking-title: -.025em;   /* el tracking negativo de los títulos de 34px */
+
+  --lh-tight: 1.3;   --lh: 1.5;   --lh-loose: 1.6;
+}
+
+/* ── BASE MÍNIMA · lo único que esta hoja pinta, y por una razón medida ───────────
+ * NADIE declaraba el color del ::placeholder, así que los 13 campos del producto
+ * (buscar en el catálogo, filtrar conexiones, la URL del MCP…) heredaban el gris
+ * por defecto del browser: #757575 fijo, que da 3.4:1 en oscuro y 4.2:1 en claro.
+ * Un campo vacío es lo PRIMERO que se lee de un formulario. Una línea lo arregla
+ * en todas las superficies; `opacity:1` porque Firefox lo baja a .54 por su cuenta. */
+::placeholder { color: var(--faint); opacity: 1; }
+
+/* Los controles de formulario NO heredan ni la tipografía ni el color: es la regla del
+ * user-agent, no una decisión de nadie acá — y de ahí salían DOS de los síntomas del
+ * reporte. (1) "Selects/barras negros con letra negra": un <select> o <button> sin
+ * `color` propio se pinta con el negro del UA, y sobre el panel oscuro eso es 1.2:1.
+ * (2) "Tipografías mezcladas": Chrome le pone Arial a los controles, y así aparecía
+ * una tercera familia en 90 lugares de 10 pantallas sin que nadie la hubiera escrito.
+ * `background-color` va junto al `color` en los campos porque un select que hereda
+ * tinta clara pero conserva el blanco del UA queda igual de ilegible, sólo al revés.
+ * Es una regla de elemento: cualquier declaración de la pantalla la gana por orden. */
+button, input, select, textarea, optgroup { font-family: inherit; color: inherit; }
+select, textarea,
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="file"]) {
+  background-color: var(--paper2);
+}
+option { color: var(--ink); background-color: var(--paper); }

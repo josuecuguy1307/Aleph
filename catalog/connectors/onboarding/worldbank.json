@@ -1,0 +1,50 @@
+{
+  "connector": "worldbank",
+  "auth_method": "keyless",
+  "tier": "average",
+  "needs_base_url": false,
+  "deep_link": "https://data.worldbank.org",
+  "api_base": "https://api.worldbank.org",
+  "credential_fields": [],
+  "steps": [
+    {
+      "txt": "El Banco Mundial es data pública abierta — no necesitas ninguna llave. Toca conectar y quedo listo para obtener series de cualquier país.",
+      "emphasis": [
+        "sin ninguna llave"
+      ]
+    }
+  ],
+  "validate": {
+    "method": "GET",
+    "path": "/v2/country/EC/indicator/NY.GDP.MKTP.CD?format=json&date=2022:2023&per_page=2"
+  },
+  "permissions": [
+    "leer series macroeconómicas (PIB, inflación, deuda, población, etc.)"
+  ],
+  "requires_sharing": false,
+  "errors": {
+    "network": "No pude alcanzar el Banco Mundial ahora — prueba de nuevo en un momento."
+  },
+  "capability_line": "Listo — ya puedo obtener series macro del Banco Mundial (PIB, inflación, deuda…) para cualquier país, sin que pongas ninguna llave.",
+  "trust_line": "Data pública del Banco Mundial · sin credenciales · solo lectura.",
+  "verification": {
+    "deep_link_ok": true,
+    "validated_with_test_key": true,
+    "notes": "[v3] auth_method=keyless. API pública api.worldbank.org verificada EN VIVO (serie de PIB de Alemania 2015-2023, 9 observaciones reales, 2026-06-16). El connect-engine devuelve 'connected' directo por keyless (no llama validate). El bloque validate queda como sonda de salud para health-checks futuros. Es la fuente que el belt de finanzas usa para el .xlsx con procedencia."
+  },
+  "en": {
+    "steps": [
+      {
+        "txt": "The World Bank is open public data — you don't need any key at all. Just tap connect and I'm ready to pull series for any country.",
+        "emphasis": [
+          "any key at all"
+        ]
+      }
+    ],
+    "trust_line": "Public World Bank data · no credentials · read-only.",
+    "capability_line": "Done — I can now pull World Bank macro series (GDP, inflation, debt…) for any country, without you entering any key.",
+    "errors": {
+      "network": "I couldn't reach the World Bank right now — try again in a moment."
+    }
+  }
+}

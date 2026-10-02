@@ -1,0 +1,60 @@
+==============================================================================
+PUPPET AI — INFERENCE COST + LATENCY COMPARATOR
+run_date=2026-06-11   prices_fetched_on=2026-06-11   (prices.json, not live web)
+==============================================================================
+
+[1] LIVE LATENCY  (one ~20-token ping each, timeout 12s)
+------------------------------------------------------------------------------
+  LiteLLM proxy @ http://localhost:4000 (lane aliases):
+    premium           alias=premium           OK     451.3 ms  -> premium
+    constructor-code  alias=constructor-code  OK     462.9 ms  -> constructor-code
+    explorer-reason   alias=explorer-reason   OK     347.8 ms  -> explorer-reason
+    specialist        alias=specialist        OK    1437.3 ms  -> specialist
+
+  Ollama direct @ http://localhost:11434 (bypass proxy):
+    qwen3:8b                              OK    1211.5 ms
+
+[2] PRICE TABLE  ($/1M tokens, from prices.json fetched 2026-06-11)
+------------------------------------------------------------------------------
+  constructor-code:
+    [PRIMARY] groq         openai/gpt-oss-120b                in $0.1500 / out $0.6000 per 1M  | blended3:1 $0.2625/1M
+    [alt    ] openrouter   openai/gpt-oss-120b                in $0.0390 / out $0.1800 per 1M  | blended3:1 $0.0742/1M
+  explorer-reason:
+    [PRIMARY] groq         qwen/qwen3-32b                     in $0.2900 / out $0.5900 per 1M  | blended3:1 $0.365/1M
+    [alt    ] openrouter   qwen/qwen3-32b                     in $0.0800 / out $0.2800 per 1M  | blended3:1 $0.13/1M
+    [alt    ] deepseek     deepseek-v4-flash                  in $0.1400 / out $0.2800 per 1M  | blended3:1 $0.175/1M
+  premium:
+    [PRIMARY] groq         llama-3.3-70b-versatile            in $0.5900 / out $0.7900 per 1M  | blended3:1 $0.64/1M
+    [alt    ] openrouter   llama-3.3-70b:free                 in $0.0000 / out $0.0000 per 1M  | blended3:1 $0.0/1M
+  specialist:
+    [PRIMARY] ollama_local qwen3:8b                           in $0.0000 / out $0.0000 per 1M  | blended3:1 $0.0/1M
+
+[3] RECOMMENDATION PER LANE  (price + live latency + notes)
+------------------------------------------------------------------------------
+
+  1. CONSTRUCTOR-CODE -> Groq gpt-oss-120b (free tier).
+    Cheapest code-direct OSS on the ladder: $0.15 in / $0.60 out, blended $0.2625/1M. Free tier covers it (200k TPD).
+    Fallback when Groq rate-limits: OpenRouter gpt-oss-120b paid ($0.039/$0.18) — ~4x cheaper input than Groq paid,
+    use it as the paid overflow, not Groq paid. LIVE: 462.9 ms via proxy (constructor-code).
+
+  2. EXPLORER-REASON -> Groq qwen3-32b (free tier) for open/reasoning tasks.
+    $0.29 in / $0.59 out, blended $0.365/1M; emits <think> so give generous max_tokens.
+    Cheaper external alt for heavy reasoning volume: DeepSeek v4-flash ($0.14 in / $0.28 out, cache-hit in $0.0028),
+    which undercuts Groq paid AND OpenRouter qwen3-32b — route here if free tier TPM (6k) chokes. LIVE: 347.8 ms via proxy (explorer-reason).
+
+  3. PREMIUM -> Groq llama-3.3-70b-versatile (free tier) for Leads/Reviewers/Supervisor.
+    $0.59 in / $0.79 out, blended $0.64/1M — priciest lane, keep it for judgment only.
+    Fallback OpenRouter llama-3.3-70b:free ($0/$0) when Groq 429s; it is truly free but
+    rate-capped (~20 rpm, 50-1000/day) and upstream-availability-dependent, so it's a spillover, not the primary. LIVE: 451.3 ms via proxy (premium).
+
+  4. SPECIALIST -> local Ollama qwen3:8b ($0 dollar-cost) for high-volume executor work.
+    $0/token; the real cost is latency+quality, not money. Best when throughput matters and the
+    task is bounded enough for an 8B model. If a turn needs more muscle, escalate to constructor-code.
+    No rate limits, fully private/local. LIVE: 1211.5 ms direct to Ollama (this is the latency you pay instead of dollars).
+
+==============================================================================
+BOTTOM LINE: free Groq tier serves all 4 paid lanes today; route by tokens-per-day,
+not requests. Paid overflow order: OpenRouter (gpt-oss-120b / qwen3-32b) and DeepSeek
+v4-flash beat Groq paid on $/token — escalate to them before paying Groq. Specialist
+stays local at $0 with latency as its only cost.
+==============================================================================

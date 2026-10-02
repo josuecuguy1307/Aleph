@@ -1,0 +1,515 @@
+{
+  "schemaVersion": "1.0.0",
+  "meta": {
+    "name": "Cuarto \u2014 sala base",
+    "background": "#10131a"
+  },
+  "grid": {
+    "cols": 7,
+    "rows": 7,
+    "tileWidth": 64,
+    "tileHeight": 32
+  },
+  "tiles": [
+    {
+      "gridX": 0,
+      "gridY": 0,
+      "sprite": "floor"
+    },
+    {
+      "gridX": 0,
+      "gridY": 1,
+      "sprite": "floor"
+    },
+    {
+      "gridX": 0,
+      "gridY": 2,
+      "sprite": "floor"
+    },
+    {
+      "gridX": 0,
+      "gridY": 3,
+      "sprite": "floor"
+    },
+    {
+      "gridX": 0,
+      "gridY": 4,
+      "sprite": "floor"
+    },
+    {
+      "gridX": 0,
+      "gridY": 5,
+      "sprite": "floor"
+    },
+    {
+      "gridX": 0,
+      "gridY": 6,
+      "sprite": "floor"
+    },
+    {
+      "gridX": 1,
+      "gridY": 0,
+      "sprite": "floor"
+    },
+    {
+      "gridX": 1,
+      "gridY": 1,
+      "sprite": "floor"
+    },
+    {
+      "gridX": 1,
+      "gridY": 2,
+      "sprite": "floor"
+    },
+    {
+      "gridX": 1,
+      "gridY": 3,
+      "sprite": "floor"
+    },
+    {
+      "gridX": 1,
+      "gridY": 4,
+      "sprite": "floor"
+    },
+    {
+      "gridX": 1,
+      "gridY": 5,
+      "sprite": "floor"
+    },
+    {
+      "gridX": 1,
+      "gridY": 6,
+      "sprite": "floor"
+    },
+    {
+      "gridX": 2,
+      "gridY": 0,
+      "sprite": "floor"
+    },
+    {
+      "gridX": 2,
+      "gridY": 1,
+      "sprite": "floor"
+    },
+    {
+      "gridX": 2,
+      "gridY": 2,
+      "sprite": "floor"
+    },
+    {
+      "gridX": 2,
+      "gridY": 3,
+      "sprite": "floor"
+    },
+    {
+      "gridX": 2,
+      "gridY": 4,
+      "sprite": "floor"
+    },
+    {
+      "gridX": 2,
+      "gridY": 5,
+      "sprite": "floor"
+    },
+    {
+      "gridX": 2,
+      "gridY": 6,
+      "sprite": "floor"
+    },
+    {
+      "gridX": 3,
+      "gridY": 0,
+      "sprite": "floor"
+    },
+    {
+      "gridX": 3,
+      "gridY": 1,
+      "sprite": "floor"
+    },
+    {
+      "gridX": 3,
+      "gridY": 2,
+      "sprite": "floor"
+    },
+    {
+      "gridX": 3,
+      "gridY": 3,
+      "sprite": "floor"
+    },
+    {
+      "gridX": 3,
+      "gridY": 4,
+      "sprite": "floor"
+    },
+    {
+      "gridX": 3,
+      "gridY": 5,
+      "sprite": "floor"
+    },
+    {
+      "gridX": 3,
+      "gridY": 6,
+      "sprite": "floor"
+    },
+    {
+      "gridX": 4,
+      "gridY": 0,
+      "sprite": "floor"
+    },
+    {
+      "gridX": 4,
+      "gridY": 1,
+      "sprite": "floor"
+    },
+    {
+      "gridX": 4,
+      "gridY": 2,
+      "sprite": "floor"
+    },
+    {
+      "gridX": 4,
+      "gridY": 3,
+      "sprite": "floor"
+    },
+    {
+      "gridX": 4,
+      "gridY": 4,
+      "sprite": "floor"
+    },
+    {
+      "gridX": 4,
+      "gridY": 5,
+      "sprite": "floor"
+    },
+    {
+      "gridX": 4,
+      "gridY": 6,
+      "sprite": "floor"
+    },
+    {
+      "gridX": 5,
+      "gridY": 0,
+      "sprite": "floor"
+    },
+    {
+      "gridX": 5,
+      "gridY": 1,
+      "sprite": "floor"
+    },
+    {
+      "gridX": 5,
+      "gridY": 2,
+      "sprite": "floor"
+    },
+    {
+      "gridX": 5,
+      "gridY": 3,
+      "sprite": "floor"
+    },
+    {
+      "gridX": 5,
+      "gridY": 4,
+      "sprite": "floor"
+    },
+    {
+      "gridX": 5,
+      "gridY": 5,
+      "sprite": "floor"
+    },
+    {
+      "gridX": 5,
+      "gridY": 6,
+      "sprite": "floor"
+    },
+    {
+      "gridX": 6,
+      "gridY": 0,
+      "sprite": "floor"
+    },
+    {
+      "gridX": 6,
+      "gridY": 1,
+      "sprite": "floor"
+    },
+    {
+      "gridX": 6,
+      "gridY": 2,
+      "sprite": "floor"
+    },
+    {
+      "gridX": 6,
+      "gridY": 3,
+      "sprite": "floor"
+    },
+    {
+      "gridX": 6,
+      "gridY": 4,
+      "sprite": "floor"
+    },
+    {
+      "gridX": 6,
+      "gridY": 5,
+      "sprite": "floor"
+    },
+    {
+      "gridX": 6,
+      "gridY": 6,
+      "sprite": "floor"
+    }
+  ],
+  "props": [
+    {
+      "id": "wall_l_0",
+      "sprite": "wall",
+      "gridX": 0,
+      "gridY": 0,
+      "anchorX": 0.5,
+      "anchorY": 0.8
+    },
+    {
+      "id": "wall_l_1",
+      "sprite": "wall",
+      "gridX": 0,
+      "gridY": 1,
+      "anchorX": 0.5,
+      "anchorY": 0.8
+    },
+    {
+      "id": "wall_l_2",
+      "sprite": "wall",
+      "gridX": 0,
+      "gridY": 2,
+      "anchorX": 0.5,
+      "anchorY": 0.8
+    },
+    {
+      "id": "wall_l_3",
+      "sprite": "wall",
+      "gridX": 0,
+      "gridY": 3,
+      "anchorX": 0.5,
+      "anchorY": 0.8
+    },
+    {
+      "id": "wall_l_4",
+      "sprite": "wall",
+      "gridX": 0,
+      "gridY": 4,
+      "anchorX": 0.5,
+      "anchorY": 0.8
+    },
+    {
+      "id": "wall_l_5",
+      "sprite": "wall",
+      "gridX": 0,
+      "gridY": 5,
+      "anchorX": 0.5,
+      "anchorY": 0.8
+    },
+    {
+      "id": "wall_l_6",
+      "sprite": "wall",
+      "gridX": 0,
+      "gridY": 6,
+      "anchorX": 0.5,
+      "anchorY": 0.8
+    },
+    {
+      "id": "wall_r_1",
+      "sprite": "wall",
+      "gridX": 1,
+      "gridY": 0,
+      "anchorX": 0.5,
+      "anchorY": 0.8
+    },
+    {
+      "id": "wall_r_3",
+      "sprite": "wall",
+      "gridX": 3,
+      "gridY": 0,
+      "anchorX": 0.5,
+      "anchorY": 0.8
+    },
+    {
+      "id": "wall_r_4",
+      "sprite": "wall",
+      "gridX": 4,
+      "gridY": 0,
+      "anchorX": 0.5,
+      "anchorY": 0.8
+    },
+    {
+      "id": "wall_r_5",
+      "sprite": "wall",
+      "gridX": 5,
+      "gridY": 0,
+      "anchorX": 0.5,
+      "anchorY": 0.8
+    },
+    {
+      "id": "wall_r_6",
+      "sprite": "wall",
+      "gridX": 6,
+      "gridY": 0,
+      "anchorX": 0.5,
+      "anchorY": 0.8
+    },
+    {
+      "id": "mcp_door_1",
+      "sprite": "door",
+      "gridX": 2,
+      "gridY": 0,
+      "anchorX": 0.5,
+      "anchorY": 0.8,
+      "interactive": true
+    },
+    {
+      "id": "nucleo_pedestal",
+      "sprite": "pedestal",
+      "gridX": 3,
+      "gridY": 1,
+      "anchorX": 0.5,
+      "anchorY": 0.7188
+    },
+    {
+      "id": "nucleo_orb",
+      "sprite": "orb",
+      "gridX": 3,
+      "gridY": 1,
+      "anchorX": 0.5,
+      "anchorY": 1.0,
+      "z": 1,
+      "interactive": true
+    },
+    {
+      "id": "slot_fuentes",
+      "sprite": "slot",
+      "gridX": 2,
+      "gridY": 4,
+      "anchorX": 0.5,
+      "anchorY": 0.5,
+      "interactive": true
+    },
+    {
+      "id": "slot_mesa",
+      "sprite": "slot",
+      "gridX": 3,
+      "gridY": 4,
+      "anchorX": 0.5,
+      "anchorY": 0.5,
+      "interactive": true
+    },
+    {
+      "id": "slot_entrega",
+      "sprite": "slot",
+      "gridX": 6,
+      "gridY": 4,
+      "anchorX": 0.5,
+      "anchorY": 0.5,
+      "interactive": true
+    },
+    {
+      "id": "plant_1",
+      "sprite": "plant",
+      "gridX": 1,
+      "gridY": 5,
+      "anchorX": 0.5,
+      "anchorY": 1.0
+    },
+    {
+      "id": "plant_2",
+      "sprite": "plant",
+      "gridX": 5,
+      "gridY": 5,
+      "anchorX": 0.5,
+      "anchorY": 1.0
+    }
+  ],
+  "zones": [
+    {
+      "id": "zone_nucleo",
+      "gridX": 3,
+      "gridY": 1,
+      "w": 1,
+      "h": 1,
+      "role": "nucleo"
+    },
+    {
+      "id": "zone_fuentes",
+      "gridX": 1,
+      "gridY": 3,
+      "w": 2,
+      "h": 3,
+      "role": "fuentes"
+    },
+    {
+      "id": "zone_mesa",
+      "gridX": 3,
+      "gridY": 3,
+      "w": 2,
+      "h": 2,
+      "role": "mesa"
+    },
+    {
+      "id": "zone_entrega",
+      "gridX": 5,
+      "gridY": 3,
+      "w": 2,
+      "h": 3,
+      "role": "entrega"
+    }
+  ],
+  "atlas": {
+    "image": "atlas.png",
+    "frames": {
+      "floor": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 32
+      },
+      "wall": {
+        "x": 66,
+        "y": 0,
+        "w": 64,
+        "h": 80
+      },
+      "pedestal": {
+        "x": 132,
+        "y": 0,
+        "w": 56,
+        "h": 64
+      },
+      "orb": {
+        "x": 190,
+        "y": 0,
+        "w": 48,
+        "h": 96
+      },
+      "plant": {
+        "x": 0,
+        "y": 98,
+        "w": 40,
+        "h": 72
+      },
+      "door": {
+        "x": 42,
+        "y": 98,
+        "w": 64,
+        "h": 80
+      },
+      "slot": {
+        "x": 108,
+        "y": 98,
+        "w": 56,
+        "h": 36
+      },
+      "tile": {
+        "x": 166,
+        "y": 98,
+        "w": 46,
+        "h": 44
+      }
+    }
+  }
+}

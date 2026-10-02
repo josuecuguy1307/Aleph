@@ -1,0 +1,550 @@
+{
+  "arquetipo": "freecad",
+  "paso": "list_tools",
+  "transporte": "stdio",
+  "servidor": "verificador",
+  "grabado_en": "2026-08-04T09:46:13",
+  "huella_receta": "99283624a653",
+  "env_declarado": false,
+  "receta": {
+    "command": "uvx",
+    "args": [
+      "freecad-mcp",
+      "--only-text-feedback"
+    ],
+    "cwd": ""
+  },
+  "peticion": {
+    "metodo": "tools/list",
+    "args": {}
+  },
+  "respuesta": [
+    {
+      "name": "create_document",
+      "description": "Create a new document in FreeCAD.\n\nArgs:\n    name: The name of the document to create.\n\nReturns:\n    A message indicating the success or failure of the document creation.\n\nExamples:\n    If you want to create a document named \"MyDocument\", you can use the following data.\n    ```json\n    {\n        \"name\": \"MyDocument\"\n    }\n    ```\n",
+      "inputSchema": {
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "title": "[secreto removido]"
+      }
+    },
+    {
+      "name": "create_object",
+      "description": "Create a new object in FreeCAD.\nObject type is starts with \"Part::\" or \"Draft::\" or \"PartDesign::\" or \"Fem::\".\n\nArgs:\n    doc_name: The name of the document to create the object in.\n    obj_type: The type of the object to create (e.g. 'Part::Box', 'Part::Cylinder', 'Draft::Circle', 'PartDesign::Body', etc.).\n    obj_name: The name of the object to create.\n    obj_properties: The properties of the object to create.\n    include_screenshot: Whether to return a screenshot of the model (default True).\n        Set to False to save tokens when visual feedback is not needed,\n        e.g. for intermediate steps in a longer sequence of changes.\n    view_name: The view orientation of the returned screenshot (default \"Isometric\").\n        Pick the view that best shows the change being made.\n\nReturns:\n    A message indicating the success or failure of the object creation and a screenshot of the object.\n\nExamples:\n    If you want to create a cylinder with a height of 30 and a radius of 10, you can use the following data.\n    ```json\n    {\n        \"doc_name\": \"MyCylinder\",\n        \"obj_name\": \"Cylinder\",\n        \"obj_type\": \"Part::Cylinder\",\n        \"obj_properties\": {\n            \"Height\": 30,\n            \"Radius\": 10,\n            \"Placement\": {\n                \"Base\": {\n                    \"x\": 10,\n                    \"y\": 10,\n                    \"z\": 0\n                },\n                \"Rotation\": {\n                    \"Axis\": {\n                        \"x\": 0,\n                        \"y\": 0,\n                        \"z\": 1\n                    },\n                    \"Angle\": 45\n                }\n            },\n            \"ViewObject\": {\n                \"ShapeColor\": [0.5, 0.5, 0.5, 1.0]\n            }\n        }\n    }\n    ```\n\n    If you want to create a circle with a radius of 10, you can use the following data.\n    ```json\n    {\n        \"doc_name\": \"MyCircle\",\n        \"obj_name\": \"Circle\",\n        \"obj_type\": \"Draft::Circle\",\n    }\n    ```\n\n    If you want to create a FEM analysis, you can use the following data.\n    ```json\n    {\n        \"doc_name\": \"MyFEMAnalysis\",\n        \"obj_name\": \"FemAnalysis\",\n        \"obj_type\": \"Fem::AnalysisPython\",\n    }\n    ```\n\n    If you want to create a FEM constraint, you can use the following data.\n    ```json\n    {\n        \"doc_name\": \"MyFEMConstraint\",\n        \"obj_name\": \"FemConstraint\",\n        \"obj_type\": \"Fem::ConstraintFixed\",\n        \"analysis_name\": \"MyFEMAnalysis\",\n        \"obj_properties\": {\n            \"References\": [\n                {\n                    \"object_name\": \"MyObject\",\n                    \"face\": \"Face1\"\n                }\n            ]\n        }\n    }\n    ```\n\n    If you want to create a FEM mechanical material, you can use the following data.\n    ```json\n    {\n        \"doc_name\": \"MyFEMAnalysis\",\n        \"obj_name\": \"FemMechanicalMaterial\",\n        \"obj_type\": \"Fem::MaterialCommon\",\n        \"analysis_name\": \"MyFEMAnalysis\",\n        \"obj_properties\": {\n            \"Material\": {\n                \"Name\": \"MyMaterial\",\n                \"Density\": \"7900 kg/m^3\",\n                \"YoungModulus\": \"210 GPa\",\n                \"PoissonRatio\": 0.3\n            }\n        }\n    }\n    ```\n\n    If you want to create a FEM mesh, you can use the following data.\n    The `Shape` property is required (legacy `Part` is also accepted).\n    On FreeCAD 1.x the size limits are `[secreto removido]`;\n    the legacy `ElementSizeMax/Min` keys are also accepted.\n    ```json\n    {\n        \"doc_name\": \"MyFEMMesh\",\n        \"obj_name\": \"FemMesh\",\n        \"obj_type\": \"Fem::FemMeshGmsh\",\n        \"analysis_name\": \"MyFEMAnalysis\",\n        \"obj_properties\": {\n            \"Shape\": \"MyObject\",\n            \"CharacteristicLengthMax\": 10,\n            \"CharacteristicLengthMin\": 0.1\n        }\n    }\n    ```\n",
+      "inputSchema": {
+        "properties": {
+          "doc_name": {
+            "title": "Doc Name",
+            "type": "string"
+          },
+          "obj_type": {
+            "title": "Obj Type",
+            "type": "string"
+          },
+          "obj_name": {
+            "title": "Obj Name",
+            "type": "string"
+          },
+          "analysis_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Analysis Name"
+          },
+          "obj_properties": {
+            "additionalProperties": true,
+            "default": null,
+            "title": "Obj Properties",
+            "type": "object"
+          },
+          "include_screenshot": {
+            "default": true,
+            "title": "Include Screenshot",
+            "type": "boolean"
+          },
+          "view_name": {
+            "default": "Isometric",
+            "enum": [
+              "Isometric",
+              "Front",
+              "Top",
+              "Right",
+              "Back",
+              "Left",
+              "Bottom",
+              "Dimetric",
+              "Trimetric"
+            ],
+            "title": "View Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "doc_name",
+          "obj_type",
+          "obj_name"
+        ],
+        "type": "object",
+        "title": "create_objectArguments"
+      }
+    },
+    {
+      "name": "edit_object",
+      "description": "Edit an object in FreeCAD.\nThis tool is used when the `create_object` tool cannot handle the object creation.\n\nArgs:\n    doc_name: The name of the document to edit the object in.\n    obj_name: The name of the object to edit.\n    obj_properties: The properties of the object to edit.\n    include_screenshot: Whether to return a screenshot of the model (default True).\n        Set to False to save tokens when visual feedback is not needed,\n        e.g. for intermediate steps in a longer sequence of changes.\n    view_name: The view orientation of the returned screenshot (default \"Isometric\").\n        Pick the view that best shows the change being made.\n\nReturns:\n    A message indicating the success or failure of the object editing and a screenshot of the object.\n",
+      "inputSchema": {
+        "properties": {
+          "doc_name": {
+            "title": "Doc Name",
+            "type": "string"
+          },
+          "obj_name": {
+            "title": "Obj Name",
+            "type": "string"
+          },
+          "obj_properties": {
+            "additionalProperties": true,
+            "title": "Obj Properties",
+            "type": "object"
+          },
+          "include_screenshot": {
+            "default": true,
+            "title": "Include Screenshot",
+            "type": "boolean"
+          },
+          "view_name": {
+            "default": "Isometric",
+            "enum": [
+              "Isometric",
+              "Front",
+              "Top",
+              "Right",
+              "Back",
+              "Left",
+              "Bottom",
+              "Dimetric",
+              "Trimetric"
+            ],
+            "title": "View Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "doc_name",
+          "obj_name",
+          "obj_properties"
+        ],
+        "type": "object",
+        "title": "edit_objectArguments"
+      }
+    },
+    {
+      "name": "delete_object",
+      "description": "Delete an object in FreeCAD.\n\nArgs:\n    doc_name: The name of the document to delete the object from.\n    obj_name: The name of the object to delete.\n    include_screenshot: Whether to return a screenshot of the model (default True).\n        Set to False to save tokens when visual feedback is not needed,\n        e.g. for intermediate steps in a longer sequence of changes.\n    view_name: The view orientation of the returned screenshot (default \"Isometric\").\n        Pick the view that best shows the change being made.\n\nReturns:\n    A message indicating the success or failure of the object deletion and a screenshot of the object.\n",
+      "inputSchema": {
+        "properties": {
+          "doc_name": {
+            "title": "Doc Name",
+            "type": "string"
+          },
+          "obj_name": {
+            "title": "Obj Name",
+            "type": "string"
+          },
+          "include_screenshot": {
+            "default": true,
+            "title": "Include Screenshot",
+            "type": "boolean"
+          },
+          "view_name": {
+            "default": "Isometric",
+            "enum": [
+              "Isometric",
+              "Front",
+              "Top",
+              "Right",
+              "Back",
+              "Left",
+              "Bottom",
+              "Dimetric",
+              "Trimetric"
+            ],
+            "title": "View Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "doc_name",
+          "obj_name"
+        ],
+        "type": "object",
+        "title": "delete_objectArguments"
+      }
+    },
+    {
+      "name": "execute_code_async",
+      "description": "Execute Python code in FreeCAD without waiting for completion.\n\nUse this ONLY for long-running background computations that do NOT touch the\nFreeCAD GUI or mutate the FreeCAD document tree directly.\n\nThis tool runs the submitted code in a background thread and returns\nimmediately. Because it does not run on FreeCAD's main GUI thread, the code\nmust NOT call FreeCADGui APIs, manipulate the active view or selection, create\nor edit document objects, change object properties, call doc.recompute(), or\nsave documents.\n\nFor code that touches FreeCAD documents, document objects, FreeCADGui, the\nactive view, selection, recompute, or save operations, use execute_code instead.\nexecute_code runs on the FreeCAD GUI thread and is the safe default for normal\nFreeCAD automation.\n\nUse execute_code_async only for background-safe work such as long-running\npure OCCT geometry calculations (e.g. fuse/cut/loft on already-fetched shapes)\nor other CPU-bound computations that do not interact with the document or GUI.\n\nTypical usage pattern:\n1. Fetch shapes into local variables first (via execute_code on the GUI thread).\n2. Store intermediate results in a module-level Python variable (not in the\n   FreeCAD document) so execute_code can read them later.\n3. Run the heavy computation via execute_code_async.\n4. After the expected computation time has elapsed, apply results to the\n   document via execute_code (which runs on the GUI thread).\n\nArgs:\n    code: Background-safe Python code to execute.\n\nReturns:\n    A message confirming that background execution has started.\n",
+      "inputSchema": {
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code"
+        ],
+        "type": "object",
+        "title": "[secreto removido]"
+      }
+    },
+    {
+      "name": "execute_code",
+      "description": "Execute arbitrary Python code in FreeCAD.\n\nArgs:\n    code: The Python code to execute.\n    include_screenshot: Whether to return a screenshot of the model (default True).\n        Set to False to save tokens when the code does not change the model's\n        appearance, e.g. analytical or computational scripts whose result is\n        printed output, or intermediate steps in a longer sequence of changes.\n    view_name: The view orientation of the returned screenshot (default \"Isometric\").\n        Pick the view that best shows the change being made.\n\nReturns:\n    A message indicating the success or failure of the code execution, the output of the code execution, and a screenshot of the object.\n",
+      "inputSchema": {
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "include_screenshot": {
+            "default": true,
+            "title": "Include Screenshot",
+            "type": "boolean"
+          },
+          "view_name": {
+            "default": "Isometric",
+            "enum": [
+              "Isometric",
+              "Front",
+              "Top",
+              "Right",
+              "Back",
+              "Left",
+              "Bottom",
+              "Dimetric",
+              "Trimetric"
+            ],
+            "title": "View Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code"
+        ],
+        "type": "object",
+        "title": "execute_codeArguments"
+      }
+    },
+    {
+      "name": "get_view",
+      "description": "Get a screenshot of the active view.\n\nArgs:\n    view_name: The name of the view to get the screenshot of.\n    The following views are available:\n    '- \"Isometric\"\n    '- \"Front\"\n    '- \"Top\"\n    '- \"Right\"\n    '- \"Back\"\n    '- \"Left\"\n    '- \"Bottom\"\n    '- \"Dimetric\"\n    '- \"Trimetric\"\n    width: The width of the screenshot in pixels. If not specified, uses the viewport width.\n    height: The height of the screenshot in pixels. If not specified, uses the viewport height.\n    focus_object: The name of the object to focus on. If not specified, fits all objects in the view.\n\nReturns:\n    A screenshot of the active view.\n",
+      "inputSchema": {
+        "properties": {
+          "view_name": {
+            "enum": [
+              "Isometric",
+              "Front",
+              "Top",
+              "Right",
+              "Back",
+              "Left",
+              "Bottom",
+              "Dimetric",
+              "Trimetric"
+            ],
+            "title": "View Name",
+            "type": "string"
+          },
+          "width": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Width"
+          },
+          "height": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Height"
+          },
+          "focus_object": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Focus Object"
+          }
+        },
+        "required": [
+          "view_name"
+        ],
+        "type": "object",
+        "title": "get_viewArguments"
+      }
+    },
+    {
+      "name": "insert_part_from_library",
+      "description": "Insert a part from the parts library addon.\n\nArgs:\n    relative_path: The relative path of the part to insert.\n    include_screenshot: Whether to return a screenshot of the model (default True).\n        Set to False to save tokens when visual feedback is not needed,\n        e.g. for intermediate steps in a longer sequence of changes.\n    view_name: The view orientation of the returned screenshot (default \"Isometric\").\n        Pick the view that best shows the change being made.\n\nReturns:\n    A message indicating the success or failure of the part insertion and a screenshot of the object.\n",
+      "inputSchema": {
+        "properties": {
+          "relative_path": {
+            "title": "Relative Path",
+            "type": "string"
+          },
+          "include_screenshot": {
+            "default": true,
+            "title": "Include Screenshot",
+            "type": "boolean"
+          },
+          "view_name": {
+            "default": "Isometric",
+            "enum": [
+              "Isometric",
+              "Front",
+              "Top",
+              "Right",
+              "Back",
+              "Left",
+              "Bottom",
+              "Dimetric",
+              "Trimetric"
+            ],
+            "title": "View Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "relative_path"
+        ],
+        "type": "object",
+        "title": "[secreto removido]"
+      }
+    },
+    {
+      "name": "get_objects",
+      "description": "Get all objects in a document.\nYou can use this tool to get the objects in a document to see what you can check or edit.\n\nArgs:\n    doc_name: The name of the document to get the objects from.\n    include_screenshot: Whether to return a screenshot of the document (default True).\n        Set to False to save tokens when only the object data is needed.\n    view_name: The view orientation of the returned screenshot (default \"Isometric\").\n\nReturns:\n    A list of objects in the document and a screenshot of the document.\n",
+      "inputSchema": {
+        "properties": {
+          "doc_name": {
+            "title": "Doc Name",
+            "type": "string"
+          },
+          "include_screenshot": {
+            "default": true,
+            "title": "Include Screenshot",
+            "type": "boolean"
+          },
+          "view_name": {
+            "default": "Isometric",
+            "enum": [
+              "Isometric",
+              "Front",
+              "Top",
+              "Right",
+              "Back",
+              "Left",
+              "Bottom",
+              "Dimetric",
+              "Trimetric"
+            ],
+            "title": "View Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "doc_name"
+        ],
+        "type": "object",
+        "title": "get_objectsArguments"
+      }
+    },
+    {
+      "name": "get_object",
+      "description": "Get an object from a document.\nYou can use this tool to get the properties of an object to see what you can check or edit.\n\nArgs:\n    doc_name: The name of the document to get the object from.\n    obj_name: The name of the object to get.\n    include_screenshot: Whether to return a screenshot of the document (default True).\n        Set to False to save tokens when only the object data is needed.\n    view_name: The view orientation of the returned screenshot (default \"Isometric\").\n\nReturns:\n    The object and a screenshot of the object.\n",
+      "inputSchema": {
+        "properties": {
+          "doc_name": {
+            "title": "Doc Name",
+            "type": "string"
+          },
+          "obj_name": {
+            "title": "Obj Name",
+            "type": "string"
+          },
+          "include_screenshot": {
+            "default": true,
+            "title": "Include Screenshot",
+            "type": "boolean"
+          },
+          "view_name": {
+            "default": "Isometric",
+            "enum": [
+              "Isometric",
+              "Front",
+              "Top",
+              "Right",
+              "Back",
+              "Left",
+              "Bottom",
+              "Dimetric",
+              "Trimetric"
+            ],
+            "title": "View Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "doc_name",
+          "obj_name"
+        ],
+        "type": "object",
+        "title": "get_objectArguments"
+      }
+    },
+    {
+      "name": "get_parts_list",
+      "description": "Get the list of parts in the parts library addon.\n    ",
+      "inputSchema": {
+        "properties": {},
+        "type": "object",
+        "title": "get_parts_listArguments"
+      }
+    },
+    {
+      "name": "reload_document",
+      "description": "Close and re-open a document to pick up external file changes.\n\nUse this AFTER the document's .FCStd file has been modified by\nsomething outside of FreeCAD's GUI process — for example, a\nheadless `freecadcmd` script that edited and saved the file. The\nopen GUI document is otherwise unaware of on-disk changes; this\ntool closes the stale in-memory copy and reopens the file from\ndisk so the GUI shows current geometry.\n\nArgs:\n    doc_name: The name of the open document to reload. Must match\n        the name shown by ``list_documents``.\n\nReturns:\n    A message confirming the document was reloaded, or describing\n    the failure (document not loaded, no associated file, etc).\n\nExamples:\n    ```json\n    {\n        \"doc_name\": \"chassis\"\n    }\n    ```\n",
+      "inputSchema": {
+        "properties": {
+          "doc_name": {
+            "title": "Doc Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "doc_name"
+        ],
+        "type": "object",
+        "title": "[secreto removido]"
+      }
+    },
+    {
+      "name": "list_documents",
+      "description": "Get the list of open documents in FreeCAD.\n\nReturns:\n    A list of document names.\n",
+      "inputSchema": {
+        "properties": {},
+        "type": "object",
+        "title": "list_documentsArguments"
+      }
+    },
+    {
+      "name": "run_fem_analysis",
+      "description": "Run the CalculiX solver on an existing Fem::FemAnalysis container and return summary results.\n\nPrerequisites in the document:\n'- A Part-derived solid (e.g. Part::Box, PartDesign::Body) acting as the geometry.\n'- A Fem::AnalysisPython container created via `create_object`.\n'- A Fem::MaterialCommon assigned to the geometry, added to the analysis.\n'- A Fem::FemMeshGmsh referencing the geometry, added to the analysis (the\n  mesh is generated automatically when created via `create_object`).\n'- At least one Fem::ConstraintFixed and one Fem::ConstraintForce (or\n  ConstraintPressure) bound to faces of the geometry, added to the analysis.\n\nA SolverCcxTools is auto-created if the analysis has none.\n\nThe solver runs synchronously on the FreeCAD GUI thread and blocks all\nother RPC calls for its duration; do not fan out parallel requests.\n\nReturns max von Mises stress (MPa), max/min displacement (mm), node count,\nand the working directory CalculiX wrote to. On failure, returns the\nprerequisite-check or solver error along with the working directory for\ntriage.\n\nArgs:\n    doc_name: Name of the FreeCAD document.\n    analysis_name: Name of the Fem::AnalysisPython object.\n    timeout: Seconds to wait for the solver (default 600).\n    include_screenshot: Whether to return a screenshot of the model (default True).\n        Set to False to save tokens when only the numeric results are needed.\n    view_name: The view orientation of the returned screenshot (default \"Isometric\").\n",
+      "inputSchema": {
+        "properties": {
+          "doc_name": {
+            "title": "Doc Name",
+            "type": "string"
+          },
+          "analysis_name": {
+            "title": "Analysis Name",
+            "type": "string"
+          },
+          "timeout": {
+            "default": 600,
+            "title": "Timeout",
+            "type": "integer"
+          },
+          "include_screenshot": {
+            "default": true,
+            "title": "Include Screenshot",
+            "type": "boolean"
+          },
+          "view_name": {
+            "default": "Isometric",
+            "enum": [
+              "Isometric",
+              "Front",
+              "Top",
+              "Right",
+              "Back",
+              "Left",
+              "Bottom",
+              "Dimetric",
+              "Trimetric"
+            ],
+            "title": "View Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "doc_name",
+          "analysis_name"
+        ],
+        "type": "object",
+        "title": "[secreto removido]"
+      }
+    }
+  ],
+  "diagnostico": {
+    "stderr": "Downloading cryptography (3.8MiB)\nDownloading pydantic-core (1.9MiB)\nDownloading pygments (1.2MiB)\n Downloaded pygments\n Downloaded pydantic-core\n Downloaded cryptography\nInstalled 38 packages in 20ms\n2026-08-04 09:46:13,893 - FreeCADMCPserver - INFO - Only text feedback: True\n2026-08-04 09:46:13,893 - FreeCADMCPserver - INFO - Connecting to FreeCAD RPC server at: localhost\n2026-08-04 09:46:13,905 - FreeCADMCPserver - INFO - FreeCADMCP server starting up\n2026-08-04 09:46:13,907 - FreeCADMCPserver - WARNING - Could not connect to FreeCAD on startup: [Errno 61] Connection refused\n2026-08-04 09:46:13,907 - FreeCADMCPserver - WARNING - Make sure the FreeCAD addon is running before using FreeCAD resources or tools",
+    "exit_code": null,
+    "exit_code_fuente": "no expuesto: stdio_client (mcp 2.0.0) hace `yield read_stream, write_stream` y se queda el Process",
+    "murio": false,
+    "t_eof": null,
+    "timeouts": [],
+    "rpc_timeout_s": 45.0,
+    "stderr_lineas": 12,
+    "stderr_bytes": 719,
+    "stderr_cap_bytes": 32768,
+    "stderr_cap_lineas": 80,
+    "command": "uvx",
+    "transporte": "sdk-stdio",
+    "entorno": {
+      "omitido": "ambiente de la máquina, no del veredicto"
+    },
+    "server_info": {
+      "name": "FreeCADMCP",
+      "version": ""
+    },
+    "protocolo": {
+      "cliente": "2025-11-25",
+      "servidor": "2025-11-25",
+      "negociacion": "aceptada"
+    },
+    "detail": "el proceso arrancó pero no respondió al saludo initialize de MCP (Downloading cryptography (3.8MiB)\nDownloading pydantic-core (1.9MiB)\nDownloading pygments (1.2MiB)\n Downloaded pygments\n Downloaded pydantic-core\n Downloaded cryptography\nInstalled 38 packages in 20ms\n2026-08-04 09:46:13,893 - FreeCADMCPserver - INFO - Only text feedback: True\n2026-08-04 09:46:13,893 - FreeCADMCPserver - INFO - Connecting to FreeCAD RPC server at: localhost\n2026-08-04 09:46:13,905 - FreeCADMCPserver - INFO - FreeCADMCP server starting up\n2026-08-04 09:46:13,907 - FreeCADMCPserver - WARNING - Could not connect to FreeCAD on startup: [Errno 61] Connection refused\n2026-08-04 09:46:13,907 - FreeCADMCPserver - WARNING - Make sure the FreeCAD addon is running before using FreeCAD resources or tools)"
+  },
+  "scrubber": {
+    "hallazgos_neutralizados": 20
+  }
+}

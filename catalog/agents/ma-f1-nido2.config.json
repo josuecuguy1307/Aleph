@@ -1,0 +1,25 @@
+{
+  "schema_version": "v1",
+  "meta": {
+    "name": "F1 · Nido 2",
+    "nicho": "general",
+    "descripcion": "Globo anidado nivel 2 — fixture del guard de PROFUNDIDAD de la vara MULTIAGENTE-F1."
+  },
+  "model": {
+    "primary": "openai/gpt-oss-120b",
+    "base_url": "https://api.groq.com/openai/v1",
+    "temperature": 0,
+    "max_tokens": 256,
+    "max_turns": 3
+  },
+  "modo": "cadena",
+  "belt": {
+    "agent_refs": [
+      "catalog/agents/ma-f1-nido3.config.json"
+    ],
+    "tool_filters": {}
+  },
+  "rag": {
+    "enabled": false
+  }
+}

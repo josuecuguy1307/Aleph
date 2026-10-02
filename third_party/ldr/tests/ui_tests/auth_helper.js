@@ -1,0 +1,972 @@
+/**
+ * Authentication Helper for UI Tests
+ * Handles login and registration for Puppeteer tests
+ */
+
+const crypto = require('crypto');
+
+/**
+ * Timing utility for detailed performance logging
+ */
+class Timer {
+    constructor(label) {
+        this.label = label;
+        this.startTime = Date.now();
+        this.laps = [];
+    }
+
+    lap(description) {
+        const now = Date.now();
+        const elapsed = now - this.startTime;
+        const lapTime = this.laps.length > 0
+            ? now - this.laps[this.laps.length - 1].timestamp
+            : elapsed;
+        this.laps.push({ description, elapsed, lapTime, timestamp: now });
+        return elapsed;
+    }
+
+    elapsed() {
+        return Date.now() - this.startTime;
+    }
+
+    summary() {
+        const total = this.elapsed();
+        console.log(`  ⏱️  [${this.label}] TOTAL: ${total}ms (${(total/1000).toFixed(1)}s)`);
+        return total;
+    }
+}
+
+const DEFAULT_TEST_USER = {
+    username: 'testuser',
+    password: 'T3st!Secure#2024$LDR'
+};
+
+// CI pre-created test user (created in GitHub workflow's "Initialize database" step)
+// This user is created BEFORE tests run, so no slow registration needed
+const CI_TEST_USER = {
+    username: 'test_admin',
+    password: 'testpass123'
+};
+
+// Configuration constants - single source of truth for auth helper settings
+const AUTH_CONFIG = {
+    // Route paths
+    paths: {
+        login: '/auth/login',
+        register: '/auth/register',
+        logout: '/auth/logout'
+    },
+    // Timeouts (ms) - CI has longer timeouts due to:
+    // 1. Slower CI runners with shared resources
+    // 2. Registration creates encrypted SQLCipher database
+    // 3. Key derivation from password is CPU intensive
+    // 4. Creating 58 database tables takes time
+    // 5. Importing 500+ settings from JSON files
+    // Note: If registration takes >2min, something is likely wrong
+    timeouts: {
+        navigation: process.env.CI ? 60000 : 30000,       // 1 min in CI (reduced from 3 min)
+        formSelector: process.env.CI ? 30000 : 5000,      // 30s in CI (reduced from 1 min)
+        submitNavigation: process.env.CI ? 60000 : 60000,   // 1 min in CI (fast KDF makes 2 min unnecessary)
+        urlCheck: process.env.CI ? 10000 : 5000,          // 10s in CI (reduced from 30s)
+        errorCheck: process.env.CI ? 5000 : 2000,         // 5s in CI (reduced from 15s)
+        logout: process.env.CI ? 30000 : 10000            // 30s in CI (reduced from 1 min)
+    },
+    // Delays (ms)
+    delays: {
+        retryNavigation: process.env.CI ? 2000 : 1000,    // 2s between retries in CI
+        afterRegistration: process.env.CI ? 5000 : 3000,  // 5s after registration in CI
+        beforeRetry: process.env.CI ? 5000 : 5000,        // 5s before retry in CI
+        afterLogout: process.env.CI ? 2000 : 1000         // 2s after logout in CI
+    },
+    // CI-specific settings
+    ci: {
+        waitUntil: 'domcontentloaded',
+        maxLoginAttempts: 10,        // Reduced from 15 - fail faster
+        maxNavigationRetries: 3      // Reduced from 5 - fail faster
+    }
+};
+
+// Generate random username for each test to avoid conflicts
+function generateRandomUsername() {
+    const timestamp = Date.now();
+    let random;
+    // Use rejection sampling to avoid bias
+    const maxValue = 4294967295; // Max value for 32-bit unsigned int
+    const limit = maxValue - (maxValue % 1000); // Largest multiple of 1000 that fits
+
+    do {
+        random = crypto.randomBytes(4).readUInt32BE(0);
+    } while (random >= limit); // Reject values that would cause bias
+
+    random %= 1000;
+    return `testuser_${timestamp}_${random}`;
+}
+
+class AuthHelper {
+    constructor(page, baseUrl = 'http://127.0.0.1:5000') {
+        this.page = page;
+        this.baseUrl = baseUrl;
+        this.isCI = !!process.env.CI;
+    }
+
+    /**
+     * Get the current page reference.
+     * The page may have been replaced if a detached frame error was recovered.
+     * Tests should call this after ensureAuthenticated() to get the working page.
+     */
+    getPage() {
+        return this.page;
+    }
+
+    /**
+     * Helper method for delays
+     */
+    async _delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    /**
+     * Wait for server to become responsive
+     * Uses Node.js http.get instead of page.evaluate to avoid Puppeteer's
+     * protocolTimeout (600s) when the page is in a bad state after navigation failure.
+     */
+    async _waitForServerReady(maxWaitMs = 120000, checkIntervalMs = 5000) {
+        const http = require('http');
+        const startTime = Date.now();
+
+        while (Date.now() - startTime < maxWaitMs) {
+            try {
+                const ok = await new Promise((resolve) => {
+                    const req = http.get(this.baseUrl, { timeout: 10000 }, (res) => {
+                        resolve(res.statusCode >= 200 && res.statusCode < 400);
+                        res.resume(); // drain the response
+                    });
+                    req.on('error', () => resolve(false));
+                    req.on('timeout', () => { req.destroy(); resolve(false); });
+                });
+
+                if (ok) {
+                    return true;
+                }
+            } catch {
+                // ignore - will retry
+            }
+
+            await this._delay(checkIntervalMs);
+        }
+
+        console.log(`  Server did not become ready within ${maxWaitMs/1000}s`);
+        return false;
+    }
+
+    /**
+     * Navigate to an auth page with CI-aware retry logic
+     * @param {string} path - The path to navigate to (e.g., AUTH_CONFIG.paths.login)
+     * @param {string} expectedPathSegment - Path segment to verify arrival (e.g., '/auth/login')
+     * @returns {string} The URL we arrived at
+     */
+    async _navigateToAuthPage(path, expectedPathSegment) {
+        const timer = new Timer(`nav:${path}`);
+        const targetUrl = `${this.baseUrl}${path}`;
+        const waitUntil = this.isCI ? AUTH_CONFIG.ci.waitUntil : 'networkidle2';
+        const maxRetries = this.isCI ? AUTH_CONFIG.ci.maxNavigationRetries : 1;
+        const timeout = AUTH_CONFIG.timeouts.navigation;
+
+        let arrivedUrl = '';
+        let lastError = null;
+
+        for (let attempt = 1; attempt <= maxRetries; attempt++) {
+            try {
+                timer.lap(`attempt ${attempt} start`);
+                await this.page.goto(targetUrl, {
+                    waitUntil,
+                    timeout
+                });
+                timer.lap(`attempt ${attempt} navigation complete`);
+
+                arrivedUrl = this.page.url();
+
+                // Check if we arrived at expected page
+                if (arrivedUrl.includes(expectedPathSegment)) {
+                    return arrivedUrl;
+                }
+
+                // If redirected somewhere else (like home when logged in), that's also OK
+                if (!arrivedUrl.includes('/auth/')) {
+                    return arrivedUrl;
+                }
+
+                // If we didn't get where we wanted, retry
+                if (attempt < maxRetries) {
+                    await this._delay(AUTH_CONFIG.delays.retryNavigation);
+                }
+            } catch (navError) {
+                lastError = navError;
+
+                // If the frame is detached, create a fresh page and retry
+                if (navError.message.includes('detached') || navError.message.includes('destroyed')) {
+                    try {
+                        const browser = this.page.browser();
+                        const newPage = await browser.newPage();
+                        try { await this.page.close(); } catch { /* already broken */ }
+                        this.page = newPage;
+                    } catch {
+                        // Could not create fresh page
+                    }
+                }
+
+                if (attempt < maxRetries) {
+                    await this._delay(AUTH_CONFIG.delays.retryNavigation);
+                }
+            }
+        }
+
+        // If we got a URL but it wasn't what we expected, return it anyway
+        if (arrivedUrl) {
+            return arrivedUrl;
+        }
+
+        // If we never got a URL, throw the last error
+        throw lastError || new Error(`Failed to navigate to ${path} after ${maxRetries} attempts`);
+    }
+
+    /**
+     * Check if user is logged in by looking for logout button or username
+     */
+    async isLoggedIn() {
+        try {
+            const url = this.page.url();
+
+            if (url.includes(AUTH_CONFIG.paths.login)) {
+                return false;
+            }
+
+            // Check for logout button/link
+            const logoutSelectors = [
+                'a.logout-btn',
+                '#logout-form',
+                'form[action="/auth/logout"]',
+                'a[onclick*="logout"]'
+            ];
+
+            for (const selector of logoutSelectors) {
+                try {
+                    const element = await this.page.$(selector);
+                    if (element) {
+                        return true;
+                    }
+                } catch {
+                    // Some selectors might not be valid, continue
+                }
+            }
+
+            // Check if we can access protected pages
+            const currentUrl = this.page.url();
+            if (currentUrl.includes('/settings') || currentUrl.includes('/metrics') || currentUrl.includes('/history')) {
+                return true;
+            }
+
+            // If we're on the home page, check for research form
+            const researchForm = await this.page.$('form[action*="research"], #query, button[type="submit"]');
+            if (researchForm) {
+                return true;
+            }
+
+            return false;
+        } catch {
+            return false;
+        }
+    }
+
+    /**
+     * Login with existing user credentials
+     */
+    async login(username = DEFAULT_TEST_USER.username, password = DEFAULT_TEST_USER.password) {
+        const timer = new Timer('login');
+        console.log(`🔐 Attempting login as ${username}...`);
+
+        // Check if already logged in
+        if (await this.isLoggedIn()) {
+            console.log('✅ Already logged in');
+            timer.summary();
+            return true;
+        }
+        timer.lap('checked login status');
+
+        // Always navigate to login page to ensure fresh CSRF token
+        // (After logout, the page may have a stale token from the previous session)
+        await this._navigateToAuthPage(AUTH_CONFIG.paths.login, AUTH_CONFIG.paths.login);
+        timer.lap('navigated to login page');
+
+        // Wait for login form
+        await this.page.waitForSelector('input[name="username"]', { timeout: AUTH_CONFIG.timeouts.formSelector });
+        timer.lap('login form ready');
+
+        // Clear fields first to ensure clean state
+        await this.page.$eval('input[name="username"]', el => { el.value = ''; });
+        await this.page.$eval('input[name="password"]', el => { el.value = ''; });
+
+        // Type credentials
+        await this.page.type('input[name="username"]', username);
+        await this.page.type('input[name="password"]', password);
+        timer.lap('credentials filled');
+
+        // Listen to page errors
+        this.page.on('pageerror', error => console.log('  Page error:', error.message));
+
+        try {
+            // In CI, use a simpler and faster approach
+            // NOTE: Previous implementation used a polling loop that called page.evaluate()
+            // 30 times with 10s timeouts each. When the page was navigating, evaluate()
+            // would hang, causing 5+ minute delays ("URL check timeout" x30).
+            // This simpler Promise.all approach completes in seconds.
+            if (this.isCI) {
+                timer.lap('starting CI login');
+
+                // Use Promise.all with waitForNavigation - the standard Puppeteer approach
+                // This is more reliable than polling page.evaluate() which hangs during navigation
+                try {
+                    await Promise.all([
+                        this.page.waitForNavigation({
+                            waitUntil: 'domcontentloaded',
+                            timeout: AUTH_CONFIG.timeouts.navigation  // 60s in CI, 30s locally
+                        }),
+                        this.page.click('button[type="submit"]')
+                    ]);
+                    timer.lap('navigation complete after submit');
+                } catch (navError) {
+                    timer.lap(`navigation error: ${navError.message.substring(0, 50)}`);
+
+                    // Check if we actually succeeded despite the error
+                    const currentUrl = this.page.url();
+
+                    if (!currentUrl.includes(AUTH_CONFIG.paths.login)) {
+                        // Actually redirected successfully
+                    } else {
+                        // Check for session cookie - login may have worked
+                        const cookies = await this.page.cookies();
+                        const sessionCookie = cookies.find(c => c.name === 'session');
+                        if (sessionCookie) {
+                            // NOTE: Using configured navigation timeout instead of hardcoded 15s
+                            // because CI runners can be slow and 15s often isn't enough
+                            await this.page.goto(this.baseUrl, {
+                                waitUntil: 'domcontentloaded',
+                                timeout: AUTH_CONFIG.timeouts.navigation  // 60s in CI
+                            });
+                            timer.lap('navigated to home via cookie');
+                        } else {
+                            // Check for error message
+                            const errorEl = await this.page.$('.alert-danger, .error-message');
+                            if (errorEl) {
+                                const errorText = await this.page.evaluate(el => el.textContent.trim(), errorEl);
+                                throw new Error(`Login failed: ${errorText}`);
+                            }
+                            throw new Error('Login failed - no redirect, no cookie');
+                        }
+                    }
+                }
+
+                timer.lap('CI login complete');
+            } else {
+                // Non-CI logic - use domcontentloaded instead of networkidle2 to avoid WebSocket/polling timeouts
+                await Promise.all([
+                    this.page.waitForNavigation({
+                        waitUntil: 'domcontentloaded',
+                        timeout: AUTH_CONFIG.timeouts.submitNavigation
+                    }),
+                    this.page.click('button[type="submit"]')
+                ]);
+            }
+        } catch (navError) {
+            timer.lap(`navigation error: ${navError.message.substring(0, 40)}`);
+            timer.summary();
+            throw navError;
+        }
+
+        // Check if login was successful
+        const finalUrl = this.page.url();
+
+        if (finalUrl.includes(AUTH_CONFIG.paths.login)) {
+            // Still on login page - check for error
+            const error = await this.page.$('.alert-danger, .error-message, .alert');
+            if (error) {
+                const errorText = await this.page.evaluate(el => el.textContent, error);
+                timer.summary();
+                throw new Error(`Login failed: ${errorText.trim()}`);
+            }
+
+            timer.summary();
+            throw new Error('Login failed - still on login page');
+        }
+
+        timer.summary();
+        console.log('✅ Login successful');
+        return true;
+    }
+
+    /**
+     * Register a new user
+     */
+    async register(username = DEFAULT_TEST_USER.username, password = DEFAULT_TEST_USER.password) {
+        const timer = new Timer('register');
+        console.log(`📝 Attempting registration for ${username}...`);
+        // Navigate to registration page using the helper
+        const arrivedUrl = await this._navigateToAuthPage(AUTH_CONFIG.paths.register, AUTH_CONFIG.paths.register);
+        timer.lap('navigation complete');
+
+        // If redirected to login, registration might be disabled
+        if (arrivedUrl.includes(AUTH_CONFIG.paths.login)) {
+            throw new Error('Registration page redirected to login - registrations may be disabled');
+        }
+
+        // Wait for registration form
+        await this.page.waitForSelector('input[name="username"]', { timeout: AUTH_CONFIG.timeouts.formSelector });
+        timer.lap('form ready');
+        await this.page.type('input[name="username"]', username);
+        await this.page.type('input[name="password"]', password);
+        await this.page.type('input[name="confirm_password"]', password);
+        timer.lap('form filled');
+
+        // Check acknowledgment checkbox if present
+        const acknowledgeCheckbox = await this.page.$('input[name="acknowledge"]');
+        if (acknowledgeCheckbox) {
+            await this.page.click('input[name="acknowledge"]');
+            timer.lap('checkbox clicked');
+        }
+
+        // Submit form - use CI-specific approach with waitForNavigation + retries
+        if (this.isCI) {
+            // In CI, registration can take 2+ minutes due to encrypted DB creation.
+            // The page.evaluate() approach doesn't work because the page is unresponsive
+            // during server processing. Instead, we use waitForNavigation with retries.
+
+            let registrationSucceeded = false;
+
+            try {
+                await Promise.all([
+                    this.page.waitForNavigation({
+                        waitUntil: 'domcontentloaded',
+                        timeout: AUTH_CONFIG.timeouts.submitNavigation  // 5 minutes
+                    }),
+                    this.page.click('button[type="submit"]')
+                ]);
+
+                const currentUrl = this.page.url();
+
+                if (!currentUrl.includes(AUTH_CONFIG.paths.register)) {
+                    registrationSucceeded = true;
+                }
+            } catch (navError) {
+                // Handle frame detachment (page was replaced)
+                if (navError.message.includes('detached') || navError.message.includes('destroyed')) {
+                    await this._delay(AUTH_CONFIG.delays.afterRegistration);
+
+                    // The current page's frame is broken - get a fresh page from the browser
+                    try {
+                        const browser = this.page.browser();
+                        const newPage = await browser.newPage();
+                        try { await this.page.close(); } catch { /* already broken */ }
+                        this.page = newPage;
+
+                        await this.page.goto(this.baseUrl, {
+                            waitUntil: AUTH_CONFIG.ci.waitUntil,
+                            timeout: AUTH_CONFIG.timeouts.formSelector
+                        });
+                        registrationSucceeded = true;
+                    } catch {
+                        // Could not navigate to home after frame detachment
+                    }
+                }
+                // For timeout errors, fall through to session verification below
+            }
+
+            // If navigation didn't clearly succeed, verify via session with retries
+            if (!registrationSucceeded) {
+                // Ensure we have a working page (may have been replaced above)
+                try {
+                    await this.page.url();
+                } catch {
+                    const browser = this.page.browser();
+                    try { await this.page.close(); } catch { /* already broken */ }
+                    this.page = await browser.newPage();
+                }
+
+                // Wait for server to become ready (might be still processing)
+                // In CI, registration can take 2+ minutes due to encrypted DB creation
+                const serverReady = await this._waitForServerReady(180000, 10000);  // 3 min max, check every 10s
+
+                if (serverReady) {
+                    // Try to navigate and verify session
+                    for (let retryAttempt = 1; retryAttempt <= 3; retryAttempt++) {
+                        try {
+                            await this.page.goto(this.baseUrl, {
+                                waitUntil: AUTH_CONFIG.ci.waitUntil,
+                                timeout: AUTH_CONFIG.timeouts.formSelector
+                            });
+
+                            const homeUrl = this.page.url();
+
+                            if (!homeUrl.includes('/auth/login') && !homeUrl.includes('/auth/register')) {
+                                const logoutBtn = await this.page.$('#logout-form, a[href*="logout"], .logout');
+                                if (logoutBtn) {
+                                    registrationSucceeded = true;
+                                    break;
+                                }
+                            }
+                        } catch {
+                            if (retryAttempt < 3) {
+                                await this._delay(10000);  // Wait 10s before retry
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (registrationSucceeded) {
+                console.log('✅ Registration successful');
+                return true;
+            }
+
+            // Check if still on registration page with an error
+            const currentUrl = this.page.url();
+            if (currentUrl.includes(AUTH_CONFIG.paths.register)) {
+                try {
+                    const error = await this.page.$('.alert-danger:not(.alert-warning), .error-message');
+                    if (error) {
+                        const errorText = await this.page.evaluate(el => el.textContent, error);
+                        if (errorText.includes('already exists')) {
+                            console.log('⚠️  User already exists, attempting login instead');
+                            return await this.login(username, password);
+                        }
+                        throw new Error(`Registration failed: ${errorText.trim()}`);
+                    }
+                } catch (e) {
+                    if (e.message.includes('Registration failed')) throw e;
+                    // Ignore error checking errors
+                }
+            }
+
+            throw new Error('Registration failed - could not verify success');
+        }
+
+        // Non-CI logic - use waitForNavigation
+        try {
+            await Promise.all([
+                this.page.waitForNavigation({
+                    waitUntil: 'domcontentloaded',
+                    timeout: AUTH_CONFIG.timeouts.submitNavigation
+                }),
+                this.page.click('button[type="submit"]')
+            ]);
+            timer.lap('form submitted + navigation complete');
+        } catch (navError) {
+            timer.lap(`submit error: ${navError.message.substring(0, 50)}`);
+
+            // Handle frame detachment errors
+            if (navError.message.includes('detached')) {
+                // Wait for registration to complete server-side
+                await this._delay(AUTH_CONFIG.delays.afterRegistration);
+                timer.lap('post-registration delay complete');
+
+                // The current page's frame is broken - get a fresh page
+                try {
+                    const browser = this.page.browser();
+                    const newPage = await browser.newPage();
+                    try { await this.page.close(); } catch { /* already broken */ }
+                    this.page = newPage;
+
+                    await this.page.goto(this.baseUrl, {
+                        waitUntil: 'domcontentloaded',
+                        timeout: AUTH_CONFIG.timeouts.formSelector
+                    });
+                    timer.lap('navigated to home');
+                } catch {
+                    // Could not navigate after registration
+                }
+
+                timer.summary();
+                console.log('✅ Registration completed');
+                return true;
+            }
+            timer.summary();
+            throw navError;
+        }
+
+        // Check if registration was successful
+        const currentUrl = this.page.url();
+        timer.lap('checking result URL');
+        if (currentUrl.includes(AUTH_CONFIG.paths.register)) {
+            // Still on registration page - check for actual errors (not warnings)
+            const error = await this.page.$('.alert-danger:not(.alert-warning), .error-message');
+            if (error) {
+                const errorText = await this.page.evaluate(el => el.textContent, error);
+                if (errorText.includes('already exists')) {
+                    console.log('⚠️  User already exists, attempting login instead');
+                    timer.summary();
+                    return await this.login(username, password);
+                }
+                timer.summary();
+                throw new Error(`Registration failed: ${errorText}`);
+            }
+
+            // Check for security warnings (these are not errors)
+            const warning = await this.page.$('.alert-warning');
+            if (warning) {
+                const warningText = await this.page.evaluate(el => el.textContent, warning);
+                console.log('⚠️  Security warning:', warningText.trim().replace(/\s+/g, ' '));
+            }
+
+            timer.summary();
+            throw new Error('Registration failed - still on registration page');
+        }
+
+        timer.summary();
+        console.log('✅ Registration successful');
+        return true;
+    }
+
+    /**
+     * Ensure user is authenticated - register if needed, then login
+     * In CI mode, first tries the pre-created CI test user for speed
+     */
+    async ensureAuthenticated(username = null, password = DEFAULT_TEST_USER.password, retries = null) {
+        const timer = new Timer('ensureAuthenticated');
+
+        // Use more retries in CI environment
+        if (retries === null) {
+            retries = this.isCI ? 2 : 2;
+        }
+
+        // Check if already logged in
+        try {
+            if (await this.isLoggedIn()) {
+                console.log('✅ Already logged in');
+                timer.summary();
+                return true;
+            }
+        } catch (checkError) {
+            console.log(`⚠️  Could not check login status: ${checkError.message}`);
+            // Continue with authentication attempt
+        }
+        timer.lap('login status checked');
+
+        // In CI, try the pre-created CI test user first (much faster than registration!)
+        // If CI login fails, fall back to registration (slower but reliable).
+        // This allows incremental migration - workflows with init_test_database.py
+        // get the speed benefit, while others still work via registration fallback.
+        if (this.isCI) {
+            try {
+                console.log('🔐 Trying CI test user login...');
+                await this.login(CI_TEST_USER.username, CI_TEST_USER.password);
+                console.log('✅ Logged in with CI test user');
+                timer.summary();
+                return true;
+            } catch (ciLoginError) {
+                console.log(`⚠️  CI test user login failed: ${ciLoginError.message.substring(0, 80)}`);
+                // Fall back to registration (slower but reliable)
+            }
+        }
+
+        // ---------------------------------------------------------------
+        // GOTCHA — fresh-user fallback can masquerade as a server FD/DB leak.
+        //
+        // When the CI test-user login above fails, every test falls back to
+        // registering a BRAND-NEW user (generateRandomUsername() below). The
+        // most common cause locally is the shared `test_admin` getting
+        // failed-login *lockout-locked* after several iterations — once that
+        // happens, each test in a shard registers its own `testuser_<ts>`.
+        //
+        // Each fresh user gets its own per-user encrypted DB + SQLAlchemy
+        // engine on the server. Those engines are only disposed by logout or
+        // the periodic connection-cleanup sweep (~300s; see
+        // docs/developing/resource-cleanup.md and ADR-0004), so within a
+        // single sub-300s shard run they accumulate. The server's open
+        // file-descriptor count to encrypted_databases/*.db(-wal/-shm) then
+        // climbs ~linearly across tests — which looks EXACTLY like a per-user
+        // DB connection leak but is purely this test artifact.
+        //
+        // In real CI a single working `test_admin` is reused, so there is one
+        // engine and FDs stay bounded by the pool cap (pool_size 20 +
+        // max_overflow 40 = 60). Before chasing a "chat shards leak / hang",
+        // confirm you are NOT in this fallback: grep the server log for many
+        // distinct `testuser_<ts>` opens. The chat-shard CI failures
+        // themselves are runner contention (60s navigation timeouts under a
+        // heavily-loaded Docker runner), not a server-side connection leak —
+        // both chat shards pass locally in faithful CI mode with bounded FDs.
+        // ---------------------------------------------------------------
+
+        // Generate random username if not provided
+        if (!username) {
+            username = generateRandomUsername();
+        }
+
+        let lastError;
+        for (let attempt = 1; attempt <= retries; attempt++) {
+            try {
+                return await this.register(username, password);
+            } catch (registerError) {
+                // If user already exists, try login
+                if (registerError.message.includes('already exists') ||
+                    registerError.message.includes('still on registration page')) {
+                    try {
+                        return await this.login(username, password);
+                    } catch (loginError) {
+                        lastError = loginError;
+                    }
+                } else {
+                    lastError = registerError;
+                }
+
+                console.log(`🔄 Auth attempt ${attempt}/${retries} failed: ${lastError.message.substring(0, 80)}`);
+
+                // If timeout or network error, wait and retry
+                if (attempt < retries &&
+                    (lastError.message.includes('timeout') ||
+                     lastError.message.includes('net::') ||
+                     lastError.message.includes('Navigation'))) {
+                    await this._delay(AUTH_CONFIG.delays.beforeRetry);
+                    continue;
+                }
+
+                if (attempt === retries) {
+                    console.log(`❌ Auth failed after ${retries} attempts. Last error: ${lastError.message}`);
+                    timer.summary();
+                    throw lastError;
+                }
+            }
+        }
+
+        timer.summary();
+        throw lastError || new Error('Failed to authenticate after retries');
+    }
+
+    /**
+     * Wrapper around ensureAuthenticated() with a timeout guard.
+     * Prevents auth from hanging indefinitely in CI when the server is unresponsive.
+     * Default: 120s CI, 30s local.
+     */
+    async ensureAuthenticatedWithTimeout(username = null, password = DEFAULT_TEST_USER.password, timeoutMs = null) {
+        if (timeoutMs === null) {
+            timeoutMs = this.isCI ? 120000 : 30000;
+        }
+        return new Promise((resolve, reject) => {
+            const timer = setTimeout(() => {
+                console.log(`⏱️  Auth timeout after ${timeoutMs / 1000}s — ensureAuthenticated did not complete`);
+                reject(new Error(`Auth timeout: did not complete within ${timeoutMs / 1000}s`));
+            }, timeoutMs);
+            this.ensureAuthenticated(username, password).then(
+                (val) => { clearTimeout(timer); resolve(val); },
+                (err) => { clearTimeout(timer); reject(err); }
+            );
+        });
+    }
+
+    /**
+     * Logout the current user
+     */
+    async logout() {
+        console.log('🚪 Logging out...');
+
+        try {
+            // Try to find and submit the logout form directly (more reliable than clicking link)
+            const logoutForm = await this.page.$('#logout-form');
+            if (logoutForm) {
+                await Promise.all([
+                    this.page.waitForNavigation({
+                        waitUntil: 'networkidle2',
+                        timeout: AUTH_CONFIG.timeouts.logout
+                    }).catch(() => {}),
+                    this.page.evaluate(() => {
+                        document.getElementById('logout-form').submit();
+                    })
+                ]);
+            } else {
+                const logoutLink = await this.page.$('a.logout-btn');
+                if (logoutLink) {
+                    await Promise.all([
+                        this.page.waitForNavigation({
+                            waitUntil: 'networkidle2',
+                            timeout: AUTH_CONFIG.timeouts.logout
+                        }).catch(() => {}),
+                        this.page.click('a.logout-btn')
+                    ]);
+                } else {
+                    // Last resort: navigate directly to logout URL
+                    await this.page.goto(`${this.page.url().split('/').slice(0, 3).join('/')}${AUTH_CONFIG.paths.logout}`, {
+                        waitUntil: 'networkidle2',
+                        timeout: AUTH_CONFIG.timeouts.logout
+                    });
+                }
+            }
+
+            // Give it a moment for any redirects
+            await this._delay(AUTH_CONFIG.delays.afterLogout);
+
+            const currentUrl = this.page.url();
+            const loginForm = await this.page.$('form[action*="login"], input[name="username"]');
+            if (loginForm || currentUrl.includes(AUTH_CONFIG.paths.login)) {
+                console.log('✅ Logged out successfully');
+            } else {
+                // Double-check by trying to access a protected page
+                await this.page.goto(`${this.page.url().split('/').slice(0, 3).join('/')}/settings/`, {
+                    waitUntil: 'networkidle2',
+                    timeout: AUTH_CONFIG.timeouts.formSelector
+                }).catch(() => {});
+
+                const finalUrl = this.page.url();
+                if (!finalUrl.includes(AUTH_CONFIG.paths.login)) {
+                    console.log(`Warning: May not be fully logged out. Current URL: ${finalUrl}`);
+                } else {
+                    console.log('✅ Logged out successfully');
+                }
+            }
+        } catch (error) {
+            console.log(`⚠️ Logout error: ${error.message}`);
+        }
+    }
+}
+
+/**
+ * Safe click utility - waits for element to be visible and clickable
+ * Use this instead of direct element.click() to avoid "not clickable" errors
+ *
+ * @param {Page} page - Puppeteer page object
+ * @param {string|ElementHandle} selectorOrElement - CSS selector or element handle
+ * @param {Object} options - Options for the click
+ * @param {number} options.timeout - Max time to wait for element (default: 10000ms)
+ * @param {boolean} options.scrollIntoView - Scroll element into view before clicking (default: true)
+ * @returns {Promise<boolean>} - True if click succeeded
+ */
+async function safeClick(page, selectorOrElement, options = {}) {
+    const timeout = options.timeout || (process.env.CI ? 15000 : 10000);
+    const scrollIntoView = options.scrollIntoView !== false;
+
+    let element;
+
+    // Get the element handle
+    if (typeof selectorOrElement === 'string') {
+        try {
+            await page.waitForSelector(selectorOrElement, {
+                visible: true,
+                timeout
+            });
+            element = await page.$(selectorOrElement);
+        } catch {
+            console.log(`safeClick: Element not found or not visible: ${selectorOrElement}`);
+            return false;
+        }
+    } else {
+        element = selectorOrElement;
+    }
+
+    if (!element) {
+        console.log('safeClick: No element to click');
+        return false;
+    }
+
+    try {
+        // Scroll element into view if needed
+        if (scrollIntoView) {
+            await page.evaluate(el => {
+                el.scrollIntoView({ behavior: 'instant', block: 'center', inline: 'center' });
+            }, element);
+            // Small delay after scrolling
+            await new Promise(r => setTimeout(r, 100));
+        }
+
+        // Wait for element to be in a clickable state
+        await page.evaluate(el => {
+            return new Promise((resolve, reject) => {
+                const checkClickable = () => {
+                    const rect = el.getBoundingClientRect();
+                    const isVisible = rect.width > 0 && rect.height > 0;
+                    const isInViewport = rect.top >= 0 && rect.left >= 0;
+                    const style = window.getComputedStyle(el);
+                    const notHidden = style.visibility !== 'hidden' && style.display !== 'none';
+
+                    if (isVisible && notHidden) {
+                        resolve(true);
+                    } else {
+                        reject(new Error('Element not clickable'));
+                    }
+                };
+
+                // Check immediately and after a short delay
+                setTimeout(checkClickable, 50);
+            });
+        }, element);
+
+        // Perform the click
+        await element.click();
+        return true;
+
+    } catch (clickError) {
+        console.log(`safeClick: Click failed - ${clickError.message}`);
+
+        // Fallback: try clicking via JavaScript
+        try {
+            await page.evaluate(el => el.click(), element);
+            console.log('safeClick: Fallback JS click succeeded');
+            return true;
+        } catch (jsClickError) {
+            console.log(`safeClick: JS click also failed - ${jsClickError.message}`);
+            return false;
+        }
+    }
+}
+
+/**
+ * Wait for a selector to be present and visually stable.
+ *
+ * Use this instead of `await delay(N)` after an action that triggers UI to
+ * settle (e.g., a button click that reveals a panel, a typed input that
+ * triggers debounced validation). It resolves as soon as the element's
+ * bounding box hasn't moved for `idleMs` of `requestAnimationFrame` ticks,
+ * up to a 3s in-page budget.
+ *
+ * DO NOT replace `delay()` calls that intentionally exercise wall-clock
+ * behavior (e.g., a 10s timer the app is supposed to respect) — those tests
+ * need real elapsed time, not a settle wait.
+ *
+ * @param {Page} page - Puppeteer page object
+ * @param {string} selector - CSS selector to wait for
+ * @param {Object} [options]
+ * @param {number} [options.timeout=5000]  Max time to wait for the selector to appear
+ * @param {number} [options.idleMs=200]    Final settle pause after layout stabilizes
+ */
+async function waitForStable(page, selector, options = {}) {
+    const timeout = options.timeout || 5000;
+    const idleMs = options.idleMs ?? 200;
+
+    await page.waitForSelector(selector, { visible: true, timeout });
+    await page.evaluate(async (sel, idle) => {
+        const el = document.querySelector(sel);
+        if (!el) return;
+        let last = el.getBoundingClientRect();
+        const start = Date.now();
+        // Bounded in-page poll: returns as soon as the layout settles, or after
+        // 3s if the element keeps moving (caller can extend via outer logic).
+        while (Date.now() - start < 3000) {
+            await new Promise((r) => requestAnimationFrame(r));
+            const now = el.getBoundingClientRect();
+            if (
+                now.x === last.x &&
+                now.y === last.y &&
+                now.width === last.width &&
+                now.height === last.height
+            ) {
+                await new Promise((r) => setTimeout(r, idle));
+                return;
+            }
+            last = now;
+        }
+    }, selector, idleMs);
+}
+
+module.exports = AuthHelper;
+module.exports.safeClick = safeClick;
+module.exports.waitForStable = waitForStable;
+module.exports.AUTH_CONFIG = AUTH_CONFIG;
+module.exports.Timer = Timer;
+module.exports.CI_TEST_USER = CI_TEST_USER;
+module.exports.DEFAULT_TEST_USER = DEFAULT_TEST_USER;

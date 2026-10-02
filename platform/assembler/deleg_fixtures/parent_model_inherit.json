@@ -1,0 +1,12 @@
+{
+  "schema_version": "v1",
+  "meta": { "name": "parent_model_inherit", "nicho": "general", "descripcion": "default: el hijo HEREDA el modelo del padre" },
+  "model": { "primary": "parent-model", "base_url": "stub://parent", "temperature": 0, "max_tokens": 256, "max_turns": 6 },
+  "belt": {
+    "belt_ref": "platform/assembler/deleg_fixtures/belt-deleg.mcp.json",
+    "agent_refs": ["platform/assembler/deleg_fixtures/child_model.json"],
+    "tool_filters": { "deleg": ["read_data"] }
+  },
+  "rag": { "enabled": false },
+  "gates": { "money_touch": "needs_ok", "send": "needs_ok" }
+}

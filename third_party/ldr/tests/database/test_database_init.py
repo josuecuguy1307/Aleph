@@ -1,0 +1,472 @@
+"""Tests for database initialization and encryption functionality."""
+
+import shutil
+import tempfile
+import uuid
+from pathlib import Path
+
+import pytest
+from sqlalchemy import create_engine, inspect
+from sqlalchemy.orm import sessionmaker
+
+from local_deep_research.database.models import (
+    Base,
+    ResearchHistory,
+    Setting,
+    User,
+)
+
+
+class TestDatabaseInitialization:
+    """Test suite for database initialization and setup."""
+
+    @pytest.fixture
+    def temp_dir(self):
+        """Create a temporary directory for test databases."""
+        temp_dir = tempfile.mkdtemp()
+        yield temp_dir
+        shutil.rmtree(temp_dir)
+
+    @pytest.fixture
+    def db_engine(self, temp_dir):
+        """Create and dispose a SQLite engine with all tables."""
+        db_path = str(Path(temp_dir) / "test.db")
+        engine = create_engine(f"sqlite:///{db_path}")
+        Base.metadata.create_all(engine)
+        yield engine
+        engine.dispose()
+
+    @pytest.fixture
+    def db_session(self, db_engine):
+        """Create a session bound to db_engine, closed on teardown."""
+        Session = sessionmaker(bind=db_engine)
+        session = Session()
+        yield session
+        session.close()
+
+    def test_basic_database_creation(self, temp_dir):
+        """Test creating a basic SQLite database."""
+        db_path = str(Path(temp_dir) / "test.db")
+        engine = create_engine(f"sqlite:///{db_path}")
+        Base.metadata.create_all(engine)
+
+        # Verify database file exists
+        assert Path(db_path).exists()
+
+        # Verify tables were created
+        inspector = inspect(engine)
+        tables = inspector.get_table_names()
+
+        # Check for essential tables
+        assert "users" in tables
+        assert "research_history" in tables
+        assert "settings" in tables
+        assert "research_resources" in tables
+        assert "token_usage" in tables
+
+        engine.dispose()
+
+    def test_database_creation_with_function(self, temp_dir):
+        """Test database creation through standard SQLAlchemy."""
+        db_path = str(Path(temp_dir) / "test_user.db")
+
+        # Create engine and initialize database
+        engine = create_engine(f"sqlite:///{db_path}")
+        Base.metadata.create_all(engine)
+
+        # Verify engine is created
+        assert engine is not None
+
+        # Verify database exists
+        assert Path(db_path).exists()
+
+        # Test connection
+        from sqlalchemy import text
+
+        with engine.connect() as conn:
+            result = conn.execute(text("SELECT 1"))
+            assert result.fetchone()[0] == 1
+
+        engine.dispose()
+
+    def test_encrypted_database_creation(self, temp_dir, monkeypatch):
+        """A user database created via DatabaseManager is real SQLCipher-encrypted.
+
+        Uses the production creation path (DatabaseManager + sqlcipher3), not
+        the obsolete ``sqlite+pysqlcipher://`` dialect, and skips only when a
+        functional SQLCipher backend is genuinely unavailable -- checked via
+        ``DatabaseManager.has_encryption`` rather than guessing a package name.
+        The previous version probed ``pysqlcipher3`` (which this project does
+        not install -- it uses ``sqlcipher3``), so it silently skipped
+        everywhere, including CI.
+        """
+        from sqlalchemy import text
+        from sqlalchemy.exc import DatabaseError
+
+        from local_deep_research.database.encrypted_db import DatabaseManager
+
+        monkeypatch.setattr(
+            "local_deep_research.database.encrypted_db.get_data_directory",
+            lambda: Path(temp_dir),
+        )
+        manager = DatabaseManager()
+        if not manager.has_encryption:
+            pytest.skip("Functional SQLCipher backend not available")
+
+        username, password = "encuser", "TestPassword123!"
+        engine = manager.create_user_database(username, password)
+        plain_engine = None
+        try:
+            # The encrypted engine is functional.
+            with engine.connect() as conn:
+                assert conn.execute(text("SELECT 1")).scalar() == 1
+
+            db_path = manager._get_user_db_path(username)
+            assert db_path.exists()
+
+            # Opening the same file as PLAINTEXT SQLite must fail with "file is
+            # not a database": the bytes are encrypted, so SQLite cannot parse
+            # the header. DatabaseError (SQLAlchemy's OperationalError subclasses
+            # it) is specific enough that the test can't pass for an unrelated
+            # reason -- the actual proof that encryption was applied.
+            plain_engine = create_engine(f"sqlite:///{db_path}")
+            with pytest.raises(DatabaseError):
+                with plain_engine.connect() as conn:
+                    conn.execute(text("SELECT name FROM sqlite_master"))
+        finally:
+            if plain_engine is not None:
+                plain_engine.dispose()
+            manager.close_user_database(username)
+
+    def test_database_schema_completeness(self, db_engine):
+        """Test that all expected tables and columns are created."""
+        inspector = inspect(db_engine)
+
+        # Test ResearchHistory table schema
+        research_columns = {
+            col["name"] for col in inspector.get_columns("research_history")
+        }
+        expected_columns = {
+            "id",
+            "query",
+            "mode",
+            "status",
+            "created_at",
+            "completed_at",
+            "duration_seconds",
+            "progress",
+            "report_path",
+            "report_content",
+            "title",
+            "progress_log",
+            "research_meta",
+        }
+        assert expected_columns.issubset(research_columns)
+
+        # Test User table schema
+        user_columns = {col["name"] for col in inspector.get_columns("users")}
+        expected_user_columns = {
+            "id",
+            "username",
+            "created_at",
+            "last_login",
+            "database_version",
+        }
+        assert expected_user_columns.issubset(user_columns), (
+            f"Missing columns: {expected_user_columns - user_columns}"
+        )
+
+        # Test Settings table schema
+        settings_columns = {
+            col["name"] for col in inspector.get_columns("settings")
+        }
+        expected_settings_columns = {
+            "id",
+            "key",
+            "value",
+            "type",
+            "category",
+            "description",
+            "name",
+            "ui_element",
+            "options",
+            "min_value",
+            "max_value",
+            "step",
+            "visible",
+            "editable",
+            "created_at",
+            "updated_at",
+        }
+        assert expected_settings_columns.issubset(settings_columns)
+
+    def test_database_indexes(self, db_engine):
+        """Test that proper indexes are created."""
+        inspector = inspect(db_engine)
+
+        # Check indexes on research_history
+        research_indexes = inspector.get_indexes("research_history")
+        # Should have indexes on commonly queried fields
+        index_columns = set()
+        for idx in research_indexes:
+            index_columns.update(idx["column_names"])
+
+        # Status should be indexed for filtering
+        # Created_at should be indexed for sorting
+        # These might be part of composite indexes
+
+        # Check unique constraints
+        # Username and email should have unique constraints in users table
+
+    def test_database_foreign_keys(self, db_engine, db_session):
+        """Test that foreign key relationships work correctly."""
+        # Create a research record
+        research = ResearchHistory(
+            id=str(uuid.uuid4()),
+            query="Test query",
+            mode="quick",
+            status="completed",
+            created_at="2024-01-01T00:00:00",
+        )
+        db_session.add(research)
+        db_session.commit()
+
+        # Create related records
+        from local_deep_research.database.models import (
+            ResearchResource,
+            TokenUsage,
+        )
+
+        # Add a resource
+        resource = ResearchResource(
+            research_id=research.id,
+            title="Test Resource",
+            url="https://example.com",
+            created_at="2024-01-01T00:01:00",
+        )
+        db_session.add(resource)
+
+        # Add token usage
+        usage = TokenUsage(
+            research_id=str(research.id),
+            model_provider="openai",
+            model_name="gpt-4",
+            prompt_tokens=80,
+            completion_tokens=20,
+            total_tokens=100,
+        )
+        db_session.add(usage)
+
+        db_session.commit()
+
+        # Verify relationships
+        assert resource.research_id == research.id
+        assert usage.research_id == str(research.id)
+
+    def test_database_cascade_deletes(self, db_engine, db_session):
+        """Test cascade delete behavior."""
+        # Create a benchmark run with results
+        from local_deep_research.database.models import (
+            BenchmarkResult,
+            BenchmarkRun,
+            DatasetType,
+        )
+
+        run = BenchmarkRun(
+            config_hash="test123",
+            query_hash_list=[],
+            search_config={},
+            evaluation_config={},
+            datasets_config={},
+        )
+        db_session.add(run)
+        db_session.commit()
+
+        # Add results
+        for i in range(3):
+            result = BenchmarkResult(
+                benchmark_run_id=run.id,
+                example_id=f"test_{i}",
+                query_hash=f"hash_{i}",
+                dataset_type=DatasetType.SIMPLEQA,
+                question=f"Question {i}",
+                correct_answer=f"Answer {i}",
+            )
+            db_session.add(result)
+
+        db_session.commit()
+
+        # Verify results exist
+        result_count = (
+            db_session.query(BenchmarkResult)
+            .filter_by(benchmark_run_id=run.id)
+            .count()
+        )
+        assert result_count == 3
+
+        # Delete the run
+        db_session.delete(run)
+        db_session.commit()
+
+        # Verify cascade delete worked
+        result_count = (
+            db_session.query(BenchmarkResult)
+            .filter_by(benchmark_run_id=run.id)
+            .count()
+        )
+        assert result_count == 0
+
+    def test_database_transactions(self, db_engine, db_session):
+        """Test transaction rollback behavior."""
+        # Add a user
+        user = User(username="testuser")
+        db_session.add(user)
+        db_session.commit()
+
+        # Start a transaction that will fail
+        try:
+            # Add another user with duplicate username (should fail)
+            user2 = User(username="testuser")
+            db_session.add(user2)
+
+            # Add a valid setting
+            setting = Setting(
+                key="test.setting",
+                value="test_value",
+                type="string",
+                category="test",
+            )
+            db_session.add(setting)
+
+            # This should fail due to unique constraint
+            db_session.commit()
+
+        except Exception:
+            db_session.rollback()
+
+        # Verify rollback worked - setting should not exist
+        setting_count = (
+            db_session.query(Setting).filter_by(key="test.setting").count()
+        )
+        assert setting_count == 0
+
+        # Original user should still exist
+        user_count = db_session.query(User).count()
+        assert user_count == 1
+
+    def test_database_performance_with_large_dataset(
+        self, db_engine, db_session
+    ):
+        """Test database performance with larger datasets."""
+        # Add many research records
+        research_count = 1000
+        for i in range(research_count):
+            research = ResearchHistory(
+                id=str(uuid.uuid4()),
+                query=f"Test query {i}",
+                mode="quick",
+                status="completed" if i % 2 == 0 else "failed",
+                created_at=f"2024-01-{(i % 28) + 1:02d}T00:00:00",
+                duration_seconds=100 + i % 500,
+                progress=100 if i % 2 == 0 else 50,
+            )
+            db_session.add(research)
+
+            # Commit in batches
+            if i % 100 == 0:
+                db_session.commit()
+
+        db_session.commit()
+
+        # Test query performance
+        import time
+
+        # Query completed research
+        start = time.time()
+        completed = (
+            db_session.query(ResearchHistory)
+            .filter_by(status="completed")
+            .count()
+        )
+        query_time = time.time() - start
+
+        assert completed == 500
+        assert query_time < 0.1  # Should be fast with indexes
+
+        # Test ordering
+        start = time.time()
+        recent = (
+            db_session.query(ResearchHistory)
+            .order_by(ResearchHistory.created_at.desc())
+            .limit(10)
+            .all()
+        )
+        order_time = time.time() - start
+
+        assert len(recent) == 10
+        assert order_time < 0.1
+
+    def test_user_specific_database_path(self, temp_dir):
+        """Test user-specific database paths for multi-user support."""
+        # Test database path generation for different users
+        user1_path = str(Path(temp_dir) / "user1" / "user1_encrypted.db")
+        user2_path = str(Path(temp_dir) / "user2" / "user2_encrypted.db")
+
+        # Create directories
+        Path(user1_path).parent.mkdir(parents=True, exist_ok=True)
+        Path(user2_path).parent.mkdir(parents=True, exist_ok=True)
+
+        # Create separate databases
+        engine1 = create_engine(f"sqlite:///{user1_path}")
+        engine2 = create_engine(f"sqlite:///{user2_path}")
+
+        Base.metadata.create_all(engine1)
+        Base.metadata.create_all(engine2)
+
+        # Add data to each
+        Session1 = sessionmaker(bind=engine1)
+        Session2 = sessionmaker(bind=engine2)
+
+        session1 = Session1()
+        session2 = Session2()
+
+        # User 1 research
+        research1 = ResearchHistory(
+            id=str(uuid.uuid4()),
+            query="User 1 research",
+            mode="quick",
+            status="completed",
+            created_at="2024-01-01T00:00:00",
+        )
+        session1.add(research1)
+        session1.commit()
+
+        # User 2 research
+        research2 = ResearchHistory(
+            id=str(uuid.uuid4()),
+            query="User 2 research",
+            mode="quick",
+            status="completed",
+            created_at="2024-01-01T00:00:00",
+        )
+        session2.add(research2)
+        session2.commit()
+
+        # Verify isolation
+        user1_count = session1.query(ResearchHistory).count()
+        user2_count = session2.query(ResearchHistory).count()
+
+        assert user1_count == 1
+        assert user2_count == 1
+
+        # Verify different content
+        user1_research = session1.query(ResearchHistory).first()
+        user2_research = session2.query(ResearchHistory).first()
+
+        assert user1_research.query == "User 1 research"
+        assert user2_research.query == "User 2 research"
+
+        session1.close()
+        session2.close()
+        engine1.dispose()
+        engine2.dispose()

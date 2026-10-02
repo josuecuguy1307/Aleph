@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Canvas polimórfico · preview (slice 1)</title>
+<style>
+  :root{ --ink:#F3ECE0; --muted:#A89C8B; --paper:#2B2723; --paper2:#242120; --line:#3A342D; --accent:#8E8BF5; }
+  *{ box-sizing:border-box }
+  body{ margin:0; background:#1B1814; color:var(--ink); font-family:'Hanken Grotesk',system-ui,sans-serif; padding:24px; }
+  h2{ font-size:13px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; margin:26px 0 8px; }
+  .frame{ background:var(--paper); border:1px solid var(--line); border-radius:14px; padding:18px 20px; }
+  /* ── canvas base ── */
+  .sala-canvas{ font-size:14.5px; line-height:1.6; color:var(--ink); }
+  .sala-canvas strong{ font-weight:500; color:#fff; }
+  .sala-canvas a{ color:var(--accent); }
+  .sala-canvas h1,.sala-canvas h2,.sala-canvas h3{ font-family:Spectral,Georgia,serif; color:#fff; }
+  .sala-canvas ul,.sala-canvas ol{ padding-left:22px; }
+  .sala-canvas table{ border-collapse:collapse; width:100%; margin:12px 0; font-variant-numeric:tabular-nums; }
+  .sala-canvas th,.sala-canvas td{ border:1px solid var(--line); padding:7px 11px; text-align:left; }
+  .sala-canvas th{ background:var(--paper2); font-weight:500; }
+  .sala-canvas td:not(:first-child){ text-align:right; }
+  /* citas */
+  .sala-cite{ font-size:.8em; vertical-align:super; text-decoration:none; }
+  .sala-cite-sep{ border:none; border-top:1px solid var(--line); margin:16px 0 10px; }
+  .sala-sources-h{ font-size:12px; color:var(--muted); font-weight:500; margin-bottom:4px; }
+  .sala-sources-list{ font-size:13px; color:var(--muted); }
+  /* planilla */
+  .sala-formula-bar{ display:flex; align-items:center; gap:8px; border:1px solid var(--line); border-radius:8px; padding:5px 9px; margin-bottom:10px; background:var(--paper2); }
+  .sala-fx{ font-style:italic; color:var(--muted); font-size:12px; }
+  .sala-formula{ flex:1; border:none; background:none; outline:none; color:var(--ink); font:inherit; font-size:13px; }
+  .sala-grid{ border-collapse:collapse; width:100%; font-variant-numeric:tabular-nums; font-size:13px; }
+  .sala-grid th,.sala-grid td{ border:1px solid var(--line); padding:6px 10px; }
+  .sala-grid td{ text-align:right; }
+  /* web */
+  .sala-web-frame{ width:100%; height:240px; border:1px solid var(--line); border-radius:10px; background:#fff; }
+  /* documento */
+  .sala-doc-page{ background:#FBF7EF; color:#23201B; border-radius:8px; padding:30px 38px; font-family:Spectral,Georgia,serif; line-height:1.7; max-width:680px; }
+  .sala-doc-page strong{ color:#000; }
+  /* imagen */
+  .sala-img{ max-width:100%; border-radius:10px; display:block; }
+  .sala-fallback{ white-space:pre-wrap; }
+  @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
+</style>
+</head>
+<body>
+  <h2>type: informe</h2><div class="frame"><div id="c-informe"></div></div>
+  <h2>type: planilla</h2><div class="frame"><div id="c-planilla"></div></div>
+  <h2>type: web</h2><div class="frame"><div id="c-web"></div></div>
+  <h2>type: documento</h2><div class="frame"><div id="c-documento"></div></div>
+  <h2>type: imagen</h2><div class="frame"><div id="c-imagen"></div></div>
+  <h2>type: desconocido → fallback markdown</h2><div class="frame"><div id="c-unknown"></div></div>
+
+  <script src="./render.js"></script>
+  <script>
+    var SAMPLES = {
+      informe: { type:'informe',
+        content:"# Informe de riesgo\n\nEl margen creció **8,2%** este trimestre [1]. Puntos clave:\n\n- Liquidez sólida\n- Un cargo atípico en Variables\n\n| Métrica | Q1 | Q2 |\n|---|---|---|\n| Ventas | 1200 | 1480 |\n| Margen | 0.31 | 0.34 |\n\nLa tasa interna cumple $r = \\frac{C}{(1+i)^n}$ y el VP total es:\n\n$$VP = \\sum_{t=1}^{n} \\frac{C_t}{(1+i)^t}$$\n\nVer también [la fuente oficial](https://example.org).",
+        citations:[{id:1,label:'Reporte trimestral interno',url:'https://example.org/q2'}] },
+      planilla: { type:'planilla', cols:['Categoría','Enero','Febrero'],
+        rows:[['Ventas','1200','1480'],['Costos','820','910'],['Margen','380','570']] },
+      web: { type:'web',
+        content:"<!doctype html><html><body style='font-family:sans-serif;padding:20px'><h1>Landing</h1><p>Hola <b>mundo</b> — preview real en iframe.</p><button onclick=\"this.textContent='clickeado'\">Probame</button></body></html>" },
+      documento: { type:'documento',
+        content:"**MEMORANDO**\n\nPara: Dirección\nDe: Tu agente\nAsunto: Cierre de mayo\n\nEstimados, adjunto el resumen del cierre. Los números **cierran en positivo**. Quedo a disposición." },
+      imagen: { type:'imagen',
+        content:"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='320' height='120'><rect width='320' height='120' fill='%238E8BF5'/><text x='160' y='66' font-size='20' fill='white' text-anchor='middle' font-family='sans-serif'>obra: imagen</text></svg>" },
+      unknown: { type:'cualquier-cosa-nueva',
+        content:"Tipo **desconocido** → cae a markdown. Lista:\n\n1. uno\n2. dos" },
+    };
+    function go(){
+      SalaRender.renderArtifact(document.getElementById('c-informe'), SAMPLES.informe);
+      SalaRender.renderArtifact(document.getElementById('c-planilla'), SAMPLES.planilla);
+      SalaRender.renderArtifact(document.getElementById('c-web'), SAMPLES.web);
+      SalaRender.renderArtifact(document.getElementById('c-documento'), SAMPLES.documento);
+      SalaRender.renderArtifact(document.getElementById('c-imagen'), SAMPLES.imagen);
+      SalaRender.renderArtifact(document.getElementById('c-unknown'), SAMPLES.unknown);
+    }
+    if(window.SalaRender) go(); else window.addEventListener('load', go);
+  </script>
+</body>
+</html>

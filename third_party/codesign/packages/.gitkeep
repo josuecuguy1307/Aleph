@@ -1,0 +1,9 @@
+# Reserved for future packages:
+#   packages/core/        — Generation orchestration
+#   packages/providers/   — pi-ai adapter + missing-capability wrappers
+#   packages/runtime/     — Sandbox renderer (Electron iframe srcdoc + esbuild-wasm)
+#   packages/ui/          — Shared design system (open-cowork tokens)
+#   packages/artifacts/   — Artifact schema
+#   packages/exporters/   — PDF / PPTX / ZIP (lazy-loaded)
+#   packages/templates/   — Built-in demo prompts
+#   packages/shared/      — Types, utils, zod schemas

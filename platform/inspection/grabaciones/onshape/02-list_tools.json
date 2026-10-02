@@ -1,0 +1,53 @@
+{
+  "arquetipo": "onshape",
+  "paso": "list_tools",
+  "transporte": "stdio",
+  "servidor": "verificador",
+  "grabado_en": "2026-08-04T09:46:16",
+  "huella_receta": "2e8f5cf353c3",
+  "env_declarado": false,
+  "receta": {
+    "command": "python3",
+    "args": [
+      "${HOME}/Desktop/aleph-s2/product/belts/ingenieria/onshape_server.py"
+    ],
+    "cwd": ""
+  },
+  "peticion": {
+    "metodo": "tools/list",
+    "args": {}
+  },
+  "respuesta": [],
+  "diagnostico": {
+    "stderr": "",
+    "exit_code": null,
+    "exit_code_fuente": "no expuesto: stdio_client (mcp 2.0.0) hace `yield read_stream, write_stream` y se queda el Process",
+    "murio": false,
+    "t_eof": null,
+    "timeouts": [],
+    "rpc_timeout_s": 45.0,
+    "stderr_lineas": 0,
+    "stderr_bytes": 0,
+    "stderr_cap_bytes": 32768,
+    "stderr_cap_lineas": 80,
+    "command": "python3",
+    "transporte": "sdk-stdio",
+    "entorno": {
+      "omitido": "ambiente de la máquina, no del veredicto"
+    },
+    "server_info": {
+      "name": "aleph-onshape",
+      "version": "1.0.0"
+    },
+    "protocolo": {
+      "cliente": "2024-11-05",
+      "servidor": "2024-11-05",
+      "negociacion": "aceptada",
+      "solicitada": "2025-11-25"
+    },
+    "detail": "el proceso arrancó pero no respondió al saludo initialize de MCP"
+  },
+  "scrubber": {
+    "hallazgos_neutralizados": 0
+  }
+}

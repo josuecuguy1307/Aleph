@@ -1,0 +1,414 @@
+import { CancelGenerationPayloadV1, CodesignError } from '@open-codesign/shared';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+  acquireInFlightWorkspaceGeneration,
+  armGenerationTimeout,
+  cancelGenerationRequest,
+  extractGenerationTimeoutError,
+  listInFlightGenerations,
+  withInFlightGeneration,
+  withInFlightGenerationForDesign,
+} from './generation-ipc';
+
+function makeController() {
+  return { abort: vi.fn() } as unknown as AbortController;
+}
+
+describe('cancelGenerationRequest', () => {
+  it('parses the public v1 cancel-generation payload', () => {
+    const payload = CancelGenerationPayloadV1.parse({
+      schemaVersion: 1,
+      generationId: 'gen-1',
+    });
+
+    expect(payload).toEqual({
+      schemaVersion: 1,
+      generationId: 'gen-1',
+    });
+  });
+
+  it('throws on invalid IPC payloads without aborting in-flight requests', () => {
+    const controller = makeController();
+    const inFlight = new Map([['gen-1', controller]]);
+    const logIpc = { info: vi.fn() };
+
+    expect(() => cancelGenerationRequest(undefined, inFlight, logIpc)).toThrow(CodesignError);
+    expect(controller.abort).not.toHaveBeenCalled();
+    expect(inFlight.has('gen-1')).toBe(true);
+    expect(logIpc.info).not.toHaveBeenCalled();
+  });
+
+  it('aborts only the requested generation', () => {
+    const target = makeController();
+    const other = makeController();
+    const inFlight = new Map([
+      ['gen-1', target],
+      ['gen-2', other],
+    ]);
+    const logIpc = { info: vi.fn() };
+
+    cancelGenerationRequest('gen-1', inFlight, logIpc);
+
+    expect(target.abort).toHaveBeenCalledOnce();
+    expect(other.abort).not.toHaveBeenCalled();
+    expect(inFlight.has('gen-1')).toBe(false);
+    expect(inFlight.has('gen-2')).toBe(true);
+    expect(logIpc.info).toHaveBeenCalledWith('generate.cancelled', { id: 'gen-1' });
+  });
+
+  it('is a noop when the generationId is not in the in-flight map', () => {
+    const other = makeController();
+    const inFlight = new Map([['gen-2', other]]);
+    const logIpc = { info: vi.fn() };
+
+    cancelGenerationRequest('gen-unknown', inFlight, logIpc);
+
+    expect(other.abort).not.toHaveBeenCalled();
+    expect(inFlight.has('gen-2')).toBe(true);
+    expect(logIpc.info).not.toHaveBeenCalled();
+  });
+
+  it('rejects CancelGenerationPayloadV1 with empty generationId or missing schemaVersion', () => {
+    expect(() => CancelGenerationPayloadV1.parse({ schemaVersion: 1, generationId: '' })).toThrow();
+    expect(() => CancelGenerationPayloadV1.parse({ generationId: 'gen-1' })).toThrow();
+    expect(() =>
+      CancelGenerationPayloadV1.parse({ schemaVersion: 2, generationId: 'gen-1' }),
+    ).toThrow();
+  });
+});
+
+describe('withInFlightGeneration', () => {
+  it('registers a generation while it runs and clears it after success', async () => {
+    const controller = new AbortController();
+    const inFlight = new Map<string, AbortController>();
+
+    const result = await withInFlightGeneration('gen-1', inFlight, controller, async () => {
+      expect(inFlight.get('gen-1')).toBe(controller);
+      return 'ok';
+    });
+
+    expect(result).toBe('ok');
+    expect(inFlight.has('gen-1')).toBe(false);
+  });
+
+  it('clears a generation when preflight work throws before timeout arming', async () => {
+    const controller = new AbortController();
+    const inFlight = new Map<string, AbortController>();
+    const error = new CodesignError('unsupported reference URL', 'REFERENCE_URL_UNSUPPORTED');
+
+    await expect(
+      withInFlightGeneration('gen-1', inFlight, controller, async () => {
+        expect(inFlight.get('gen-1')).toBe(controller);
+        throw error;
+      }),
+    ).rejects.toBe(error);
+
+    expect(inFlight.has('gen-1')).toBe(false);
+  });
+
+  it('does not clear a newer controller registered under the same id', async () => {
+    const oldController = new AbortController();
+    const newController = new AbortController();
+    const inFlight = new Map<string, AbortController>();
+
+    const result = await withInFlightGeneration('gen-1', inFlight, oldController, async () => {
+      inFlight.set('gen-1', newController);
+      return 'old-done';
+    });
+
+    expect(result).toBe('old-done');
+    expect(inFlight.get('gen-1')).toBe(newController);
+  });
+});
+
+describe('withInFlightGenerationForDesign', () => {
+  it('rejects a second generation for the same design while the first is running', async () => {
+    const controller = new AbortController();
+    const otherController = new AbortController();
+    const inFlight = new Map<string, AbortController>();
+    const inFlightByDesign = new Map<string, { generationId: string; startedAt: number }>();
+    let releaseFirst!: () => void;
+    const firstDone = new Promise<void>((resolve) => {
+      releaseFirst = resolve;
+    });
+
+    const first = withInFlightGenerationForDesign(
+      'gen-1',
+      'design-1',
+      inFlight,
+      inFlightByDesign,
+      controller,
+      async () => {
+        await firstDone;
+        return 'done';
+      },
+    );
+
+    await vi.waitFor(() => expect(inFlightByDesign.get('design-1')?.generationId).toBe('gen-1'));
+    await expect(
+      withInFlightGenerationForDesign(
+        'gen-2',
+        'design-1',
+        inFlight,
+        inFlightByDesign,
+        otherController,
+        async () => 'should-not-run',
+      ),
+    ).rejects.toMatchObject({
+      name: 'CodesignError',
+      code: 'GENERATION_ALREADY_RUNNING',
+    });
+
+    expect(inFlight.get('gen-1')).toBe(controller);
+    expect(inFlight.has('gen-2')).toBe(false);
+    releaseFirst();
+    await expect(first).resolves.toBe('done');
+    expect(inFlightByDesign.has('design-1')).toBe(false);
+  });
+
+  it('allows different designs to run concurrently', async () => {
+    const inFlight = new Map<string, AbortController>();
+    const inFlightByDesign = new Map<string, { generationId: string; startedAt: number }>();
+    const firstController = new AbortController();
+    const secondController = new AbortController();
+
+    await expect(
+      Promise.all([
+        withInFlightGenerationForDesign(
+          'gen-1',
+          'design-1',
+          inFlight,
+          inFlightByDesign,
+          firstController,
+          async () => 'one',
+        ),
+        withInFlightGenerationForDesign(
+          'gen-2',
+          'design-2',
+          inFlight,
+          inFlightByDesign,
+          secondController,
+          async () => 'two',
+        ),
+      ]),
+    ).resolves.toEqual(['one', 'two']);
+  });
+
+  it('clears the design lock when cancellation removes the generation', async () => {
+    const controller = makeController();
+    const inFlight = new Map([['gen-1', controller]]);
+    const inFlightByDesign = new Map([['design-1', { generationId: 'gen-1', startedAt: 1234 }]]);
+    const inFlightByWorkspace = new Map([
+      ['/workspace', { generationId: 'gen-1', startedAt: 1234 }],
+    ]);
+    const logIpc = { info: vi.fn() };
+
+    cancelGenerationRequest('gen-1', inFlight, logIpc, inFlightByDesign, inFlightByWorkspace);
+
+    expect(inFlight.has('gen-1')).toBe(false);
+    expect(inFlightByDesign.has('design-1')).toBe(false);
+    expect(inFlightByWorkspace.has('/workspace')).toBe(false);
+  });
+});
+
+describe('acquireInFlightWorkspaceGeneration', () => {
+  it('rejects a second generation for the same workspace while the first is running', () => {
+    const inFlightByWorkspace = new Map<string, { generationId: string; startedAt: number }>();
+    const release = acquireInFlightWorkspaceGeneration('gen-1', '/workspace', inFlightByWorkspace);
+
+    expect(() =>
+      acquireInFlightWorkspaceGeneration('gen-2', '/workspace', inFlightByWorkspace),
+    ).toThrow(CodesignError);
+
+    release();
+    expect(inFlightByWorkspace.has('/workspace')).toBe(false);
+  });
+
+  it('allows different workspaces to run concurrently', () => {
+    const inFlightByWorkspace = new Map<string, { generationId: string; startedAt: number }>();
+    const releaseOne = acquireInFlightWorkspaceGeneration(
+      'gen-1',
+      '/workspace-a',
+      inFlightByWorkspace,
+    );
+    const releaseTwo = acquireInFlightWorkspaceGeneration(
+      'gen-2',
+      '/workspace-b',
+      inFlightByWorkspace,
+    );
+
+    expect([...inFlightByWorkspace.keys()].sort()).toEqual(['/workspace-a', '/workspace-b']);
+
+    releaseOne();
+    releaseTwo();
+    expect(inFlightByWorkspace.size).toBe(0);
+  });
+});
+
+describe('listInFlightGenerations', () => {
+  it('returns design/generation start times from the main-process in-flight registry', () => {
+    const inFlightByDesign = new Map([
+      ['design-b', { generationId: 'gen-b', startedAt: 2000 }],
+      ['design-a', { generationId: 'gen-a', startedAt: 1000 }],
+    ]);
+
+    expect(listInFlightGenerations(inFlightByDesign)).toEqual([
+      { designId: 'design-a', generationId: 'gen-a', startedAt: 1000 },
+      { designId: 'design-b', generationId: 'gen-b', startedAt: 2000 },
+    ]);
+  });
+});
+
+describe('armGenerationTimeout', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('aborts the controller with a CodesignError after the configured timeout', async () => {
+    const controller = new AbortController();
+    const logger = { warn: vi.fn() };
+
+    const clear = await armGenerationTimeout('gen-1', controller, async () => 5, logger);
+
+    expect(controller.signal.aborted).toBe(false);
+    vi.advanceTimersByTime(5000);
+    expect(controller.signal.aborted).toBe(true);
+    expect(controller.signal.reason).toBeInstanceOf(CodesignError);
+    expect((controller.signal.reason as CodesignError).code).toBe('GENERATION_TIMEOUT');
+    expect(logger.warn).toHaveBeenCalledWith('generate.timeout.fired', {
+      id: 'gen-1',
+      timeoutSec: 5,
+    });
+    clear();
+  });
+
+  it('does not abort when clear() is called before the timeout fires', async () => {
+    const controller = new AbortController();
+    const logger = { warn: vi.fn() };
+
+    const clear = await armGenerationTimeout('gen-1', controller, async () => 60, logger);
+    clear();
+    vi.advanceTimersByTime(120_000);
+
+    expect(controller.signal.aborted).toBe(false);
+    expect(logger.warn).not.toHaveBeenCalled();
+  });
+
+  it('rethrows as PREFERENCES_READ_FAIL when reading preferences fails — never silently unbounded', async () => {
+    const controller = new AbortController();
+    const logger = { warn: vi.fn() };
+
+    await expect(
+      armGenerationTimeout(
+        'gen-1',
+        controller,
+        async () => {
+          throw new Error('disk gone');
+        },
+        logger,
+      ),
+    ).rejects.toMatchObject({
+      name: 'CodesignError',
+      code: 'PREFERENCES_READ_FAIL',
+    });
+
+    expect(controller.signal.aborted).toBe(false);
+    expect(logger.warn).toHaveBeenCalledWith(
+      'generate.timeout.prefs_read_failed',
+      expect.objectContaining({ id: 'gen-1', message: 'disk gone' }),
+    );
+  });
+
+  it('treats 0 as disabled and does not arm a timeout', async () => {
+    const controller = new AbortController();
+    const logger = { warn: vi.fn() };
+
+    const clear = await armGenerationTimeout('gen-1', controller, async () => 0, logger);
+    vi.advanceTimersByTime(60_000);
+    clear();
+
+    expect(controller.signal.aborted).toBe(false);
+    expect(logger.warn).not.toHaveBeenCalled();
+  });
+
+  it('clamps very large timeout values to Node setTimeout int32 cap so the abort does not fire immediately', async () => {
+    const controller = new AbortController();
+    const logger = { warn: vi.fn() };
+    const setTimeoutSpy = vi.spyOn(globalThis, 'setTimeout');
+
+    const clear = await armGenerationTimeout('gen-1', controller, async () => 99_999_999, logger);
+
+    expect(setTimeoutSpy).toHaveBeenCalledTimes(1);
+    const delay = setTimeoutSpy.mock.calls[0]?.[1];
+    expect(delay).toBe(2_147_483_647);
+
+    vi.advanceTimersByTime(1);
+    expect(controller.signal.aborted).toBe(false);
+
+    setTimeoutSpy.mockRestore();
+    clear();
+  });
+
+  it('throws PREFERENCES_INVALID_TIMEOUT when the timeout value is NaN', async () => {
+    const controller = new AbortController();
+    const logger = { warn: vi.fn() };
+
+    await expect(
+      armGenerationTimeout('gen-1', controller, async () => Number.NaN, logger),
+    ).rejects.toMatchObject({ name: 'CodesignError', code: 'PREFERENCES_INVALID_TIMEOUT' });
+    expect(controller.signal.aborted).toBe(false);
+  });
+
+  it('throws PREFERENCES_INVALID_TIMEOUT when the timeout value is negative', async () => {
+    const controller = new AbortController();
+    const logger = { warn: vi.fn() };
+
+    await expect(
+      armGenerationTimeout('gen-1', controller, async () => -1, logger),
+    ).rejects.toMatchObject({ name: 'CodesignError', code: 'PREFERENCES_INVALID_TIMEOUT' });
+    expect(controller.signal.aborted).toBe(false);
+  });
+});
+
+describe('extractGenerationTimeoutError', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('returns the CodesignError stashed by armGenerationTimeout so the SDK-rewritten AbortError can be upgraded back to GENERATION_TIMEOUT', async () => {
+    const controller = new AbortController();
+    const logger = { warn: vi.fn() };
+
+    await armGenerationTimeout('gen-1', controller, async () => 3, logger);
+    vi.advanceTimersByTime(3000);
+
+    const recovered = extractGenerationTimeoutError(controller.signal);
+    expect(recovered).toBeInstanceOf(CodesignError);
+    expect(recovered?.code).toBe('GENERATION_TIMEOUT');
+    expect(recovered?.message).toContain('3s');
+    expect(recovered?.message).toContain('Settings');
+  });
+
+  it('returns null when the controller was aborted by a user-initiated cancel (no reason set)', () => {
+    const controller = new AbortController();
+    controller.abort();
+    expect(extractGenerationTimeoutError(controller.signal)).toBeNull();
+  });
+
+  it('returns null when the signal has not been aborted', () => {
+    const controller = new AbortController();
+    expect(extractGenerationTimeoutError(controller.signal)).toBeNull();
+  });
+
+  it('returns null when the abort reason is some other CodesignError (not a timeout)', () => {
+    const controller = new AbortController();
+    controller.abort(new CodesignError('something else', 'PROVIDER_ABORTED'));
+    expect(extractGenerationTimeoutError(controller.signal)).toBeNull();
+  });
+});

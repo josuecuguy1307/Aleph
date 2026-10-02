@@ -1,0 +1,398 @@
+{
+  "date": "2026-09-13",
+  "method": "SHA256 + fc-scan internal family and fontversion; not proof of byte identity with upstream commit",
+  "files": [
+    {
+      "path": "product/app/design/vendor/fonts/ieVn2YZDLWuGJpnzaiwFXS9tYtpQ59CxCis4UvI.woff2",
+      "family": "Hanken Grotesk",
+      "fontversion_fixed16_16": 197460,
+      "version": 3.013,
+      "sha256": "2f52020a90793104e4178b0ae3ccd30eea28cac27e0fea8fcf4f246151777f74",
+      "bytes": 1644
+    },
+    {
+      "path": "product/app/design/vendor/fonts/ieVn2YZDLWuGJpnzaiwFXS9tYtpS59CxCis4UvI.woff2",
+      "family": "Hanken Grotesk",
+      "fontversion_fixed16_16": 197460,
+      "version": 3.013,
+      "sha256": "2f467719b2167cc4778b5780a2fb42fadf5203b29d0fb5f1482bbab32b1b7999",
+      "bytes": 9364
+    },
+    {
+      "path": "product/app/design/vendor/fonts/ieVn2YZDLWuGJpnzaiwFXS9tYtpT59CxCis4UvI.woff2",
+      "family": "Hanken Grotesk",
+      "fontversion_fixed16_16": 197460,
+      "version": 3.013,
+      "sha256": "a1376a563717f1efa2f5286ab23da2b61ae8dec827a77b97adfa01cad4ec4ee2",
+      "bytes": 19572
+    },
+    {
+      "path": "product/app/design/vendor/fonts/ieVn2YZDLWuGJpnzaiwFXS9tYtpd59CxCis4.woff2",
+      "family": "Hanken Grotesk",
+      "fontversion_fixed16_16": 197460,
+      "version": 3.013,
+      "sha256": "1f21c6eaa0000f3329cfcfac966b43d5bebf5aa610303e33294ac31bc6f4bb59",
+      "bytes": 34664
+    },
+    {
+      "path": "product/app/design/vendor/fonts/instrumentserif-60c06664.woff2",
+      "family": "Instrument Serif",
+      "fontversion_fixed16_16": 65536,
+      "version": 1,
+      "sha256": "60c06664b5a95c7de6cc3e00d1f9034d78bd1e40b564016b241674449a067d4d",
+      "bytes": 15040
+    },
+    {
+      "path": "product/app/design/vendor/fonts/instrumentserif-a8c4bd7c.woff2",
+      "family": "Instrument Serif",
+      "fontversion_fixed16_16": 65536,
+      "version": 1,
+      "sha256": "a8c4bd7cd7073180e740d2d83a616b5cb0845579b73207eeafeae8532e70c901",
+      "bytes": 7828
+    },
+    {
+      "path": "product/app/design/vendor/fonts/jetbrainsmono-2c32b9b3.woff2",
+      "family": "JetBrains Mono",
+      "fontversion_fixed16_16": 144900,
+      "version": 2.210999,
+      "sha256": "2c32b9b3ee358c119e210f6f5195f9bd34894d78a785ff2e95d60e718e400af4",
+      "bytes": 31340
+    },
+    {
+      "path": "product/app/design/vendor/fonts/jetbrainsmono-4995a9a4.woff2",
+      "family": "JetBrains Mono",
+      "fontversion_fixed16_16": 144900,
+      "version": 2.210999,
+      "sha256": "4995a9a43ac659ec32fcd8b463755cd6a07b31a6e6b3894a6a153b661cf490e2",
+      "bytes": 8892
+    },
+    {
+      "path": "product/app/design/vendor/fonts/jetbrainsmono-49c3da6c.woff2",
+      "family": "JetBrains Mono",
+      "fontversion_fixed16_16": 144900,
+      "version": 2.210999,
+      "sha256": "49c3da6c9a2b279b0f1f860f5cfb1f5dc38d88a5c7be9c9b1837bbc4e3db6111",
+      "bytes": 6800
+    },
+    {
+      "path": "product/app/design/vendor/fonts/jetbrainsmono-9343de2c.woff2",
+      "family": "JetBrains Mono",
+      "fontversion_fixed16_16": 144900,
+      "version": 2.210999,
+      "sha256": "9343de2ca5d9549f792e7962375af8efb0f320c7643bfd36c884b5a30e5c396f",
+      "bytes": 1664
+    },
+    {
+      "path": "product/app/design/vendor/fonts/jetbrainsmono-9c38cb2d.woff2",
+      "family": "JetBrains Mono",
+      "fontversion_fixed16_16": 144900,
+      "version": 2.210999,
+      "sha256": "9c38cb2d0d2d93c1ee6e21fa78db76f13ea7e15e15cc64214c7ca89b6aaa35c4",
+      "bytes": 11596
+    },
+    {
+      "path": "product/app/design/vendor/fonts/jetbrainsmono-d44eb193.woff2",
+      "family": "JetBrains Mono",
+      "fontversion_fixed16_16": 144900,
+      "version": 2.210999,
+      "sha256": "d44eb1936043a56038eb02dd70b243f379bef65783f94ec12f277550720411f1",
+      "bytes": 5872
+    },
+    {
+      "path": "product/app/design/vendor/fonts/newsreader-2879c96c.woff2",
+      "family": "Newsreader 16pt",
+      "fontversion_fixed16_16": 65733,
+      "version": 1.003006,
+      "sha256": "68ef9a14f1462e2218ecd03c39d26236402ff6a9e78da39ba5591a430a229824",
+      "bytes": 27204
+    },
+    {
+      "path": "product/app/design/vendor/fonts/newsreader-4aa9bb70.woff2",
+      "family": "Newsreader 16pt",
+      "fontversion_fixed16_16": 65733,
+      "version": 1.003006,
+      "sha256": "01817351be3edfc1714fe6d60ddea6a22a169a5ebd033b50c7f9495e5d9c386a",
+      "bytes": 131848
+    },
+    {
+      "path": "product/app/design/vendor/fonts/newsreader-997f7492.woff2",
+      "family": "Newsreader 16pt",
+      "fontversion_fixed16_16": 65733,
+      "version": 1.003006,
+      "sha256": "cbca001188852d514d8654be7ddc97868f039bdf986b926ec5c985c117853cfd",
+      "bytes": 86628
+    },
+    {
+      "path": "product/app/design/vendor/fonts/outfit-74499760.woff2",
+      "family": "Outfit Thin",
+      "fontversion_fixed16_16": 72090,
+      "version": 1.100006,
+      "sha256": "9e38b3f1575daba3435ef09d33a202585ed5bd204bd0a8c744955c750c2b9091",
+      "bytes": 14760
+    },
+    {
+      "path": "product/app/design/vendor/fonts/outfit-ebadd8b7.woff2",
+      "family": "Outfit Thin",
+      "fontversion_fixed16_16": 72090,
+      "version": 1.100006,
+      "sha256": "92684e4acde79ef07758cd09380b7e01e9824d8b061eddeda046f78c166d7b12",
+      "bytes": 32228
+    },
+    {
+      "path": "product/app/design/vendor/fonts/poppins-1fae5e73.woff2",
+      "family": "Poppins",
+      "fontversion_fixed16_16": 262406,
+      "version": 4.003998,
+      "sha256": "1fae5e73d2788ee1dea1d76eca3a9f157a0386de6be8c280d076a53a64c358a1",
+      "bytes": 5640
+    },
+    {
+      "path": "product/app/design/vendor/fonts/poppins-23617a1b.woff2",
+      "family": "Poppins",
+      "fontversion_fixed16_16": 262406,
+      "version": 4.003998,
+      "sha256": "23617a1bf667dd6a29e2724ac6595e75924549d1c25e8672e2346ef38bc9984a",
+      "bytes": 39504
+    },
+    {
+      "path": "product/app/design/vendor/fonts/poppins-244dd57d.woff2",
+      "family": "Poppins ExtraLight",
+      "fontversion_fixed16_16": 262406,
+      "version": 4.003998,
+      "sha256": "244dd57da310b3fe9a789ef87179bb433b8628016354c4ce80896fd7e4e53968",
+      "bytes": 7896
+    },
+    {
+      "path": "product/app/design/vendor/fonts/poppins-289e0afc.woff2",
+      "family": "Poppins Medium",
+      "fontversion_fixed16_16": 262406,
+      "version": 4.003998,
+      "sha256": "289e0afc8be731a86822349e54557296f145926496bd2138db1bac0db77f77a2",
+      "bytes": 7740
+    },
+    {
+      "path": "product/app/design/vendor/fonts/poppins-3dc5d0c5.woff2",
+      "family": "Poppins",
+      "fontversion_fixed16_16": 262406,
+      "version": 4.003998,
+      "sha256": "3dc5d0c52428fe1696264907a1054ebbaac07f8cbe45832c105f819c2ae397c0",
+      "bytes": 7900
+    },
+    {
+      "path": "product/app/design/vendor/fonts/poppins-45d9ed43.woff2",
+      "family": "Poppins ExtraLight",
+      "fontversion_fixed16_16": 262406,
+      "version": 4.003998,
+      "sha256": "45d9ed43e433b923a0c0498dc68131e0d4bd27893169ffcb102b78ad76cf7b82",
+      "bytes": 5532
+    },
+    {
+      "path": "product/app/design/vendor/fonts/poppins-643e38d8.woff2",
+      "family": "Poppins Light",
+      "fontversion_fixed16_16": 262406,
+      "version": 4.003998,
+      "sha256": "643e38d8c288a1da34a14a68a5012441929108d50054414ce8cc33fad36a2354",
+      "bytes": 7844
+    },
+    {
+      "path": "product/app/design/vendor/fonts/poppins-9c8c47ee.woff2",
+      "family": "Poppins Medium",
+      "fontversion_fixed16_16": 262406,
+      "version": 4.003998,
+      "sha256": "9c8c47ee0aeaa2d378f4e5d5719ecbf05a601a35c285d0d48b888106bb15cf49",
+      "bytes": 39160
+    },
+    {
+      "path": "product/app/design/vendor/fonts/poppins-a17766e2.woff2",
+      "family": "Poppins ExtraLight",
+      "fontversion_fixed16_16": 262406,
+      "version": 4.003998,
+      "sha256": "a17766e20e5ec85b66150bc637ed9f4f1de7f6b75dc012444c0ec8a312b3a21c",
+      "bytes": 39176
+    },
+    {
+      "path": "product/app/design/vendor/fonts/poppins-c2857fb5.woff2",
+      "family": "Poppins Light",
+      "fontversion_fixed16_16": 262406,
+      "version": 4.003998,
+      "sha256": "c2857fb5c3f971df45e8c2764709acbcc5c6d60b9e47d945ae2e7bc51415afeb",
+      "bytes": 5540
+    },
+    {
+      "path": "product/app/design/vendor/fonts/poppins-f019bf8f.woff2",
+      "family": "Poppins Light",
+      "fontversion_fixed16_16": 262406,
+      "version": 4.003998,
+      "sha256": "f019bf8fa642981b9f12647688e825ccad3522d51f2f2859b1af372d5dc1ac31",
+      "bytes": 39416
+    },
+    {
+      "path": "product/app/design/vendor/fonts/poppins-f8f0c286.woff2",
+      "family": "Poppins Medium",
+      "fontversion_fixed16_16": 262406,
+      "version": 4.003998,
+      "sha256": "f8f0c28661c88edbcee022a4a80657619e8931af8c2a47c28e230307e2af30e5",
+      "bytes": 5496
+    },
+    {
+      "path": "product/app/design/vendor/fonts/rnCr-xNNww_2s0amA9M0knjsS_ulYHs.woff2",
+      "family": "Spectral",
+      "fontversion_fixed16_16": 131400,
+      "version": 2.005005,
+      "sha256": "9d95c480ed17a573649ca7c3dad392239dfd7bec6daf3fa86ef229d5ba2f696a",
+      "bytes": 3340
+    },
+    {
+      "path": "product/app/design/vendor/fonts/rnCr-xNNww_2s0amA9M2knjsS_ulYHs.woff2",
+      "family": "Spectral",
+      "fontversion_fixed16_16": 131400,
+      "version": 2.005005,
+      "sha256": "ae7786642b55f76c12636756c694d0ec6d8bc90aca2965a6c1c68e3222307379",
+      "bytes": 4204
+    },
+    {
+      "path": "product/app/design/vendor/fonts/rnCr-xNNww_2s0amA9M3knjsS_ulYHs.woff2",
+      "family": "Spectral",
+      "fontversion_fixed16_16": 131400,
+      "version": 2.005005,
+      "sha256": "a62b9bdf669d8fb395c8685321cbf86c2f2bc324e0b28ecf867a036095383d49",
+      "bytes": 12660
+    },
+    {
+      "path": "product/app/design/vendor/fonts/rnCr-xNNww_2s0amA9M5knjsS_ul.woff2",
+      "family": "Spectral",
+      "fontversion_fixed16_16": 131400,
+      "version": 2.005005,
+      "sha256": "bcb83e9c56d40c5111a2bdbc3d8bdabf66bd31337e968f1c223b61879b8d3cad",
+      "bytes": 14028
+    },
+    {
+      "path": "product/app/design/vendor/fonts/rnCr-xNNww_2s0amA9M9knjsS_ulYHs.woff2",
+      "family": "Spectral",
+      "fontversion_fixed16_16": 131400,
+      "version": 2.005005,
+      "sha256": "32457570dd484b9ba601e401e87da25ac826fee759885ed7c29469694db87821",
+      "bytes": 9404
+    },
+    {
+      "path": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9uCt23BafaPWnII.woff2",
+      "family": "Spectral",
+      "fontversion_fixed16_16": 131400,
+      "version": 2.005005,
+      "sha256": "1125ec621f11c8669efc3a86cc05d9e9e221853d2b1c9658d9e30de9d3b90bba",
+      "bytes": 15180
+    },
+    {
+      "path": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9uCt23FafaPWnIIMrY.woff2",
+      "family": "Spectral",
+      "fontversion_fixed16_16": 131400,
+      "version": 2.005005,
+      "sha256": "4ee603d108f6a84bf0159922ab06d474159e54cdce53adb546996ea2dc4c573d",
+      "bytes": 10752
+    },
+    {
+      "path": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9uCt23MafaPWnIIMrY.woff2",
+      "family": "Spectral",
+      "fontversion_fixed16_16": 131400,
+      "version": 2.005005,
+      "sha256": "8fac3805a2c1e55db72cf8b4ec7ed1e16471f96880398a1b663a36e7910d0cd2",
+      "bytes": 3596
+    },
+    {
+      "path": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9uCt23OafaPWnIIMrY.woff2",
+      "family": "Spectral",
+      "fontversion_fixed16_16": 131400,
+      "version": 2.005005,
+      "sha256": "2a39c85474451d160b3a1fa083ec77678bcfd88f4519d39f4cf181e8a52b1bdb",
+      "bytes": 4280
+    },
+    {
+      "path": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9uCt23PafaPWnIIMrY.woff2",
+      "family": "Spectral",
+      "fontversion_fixed16_16": 131400,
+      "version": 2.005005,
+      "sha256": "e06de276e6b69b3501de2ff0e45a7f159ba71bcca576f401098e09c0355e1ced",
+      "bytes": 13312
+    },
+    {
+      "path": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9vKsW3BafaPWnII.woff2",
+      "family": "Spectral Medium",
+      "fontversion_fixed16_16": 131400,
+      "version": 2.005005,
+      "sha256": "79ce505722da87b9a2fa21a16cd0d7f426f1624fd16413e11be377bc9e922a3b",
+      "bytes": 15084
+    },
+    {
+      "path": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9vKsW3FafaPWnIIMrY.woff2",
+      "family": "Spectral Medium",
+      "fontversion_fixed16_16": 131400,
+      "version": 2.005005,
+      "sha256": "874d49c9c14d00047a53ddd496de773d56215f85582262a2aeeab2ab41d41ae9",
+      "bytes": 10612
+    },
+    {
+      "path": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9vKsW3MafaPWnIIMrY.woff2",
+      "family": "Spectral Medium",
+      "fontversion_fixed16_16": 131400,
+      "version": 2.005005,
+      "sha256": "aff97997277cce4f2798af35dff14fd4b9cb88fac5a8310924b7eb678489e3a4",
+      "bytes": 3584
+    },
+    {
+      "path": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9vKsW3OafaPWnIIMrY.woff2",
+      "family": "Spectral Medium",
+      "fontversion_fixed16_16": 131400,
+      "version": 2.005005,
+      "sha256": "217390471a430a687e52e33c3d694d1d814e6c3de0c8e37906dcc2f8a073e175",
+      "bytes": 4260
+    },
+    {
+      "path": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9vKsW3PafaPWnIIMrY.woff2",
+      "family": "Spectral Medium",
+      "fontversion_fixed16_16": 131400,
+      "version": 2.005005,
+      "sha256": "38331492f5916e46a39699c66a1d76294b6f7b56f8a702f09cfb35fd9fd3043c",
+      "bytes": 13216
+    },
+    {
+      "path": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9vmtm3BafaPWnII.woff2",
+      "family": "Spectral SemiBold",
+      "fontversion_fixed16_16": 131400,
+      "version": 2.005005,
+      "sha256": "1fb6ca29fc243e8bfdfce12d8d6806f322bcc62d38036986812be28fb1f41f0a",
+      "bytes": 15164
+    },
+    {
+      "path": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9vmtm3FafaPWnIIMrY.woff2",
+      "family": "Spectral SemiBold",
+      "fontversion_fixed16_16": 131400,
+      "version": 2.005005,
+      "sha256": "9a6738241702381e65e80d1ee5f172ce12be2049dfedeb33016a5096444bc03b",
+      "bytes": 10744
+    },
+    {
+      "path": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9vmtm3MafaPWnIIMrY.woff2",
+      "family": "Spectral SemiBold",
+      "fontversion_fixed16_16": 131400,
+      "version": 2.005005,
+      "sha256": "3f8d833b64a1e7e1b8be07cd73513004cc680a466b84d6459fdcd2f1c1fcf0b3",
+      "bytes": 3608
+    },
+    {
+      "path": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9vmtm3OafaPWnIIMrY.woff2",
+      "family": "Spectral SemiBold",
+      "fontversion_fixed16_16": 131400,
+      "version": 2.005005,
+      "sha256": "74dc7e33abf296a6a7129a327d7b9c5bc02b11eb9ffb47447a0887997c863102",
+      "bytes": 4244
+    },
+    {
+      "path": "product/app/design/vendor/fonts/rnCs-xNNww_2s0amA9vmtm3PafaPWnIIMrY.woff2",
+      "family": "Spectral SemiBold",
+      "fontversion_fixed16_16": 131400,
+      "version": 2.005005,
+      "sha256": "ccb889e04368c402021b9b73196f26fc903d6cb269028138fefb68bd56cc5c19",
+      "bytes": 13288
+    }
+  ]
+}

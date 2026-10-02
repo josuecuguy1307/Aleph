@@ -1,0 +1,1375 @@
+{
+  "alephFrame": {
+    "home": "Home",
+    "settings": "Settings",
+    "newDesign": "New design",
+    "search": "Search"
+  },
+  "common": {
+    "appName": "open-codesign",
+    "send": "Send",
+    "cancel": "Cancel",
+    "retry": "Retry",
+    "save": "Save",
+    "close": "Close",
+    "dismissNotification": "Dismiss notification",
+    "settings": "Settings",
+    "advanced": "Advanced",
+    "about": "About",
+    "learnMore": "Learn more",
+    "copy": "Copy",
+    "copied": "Copied",
+    "comingSoon": "Coming soon",
+    "loading": "Loading…",
+    "preAlpha": "pre-alpha",
+    "tagline": "BYOK · ChatGPT login · local-first",
+    "done": "Done.",
+    "applied": "Applied.",
+    "working": "Working"
+  },
+  "ask": {
+    "title": "Quick clarification",
+    "submit": "Answer"
+  },
+  "toast": {
+    "error": {
+      "report": "Report"
+    }
+  },
+  "loading": {
+    "stage": {
+      "sending": "Connecting…",
+      "thinking": "Thinking…",
+      "streaming": "Generating…",
+      "parsing": "Finalizing…",
+      "rendering": "Rendering preview…",
+      "done": "Done"
+    },
+    "tokens": "{{count}} tokens"
+  },
+  "canvas": {
+    "previewTab": "Preview",
+    "filesTab": "Files",
+    "filesTabEmpty": "No files yet",
+    "openInTab": "Open in tab",
+    "previewHint": "Thumbnail preview · double-click the file or use Open in tab for full view",
+    "documentPreview": {
+      "previewLabel": "Document preview",
+      "expand": "Expand slides",
+      "loading": "Preparing document preview…",
+      "unavailable": "Document preview unavailable",
+      "empty": "No extractable text was found for this document.",
+      "thumbnailAlt": "{{name}} preview",
+      "section": {
+        "document": "Document text",
+        "slide": "Slide",
+        "workbook": "Workbook text"
+      },
+      "stats": {
+        "author": "Author",
+        "pages": "Pages",
+        "slides": "Slides",
+        "words": "Words",
+        "worksheets": "Sheets"
+      }
+    },
+    "tabsAriaLabel": "Open files",
+    "closeTab": "Close {{name}}",
+    "files": {
+      "sectionTitle": "Design files",
+      "sectionSubtitle": "{{count}} files",
+      "empty": "No files yet. Send a prompt to have the agent generate a design — files will show up here."
+    },
+    "newDesignDialog": {
+      "title": "New design",
+      "subtitle": "Optionally choose a local folder to sync your design files.",
+      "noWorkspace": "No folder selected",
+      "skip": "Skip",
+      "confirm": "Create"
+    },
+    "workspace": {
+      "sectionTitle": "Workspace",
+      "label": "Folder",
+      "default": "No workspace bound",
+      "choose": "Choose folder",
+      "change": "Change",
+      "open": "Open folder",
+      "clear": "Clear workspace",
+      "unavailable": "Folder not found on disk",
+      "busyGenerating": "Cannot change workspace while generating",
+      "updated": "Workspace updated",
+      "updateFailed": "Failed to update workspace",
+      "rebindTitle": "Change workspace folder?",
+      "rebindDescription": "This design already has a workspace folder. Choose how to proceed:",
+      "rebindCancel": "Cancel",
+      "rebindSwitchOnly": "Switch without copying",
+      "rebindSwitchAndCopy": "Switch and copy files",
+      "preview": {
+        "label": "Preview",
+        "detect": "Detect",
+        "apply": "Apply preview URL",
+        "reload": "Reload preview",
+        "openConnected": "Open",
+        "openFailed": "Could not open preview",
+        "saveFailed": "Could not update preview",
+        "detectFailed": "Could not detect preview",
+        "detectNone": "No running preview found",
+        "urlLabel": "Preview URL",
+        "urlPlaceholder": "localhost:5173",
+        "urlRequired": "Enter a local preview URL first.",
+        "urlInvalid": "Enter a valid http or https URL.",
+        "actions": {
+          "showOptions": "Show preview options",
+          "hideOptions": "Hide preview options"
+        },
+        "status": {
+          "saved": "Saved",
+          "auto": "Auto"
+        },
+        "mode": {
+          "label": "Mode",
+          "integrated": "Integrated file",
+          "integratedShort": "Integrated",
+          "connectedUrl": "Connected URL",
+          "connectedUrlShort": "Connected",
+          "externalApp": "External app",
+          "externalAppShort": "External",
+          "off": "Off",
+          "offShort": "Off"
+        },
+        "summary": {
+          "detecting": "Looking for a running local preview.",
+          "integrated": "Rendering workspace files inside Diseño.",
+          "integratedBlocked": "This workspace looks like an app; use its own dev server for preview.",
+          "connected": "Previewing {{url}}.",
+          "waitingUrl": "Enter the running local preview URL.",
+          "external": "Use the app's own preview window.",
+          "externalWithUrl": "External preview configured at {{url}}.",
+          "off": "Preview is off for this workspace."
+        },
+        "hint": {
+          "appWorkspace": "App workspaces usually preview best in their own dev server or app window.",
+          "simpleWorkspace": "Integrated preview renders App.jsx or index.html inside Diseño."
+        },
+        "placeholder": {
+          "off": "Preview is off for this workspace.",
+          "external": "This workspace is meant to be previewed in its own app window or browser.",
+          "devServerRequired": "This file is an app entry. Start its dev server, then use Detect or Connected URL for preview."
+        }
+      }
+    },
+    "rail": {
+      "title": "Files",
+      "collapse": "Collapse files",
+      "expand": "Expand files",
+      "empty": "No files yet"
+    }
+  },
+  "preview": {
+    "empty": {
+      "title": "Design with AI",
+      "body": "Pick a starter on the left, or describe what you want to design. The result renders here in a sandboxed preview.",
+      "starterChip": "Try a starter prompt:"
+    },
+    "loading": {
+      "title": "Generating your design…"
+    },
+    "error": {
+      "title": "Generation failed",
+      "body": "Something went wrong while generating your design.",
+      "copyError": "Copy error details",
+      "brokenJsx": "This design has a syntax error, likely an incomplete early save. Regenerate or edit to fix.",
+      "undefinedRef": "The design references an undefined variable or component. Likely a mid-run abort — try regenerating."
+    },
+    "ready": "Preview",
+    "noDesign": "No design yet",
+    "clickToComment": "Click any element in the preview to leave an inline comment.",
+    "commentMode": "Comment mode",
+    "commentModeHint": "Click any element to comment",
+    "runtimeError": "Preview runtime error",
+    "dismissErrors": "Dismiss preview errors",
+    "zoom": "Zoom",
+    "zoomFit": "Fit",
+    "viewport": {
+      "desktop": "Desktop preview",
+      "tablet": "Tablet preview",
+      "mobile": "Mobile preview"
+    }
+  },
+  "tweaks": {
+    "title": "Tweaks",
+    "openLabel": "Open tweaks panel",
+    "close": "Close",
+    "reset": "Reset to defaults",
+    "pickColor": "Pick color",
+    "swatchAria": "{{key}} color",
+    "emptyTitle": "No tweakable tokens",
+    "emptyHint": "The agent hasn't declared an EDITMODE block yet. Future generations will expose design tokens here."
+  },
+  "inspector": {
+    "title": "Inspector",
+    "close": "Close inspector",
+    "panels": {
+      "tweaks": "Tweaks",
+      "comments": "Comments",
+      "selection": "Selection",
+      "run": "Run"
+    },
+    "empty": {
+      "tweaks": "No preview is available to tweak yet.",
+      "selection": "Select an element in comment mode to inspect it."
+    },
+    "comments": {
+      "enterMode": "Comment on preview"
+    },
+    "selection": {
+      "target": "Target"
+    },
+    "run": {
+      "status": "Status",
+      "id": "Run ID",
+      "tokens": "Tokens"
+    }
+  },
+  "chat": {
+    "placeholder": "Describe what to design…",
+    "sendShortcut": "Send (Enter)",
+    "emptyHint": "Start with a starter prompt or your own idea.",
+    "sendAction": "send",
+    "sendAnywhere": "anywhere",
+    "send": "Send prompt",
+    "stop": "Stop generation",
+    "placeholderRich": "Describe a design… try 'Pitch deck for a fintech startup'",
+    "inputHint": "Enter to send · Shift+Enter for a new line"
+  },
+  "sidebar": {
+    "localContext": "Local context",
+    "attachLocalFiles": "Attach local files",
+    "linkDesignSystemRepo": "Link design system repo",
+    "refreshDesignSystemRepo": "Refresh design system repo",
+    "referenceUrl": "Reference URL",
+    "decomposeToUiKit": "Decompose to UI Kit",
+    "decomposeToUiKitDisabled": "Generate a design first, then decompose it",
+    "decomposeBusyTitle": "Generation in progress",
+    "decomposeBusyDescription": "Wait for the current run to finish, then try again.",
+    "decomposeUnavailableTitle": "Nothing to decompose yet",
+    "decomposeStartedTitle": "Decomposing to UI Kit…",
+    "decomposeStartedDescription": "Reading the artifact, extracting components and tokens, then verifying parity. Watch the agent panel for progress.",
+    "decomposeJudgeResultTitle": "Visual judge: {{passed}}/{{total}} checks passed · {{status}}",
+    "decomposeJudgeResultDescription": "Self-verify spent {{cost}}. Open BENCHMARKS.md for the boolean rubric methodology.",
+    "attachedFiles": "Attached files",
+    "removeFile": "Remove {{name}}",
+    "activeDesignSystem": "Active design system",
+    "clear": "Clear",
+    "designSystemHint": "Link a repo to extract colors, typography, spacing, and other styling cues for future generations.",
+    "startHint": "Start with a brief, then add files, a URL, or a local repo to ground the result.",
+    "empty": {
+      "title": "What should we design?",
+      "subtitle": "Describe your idea below — or start from one of these.",
+      "eyebrow": "Try"
+    },
+    "ariaLabel": "Chat pane",
+    "noDesign": "No design",
+    "newChat": "New chat",
+    "collapse": "Collapse sidebar",
+    "expand": "Expand sidebar",
+    "chat": {
+      "youLabel": "You",
+      "claudeLabel": "Claude",
+      "noModel": "No model selected",
+      "addMenu": {
+        "trigger": "Add context"
+      },
+      "thinking": "Thinking",
+      "streamingLabel": "Assistant is typing",
+      "tokensLine": "~{{count}} tokens",
+      "artifactDelivered": "delivered",
+      "artifactDefaultLabel": "design.html",
+      "tool": {
+        "done": "Done"
+      },
+      "working": {
+        "title": "Working"
+      },
+      "activity": {
+        "working": "Working",
+        "activity": "Activity",
+        "needsAttention": "Needs attention",
+        "oneStep": "1 step",
+        "stepCount": "{{count}} steps",
+        "preparingRun": "Preparing run",
+        "loadedDesignRules": "Loaded design rules",
+        "loadingDesignRules": "Loading design rules",
+        "planProgress": "Plan progress",
+        "checkedWorkspace": "Checked workspace",
+        "checkingWorkspace": "Checking workspace",
+        "workspaceCheckFailed": "Workspace check failed",
+        "titleUpdateFailed": "Title update failed",
+        "finalCheckFailed": "Final check failed",
+        "readFile": "Read file",
+        "createdFile": "Created file",
+        "editedFile": "Edited file",
+        "createdAndEdited": "Created and edited",
+        "previewing": "Previewing",
+        "previewed": "Previewed",
+        "previewFailed": "Preview failed",
+        "updatingMemory": "Updating memory",
+        "createdMemory": "Created memory",
+        "updatedMemory": "Updated memory",
+        "legacyTool": "Legacy tool",
+        "genericTool": "Tool"
+      }
+    },
+    "comments": {
+      "title": "Comment mode",
+      "body": "Inline comments on the canvas arrive in v0.2.1. You'll be able to click any element in the preview to leave a note or an edit instruction."
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "tabs": {
+      "models": "Models",
+      "images": "Image API",
+      "memory": "Memory",
+      "appearance": "Appearance",
+      "workspace": "Workspace & Files",
+      "storage": "Storage",
+      "diagnostics": "Diagnostics",
+      "advanced": "Advanced"
+    },
+    "imageGen": {
+      "tabTitle": "Image generation",
+      "tabHint": "Let the design agent call an image model through OpenAI, OpenRouter, or ChatGPT subscription for heroes, posters, and background bitmaps. Credentials stay local.",
+      "title": "Image generation assist",
+      "hint": "When enabled, the agent can invoke generate_image_asset during a run.",
+      "enabled": "Enable image generation assist",
+      "provider": "Provider",
+      "chatgptSubscription": "ChatGPT subscription",
+      "credentials": "Credentials",
+      "inherit": "Inherit from model provider",
+      "customKey": "Use a separate key",
+      "keyPlaceholder": "Leave empty to keep {{mask}}",
+      "newKeyPlaceholder": "Paste API key",
+      "model": "Image model",
+      "baseUrl": "Base URL",
+      "quality": "Quality",
+      "size": "Size",
+      "status": {
+        "ready": "Ready",
+        "needsKey": "Needs API key",
+        "needsChatgptLogin": "Needs ChatGPT sign-in",
+        "disabled": "Disabled"
+      },
+      "toast": {
+        "loadFailed": "Failed to load image generation settings",
+        "saved": "Image generation settings saved",
+        "saveFailed": "Failed to save image generation settings"
+      }
+    },
+    "memory": {
+      "userFile": "User memory file",
+      "open": "Open file",
+      "updateNow": "Update now",
+      "enabled": "Enable memory",
+      "enabledHint": "Use workspace MEMORY.md, global user memory, and compact session briefs during generation.",
+      "workspaceAutoUpdate": "Workspace memory auto-update",
+      "workspaceAutoUpdateHint": "Update MEMORY.md after successful generations.",
+      "userAutoUpdate": "User memory auto-update",
+      "userAutoUpdateHint": "Learn cross-workspace design preferences from candidate evidence. Off by default.",
+      "preview": "User Design Memory",
+      "save": "Save",
+      "clearCandidates": "Clear candidates",
+      "loadFailed": "Failed to load memory",
+      "saved": "User memory saved",
+      "saveFailed": "Failed to save memory",
+      "openFailed": "Could not open memory file",
+      "updated": "User memory updated",
+      "noCandidates": "No pending candidates",
+      "updateFailed": "Could not update user memory",
+      "candidatesCleared": "Pending candidates cleared",
+      "clearFailed": "Could not clear candidates"
+    },
+    "shell": {
+      "back": "Workspace",
+      "backAria": "Back to workspace"
+    },
+    "common": {
+      "loading": "Loading…",
+      "cancel": "Cancel",
+      "copy": "Copy",
+      "copied": "Copied!",
+      "open": "Open",
+      "unknownError": "Unknown error"
+    },
+    "providers": {
+      "sectionTitle": "API Providers",
+      "chatgptLogin": {
+        "title": "Sign in with ChatGPT subscription",
+        "description": "Use your ChatGPT Plus / Pro / Team plan quota to call Codex models (gpt-5.5 and friends) — no API key needed.",
+        "signIn": "Sign in with ChatGPT",
+        "inProgress": "Browser opened. Complete the authorization and we'll return automatically…",
+        "loggedInBadge": "Signed in with ChatGPT",
+        "logout": "Sign out",
+        "confirmLogout": "Sign out of ChatGPT subscription?",
+        "loginFailedTitle": "ChatGPT sign-in failed",
+        "logoutFailedTitle": "ChatGPT sign-out failed",
+        "statusFailedTitle": "ChatGPT status check failed",
+        "unknownError": "Unknown error",
+        "unsupportedCountryRegion": "ChatGPT subscription login is not available for this account, country, region, or territory."
+      },
+      "addProvider": "Add provider",
+      "addCustom": "Add custom",
+      "empty": "No providers configured yet. Add one to start generating.",
+      "active": "Active",
+      "activeNotInList": "(active, not in provider list)",
+      "noModel": "No model selected",
+      "decryptionFailed": "Decryption failed",
+      "setActive": "Set active",
+      "reEnterKey": "Re-enter key",
+      "missingKey": "Missing key",
+      "addKey": "Add key",
+      "confirm": "Confirm",
+      "delete": "Delete",
+      "edit": "Edit",
+      "testConnection": "Test connection",
+      "moreActions": "More actions",
+      "editModel": "Change model",
+      "deleteAria": "Delete {{label}} provider",
+      "primary": "Primary",
+      "fast": "Fast",
+      "custom": {
+        "title": "Add custom endpoint",
+        "editTitle": "Edit provider",
+        "wire": "Wire protocol",
+        "wires": {
+          "openai-chat": "OpenAI Chat",
+          "openai-responses": "OpenAI Responses",
+          "anthropic": "Anthropic Messages"
+        },
+        "name": "Label",
+        "baseUrl": "Base URL",
+        "apiKey": "API Key",
+        "apiKeyEditPlaceholder": "Leave empty to keep {{mask}}",
+        "defaultModel": "Default model",
+        "compatibilityHintTitle": "Compatibility note",
+        "compatibilityHintBody": "Some coding plans, relay services, or OpenAI-compatible gateways only allow specific clients such as Claude Code, openclaw, or Hermes. Even if the API looks compatible, Open CoDesign may still be blocked by an app allowlist.",
+        "switchToManual": "Enter manually",
+        "switchToDropdown": "Pick from list",
+        "discoveringModels": "Discovering models...",
+        "discoveredModels": "Found {{count}} models",
+        "discoveryFailed": "Could not auto-discover models",
+        "test": "Test connection",
+        "testOk": "OK — {{count}} models available",
+        "save": "Save & continue",
+        "saveEdit": "Save changes"
+      },
+      "tlsRejectUnauthorized": {
+        "label": "Disable TLS verification (insecure — internal endpoints only)",
+        "description": "Skip certificate verification for this provider. Use only for internal endpoints with self-signed or private-CA certificates.",
+        "confirmTitle": "Disable TLS verification?",
+        "confirmBody": "Outbound HTTPS requests to this provider will not verify the server certificate. Anyone on the network path between you and this endpoint could intercept or impersonate it. Only enable this for trusted internal networks.",
+        "confirmAccept": "Yes, disable verification",
+        "confirmCancel": "Cancel",
+        "badge": "TLS verify off",
+        "badgeTooltip": "TLS certificate verification is disabled for this provider. Used to connect to internal endpoints with self-signed or private-CA certificates. Increases attack surface — only enable for trusted networks."
+      },
+      "import": {
+        "action": "Import",
+        "dismiss": "Dismiss",
+        "codexFound": "Codex config detected — import {{count}} providers?",
+        "claudeCodeOAuthTitle": "Claude Code subscription detected",
+        "claudeCodeOAuthBody": "Your Pro/Max subscription can only be used through the Claude Code client itself. Third-party apps can't reuse the subscription quota. Generate an API key at Anthropic Console (same account, billed per token) to use Claude here.",
+        "claudeCodeOAuthCtaConsole": "Get API key from Anthropic Console ↗",
+        "claudeCodeHasKeyBody": "Found a key in {{source}} for the gateway at {{baseUrl}} — click Import to use it here.",
+        "claudeCodeHasKeySourceSettings": "~/.claude/settings.json",
+        "claudeCodeHasKeySourceEnv": "shell env",
+        "claudeCodeLocalProxyBody": "Looks like a local proxy at {{baseUrl}}. This is the typical setup for reusing an OAuth subscription through a tool like Claude Code Proxy.",
+        "claudeCodeLocalProxyAction": "Paste key to use proxy",
+        "claudeCodeRemoteGatewayBody": "Gateway at {{baseUrl}} has no API key in your Claude Code config. Import the gateway, then paste a key in Settings.",
+        "claudeCodeRemoteGatewayAction": "Paste key to use gateway",
+        "oauthErrorToast": "Claude Code subscription can't be shared with third-party apps. Generate an API key at Anthropic Console.",
+        "oauthErrorToastCta": "Get API key ↗",
+        "codexDone": "Codex providers imported",
+        "geminiFound": "Gemini CLI key detected — import?",
+        "geminiNoKey": "Gemini CLI config found, but no API key in ~/.gemini/.env or ~/.env. Paste a key manually to use Gemini here.",
+        "geminiBlocked": "Google Vertex AI projects aren't supported yet — paste a Gemini Developer API key (starts with AIzaSy…) to use Gemini here.",
+        "geminiDone": "Gemini provider imported",
+        "opencodeBlocked": "OpenCode config detected but nothing is importable. Check the warning above, fix auth.json, and try again.",
+        "opencodeFound": "OpenCode detected — import {{count}} providers ({{providers}})?",
+        "opencodeDone": "OpenCode providers imported",
+        "claudeCodeImportedActivated": "Claude Code imported and set as the active model provider",
+        "claudeCodeOpenSettings": "Open Settings",
+        "claudeCodeIHaveKey": "I have an API key — paste it",
+        "claudeCodeShellEnvHint": "Or: export ANTHROPIC_API_KEY in your shell and relaunch from Terminal — we'll pick it up automatically.",
+        "claudeCodeParseErrorTitle": "Claude Code config is malformed",
+        "claudeCodeParseErrorBody": "~/.claude/settings.json couldn't be parsed: {{reason}}.",
+        "claudeCodeParseErrorReasonNotObject": "the top-level value is not a JSON object",
+        "claudeCodeWarningsMore": "+{{count}} more",
+        "claudeCodeParseErrorCopyPath": "Copy file path",
+        "claudeCodeParseErrorPathCopied": "Path copied to clipboard",
+        "claudeCodeAnthropicPresetName": "Anthropic",
+        "claudeCodeLocalProxyPresetName": "Claude Code Proxy (local)",
+        "claudeCodeRemoteGatewayPresetName": "Claude Code Gateway",
+        "failed": "Import failed",
+        "codexMenu": "Import from Codex",
+        "codexMenuDesc": "Read ~/.codex/config.toml",
+        "claudeCodeMenu": "Import from Claude Code",
+        "claudeCodeMenuDesc": "Read the signed-in Claude Code session",
+        "ollamaMenu": "Ollama (local)",
+        "ollamaMenuDesc": "Add the local localhost:11434 provider",
+        "ollamaDone": "Ollama provider added",
+        "customMenu": "Custom provider",
+        "customMenuDesc": "Enter API key and URL manually",
+        "alreadyImported": "Already imported"
+      },
+      "modal": {
+        "title": "Add provider",
+        "provider": "Provider",
+        "apiKey": "API Key",
+        "getKey": "Get key ↗",
+        "apiKeyPlaceholder": "sk-...",
+        "validate": "Validate",
+        "validating": "Validating…",
+        "valid": "Valid",
+        "baseUrl": "Base URL",
+        "baseUrlOptional": "(optional)",
+        "baseUrlPlaceholder": "https://your-proxy.example.com",
+        "primaryModel": "Primary model",
+        "fastModel": "Fast model",
+        "save": "Save provider"
+      },
+      "toast": {
+        "loadFailed": "Failed to load providers",
+        "removed": "Provider removed",
+        "deleteFailed": "Delete failed",
+        "activateFailed": "Cannot activate provider",
+        "missingModel": "Provider has no default model — add one first.",
+        "switchedTo": "Switched to {{label}}",
+        "switchFailed": "Switch failed",
+        "saved": "Provider saved",
+        "saveFailed": "Failed to save provider",
+        "modelSaveFailed": "Failed to save model selection",
+        "reasoningSaved": "Reasoning depth saved",
+        "reasoningSaveFailed": "Failed to save reasoning depth",
+        "connectionOk": "Connection OK",
+        "connectionFailed": "Connection failed"
+      },
+      "cliProxyApi": {
+        "presetName": "CLIProxyAPI",
+        "presetDescription": "Local proxy that wraps Claude/Codex/Gemini OAuth subscriptions",
+        "apiKeyOptional": "API key only required if you configured `api-keys` in CPA config.yaml",
+        "thinkingHint": "Tip: append `(high)` / `(xhigh)` / `(8192)` to model name to control thinking budget"
+      },
+      "cpaDetection": {
+        "title": "CLIProxyAPI detected on your machine",
+        "body": "Import it as a provider to use your OAuth-authenticated Claude / Codex / Gemini accounts.",
+        "importAction": "Import",
+        "dismissAction": "Dismiss"
+      },
+      "reasoning": {
+        "label": "Reasoning depth",
+        "default": "Default (auto)",
+        "off": "Off",
+        "minimal": "Minimal",
+        "low": "Low",
+        "medium": "Medium",
+        "high": "High",
+        "xhigh": "Extra high"
+      }
+    },
+    "appearance": {
+      "themeTitle": "Theme",
+      "themeHint": "Choice persists across restarts.",
+      "lightLabel": "Light",
+      "lightDesc": "Warm beige, soft shadows",
+      "darkLabel": "Dark",
+      "darkDesc": "Deep neutral, low glare",
+      "languageLabel": "Language",
+      "languageHint": "Language changes take effect immediately.",
+      "languageLoadFailed": "Failed to load language",
+      "langEn": "English",
+      "langZhCN": "中文 (简体)",
+      "langPtBR": "Português (BR)",
+      "langEs": "Español"
+    },
+    "language": {
+      "label": "Language",
+      "system": "System default"
+    },
+    "theme": {
+      "label": "Theme",
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    },
+    "storage": {
+      "pathsTitle": "Paths",
+      "config": "Config",
+      "logs": "Logs",
+      "data": "Data directory",
+      "change": "Change",
+      "restartHint": "Choose where open-codesign stores config, logs, and local design data. Changes are saved permanently and take effect after restarting the app.",
+      "workspaceHint": "Design workspace folders are managed per design from the Files panel. Changing these storage paths does not move or rebind existing workspace files.",
+      "locationSavedToast": "Storage location saved. Restart the app to apply it.",
+      "locationSaveFailed": "Could not save storage location",
+      "onboardingTitle": "Onboarding",
+      "onboardingHint": "Clear the setup flag so the onboarding wizard runs again on next launch.",
+      "resetConfirm": "This will remove your saved keys. Continue?",
+      "reset": "Reset",
+      "resetButton": "Reset onboarding",
+      "pathsLoadFailed": "Failed to load app paths",
+      "openFolderFailed": "Could not open folder",
+      "onboardingResetToast": "Onboarding reset. Restart the app to re-run setup.",
+      "templatesTitle": "Template files",
+      "templatesHint": "Open the bundled starter and template folder used by scaffolds and design resources.",
+      "diagnosticsTitle": "Diagnostics",
+      "diagnosticsHint": "Open the log folder to inspect logs, or export a redacted bundle for bug reports.",
+      "openLogFolder": "Open log folder",
+      "openTemplatesFolder": "Open templates folder",
+      "exportDiagnostics": "Export diagnostics",
+      "diagnosticsExported": "Exported to {{path}}",
+      "diagnosticsExportFailed": "Could not export diagnostics"
+    },
+    "diagnostics": {
+      "title": "Diagnostics",
+      "description": "Review recent errors. Report a bug with full context attached.",
+      "openLogFolder": "Open log folder",
+      "exportBundle": "Export diagnostic bundle",
+      "showTransient": "Show retried-then-succeeded errors",
+      "empty": "No diagnostic events recorded yet.",
+      "dbUnavailable": "Diagnostic storage unavailable. Errors are still logged to main.log but won't appear here until the app restarts. Check disk space and permissions.",
+      "inMemoryFallback": "Showing in-memory records — DB unavailable, these will not persist across restart.",
+      "report": "Report",
+      "column": {
+        "time": "Time",
+        "code": "Code",
+        "scope": "Scope",
+        "runId": "Run id",
+        "message": "Message"
+      }
+    },
+    "advanced": {
+      "updateChannel": "Update channel",
+      "updateChannelHint": "Stable: tested releases. Beta: early access (may have bugs).",
+      "stable": "Stable",
+      "beta": "Beta",
+      "checkForUpdatesOnStartup": "Check for updates on startup",
+      "checkForUpdatesOnStartupHint": "Automatically check for a new release 30 seconds after launch.",
+      "timeout": "Generation timeout",
+      "timeoutHint": "Seconds before a generation request is aborted.",
+      "timeoutSeconds": "{{value}} s",
+      "proxy": "HTTP proxy",
+      "proxyHint": "Route outbound network and LLM API requests through this proxy (e.g., http://127.0.0.1:7890). Leave blank to disable. Applied immediately — no restart needed.",
+      "devtools": "Developer tools",
+      "devtoolsHint": "Open the Chromium DevTools panel for the renderer.",
+      "toggleDevtools": "Toggle DevTools",
+      "prefsLoadFailed": "Failed to load preferences",
+      "prefsSaveFailed": "Failed to save preference",
+      "devtoolsFailed": "Could not toggle DevTools"
+    }
+  },
+  "updates": {
+    "bannerAvailable": "{{appName}} {{version}} is available.",
+    "bannerViewRelease": "View release",
+    "bannerDismissAria": "Dismiss update banner"
+  },
+  "onboarding": {
+    "stepperLabel": "Step {{current}} of {{total}}",
+    "welcome": {
+      "title": "Design with any model.",
+      "subtitle": "Pick how you want to power your designs. You can change this later in Settings.",
+      "tryFree": "Try free now",
+      "tryFreeSubtitle": "OpenRouter free tier - paste an OpenRouter key, then start with openrouter/free or type any model ID.",
+      "useKey": "Use my API key",
+      "useKeySubtitle": "Anthropic, OpenAI, or OpenRouter. Auto-detected from the key prefix.",
+      "useOllama": "Use local model (Ollama)",
+      "useOllamaSubtitle": "Runs 100% locally with zero API cost. Needs Ollama installed and running.",
+      "useOllamaDetected": "Ollama detected — {{count}} models available locally.",
+      "useOllamaNotRunning": "Ollama not detected at localhost:11434. Install or start it, then retry.",
+      "useOllamaProbing": "Checking for a local Ollama instance...",
+      "useOllamaRetry": "Retry probe",
+      "useOllamaInstall": "Install Ollama ↗",
+      "whereToGetKey": "Where to get a key"
+    },
+    "paste": {
+      "title": "Paste your API key",
+      "description": "Auto-detects your provider. Click Test to verify the key and endpoint before continuing. Your key is stored locally in ~/.config/open-codesign/config.toml (file mode 0600).",
+      "placeholder": "sk-…",
+      "recognized": "Detected provider: {{provider}}",
+      "connected_one": "Connected {{count}} model",
+      "connected_other": "Connected {{count}} models",
+      "howToGet": "How to get a key",
+      "getKey": "Get key",
+      "statusIdle": "Paste a key above — provider is auto-detected from the prefix.",
+      "statusDetecting": "Detecting provider...",
+      "statusValidating": "Recognized: {{provider}} — validating...",
+      "statusDetected": "Recognized: {{provider}} — click Test to verify",
+      "statusOk": "Recognized: {{provider}} — Connected ({{count}} models)",
+      "errors": {
+        "401": "API key invalid or unauthorized. Check it in your provider dashboard.",
+        "402": "Your account has no credit. Top up and retry.",
+        "429": "Rate limited. Wait a moment and try again.",
+        "network": "Cannot reach base URL. Check domain/port/network.",
+        "unsupported": "Unrecognized key prefix. Supported: sk-ant- (Anthropic), sk- (OpenAI), sk-or- (OpenRouter).",
+        "notSupportedProvider": "{{provider}} is not supported by the first-run provider shortcut. Use Anthropic, OpenAI, OpenRouter, Ollama, ChatGPT subscription sign-in, or add a custom provider in Settings.",
+        "rendererDisconnected": "Renderer is not connected to the main process.",
+        "detectIpc": "Provider detection failed (main process unreachable): {{message}}. Restart the app and try again.",
+        "detectNetwork": "Provider detection failed (network error): {{message}}. Check your connection and try again."
+      },
+      "advanced": {
+        "toggle": "Advanced — custom base URL (proxy / relay)",
+        "title": "Advanced — custom base URL",
+        "description": "Override the default endpoint for your provider. Useful for relay services and self-hosted proxies. Leave empty to use the official endpoint."
+      },
+      "preset": {
+        "label": "Preset",
+        "placeholder": "-- choose a preset --",
+        "hint": "Not sure which to pick? Choose OpenAI Official for the official endpoint, or pick by relay name.",
+        "custom": "Custom"
+      },
+      "apiKey": {
+        "label": "API key"
+      },
+      "baseUrl": {
+        "label": "Base URL"
+      },
+      "connectionTest": {
+        "button": "Test",
+        "testing": "Testing...",
+        "ok": "Connected",
+        "okVerified": "Connected — key and endpoint verified",
+        "idleHint": "Run Test to verify your key and connection before continuing.",
+        "runFirst": "Run Test to verify your connection first",
+        "errors": {
+          "401": "API key invalid or unauthorized.",
+          "404": "Base URL path wrong. Try adding /v1 suffix (e.g. https://your-host/v1).",
+          "ECONNREFUSED": "Cannot reach base URL. Check domain/port/network.",
+          "NETWORK": "Network error. Check your connection.",
+          "PARSE": "Unexpected response. View logs at ~/Library/Logs/open-codesign/main.log",
+          "IPC_BAD_INPUT": "Invalid input sent to connection test. Check provider / API key / base URL fields."
+        }
+      },
+      "back": "Back",
+      "continue": "Continue"
+    },
+    "choose": {
+      "title": "Pick default models",
+      "description": "Start with a recommendation or enter any provider-specific model ID. You can switch these per design later.",
+      "primary": "Primary design model",
+      "fast": "Fast completion model",
+      "primaryHint": "Used for full design generation.",
+      "fastHint": "Used for quick edits and inline tweaks.",
+      "primaryHintFree": "Free path starts on openrouter/free, but you can enter any OpenRouter model ID.",
+      "fastHintFree": "Keep openrouter/free for lowest cost, or replace it with a faster custom choice.",
+      "customBaseUrl": "Custom base URL: {{url}}",
+      "costNote": "Estimated cost varies by provider, chosen model, and prompt length.",
+      "costNoteFree": "OpenRouter free routing availability can change. If a free route is unavailable, type another model ID here.",
+      "estimatedCost": "Estimated cost: {{amount}}",
+      "back": "Back",
+      "saving": "Saving...",
+      "finish": "Finish"
+    }
+  },
+  "topbar": {
+    "modelSwitcher": {
+      "fromProvider": "Provider",
+      "searchPlaceholder": "Search models…",
+      "searchAriaLabel": "Filter models by name",
+      "clearSearch": "Clear search",
+      "noMatches": "No models match \"{{query}}\""
+    },
+    "status": {
+      "connected": "Connected",
+      "untested": "Not tested",
+      "error": "Connection error",
+      "noProvider": "No provider configured",
+      "lastTested": "Last tested {{time}}",
+      "tooltip": {
+        "click": "Click to re-test"
+      }
+    },
+    "openMyDesigns": "All designs",
+    "hubLabel": "My designs",
+    "settingsLabel": "Settings",
+    "closeSettings": "Close settings",
+    "unreadErrors": "{{count}} unread error"
+  },
+  "theme": {
+    "toggleAria": "Toggle theme",
+    "switchToLight": "Switch to light",
+    "switchToDark": "Switch to dark"
+  },
+  "export": {
+    "button": "Export",
+    "items": {
+      "html": {
+        "label": "HTML",
+        "hint": "Single self-contained .html file"
+      },
+      "pdf": {
+        "label": "PDF",
+        "hint": "Rendered via your installed Chrome"
+      },
+      "pptx": {
+        "label": "PPTX",
+        "hint": "High-fidelity slides; one per <section>"
+      },
+      "zip": {
+        "label": "ZIP bundle",
+        "hint": "index.html + assets + README.md"
+      },
+      "markdown": {
+        "label": "Markdown",
+        "hint": "Plain .md with YAML frontmatter"
+      }
+    }
+  },
+  "notifications": {
+    "designSystemLinked": "Design system linked",
+    "designSystemScanFailed": "Design system scan failed",
+    "designSystemCleared": "Design system cleared",
+    "clearDesignSystemFailed": "Unable to clear design system",
+    "generationFailed": "Generation failed",
+    "generationFailedApplyFix": "Apply fix",
+    "generationFailedBaseUrlUpdated": "Base URL updated. Try the request again.",
+    "generationFailedFixUnavailable": "Auto-fix unavailable",
+    "generationFailedFixUnavailableDescription": "This app version can't apply the fix automatically. Please edit the Base URL manually in Settings.",
+    "generationFailedFixApplyFailed": "Could not apply fix",
+    "cancellationFailed": "Cancellation failed",
+    "inlineCommentFailed": "Inline comment failed",
+    "commentNeedsSnapshot": "Generate a design first before leaving a comment",
+    "commentCreateFailed": "Could not save the comment",
+    "commentUpdateFailed": "Could not update the comment",
+    "commentDeleteFailed": "Could not delete the comment",
+    "noDesignToExport": "No design to export yet.",
+    "exportedTo": "Exported to {{path}}"
+  },
+  "inlineComment": {
+    "title": "Comment on",
+    "closeComposer": "Close inline comment composer",
+    "description": "Clicked elements stay selected in the canvas. Describe the visual or content change you want, and open-codesign will rewrite the artifact around that target.",
+    "placeholder": "Make this section more compact, sharpen the headline, and align it with the linked design system…",
+    "applying": "Applying…",
+    "applyChange": "Apply change"
+  },
+  "commentBubble": {
+    "title": "Comment on",
+    "close": "Close comment bubble",
+    "placeholder": "Describe the change, or leave a note for yourself…",
+    "saveNote": "Save comment",
+    "sendToChat": "Add to chat",
+    "saving": "Saving…",
+    "sending": "Sending…",
+    "scope": {
+      "legend": "Scope of this comment",
+      "element": "This element only",
+      "global": "Whole design"
+    }
+  },
+  "pinOverlay": {
+    "note": "Note {{n}}",
+    "edit": "Edit {{n}}"
+  },
+  "commentChip": {
+    "dismiss": "Dismiss pending edit",
+    "empty": "No pending edits",
+    "apply": "Apply ({{count}})",
+    "applyAll": "Apply all pending edits"
+  },
+  "commentsTab": {
+    "empty": "Click any element in the preview while comment mode is on to leave a note or an edit instruction.",
+    "pendingEdits": "Pending edits",
+    "notes": "Notes",
+    "appliedEdits": "Applied edits",
+    "delete": "Delete comment",
+    "atSnapshot": "@ snapshot {{n}}"
+  },
+  "comments": {
+    "panel": {
+      "title": "Comments",
+      "close": "Close comments panel",
+      "empty": "No comments yet. Click any element on the canvas to leave one.",
+      "delete": "Delete comment",
+      "sendToChat": "Add to chat",
+      "addedToChat": "Already in chat",
+      "untitled": "(no text)",
+      "status": {
+        "pending": "Pending",
+        "applied": "Applied"
+      },
+      "scope": {
+        "element": "Element",
+        "global": "Global",
+        "tooltip": "Whether the change is scoped to this element or the whole design"
+      }
+    },
+    "quickActions": {
+      "label": "Quick actions",
+      "spacing": {
+        "more": "+ Spacing",
+        "less": "− Spacing"
+      },
+      "contrast": {
+        "more": "+ Contrast",
+        "less": "− Contrast"
+      },
+      "font": {
+        "bigger": "+ Font",
+        "smaller": "− Font"
+      },
+      "radius": {
+        "more": "+ Radius",
+        "less": "− Radius"
+      },
+      "text": {
+        "spacing-more": "increase spacing on this element",
+        "spacing-less": "tighten spacing on this element",
+        "contrast-more": "increase color contrast",
+        "contrast-less": "soften the color contrast",
+        "font-bigger": "increase font size on this element",
+        "font-smaller": "decrease font size on this element",
+        "radius-more": "make corners more rounded",
+        "radius-less": "make corners sharper"
+      }
+    }
+  },
+  "disabledReason": {
+    "typePromptToSend": "Type a prompt to start",
+    "generatingInProgress": "Generation in progress",
+    "typeDraftToApply": "Type a comment to apply",
+    "noDesignToExport": "Generate a design first",
+    "enterApiKeyToValidate": "Enter an API key to validate",
+    "validateKeyFirst": "Validate the key first",
+    "enterKeyToTest": "Paste an API key to test the connection",
+    "detectingProvider": "Detecting provider — please wait",
+    "unsupportedKeyForTest": "Unsupported key format — can't test this key",
+    "providerDetectIpcForTest": "Provider detection failed (IPC) — can't test this key",
+    "providerDetectNetworkForTest": "Provider detection failed (network) — can't test this key",
+    "testingConnection": "Testing connection…",
+    "validateKeyToContinue": "Validate your API key to continue",
+    "savingInProgress": "Saving in progress",
+    "enterBothModels": "Both model fields are required",
+    "ollamaComingSoon": "Ollama integration is coming in v0.2"
+  },
+  "errorBoundary": {
+    "scopeFallback": "this view",
+    "crashedSuffix": "{{scope}} crashed",
+    "body": "The rest of the app is still running. Reload this view, or copy the stack to file a bug.",
+    "noStack": "(no stack)",
+    "copyStack": "Copy stack",
+    "reportOnGitHub": "Report on GitHub",
+    "reportViaDiagnostics": "Report via Diagnostics",
+    "reload": "Reload"
+  },
+  "errors": {
+    "generic": "Something went wrong.",
+    "providerAuthMissing": "No API key configured. Open Settings to add one.",
+    "providerError": "Provider error: {{message}}",
+    "ipcBadInput": "Invalid input passed to the main process.",
+    "exporterNotReady": "Exporter is still loading. Try again in a moment.",
+    "rendererDisconnected": "Renderer is not connected to the main process.",
+    "onboardingIncomplete": "Onboarding is not complete.",
+    "designSystemRequiresOnboarding": "Complete onboarding before linking a design system.",
+    "providerMissingKey": "The active provider \"{{provider}}\" has no API key. Open Settings to add one.",
+    "modelListFailed": "Could not load model list.",
+    "unknown": "Unknown error",
+    "localePersistFailed": "Failed to save language preference"
+  },
+  "projects": {
+    "untitled": "Untitled design",
+    "untitledNumbered": "Untitled design {{n}}",
+    "duplicateNameTemplate": "{{name}} copy",
+    "switcher": {
+      "currentLabel": "Current design",
+      "menuLabel": "Switch design",
+      "newDesign": "New design",
+      "renameCurrent": "Rename",
+      "viewAll": "View all designs…",
+      "recent": "Recent",
+      "noOthers": "No other designs yet"
+    },
+    "view": {
+      "title": "Designs",
+      "subtitle": "All your saved designs. Switch, rename, duplicate, or delete.",
+      "newDesign": "New design",
+      "search": "Search designs",
+      "empty": "No designs yet — create your first one to get started.",
+      "noMatches": "No designs match \"{{query}}\".",
+      "open": "Open",
+      "rename": "Rename",
+      "duplicate": "Duplicate",
+      "delete": "Delete",
+      "edited": "Edited {{when}}",
+      "snapshotCount_one": "{{count}} version",
+      "snapshotCount_other": "{{count}} versions",
+      "close": "Close designs view"
+    },
+    "rename": {
+      "title": "Rename design",
+      "label": "Design name",
+      "placeholder": "e.g. Landing page hero",
+      "save": "Save",
+      "cancel": "Cancel"
+    },
+    "delete": {
+      "title": "Delete this design?",
+      "body": "\"{{name}}\" and all of its history will be removed from the designs list. This cannot be undone in v0.",
+      "confirm": "Delete design",
+      "cancel": "Keep it"
+    },
+    "time": {
+      "justNow": "just now",
+      "minutesAgo_one": "{{count}} minute ago",
+      "minutesAgo_other": "{{count}} minutes ago",
+      "hoursAgo_one": "{{count}} hour ago",
+      "hoursAgo_other": "{{count}} hours ago",
+      "yesterday": "yesterday",
+      "daysAgo_one": "{{count}} day ago",
+      "daysAgo_other": "{{count}} days ago"
+    },
+    "notifications": {
+      "createFailed": "Could not create a new design",
+      "switchFailed": "Could not switch design",
+      "switchBlockedGenerating": "Wait for generation to finish before switching",
+      "busyGenerating": "Wait for the current generation to finish, then try again",
+      "workspaceBusyGenerating": "A generation is already running for this workspace",
+      "renameFailed": "Could not rename the design",
+      "duplicated": "Duplicated as \"{{name}}\"",
+      "duplicateFailed": "Could not duplicate the design",
+      "deleted": "Design moved out of the active list",
+      "deleteFailed": "Could not delete the design",
+      "deleteBlockedGenerating": "Wait for generation to finish before deleting",
+      "saveFailed": "Could not save the latest changes",
+      "snapshotSkipped": "Incomplete output kept unsaved",
+      "snapshotSkippedBody": "The agent's JSX is truncated (missing ReactDOM.createRoot or unbalanced braces). Previous good version preserved. Send the prompt again to retry.",
+      "loadFailed": "Could not load your designs"
+    }
+  },
+  "diagnostics": {
+    "title": "Connection failed",
+    "status": "Status: {{status}}",
+    "attempted": "What we tried: {{url}}",
+    "mostLikelyCause": "Most likely cause:",
+    "cause": {
+      "keyInvalid": "API key invalid or revoked.",
+      "balanceEmpty": "Account balance is empty.",
+      "missingV1": "Base URL path is likely missing the /v1 suffix.",
+      "rateLimit": "Rate limit exceeded.",
+      "hostUnreachable": "Cannot reach host — check domain, port, or VPN.",
+      "timedOut": "Request timed out — check firewall or VPN.",
+      "corsError": "CORS error (should not happen in main process). This is a bug.",
+      "sslError": "SSL / certificate error (self-signed or private-CA cert?). Enable Settings → Providers → <provider> → Disable TLS verification to connect to trusted internal endpoints.",
+      "endpointNotFound": "The endpoint path exists in the Base URL but the provider did not expose this route.",
+      "gatewayIncompatible": "The gateway accepted the connection but does not implement this provider's API. Try switching wire (e.g. openai-chat).",
+      "gatewayWafBlocked": "The gateway or reverse proxy blocked the generation request before it reached the model. Test Connection can still pass because it only probes the /models endpoint.",
+      "openaiResponsesMisconfigured": "The endpoint rejected the request shape. The wire may be wrong — try switching to openai-chat.",
+      "unsupportedRole": "The endpoint rejected the role format sent to the model. This is usually a wire or model-policy mismatch.",
+      "reasoningPolicy": "The endpoint rejected reasoning metadata for this model. Lower the reasoning depth and try again.",
+      "modelIdShape": "The selected model id includes a provider prefix this endpoint does not accept.",
+      "generationTimeout": "The generation reached the configured timeout before the model finished.",
+      "relayStreamingBug": "The gateway may mishandle OpenAI Responses API SSE events (older sub2api / claude2api / anyrouter builds cut the stream short).",
+      "transportInterrupted": "The provider connection ended before the turn completed. This is usually a gateway timeout or network interruption.",
+      "referenceUrlInvalid": "The reference URL is invalid or not supported.",
+      "referenceUrlFetchFailed": "The reference URL could not be fetched.",
+      "referenceUrlTimeout": "Fetching the reference URL timed out.",
+      "referenceUrlTooLarge": "The reference URL content is too large to include.",
+      "serverError": "Upstream server error. May be transient — try again.",
+      "unknown": "Unknown error — check the full log for details."
+    },
+    "fix": {
+      "updateKey": "Update key",
+      "addCredits": "Add credits →",
+      "addCreditsGeneric": "Check your provider's billing page",
+      "addV1": "Add /v1",
+      "waitAndRetry": "Wait and retry",
+      "adjustGenerationTimeout": "Adjust generation timeout",
+      "checkNetwork": "Check network / VPN",
+      "checkVpn": "Check VPN / firewall",
+      "reportBug": "Report this bug",
+      "disableTls": "Disable TLS verify",
+      "switchWire": "Switch wire in Settings",
+      "setReasoningMinimal": "Set reasoning to minimal",
+      "disableReasoning": "Turn reasoning off",
+      "normalizeModelId": "Remove model prefix",
+      "checkReferenceUrl": "Check reference URL",
+      "gatewayWafBlocked": "Check proxy allowlist / headers",
+      "relayStreamingBug": "Upgrade the relay, switch wire to openai-chat, or use api.openai.com directly"
+    },
+    "applyFix": "Apply this fix",
+    "setBaseUrlFirst": "Set a Base URL first",
+    "testAgain": "Test again",
+    "showLog": "Show full log",
+    "showLogFailed": "Failed to open logs folder",
+    "gatewayAllowlistHintTitle": "This endpoint may restrict which apps can connect",
+    "gatewayAllowlistHintBody": "Some coding plans and protocol-conversion gateways keep an app allowlist. Even when they advertise an OpenAI-compatible API, they may still reject Open CoDesign unless this app is explicitly allowed.",
+    "dismiss": "Dismiss",
+    "report": {
+      "title": "Report a bug",
+      "notes": "Steps to reproduce (optional)",
+      "include": {
+        "prompt": "Include prompt text",
+        "paths": "Include file paths",
+        "urls": "Include URLs",
+        "timeline": "Include 60 s action timeline",
+        "promptHint": "Includes the text of prompts you submitted during the session.",
+        "pathsHint": "Includes local file paths (can reveal your username / directory structure).",
+        "urlsHint": "Includes reference URLs you pasted.",
+        "timelineHint": "60-second activity log — actions only, no content."
+      },
+      "disclaimer": "Nothing is uploaded automatically. The diagnostic bundle is saved to your Downloads folder; attach it to the GitHub issue manually.",
+      "openIssue": "Open issue",
+      "copySummary": "Copy summary",
+      "cancel": "Cancel",
+      "copied": "Copied to clipboard",
+      "generating": "Creating bundle…",
+      "close": "Close",
+      "scope": "Scope",
+      "runId": "Run id",
+      "fingerprint": "Fingerprint",
+      "message": "Message",
+      "recentlyReported": "You reported this {{relative}} as issue #{{issueNumber}}.",
+      "recentlyReportedNoNumber": "You reported this {{relative}}.",
+      "viewPrevious": "View previous issue",
+      "continueAnyway": "Continue anyway",
+      "confirmOpenAnyway": "Yes, open anyway ({{seconds}}s)",
+      "error": {
+        "notesTooLong": "Notes exceed the 2000-character limit.",
+        "generic": "Couldn't open the issue. Check the log folder for details."
+      },
+      "bundleSavedTitle": "Bundle saved",
+      "bundleSavedDescription": "Saved to",
+      "revealBundle": "Show in folder",
+      "openFailedTitle": "Couldn't open the browser",
+      "openFailedCopyHint": "Copy the issue URL and open it manually.",
+      "copyIssueUrl": "Copy URL",
+      "clipboardFailedTitle": "Couldn't copy to clipboard",
+      "clipboardFailedHint": "The bundle is on disk — open it manually and paste the summary there.",
+      "preview": {
+        "code": "Code",
+        "scope": "Scope",
+        "runId": "Run id",
+        "fingerprint": "Fingerprint",
+        "message": "Message",
+        "upstream": "Upstream context",
+        "upstreamProvider": "Provider",
+        "upstreamStatus": "Status",
+        "upstreamRequestId": "Request id",
+        "upstreamRetry": "Retry",
+        "upstreamBodyHead": "Body head"
+      }
+    }
+  },
+  "demos": {
+    "meditationApp": {
+      "title": "Calm Spaces meditation app",
+      "description": "Mobile prototype with phone frame, soft palette, interactive nav.",
+      "prompt": "Design a mobile app prototype for a meditation app called Calm Spaces. Show a phone frame containing a home screen with a meditation list, play button, and progress tracker. Use serene typography, soft greens and blues, and lots of white space."
+    },
+    "caseStudy": {
+      "title": "Client case study one-pager",
+      "description": "Dark theme one-page PDF-ready layout with hero metrics.",
+      "prompt": "Create a one-page client case study. The client increased qualified leads 40% using our platform. Include before/after metrics, a CEO quote, and a logo placeholder. Clean, minimal, dark theme."
+    },
+    "pitchDeck": {
+      "title": "B2B SaaS pitch deck",
+      "description": "8-12 slides for a healthcare-targeted SaaS pitch.",
+      "prompt": "Design a pitch deck for a B2B SaaS company targeting mid-market healthcare. 8 to 10 slides covering problem, market, product, traction, team, and ask."
+    },
+    "marketingLanding": {
+      "title": "Marketing landing page",
+      "description": "Hero + features + CTA, tunable accent color.",
+      "prompt": "Design a modern marketing landing page for an AI productivity tool. Include a hero section, three feature cards, social proof, and a call to action. Use a warm neutral palette."
+    }
+  },
+  "examples": {
+    "tab": "Examples",
+    "title": "Examples",
+    "subtitle": "Hand-picked starting points. Hover to preview, then drop the prompt into the composer.",
+    "empty": "No examples match your filter.",
+    "useThisPrompt": "Use this prompt",
+    "categories": {
+      "all": "All",
+      "animation": "Animation",
+      "ui": "UI",
+      "marketing": "Marketing",
+      "document": "Document",
+      "dashboard": "Dashboard",
+      "presentation": "Presentation",
+      "email": "Email",
+      "mobile": "Mobile"
+    },
+    "thumbnailAlt": "{{title}} preview",
+    "promptUsedToast": "Prompt loaded — edit and send when ready."
+  },
+  "emptyState": {
+    "heading": "What would you like to design?",
+    "subline": "Describe your idea in the chat, or pick a template to get started.",
+    "tryThese": "Quick starts",
+    "starters": {
+      "landing": "Startup landing page",
+      "pitch": "Pitch deck slides",
+      "mobile": "Mobile onboarding",
+      "dashboard": "Analytics dashboard",
+      "email": "Welcome email",
+      "portfolio": "Photo portfolio",
+      "casestudy": "Case study page",
+      "animation": "CSS animation showcase"
+    },
+    "starterDesc": {
+      "landing": "Hero + feature cards + social proof + CTA",
+      "pitch": "Title + problem + solution, 16:9 slides",
+      "mobile": "3-screen flow inside a phone frame",
+      "dashboard": "Line chart + bars + table, dark theme",
+      "email": "600px single-column with onboarding steps",
+      "portfolio": "Masonry grid + filters + hover overlays",
+      "casestudy": "Key metrics + quote + implementation steps",
+      "animation": "Pure CSS/SVG animations, 60fps smooth"
+    }
+  },
+  "starterPrompts": {
+    "landing": "Build a polished landing page for an AI startup aimed at small product teams. Include a first-viewport hero with a clear product signal, strong tagline, subhead, primary/secondary CTAs, feature section, social proof, pricing teaser, FAQ, and footer. Use editorial typography, generous whitespace, real product-oriented copy, responsive layout, and no external stock or placeholder images.",
+    "pitch": "Generate the first 3 slides of a 16:9 pitch deck for a fintech startup: title slide, problem slide, and solution slide. Use navy as the base, one orange accent, consistent footer/page numbers, simple charts or diagrams built in SVG/CSS, concise investor-ready copy, and fixed slide-safe spacing for export.",
+    "mobile": "Design a 3-screen mobile app onboarding flow inside phone frames: welcome, permissions, and first action. Show realistic app copy, progress indicators, primary/secondary buttons, permission state, and a final success hint. Use a soft mint palette, generous touch targets, accessible contrast, and no external icons or images.",
+    "dashboard": "Build an analytics dashboard for a SaaS team with MRR trend line chart, pipeline stacked bars, top accounts table, forecast gauge, date-range filters, and an empty or warning state. Use a dense dark theme, teal and amber accents, plausible mock data, accessible tables, and responsive card reflow.",
+    "email": "Design a transactional welcome email for a SaaS product. Use a 600px single-column table-based layout with logo header, greeting, 3 onboarding steps, primary CTA, fallback text link, and compliance footer. Keep it mobile-safe, use email-compatible styling, realistic copy, and no external images or scripts.",
+    "portfolio": "Design a photographer portfolio with a masonry image grid using CSS gradient or shape placeholders instead of external photos. Include wordmark nav, category filter pills, hover overlay with project title and camera settings, lightbox selected state, availability footer, dark background, and responsive two/three/four-column behavior.",
+    "casestudy": "Create a print-ready one-page customer case study for a B2B fintech. Include client hero, business context, three large before/after metrics with deltas, a CFO pull quote, three-step How we did it section, process diagram, and logo strip. Use dark theme, serif headings, monospace numerals, realistic content, and no lorem ipsum.",
+    "animation": "Build a showcase page with six organic CSS/SVG loading animations. Each loader sits in its own labeled card with a usage note, accessible status text, active/paused state, and motion polish: blob morph, leaf sway, ink drop, breathing circle, soft pulse, ribbon weave. Use warm cream background, muted pastels, responsive wrapping, and no external assets."
+  },
+  "hub": {
+    "newDesign": "New design",
+    "newDesignCardTitle": "Start a new design",
+    "newDesignCardSub": "Blank canvas · AI generated",
+    "backToHub": "All designs",
+    "tabs": {
+      "recent": "Recent",
+      "all": "All designs",
+      "examples": "Examples",
+      "resources": "Resources"
+    },
+    "recent": {
+      "title": "Recent",
+      "empty": "Nothing here yet — start a new design to see it pinned at the top."
+    },
+    "your": {
+      "title": "Your designs",
+      "empty": "No designs saved yet. Click \"New design\" to create your first one.",
+      "openAria": "Open {{name}}"
+    },
+    "examples": {
+      "title": "Examples",
+      "comingSoon": "A curated gallery of starter prompts is on the way."
+    },
+    "designSystems": {
+      "title": "Design systems",
+      "comingSoon": "Reusable brand systems and templates are on the way."
+    },
+    "card": {
+      "type": {
+        "prototype": "Prototype",
+        "slideDeck": "Slide deck",
+        "template": "From template",
+        "other": "Other"
+      },
+      "createdAt": "Created {{date}}",
+      "moreActions": "More actions for {{name}}",
+      "rename": "Rename",
+      "delete": "Delete"
+    }
+  },
+  "create": {
+    "title": "Start a new design",
+    "subtitle": "Pick a type so we can tailor the first prompt.",
+    "close": "Close",
+    "types": {
+      "prototype": "Prototype",
+      "slideDeck": "Slide deck",
+      "template": "From template",
+      "other": "Other"
+    },
+    "typeDescriptions": {
+      "prototype": "Interactive UI mockups with a phone or browser frame.",
+      "slideDeck": "A multi-slide deck for talks, pitches, or summaries.",
+      "template": "Start from one of the bundled starter prompts.",
+      "other": "A blank canvas — describe anything else you have in mind."
+    },
+    "fields": {
+      "name": "Project name",
+      "namePlaceholder": "Untitled design",
+      "fidelity": "Fidelity",
+      "fidelityWireframe": "Wireframe",
+      "fidelityWireframeHint": "Greyscale blocks, no imagery — quick exploration.",
+      "fidelityHigh": "High-fidelity",
+      "fidelityHighHint": "Polished colors, real-looking content.",
+      "fidelityComingSoon": "Wireframe vs. high-fidelity selection ships in a follow-up.",
+      "speakerNotes": "Include speaker notes",
+      "speakerNotesHint": "Adds a notes section under each slide for delivery cues.",
+      "template": "Template",
+      "templateHint": "Choose a starter — the first prompt will be pre-filled."
+    },
+    "cta": "Create",
+    "disabledHint": "Add a project name to continue.",
+    "help": {
+      "share": "Designs stay on this device. Sharing happens through bundle export — no cloud account needed.",
+      "templates": "More starters arrive in a follow-up; this list will keep growing."
+    }
+  },
+  "err": {
+    "IPC_BAD_INPUT": "The request contained invalid input. Please try again.",
+    "IPC_DB_ERROR": "A local database error occurred. Restarting the app may help.",
+    "IPC_NOT_FOUND": "The requested item was not found.",
+    "PROVIDER_AUTH_MISSING": "No API key found for this provider. Please add your key in Settings.",
+    "PROVIDER_KEY_MISSING": "No API key is stored for this provider. Add one in Settings.",
+    "PROVIDER_ACTIVE_MISSING_KEY": "The active provider has no API key. Open Settings to add one.",
+    "PROVIDER_NOT_SUPPORTED": "This provider is not supported. Check your provider configuration.",
+    "PROVIDER_MODEL_UNKNOWN": "The selected model is not available for this provider.",
+    "PROVIDER_BASE_URL_MISSING": "A base URL is required for this provider. Configure it in Settings.",
+    "PROVIDER_ERROR": "The provider returned an error. Check your API key and try again.",
+    "PROVIDER_HTTP_4XX": "The provider rejected the request. Verify your API key and billing.",
+    "PROVIDER_UPSTREAM_ERROR": "The provider returned an unexpected error. Details are in the log.",
+    "PROVIDER_GATEWAY_INCOMPATIBLE": "Your gateway returned 'not implemented' for the Messages API. Try switching wire to openai-chat in Settings, or use a gateway that supports the Anthropic Messages API.",
+    "PROVIDER_ABORTED": "Generation was cancelled.",
+    "PROVIDER_RETRY_EXHAUSTED": "The provider failed after several retries. Check your connection and try again.",
+    "CLAUDE_CODE_OAUTH_ONLY": "Your Claude Code login uses an Anthropic subscription (Pro/Max). Third-party apps cannot reuse the subscription quota — generate an API key at console.anthropic.com and use it here.",
+    "CODEX_TOKEN_PARSE_FAILED": "Local ChatGPT login is corrupted. Please re-login in Settings.",
+    "CODEX_TOKEN_NOT_LOGGED_IN": "ChatGPT subscription is not signed in. Please log in via Settings.",
+    "INPUT_EMPTY_PROMPT": "The prompt cannot be empty.",
+    "INPUT_EMPTY_COMMENT": "The comment cannot be empty.",
+    "INPUT_EMPTY_HTML": "Existing HTML is required for this operation.",
+    "INPUT_UNSUPPORTED_MODE": "This generation mode is not supported.",
+    "GENERATION_TIMEOUT": "Generation timed out. Try a shorter prompt or increase the timeout in Settings.",
+    "GENERATION_INCOMPLETE": "The agent stopped before completing verification. Continue the run to finish the workspace artifact.",
+    "WORKSPACE_MISSING": "This design has no workspace bound. Reopen or recreate the design.",
+    "ARTIFACT_PROTOCOL_INVALID": "The generated artifact did not follow the required protocol.",
+    "TOOL_EXECUTION_FAILED": "A design tool failed while running. Details are in the log.",
+    "CONFIG_READ_FAILED": "Failed to read configuration file. Check file permissions.",
+    "CONFIG_PARSE_FAILED": "Configuration file could not be parsed. It may be corrupt.",
+    "CONFIG_SCHEMA_INVALID": "Configuration file has an unrecognised format. Please reconfigure.",
+    "CONFIG_NOT_LOADED": "Configuration has not been loaded yet. Please restart the app.",
+    "CONFIG_MISSING": "No configuration found. Complete onboarding to get started.",
+    "SNAPSHOTS_UNAVAILABLE": "The local design database is unavailable. Restarting the app may help.",
+    "BOOT_ORDER": "An internal startup error occurred. Please restart the app.",
+    "STORAGE_SETTINGS_READ_FAILED": "Failed to read storage location settings.",
+    "STORAGE_SETTINGS_PARSE_FAILED": "Storage location settings could not be parsed.",
+    "STORAGE_SETTINGS_INVALID": "Storage location settings contain invalid data.",
+    "KEYCHAIN_UNAVAILABLE": "OS keychain (secure storage) is not available. API keys cannot be stored.",
+    "KEYCHAIN_EMPTY_INPUT": "Cannot encrypt or decrypt an empty value.",
+    "ATTACHMENT_TOO_LARGE": "One or more attachments exceed the size limit.",
+    "ATTACHMENT_READ_FAILED": "Failed to read an attachment file. Check that the file still exists.",
+    "REFERENCE_URL_TOO_LARGE": "The reference URL content is too large to include.",
+    "REFERENCE_URL_FETCH_FAILED": "Could not fetch the reference URL. Check the URL and your internet connection.",
+    "REFERENCE_URL_FETCH_TIMEOUT": "Fetching the reference URL timed out. Try again or use a different URL.",
+    "REFERENCE_URL_UNSUPPORTED": "This type of reference URL is not supported.",
+    "PREFERENCES_READ_FAIL": "Failed to read preferences. Default settings will be used.",
+    "PREFERENCES_INVALID_TIMEOUT": "The generation timeout value is invalid.",
+    "SKILL_LOAD_FAILED": "One or more skills failed to load. Check your skill files for errors.",
+    "EXPORTER_UNKNOWN": "Unknown export format requested.",
+    "EXPORTER_NO_CHROME": "Chrome or Chromium was not found. Install it to enable PDF export.",
+    "EXPORTER_PDF_FAILED": "PDF export failed. Ensure Chrome is installed and try again.",
+    "EXPORTER_PPTX_FAILED": "PowerPoint export failed.",
+    "EXPORTER_ZIP_UNSAFE_PATH": "Export was blocked: an asset path would escape the ZIP archive.",
+    "EXPORTER_ZIP_FAILED": "ZIP export failed.",
+    "OPEN_PATH_FAILED": "Could not open the requested folder or file.",
+    "RENDERER_ERROR": "An error occurred in the renderer. Details are in the log."
+  }
+}

@@ -1,0 +1,85 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>chart-inline</title>
+<link rel="stylesheet" href="../../aleph-tokens.css">
+<style>
+  body { background: #111; color: #eee; font: 15px/1.45 system-ui; padding: 24px; }
+  #burbuja { max-width: 720px; }
+  .sala-chart-fig { margin: .8em 0; }
+  .sala-chart { display: block; width: 100%; height: auto; }
+</style>
+<script src="../../render/sala-render.js"></script>
+<body>
+<div id="burbuja" class="sv-burbuja sv-md"></div>
+<script>
+const LINE = {
+  type: "line",
+  title: "Consumo de disco (MB)",
+  labels: ["sidecar", "vendor", "workspaces", "catalog", "docs"],
+  series: [{ name: "MB", data: [410, 220, 180, 95, 40] }],
+};
+const CJS = {
+  type: "bar",
+  data: {
+    labels: ["ene", "feb", "mar"],
+    datasets: [{ label: "Ventas", data: [10, 25, 30] }],
+  },
+};
+const SCHEMA = { type: "object", properties: { name: { type: "string" } } };
+const ROTA = { type: "line", labels: ["a"], series: [{ name: "x", data: "no-lista" }] };
+const md = [
+  "Informe de tamaños.",
+  "",
+  "```json",
+  JSON.stringify(LINE, null, 2),
+  "```",
+  "",
+  "Y un bar Chart.js:",
+  "",
+  "```",
+  JSON.stringify(CJS),
+  "```",
+  "",
+  "Schema (NO es chart):",
+  "",
+  "```json",
+  JSON.stringify(SCHEMA),
+  "```",
+  "",
+  "Python legítimo:",
+  "",
+  "```python",
+  "print(1+1)",
+  "```",
+  "",
+  "Spec rota:",
+  "",
+  "```json",
+  JSON.stringify(ROTA),
+  "```",
+].join("\n");
+window.__ready = SalaRender.ensureDeps().then(function () {
+  return SalaRender.renderMarkdown(md);
+}).then(function (html) {
+  var el = document.getElementById("burbuja");
+  el.innerHTML = html;
+  window.__mdOnly = {
+    figs: el.querySelectorAll(".sala-chart-fig").length,
+    jsonVisible: /"type": "line"/.test(el.textContent) || /"type":"line"/.test(el.textContent),
+    python: /print\(1\+1\)/.test(el.textContent),
+  };
+  SalaRender.renderInlineFigures(el);
+  window.__despues = {
+    figs: el.querySelectorAll(".sala-chart-fig").length,
+    paths: el.querySelectorAll(".sala-chart-fig svg path").length,
+    jsonLineVisible: /"labels"/.test(el.textContent) && /sidecar/.test(el.textContent)
+      && el.querySelectorAll(".sala-chart-fig").length === 0,
+    python: /print\(1\+1\)/.test(el.textContent),
+    schema: /object/.test(el.textContent) && /properties/.test(el.textContent),
+    specRotaComoCodigo: !!Array.prototype.find.call(el.querySelectorAll("pre code"), function (c) {
+      return /no-lista/.test(c.textContent);
+    }),
+  };
+});
+</script>
+</body>

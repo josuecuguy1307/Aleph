@@ -1,0 +1,158 @@
+{
+  "_meta": {
+    "belt": "kit",
+    "slug": "kit",
+    "que_es": "EL KIT BASE — los 5 BRAZOS que un cerebro frontier NO tiene. No es un nicho: es el piso de todo agente. Un modelo capaz no necesita que le digan que sabe sumar ni qué hora es; necesita poder EJECUTAR, LEER/ESCRIBIR archivos, CONSULTAR datos, ABRIR documentos y MIRAR la web. Eso son estos 6 servers (5 brazos; el brazo Web son dos: buscar + traer).",
+    "brazos": {
+      "1_codigo": "pysandbox.run_python — ejecuta Python REAL en un subproceso con entorno reducido, pero sin jail de sistema operativo; siempre requiere aprobación. Anti-fabricación: todo número sale de una corrida, no del modelo.",
+      "2_archivos": "filesystem — leer/escribir/listar bajo ${PUPPET_WORKDIR} (allow-list de un solo dir: el espacio del run).",
+      "3_datos": "sqlite — tablas y consultas reales sobre ${PUPPET_WORKDIR}/datos.db.",
+      "4_documentos": "markitdown.convert_to_markdown — PDF/Word/Excel/PPT/HTML → markdown legible por el modelo.",
+      "5_web": "duckduckgo.search + fetch_content (BÚSQUEDA GENERAL de toda la web, motor default, SIN key ni trámite) + fetch.fetch (traer CUALQUIER URL → markdown). El upgrade a Exa/Brave con key del usuario es OPCIONAL y se equipa en el Cuarto — JAMÁS es el default, porque el default no pide trámite."
+    },
+    "por_que_sin_cards": "DELIBERADO — este belt NO declara `_meta.cards`. Las 5 no son el OFICIO del agente, son su BASE: no se dibujan como piezas del diorama ni engordan /v1/atoms/catalog (atoms_router saltea todo belt sin cards) ni el cinturón de la Sala (belts_router devuelve cards:[] → 0 piezas, failed:0). El Cuarto queda para lo específico del oficio (KiCad, FreeCAD, Gmail, SEC-EDGAR). Agregar cards acá volvería a poner la calculadora en la vitrina.",
+    "credencial": "NINGUNA. Los 6 servers son keyless. Lo que toca plata o manda afuera (email/slack/pagos) NO está en el kit y sigue gateado por diseño.",
+    "sqlite_sin_describe_table": "El subset del kit NO cablea `describe_table` (sí `list_tables` y `read_query`): el hint castellano 'escrib' de EXTERNAL_WRITE_HINTS es substring de 'd-escrib-e', así que el PISO del gate re-clasifica esa LECTURA como write-world y quedaría pidiendo permiso cada vez. Falso positivo PREEXISTENTE del enforcer (conservador hacia gatear) — se REPORTA en reports/step5/FIX-P4-KIT.md, no se parcha desde acá (tocar la lista de hints cambia el gate de todo el sistema).",
+    "gates": "El gate fuerza un piso code_exec independiente de esta declaración: run_python queda RETENIDA bajo toda autonomía y no puede degradarse desde una receta. write_file/edit_file/create_directory/move_file/write_query/create_table matchean el piso write-world. La card de pysandbox conserva su gate de catálogo nivel exec.",
+    "action_classes": {
+      "_que_es": "server → tool → clase de acción DECLARADA (read | write-local | write-world). El assembler la pliega a recipe.belt.action_classes antes de construir el gate (recipe_assembler §S16). Sin esto, una tool sin verbo externo claro cae a fail-closed y el gate retiene hasta una lectura. Los pisos money/send/mutación-externa ganan POR ENCIMA: acá no se puede aflojar nada.",
+      "pysandbox": {
+        "run_python": "write-local"
+      },
+      "filesystem": {
+        "read_text_file": "read",
+        "read_multiple_files": "read",
+        "list_directory": "read",
+        "directory_tree": "read",
+        "search_files": "read",
+        "get_file_info": "read",
+        "list_allowed_directories": "read",
+        "write_file": "write-local",
+        "edit_file": "write-local",
+        "create_directory": "write-local",
+        "move_file": "write-local"
+      },
+      "sqlite": {
+        "read_query": "read",
+        "list_tables": "read",
+        "write_query": "write-local",
+        "create_table": "write-local"
+      },
+      "markitdown": {
+        "convert_to_markdown": "read"
+      },
+      "duckduckgo": {
+        "search": "read",
+        "fetch_content": "read"
+      },
+      "fetch": {
+        "fetch": "read"
+      },
+      "officecli": {
+        "_por_que": "UNA sola tool que recibe una LÍNEA DE COMANDO de officecli (create/set/add/remove/raw-set/merge…). Es exec-shaped: puede ESCRIBIR. Se declara write-local —igual que run_python— y el piso del enforcer manda por encima. No se declara `read` aunque la mayoría de sus verbos lean: la clase es de la TOOL, y esta tool puede escribir con un argumento distinto.",
+        "officecli": "write-local"
+      },
+      "skills": {
+        "_por_que": "Las tres LEEN archivos declarados y nada más: no ejecutan, no escriben, no salen a la red. `read`, y el piso del enforcer manda igual.",
+        "list_skills": "read",
+        "read_skill": "read",
+        "read_skill_file": "read"
+      }
+    },
+    "verificado": "JSON-RPC initialize + tools/list REALES sobre los 6 servers el 2026-07-26 (probe stdio directo): pysandbox→[run_python] · filesystem→[read_file, read_text_file, read_media_file, read_multiple_files, write_file, edit_file, create_directory, list_directory, list_directory_with_sizes, directory_tree, move_file, search_files, get_file_info, list_allowed_directories] · sqlite→[read_query, write_query, create_table, list_tables, describe_table, append_insight] · markitdown→[convert_to_markdown] · duckduckgo→[search, fetch_content] · fetch→[fetch]. Evidencia en reports/step5/FIX-P4-KIT.md."
+  },
+  "mcpServers": {
+    "pysandbox": {
+      "command": "python3",
+      "args": [
+        "${PUPPET_BELTS}/generalistas/pysandbox_server.py"
+      ],
+      "env": {
+        "PUPPET_WORKDIR": "${PUPPET_WORKDIR}"
+      },
+      "description": "BRAZO 1 · CÓDIGO. run_python usa python3 -I, cwd temporal, entorno reducido y timeout, pero NO un jail de sistema operativo; el gate exige aprobación cada vez."
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "${PUPPET_WORKDIR}"
+      ],
+      "description": "BRAZO 2 · ARCHIVOS. Referencia oficial MCP, keyless. Allow-list de UN dir: el espacio del run (${PUPPET_WORKDIR}); no ve el resto del disco. Las tools de escritura quedan retenidas por el piso del gate."
+    },
+    "sqlite": {
+      "command": "uvx",
+      "args": [
+        "--with",
+        "mcp==1.29.0",
+        "mcp-server-sqlite",
+        "--db-path",
+        "${PUPPET_WORKDIR}/datos.db"
+      ],
+      "description": "BRAZO 3 · DATOS. Referencia oficial MCP, keyless: tablas y consultas REALES sobre un SQLite en el workdir del run. Mismo server/args que declara belt-generalistas.",
+      "pin_sdk": {
+        "mcp": "1.29.0",
+        "por_que": "Mismo pin que la copia hermana: el SDK `mcp` publicó 2.0.0 (major) y este server está escrito contra la 1.x, con `mcp>=` abierto en su metadata. Este archivo tenía una copia SIN pinear del mismo server — el verificador sólo mide la PRIMERA aparición de cada nombre, así que la copia quedó rota e invisible hasta que el calentamiento del agente la levantó."
+      }
+    },
+    "markitdown": {
+      "command": "uvx",
+      "args": [
+        "markitdown-mcp"
+      ],
+      "description": "BRAZO 4 · DOCUMENTOS. markitdown-mcp (Microsoft), keyless: convert_to_markdown lleva PDF/Word/Excel/PowerPoint/HTML/imagen a markdown que el modelo puede leer. Acepta file:/// del workdir y http(s)://."
+    },
+    "duckduckgo": {
+      "command": "uvx",
+      "args": [
+        "duckduckgo-mcp-server"
+      ],
+      "description": "BRAZO 5a · WEB (BÚSQUEDA GENERAL). DuckDuckGo como MOTOR DEFAULT de toda la web: search + fetch_content. Sin API key, sin trámite — el default no pide trámite. Mismo server que declara belt-generalistas."
+    },
+    "fetch": {
+      "command": "uvx",
+      "args": [
+        "--with",
+        "mcp==1.29.0",
+        "mcp-server-fetch"
+      ],
+      "description": "BRAZO 5b · WEB (TRAER URL). Referencia oficial MCP, keyless: fetch trae CUALQUIER URL y la devuelve como markdown. Lectura pura, sin gate.",
+      "pin_sdk": {
+        "mcp": "1.29.0",
+        "por_que": "El SDK `mcp` publicó 2.0.0 (major = ruptura) y este server está escrito contra la serie 1.x. Su metadata declara `mcp>=…` —rango abierto—, así que `uvx` resolvía 2.0.0 y el proceso moría en el import. MEDIDO: pinear el PAQUETE no alcanza (tres versiones distintas de mcp-server-git, las tres rotas): el pin tiene que ir en el SDK. `==` exacto, jamás un rango: el rango es el bug con otro nombre."
+      },
+      "tool_sonda": "fetch",
+      "args_sonda": {
+        "url": "https://example.com"
+      },
+      "sonda_por_que": {
+        "clase": "constante neutra",
+        "lectura_pura": true,
+        "motivo": "Su única tool pide `url`. `example.com` está reservado por la IANA (RFC 2606) justamente para esto: es público, estable y no le pertenece a nadie, así que pedirlo no toca a ningún tercero. Lectura pura."
+      }
+    },
+    "officecli": {
+      "command": "${PUPPET_BELTS}/../../third_party/officecli/bin/officecli-macos-arm64",
+      "args": [
+        "mcp"
+      ],
+      "env": {
+        "PUPPET_WORKDIR": "${PUPPET_WORKDIR}",
+        "OFFICECLI_SKIP_UPDATE": "1",
+        "OFFICECLI_NO_AUTO_INSTALL": "1"
+      },
+      "description": "BRAZO 6 · DOCUMENTOS DE OFICINA, EDITABLES. `officecli` abre un .docx/.xlsx/.pptx que YA EXISTE y lo consulta o lo modifica por selectores tipo CSS (get · query · set · add · remove · move · raw-set · merge de plantillas). MCP nativo: el binario trae su propio server stdio (`officecli mcp`), así que entra por el mismo carril que el resto — cero envoltorio nuestro. Apache-2.0, keyless, SIN RED, binario commiteado (32 MiB). NO SE SOLAPA con artifact_export: aquél GENERA el archivo desde el contenido del turno (un tiro, markdown → .docx/.xlsx/.pptx, con su vara probada cayendo); éste EDITA uno existente conservando todo lo demás. Dos trabajos distintos sobre el mismo formato."
+    },
+    "skills": {
+      "command": "python3",
+      "args": [
+        "${PUPPET_BELTS}/generalistas/skills_server.py"
+      ],
+      "env": {
+        "ALEPH_SKILL_PATHS": "${PUPPET_BELTS}/../../third_party/officecli/skills:${PUPPET_BELTS}/../../third_party/gws/skills:${PUPPET_BELTS}/../../catalog/skills"
+      },
+      "description": "BRAZO 7 · PERICIAS. El formato Anthropic Agent Skills —carpeta con `SKILL.md` de frontmatter (name/description) + cuerpo— cargado por Aleph, de cualquier origen. DIVULGACIÓN PROGRESIVA: `list_skills` da el índice barato (nombre + para qué sirve) y `read_skill` trae el procedimiento SÓLO cuando el modelo decidió usarlo; meter los 26 cuerpos en cada prompt sería pagar por lo que no se usa, que es justo lo que el formato existe para evitar. Sólo stdlib, sólo lectura, raíces DECLARADAS."
+    }
+  }
+}

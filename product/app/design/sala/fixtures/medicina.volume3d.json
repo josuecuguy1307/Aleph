@@ -1,0 +1,16 @@
+{
+ "type": "volume3d",
+ "structure": "pulmon",
+ "structure_label": "Pulmón (fixture)",
+ "title": "Volumen segmentado (fixture)",
+ "color": [
+  122,
+  199,
+  156
+ ],
+ "n_vertices": 4,
+ "n_triangles": 4,
+ "vertices_b64": "AAAAAAAAAAAAAAAAAAAgQgAAAAAAAAAAAACgQQAACEIAAAAAAACgQQAAQEEAAABC",
+ "faces_b64": "AAAAAAEAAAACAAAAAAAAAAEAAAADAAAAAQAAAAIAAAADAAAAAAAAAAIAAAADAAAA",
+ "source": "fixture"
+}

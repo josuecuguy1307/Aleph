@@ -1,0 +1,129 @@
+[
+  {
+    "archivo": "product/belts/ingenieria/fem_server.py",
+    "campo": "TOOLS[0].description (L34-42)",
+    "valor_es_actual": "Corre un análisis FEM (elementos finitos) REAL con CalculiX sobre una viga en voladizo paramétrica de acero (empotrada en un extremo, carga transversal en el otro). Devuelve la tensión de von Mises máxima y mínima (MPa), el desplazamiento máximo (mm) y un mapa de campo renderizable. Úsalo cuando el usuario pida análisis estructural, de esfuerzos/tensiones, deflexión o FEM. Todo número sale del solver, nunca de memoria. Para DIMENSIONAR de forma iterativa: llámala con la geometría actual, lee max_von_mises_MPa, compara contra yield_strength_MPa, y si excede, llámala DE NUEVO con una sección mayor. Cada llamada en el mismo run se acumula como una iteración de convergencia.",
+    "clave_a_emitir": "obra.fem.tool_description"
+  },
+  {
+    "archivo": "product/belts/ingenieria/fem_server.py",
+    "campo": "inputSchema.length_mm.description (L47)",
+    "valor_es_actual": "Largo de la viga en mm (default 1000).",
+    "clave_a_emitir": "obra.fem.param_length"
+  },
+  {
+    "archivo": "product/belts/ingenieria/fem_server.py",
+    "campo": "inputSchema.width_mm.description (L48)",
+    "valor_es_actual": "Ancho de sección en mm (default 100).",
+    "clave_a_emitir": "obra.fem.param_width"
+  },
+  {
+    "archivo": "product/belts/ingenieria/fem_server.py",
+    "campo": "inputSchema.height_mm.description (L49)",
+    "valor_es_actual": "Alto de sección en mm (default 100).",
+    "clave_a_emitir": "obra.fem.param_height"
+  },
+  {
+    "archivo": "product/belts/ingenieria/fem_server.py",
+    "campo": "inputSchema.force_N.description (L50)",
+    "valor_es_actual": "Carga transversal en N (default 10000).",
+    "clave_a_emitir": "obra.fem.param_force"
+  },
+  {
+    "archivo": "product/belts/ingenieria/fem_server.py",
+    "campo": "inputSchema.material_name.description (L51)",
+    "valor_es_actual": "Nombre del material (default Steel).",
+    "clave_a_emitir": "obra.fem.param_material_name"
+  },
+  {
+    "archivo": "product/belts/ingenieria/fem_server.py",
+    "campo": "inputSchema.youngs_modulus_MPa.description (L52)",
+    "valor_es_actual": "Módulo de Young en MPa (default 210000).",
+    "clave_a_emitir": "obra.fem.param_youngs_modulus"
+  },
+  {
+    "archivo": "product/belts/ingenieria/fem_server.py",
+    "campo": "inputSchema.poisson_ratio.description (L53)",
+    "valor_es_actual": "Coef. de Poisson (default 0.30).",
+    "clave_a_emitir": "obra.fem.param_poisson"
+  },
+  {
+    "archivo": "product/belts/ingenieria/fem_server.py",
+    "campo": "inputSchema.density_kg_m3.description (L54)",
+    "valor_es_actual": "Densidad kg/m^3 (default 7900).",
+    "clave_a_emitir": "obra.fem.param_density"
+  },
+  {
+    "archivo": "product/belts/ingenieria/fem_server.py",
+    "campo": "inputSchema.mesh_size_mm.description (L55)",
+    "valor_es_actual": "Tamaño de elemento de malla en mm (opcional).",
+    "clave_a_emitir": "obra.fem.param_mesh_size"
+  },
+  {
+    "archivo": "product/belts/ingenieria/fem_server.py",
+    "campo": "inputSchema.yield_strength_MPa.description (L56)",
+    "valor_es_actual": "Límite admisible de von Mises del material (yield) en MPa para el chequeo de falla y el gráfico de convergencia (default 250, acero).",
+    "clave_a_emitir": "obra.fem.param_yield_strength"
+  },
+  {
+    "archivo": "product/belts/ingenieria/fem_server.py",
+    "campo": "_run_fem error (L83)",
+    "valor_es_actual": "freecadcmd no encontrado en %s (FreeCAD no instalado)",
+    "clave_a_emitir": "obra.fem.err_freecadcmd_missing"
+  },
+  {
+    "archivo": "product/belts/ingenieria/fem_server.py",
+    "campo": "_run_fem error (L95)",
+    "valor_es_actual": "FEM timeout (>%ss)",
+    "clave_a_emitir": "obra.fem.err_timeout"
+  },
+  {
+    "archivo": "product/belts/ingenieria/fem_server.py",
+    "campo": "_run_fem error (L97)",
+    "valor_es_actual": "el motor FEM no produjo resultado (ver freecadcmd)",
+    "clave_a_emitir": "obra.fem.err_no_result"
+  },
+  {
+    "archivo": "product/belts/ingenieria/fem_server.py",
+    "campo": "convergence.title (L129)",
+    "valor_es_actual": "Convergencia FEM — dimensionado de viga",
+    "clave_a_emitir": "obra.fem.title"
+  },
+  {
+    "archivo": "product/belts/ingenieria/fem_server.py",
+    "campo": "convergence.metric.name (L130)",
+    "valor_es_actual": "von Mises máx",
+    "clave_a_emitir": "obra.fem.metric_von_mises"
+  },
+  {
+    "archivo": "product/belts/ingenieria/fem_server.py",
+    "campo": "result.verdict (L153)",
+    "valor_es_actual": "FALLA / PASA",
+    "clave_a_emitir": "render.convergence.verdict_fail / render.convergence.verdict_pass",
+    "nota": "reusa la clave canónica de render.convergence (mismo concepto, mismo texto)"
+  },
+  {
+    "archivo": "product/belts/ingenieria/fem_server.py",
+    "campo": "result.note (L157)",
+    "valor_es_actual": "Análisis FEM real con CalculiX. La decisión de qué geometría probar es tuya.",
+    "clave_a_emitir": "obra.fem.note"
+  },
+  {
+    "archivo": "product/belts/ingenieria/fem_server.py",
+    "campo": "_handle ValueError (L185)",
+    "valor_es_actual": "unknown tool %s",
+    "clave_a_emitir": "obra.fem.err_unknown_tool"
+  },
+  {
+    "archivo": "product/belts/ingenieria/fem_server.py",
+    "campo": "_handle except (L192)",
+    "valor_es_actual": "error: %s",
+    "clave_a_emitir": "obra.fem.err_internal"
+  },
+  {
+    "archivo": "product/belts/ingenieria/fem_server.py",
+    "campo": "_handle JSON-RPC error (L196)",
+    "valor_es_actual": "Method not found: %s",
+    "clave_a_emitir": "obra.fem.err_method_not_found"
+  }
+]

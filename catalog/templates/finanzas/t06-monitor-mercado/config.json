@@ -1,0 +1,36 @@
+{
+  "belt_path": "catalog/templates/finanzas/belt-finanzas.mcp.json",
+  "framing_path": "catalog/templates/finanzas/t06-monitor-mercado/framing.md",
+  "framing_fallback": "Eres un analista de mercado. Monitoras los activos indicados usando Alpha Vantage. El workflow es: TOOL_LIST para descubrir tools disponibles, TOOL_GET para obtener el schema, TOOL_CALL para ejecutar. Reportas variaciones y señales técnicas de forma estructurada. Alertas cuando se superan los umbrales definidos.",
+  "rag_dir": null,
+  "base_url": "http://127.0.0.1:11434/v1",
+  "model": "qwen3:8b",
+  "max_turns": 14,
+  "max_tokens": 4096,
+  "temperature": 0,
+  "tool_filters": {
+    "alphavantage": [
+      "TOOL_LIST",
+      "TOOL_GET",
+      "TOOL_CALL"
+    ],
+    "excel": [
+      "create_workbook",
+      "create_worksheet",
+      "write_data_to_excel",
+      "get_workbook_metadata"
+    ]
+  },
+  "surgery_params": {
+    "tickers": "__REQUIRED__",
+    "umbral_variacion_pct": 2.0,
+    "indicadores_tecnicos": ["RSI", "MACD"],
+    "umbral_rsi_sobrecompra": 70,
+    "umbral_rsi_sobreventa": 30,
+    "guardar_xlsx": true,
+    "output_xlsx": "__AUTO__"
+  },
+  "api_key": {
+    "env_var": "ALPHA_VANTAGE_API_KEY"
+  }
+}

@@ -1,0 +1,90 @@
+{
+  "connector": "huggingface",
+  "auth_method": "personal_token",
+  "tier": "average",
+  "needs_base_url": false,
+  "deep_link": "https://huggingface.co/settings/tokens",
+  "api_base": "https://huggingface.co",
+  "credential_fields": [
+    {
+      "id": "key",
+      "label": "Tu token de Hugging Face",
+      "shape": "hf_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx (empieza con hf_)",
+      "secret": true
+    }
+  ],
+  "auth": {
+    "scheme": "header",
+    "name": "Authorization",
+    "value": "Bearer {key}"
+  },
+  "steps": [
+    {
+      "txt": "Te llevo a crear un token en Hugging Face. Pon un nombre (ej. 'Mi asistente') → el tipo «Read» alcanza para buscar papers/modelos → Generar.",
+      "emphasis": [
+        "Read",
+        "Genera"
+      ]
+    },
+    {
+      "txt": "Copia el token (empieza con hf_) — es la única vez que se muestra completo."
+    },
+    {
+      "txt": "Pega tu llave aquí."
+    }
+  ],
+  "validate": {
+    "method": "GET",
+    "path": "/api/whoami-v2",
+    "identity_field": "name"
+  },
+  "permissions": [
+    "buscar papers, modelos y datasets del Hub"
+  ],
+  "requires_sharing": false,
+  "errors": {
+    "invalid": "Ese token no funcionó o se borró — genera uno nuevo en Hugging Face y pégalo.",
+    "wrong_account": "Ese token es de otra cuenta. Genéralo desde la cuenta que vas a usar.",
+    "network": "No pude verificar ahora — prueba de nuevo en un momento."
+  },
+  "escape_hatch": true,
+  "capability_line": "Listo — ya puedo buscar papers, modelos y datasets en Hugging Face.",
+  "trust_line": "Tu token se guarda cifrado · lo quitas cuando quieras.",
+  "verification": {
+    "deep_link_ok": true,
+    "anchor_ok": false,
+    "validated_with_test_key": false,
+    "notes": "validate GET huggingface.co/api/whoami-v2 con Authorization: Bearer <hf_token> devuelve {name,...} → identity 'name'. Endpoint real y publico de HF. NO validado en vivo con un token de prueba (sin test key, no validé). Consumido por el server 'huggingface' del belt-research (HF_TOKEN)."
+  },
+  "en": {
+    "steps": [
+      {
+        "txt": "I'll take you to create a token in Hugging Face. Give it a name (e.g. 'My assistant') → the «Read» type is enough to search papers/models → Generate.",
+        "emphasis": [
+          "Read",
+          "Generate"
+        ]
+      },
+      {
+        "txt": "Copy the token (it starts with hf_) — this is the only time it's shown in full."
+      },
+      {
+        "txt": "Paste it here."
+      }
+    ],
+    "trust_line": "Your token is stored encrypted · remove it anytime.",
+    "capability_line": "Done — I can now search papers, models and datasets on Hugging Face.",
+    "errors": {
+      "invalid": "That token didn't work or was deleted — generate a new one in Hugging Face and paste it.",
+      "wrong_account": "That token belongs to another account. Generate it from the account you're going to use.",
+      "network": "I couldn't verify right now — try again in a moment."
+    },
+    "credential_fields": [
+      {
+        "id": "key",
+        "label": "Your Hugging Face token",
+        "shape": "hf_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx (starts with hf_)"
+      }
+    ]
+  }
+}

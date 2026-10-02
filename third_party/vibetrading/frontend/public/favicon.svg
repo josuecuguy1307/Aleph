@@ -1,0 +1,13 @@
+<!-- [Gate 4 · F6 · Finanzas · inmersión 3.8] Las tres velas son el OFICIO y se conservan; la
+     placa naranja con el degradé de marca del proyecto de origen, no. El fondo pasa al campo
+     de Aleph (#0B0B0C) y las velas al acento de la casa (#8D8BEE), que es como se ven todos
+     los glifos del sistema. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <rect width="32" height="32" rx="7.5" fill="#0B0B0C"/>
+  <line x1="9.5" y1="14" x2="9.5" y2="24.5" stroke="#8D8BEE" stroke-opacity="0.75" stroke-width="1.8" stroke-linecap="round"/>
+  <rect x="7.5" y="16" width="4" height="6" rx="1" fill="#8D8BEE"/>
+  <line x1="16" y1="9.5" x2="16" y2="21.5" stroke="#8D8BEE" stroke-opacity="0.75" stroke-width="1.8" stroke-linecap="round"/>
+  <rect x="14" y="11.5" width="4" height="7" rx="1" fill="#8D8BEE"/>
+  <line x1="22.5" y1="5.5" x2="22.5" y2="18" stroke="#8D8BEE" stroke-opacity="0.75" stroke-width="1.8" stroke-linecap="round"/>
+  <rect x="20.5" y="7.5" width="4" height="7.5" rx="1" fill="#8D8BEE"/>
+</svg>

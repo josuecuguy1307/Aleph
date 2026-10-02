@@ -1,0 +1,152 @@
+{
+  "_meta": {
+    "belt": "electronica",
+    "slug": "electronica",
+    "que_es": "Cinturon MCP del agente de ELECTRONICA: diseno de esquematicos KiCad REALES via kicad-sch-api (mcp-kicad-sch-api). Crea/edita/lee componentes, wires y labels en archivos .kicad_sch nativos. Todo componente que reporta sale de un archivo real, no de memoria.",
+    "fuente": "INSTALL+smoke 2026-06-19 (circuit-synth/mcp-kicad-sch-api sobre kicad-sch-api 0.5.6; KiCad 10.0.3 app instalada). Patron de catalog/templates/ingenieria/belt-ingenieria.mcp.json (FreeCAD).",
+    "verificado": "kicad: create_schematic -> add_component(R1 Device:R 4k7) -> list_components -> 'R1 (Device:R) = 4k7' por mcp_smoke (mismo stdio que :8080), schematic real generado. El repo nombrado en el plan (lamaalrajih/kicad-mcp) bootea pero sus tools son inllamables en fastmcp 2.10.6 (bug ctx); por eso se usa mcp-kicad-sch-api, que hace exactamente crear/leer componentes.",
+    "DEPENDENCIA": "Servidor stdio Python (kicad-sch-api). NO requiere la GUI de KiCad para crear/leer esquematicos (trabaja sobre el formato .kicad_sch). La app KiCad 10.0.3 esta instalada para kicad-cli/visualizacion. Server STATEFUL en memoria por run: create/load_schematic primero, despues add/list.",
+    "base_matrix": "catalog/templates/electronica/base-matrix-electronica.json",
+    "base_matrix_nota": "Declara quote_component/quote_bom (precio+stock) y ac_sweep/build_filter_schematic/run_erc (simulacion+DRC) como auto-ejecuta (lectura/computo local keyless), patron del FEM (ing-fem-headless). El enforcer (recipe_enforcer) sigue forzando money/send por encima.",
+    "cards": [
+      {
+        "id": "kicad-sch",
+        "gate": null,
+        "label": "Esquematicos KiCad",
+        "sub": "crea/edita/lee componentes, wires y labels en .kicad_sch real · sin llave",
+        "auth": "keyless",
+        "armario": "apps",
+        "backed_by": "kicad",
+        "tools": [
+          "create_schematic",
+          "load_schematic",
+          "add_component",
+          "list_components",
+          "get_schematic_info",
+          "add_wire",
+          "add_label",
+          "save_schematic"
+        ]
+      },
+      {
+        "id": "precio-stock",
+        "label": "Precio y stock de componentes",
+        "sub": "precio $ unitario + stock REAL por part number · catalogo JLCPCB/LCSC en vivo · BOM cotizado · sin llave",
+        "auth": "keyless",
+        "armario": "mundo",
+        "backed_by": "precio",
+        "tools": [
+          "quote_component",
+          "quote_bom"
+        ]
+      },
+      {
+        "id": "simulacion-drc",
+        "label": "Simulacion (Bode) y DRC",
+        "sub": "barrido AC con ngspice (-3dB real, magnitud/fase) + chequeo ERC con kicad-cli · headless · sin llave",
+        "auth": "keyless",
+        "armario": "apps",
+        "backed_by": "spice",
+        "tools": [
+          "ac_sweep",
+          "build_filter_schematic",
+          "run_erc"
+        ]
+      }
+    ]
+  },
+  "mcpServers": {
+    "spice": {
+      "command": "python3",
+      "args": [
+        "${PUPPET_BELTS}/electronica/spice_server.py"
+      ],
+      "env": {
+        "NGSPICE_BIN": "ngspice",
+        "SPICE_TIMEOUT": "60",
+        "PUPPET_LANG": "${PUPPET_LANG}",
+        "PUPPET_WORKDIR": "${PUPPET_WORKDIR}"
+      },
+      "caso": 1,
+      "bucket": "B1-local",
+      "nichos": [
+        "electronica"
+      ],
+      "transport": "stdio",
+      "credenciales": "ninguna (ngspice + kicad-cli locales, headless, por CLI; NO el GUI).",
+      "requiere_app": "ngspice (brew install ngspice) + KiCad 10.x (kicad-cli en /Applications/KiCad/KiCad.app) + venv de kicad-sch-api para autoria de esquematicos. Pisables por env: NGSPICE_BIN, KICAD_CLI_BIN, KICAD_SCH_API_PY.",
+      "REGLA": "ac_sweep / build_filter_schematic / run_erc son computo/lectura LOCAL de baja consecuencia (no tocan plata ni mandan nada) -> auto-ejecuta. Todo numero (magnitud, -3dB, fase, infracciones) sale del solver/CLI en vivo, jamas de memoria. ac_sweep con task_id acumula convergence.json en ${PUPPET_WORKDIR} -> La Sala rinde el loop como UNA convergencia 1D (la curva deslizandose al target).",
+      "description": "Simulacion de respuesta en frecuencia (Bode) con ngspice headless + DRC/ERC con kicad-cli headless: ac_sweep (barrido AC de un filtro RC/RLC -> magnitud dB + fase + -3dB MEDIDO + atenuacion en el target; convergencia por task_id), build_filter_schematic (autoria el .kicad_sch del filtro), run_erc (lista REAL de infracciones). Cierra el loop diseno->simula->ajusta->cumple del agente de electronica.",
+      "instalacion": {
+        "que": "ngspice y KiCad 10.x",
+        "link": "https://www.kicad.org/download/",
+        "verificar": "/Applications/KiCad/KiCad.app",
+        "rotulo": "Ya lo instalé · verificar"
+      }
+    },
+    "precio": {
+      "command": "python3",
+      "args": [
+        "${PUPPET_BELTS}/electronica/precio_server.py"
+      ],
+      "env": {
+        "PRECIO_JLC_ENDPOINT": "https://jlcpcb.com/api/overseas-pcb-order/v1/shoppingCart/smtGood/selectSmtComponentList",
+        "PRECIO_TIMEOUT": "25",
+        "PUPPET_LANG": "${PUPPET_LANG}",
+        "PUPPET_WORKDIR": "${PUPPET_WORKDIR}"
+      },
+      "caso": 1,
+      "bucket": "B1",
+      "nichos": [
+        "electronica"
+      ],
+      "transport": "stdio",
+      "credenciales": "ninguna (catalogo publico JLCPCB/LCSC, sin API key). UA de navegador en el server porque el edge rechaza UA de urllib.",
+      "REGLA": "quote_component / quote_bom son LECTURAS keyless de baja consecuencia (no tocan plata ni mandan nada) -> auto-ejecuta. Todo precio y stock sale de la API en vivo; sin match o sin red devuelve error honesto (jamas un precio inventado). quote_bom escribe bom.planilla.json en ${PUPPET_WORKDIR} -> La Sala lo rinde como planilla (BOM cotizado).",
+      "description": "Precio $ unitario (USD) + stock REAL por componente (part number o descripcion) desde el catalogo SMT de JLCPCB/LCSC: quote_component (1 pieza: precio, stock, distribuidor, codigo LCSC, fabricante, tramos por cantidad) y quote_bom (lista -> tabla cotizada con subtotales y total + artifact planilla)."
+    },
+    "kicad": {
+      "command": "<mcp-install>/mcp-kicad-sch-api/.venv/bin/python",
+      "args": [
+        "-m",
+        "mcp_kicad_sch_api"
+      ],
+      "transport": "stdio",
+      "credenciales": "ninguna (server local sobre el formato .kicad_sch).",
+      "REGLA": "Server STATEFUL: en el mismo run, primero create_schematic (o load_schematic), despues add_component / list_components. Los componentes que reporta salen del schematic en memoria/archivo, no inventados.",
+      "description": "Diseno de esquematicos KiCad via kicad-sch-api: create_schematic, add_component (lib_id ej Device:R/Device:C, reference, value, position), list_components, add_wire, add_label, save_schematic. KiCad 10.0.3 instalada para kicad-cli.",
+      "fuente": "https://github.com/circuit-synth/mcp-kicad-sch-api",
+      "reparacion": {
+        "precondiciones": [
+          {
+            "id": "kicad_instalado",
+            "tipo": "ruta",
+            "programa": "KiCad",
+            "titulo": "Instala KiCad",
+            "ruta": "/Applications/KiCad/KiCad.app",
+            "como": "brew install --cask kicad",
+            "url": "https://www.kicad.org/download/"
+          },
+          {
+            "id": "kicad_api",
+            "tipo": "humana",
+            "programa": "API de KiCad",
+            "titulo": "Activa la API dentro de KiCad",
+            "guia": "KiCad tiene que estar abierto y aceptar conexiones de sus plugins; instalar la aplicación solo no alcanza.",
+            "pasos": [
+              "Abre KiCad.",
+              "En macOS, entra a KiCad → Settings; en Windows o Linux, a Preferences.",
+              "Abre Plugins y marca Enable KiCad API.",
+              "Deja KiCad abierto y vuelve aquí."
+            ],
+            "url": "https://docs.kicad.org/10.0/en/kicad/kicad.html#preferences-plugins",
+            "verificacion": {
+              "tipo": "ruta",
+              "ruta": "/tmp/kicad/api.sock"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

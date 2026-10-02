@@ -1,0 +1,766 @@
+{
+  "commit": "f3cdfd15f7b675e651773b3f6a8ef9468f56ed14",
+  "tree_truncated": false,
+  "entries": [
+    {
+      "path": ".opencode/agent/duplicate-pr.md",
+      "upstream_blob_sha1": "c9c932ef790decab7113bdddb6508b454e5460e1",
+      "local_blob_sha1": "c9c932ef790decab7113bdddb6508b454e5460e1",
+      "match": true
+    },
+    {
+      "path": ".opencode/agent/triage.md",
+      "upstream_blob_sha1": "03df339cb89ab91304421a694e05135f9dfa5027",
+      "local_blob_sha1": "03df339cb89ab91304421a694e05135f9dfa5027",
+      "match": true
+    },
+    {
+      "path": ".opencode/skills/effect/SKILL.md",
+      "upstream_blob_sha1": "3a44fa88dcdd59ff04a94634a1bfecee05a5cc18",
+      "local_blob_sha1": "3a44fa88dcdd59ff04a94634a1bfecee05a5cc18",
+      "match": true
+    },
+    {
+      "path": "dochaus/agent/agent-builder.md",
+      "upstream_blob_sha1": "e5befc23b72d4544c5c614e98cf1e38a44b9e534",
+      "local_blob_sha1": "e5befc23b72d4544c5c614e98cf1e38a44b9e534",
+      "match": true
+    },
+    {
+      "path": "dochaus/agent/assumption-challenger.md",
+      "upstream_blob_sha1": "195b344a8388e1852b0faad209a9253890403ced",
+      "local_blob_sha1": "195b344a8388e1852b0faad209a9253890403ced",
+      "match": true
+    },
+    {
+      "path": "dochaus/agent/compare.md",
+      "upstream_blob_sha1": "62e38fe89fb4a40076fe950fff027646e6cf8024",
+      "local_blob_sha1": "62e38fe89fb4a40076fe950fff027646e6cf8024",
+      "match": true
+    },
+    {
+      "path": "dochaus/agent/drafter.md",
+      "upstream_blob_sha1": "96a88c9c790481b7811df75bee30986428f2ff44",
+      "local_blob_sha1": "64b2b9420c98c17d84530753403efbad36fbe6d3",
+      "match": false
+    },
+    {
+      "path": "dochaus/agent/extract.md",
+      "upstream_blob_sha1": "9a53d9886418c8d811fd076068bfc2814f43f6eb",
+      "local_blob_sha1": "796836bbeef99979fe4bb243c68c58798c46402d",
+      "match": false
+    },
+    {
+      "path": "dochaus/agent/legal-review.md",
+      "upstream_blob_sha1": "f67a5cc46241d5b9cc49d73ae09620e764db9851",
+      "local_blob_sha1": "f67a5cc46241d5b9cc49d73ae09620e764db9851",
+      "match": true
+    },
+    {
+      "path": "dochaus/agent/legal-reviewer.md",
+      "upstream_blob_sha1": "aa1caae487a14d4d1f38bae1eb6cea5d3e776d6c",
+      "local_blob_sha1": "fcd88fe02ab30711897c678caf2154f4ef736db9",
+      "match": false
+    },
+    {
+      "path": "dochaus/agent/obligations.md",
+      "upstream_blob_sha1": "fdd582c4f74236ca84cbe0b517d29e53f2927366",
+      "local_blob_sha1": "fdd582c4f74236ca84cbe0b517d29e53f2927366",
+      "match": true
+    },
+    {
+      "path": "dochaus/agent/playbook-importer.md",
+      "upstream_blob_sha1": "cec84157a9c9847ae04db2dd57077665d1edcbbd",
+      "local_blob_sha1": "cec84157a9c9847ae04db2dd57077665d1edcbbd",
+      "match": true
+    },
+    {
+      "path": "dochaus/agent/playbook-reviewer.md",
+      "upstream_blob_sha1": "82de488d39d958d7f84119ae42de76cb5a85ea28",
+      "local_blob_sha1": "82de488d39d958d7f84119ae42de76cb5a85ea28",
+      "match": true
+    },
+    {
+      "path": "dochaus/agent/qa.md",
+      "upstream_blob_sha1": "a0d3a8383b9f517f3be1a894c1ac5ea6f7236030",
+      "local_blob_sha1": "a0d3a8383b9f517f3be1a894c1ac5ea6f7236030",
+      "match": true
+    },
+    {
+      "path": "dochaus/agent/redactor.md",
+      "upstream_blob_sha1": "438171f55b5d5d3df78d210262618485946bfd9a",
+      "local_blob_sha1": "438171f55b5d5d3df78d210262618485946bfd9a",
+      "match": true
+    },
+    {
+      "path": "dochaus/agent/redliner.md",
+      "upstream_blob_sha1": "328bfdcb71ad9086fe1d97852df865e478d2cc6a",
+      "local_blob_sha1": "328bfdcb71ad9086fe1d97852df865e478d2cc6a",
+      "match": true
+    },
+    {
+      "path": "dochaus/agent/research.md",
+      "upstream_blob_sha1": "b97730b88191c8fc5c0492c43b60bc378cf11b4c",
+      "local_blob_sha1": "b97730b88191c8fc5c0492c43b60bc378cf11b4c",
+      "match": true
+    },
+    {
+      "path": "dochaus/agent/router.md",
+      "upstream_blob_sha1": "3d871a72013d7b824d85827a9b08b2192b71a1f2",
+      "local_blob_sha1": "7195def93080a5c8ee55c3347d0c6019448ae5e5",
+      "match": false
+    },
+    {
+      "path": "dochaus/agent/skill-builder.md",
+      "upstream_blob_sha1": "b4bd90ab5ab3f965b4f3efbc48c1d6482b207992",
+      "local_blob_sha1": "b4bd90ab5ab3f965b4f3efbc48c1d6482b207992",
+      "match": true
+    },
+    {
+      "path": "dochaus/agent/summarizer.md",
+      "upstream_blob_sha1": "f9916d3024b4e6fab58034665eefea27858569fa",
+      "local_blob_sha1": "f9916d3024b4e6fab58034665eefea27858569fa",
+      "match": true
+    },
+    {
+      "path": "dochaus/agent/template-builder.md",
+      "upstream_blob_sha1": "cf8c06a4bb27b8ac2dbaf7ef15c45105ea77531e",
+      "local_blob_sha1": "cf8c06a4bb27b8ac2dbaf7ef15c45105ea77531e",
+      "match": true
+    },
+    {
+      "path": "dochaus/agent/workflow-builder.md",
+      "upstream_blob_sha1": "46f630cfa3f1f99b48727531f9a3fb99cc8bf6da",
+      "local_blob_sha1": "46f630cfa3f1f99b48727531f9a3fb99cc8bf6da",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/AE/profile.json",
+      "upstream_blob_sha1": "f336dddcc8fb297464ca98a6429f21edec289147",
+      "local_blob_sha1": "f336dddcc8fb297464ca98a6429f21edec289147",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/AE/prompt.md",
+      "upstream_blob_sha1": "427a778d876bd52094d3ecbef566edc8a8c49bc6",
+      "local_blob_sha1": "427a778d876bd52094d3ecbef566edc8a8c49bc6",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/AU-NSW/profile.json",
+      "upstream_blob_sha1": "d8e41d949f8cb6c40a6d6f5137fe93c43707c022",
+      "local_blob_sha1": "d8e41d949f8cb6c40a6d6f5137fe93c43707c022",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/AU-NSW/prompt.md",
+      "upstream_blob_sha1": "08a3412ba07e050771b938b92d7f3c34eeaa4207",
+      "local_blob_sha1": "08a3412ba07e050771b938b92d7f3c34eeaa4207",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/AU-VIC/profile.json",
+      "upstream_blob_sha1": "fb6ae18223acb353fe174d0efbe0dc6d193c6a7b",
+      "local_blob_sha1": "fb6ae18223acb353fe174d0efbe0dc6d193c6a7b",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/AU-VIC/prompt.md",
+      "upstream_blob_sha1": "028c44189403ff01a7d1c16048c773999c60b02e",
+      "local_blob_sha1": "028c44189403ff01a7d1c16048c773999c60b02e",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/AU/profile.json",
+      "upstream_blob_sha1": "f8110ebaaac06bb12f1661373d2d427d8e12a24f",
+      "local_blob_sha1": "f8110ebaaac06bb12f1661373d2d427d8e12a24f",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/AU/prompt.md",
+      "upstream_blob_sha1": "c4b2b67a9f487896242e882afed604962cda643d",
+      "local_blob_sha1": "c4b2b67a9f487896242e882afed604962cda643d",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/CA-BC/profile.json",
+      "upstream_blob_sha1": "6739ee0f08b85df917f40d97dda5598199c34fdc",
+      "local_blob_sha1": "6739ee0f08b85df917f40d97dda5598199c34fdc",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/CA-BC/prompt.md",
+      "upstream_blob_sha1": "0a498574d182ca04a06fa08ed7305ae26a8d8918",
+      "local_blob_sha1": "0a498574d182ca04a06fa08ed7305ae26a8d8918",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/CA-ON/profile.json",
+      "upstream_blob_sha1": "8b9df825149f48d174309a7ce325bdafc50eba88",
+      "local_blob_sha1": "8b9df825149f48d174309a7ce325bdafc50eba88",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/CA-ON/prompt.md",
+      "upstream_blob_sha1": "23fe3a8179acdbbff23aba75a4f642821d14d7e2",
+      "local_blob_sha1": "23fe3a8179acdbbff23aba75a4f642821d14d7e2",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/CA-QC/profile.json",
+      "upstream_blob_sha1": "d15ff4e29e1521ae233254dc252aff9a84a090c4",
+      "local_blob_sha1": "d15ff4e29e1521ae233254dc252aff9a84a090c4",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/CA-QC/prompt.md",
+      "upstream_blob_sha1": "bf2bce0aa72b45f1fb7587d40c7ca34f8a50d2d0",
+      "local_blob_sha1": "bf2bce0aa72b45f1fb7587d40c7ca34f8a50d2d0",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/CA/profile.json",
+      "upstream_blob_sha1": "fc8ef10e2b39f0e78340f43a513be0fd7d65e6b8",
+      "local_blob_sha1": "fc8ef10e2b39f0e78340f43a513be0fd7d65e6b8",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/CA/prompt.md",
+      "upstream_blob_sha1": "5819a525b7a2921207bd533ae1a3cb67324fb771",
+      "local_blob_sha1": "5819a525b7a2921207bd533ae1a3cb67324fb771",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/CH/profile.json",
+      "upstream_blob_sha1": "402acfb453b12f9193d79fb8aea9e4264e392f7d",
+      "local_blob_sha1": "402acfb453b12f9193d79fb8aea9e4264e392f7d",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/CH/prompt.md",
+      "upstream_blob_sha1": "95d776ab5b164042a73a485b2a2f44e5c1a36ff0",
+      "local_blob_sha1": "95d776ab5b164042a73a485b2a2f44e5c1a36ff0",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/DE/profile.json",
+      "upstream_blob_sha1": "0761235327e89b6dc9bedbb9c646157167d59307",
+      "local_blob_sha1": "0761235327e89b6dc9bedbb9c646157167d59307",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/DE/prompt.md",
+      "upstream_blob_sha1": "b8fd37876682c1188fc38c427581ea8e065036cc",
+      "local_blob_sha1": "b8fd37876682c1188fc38c427581ea8e065036cc",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/EU/profile.json",
+      "upstream_blob_sha1": "2fab37270ea71ec973421355860bea249fd26f02",
+      "local_blob_sha1": "2fab37270ea71ec973421355860bea249fd26f02",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/EU/prompt.md",
+      "upstream_blob_sha1": "f4d7770cab0468a0d79c9954a7b1f65081133ac4",
+      "local_blob_sha1": "f4d7770cab0468a0d79c9954a7b1f65081133ac4",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/EW/profile.json",
+      "upstream_blob_sha1": "5bbac18bc1cd89d370ca969041f964027e3a8f2c",
+      "local_blob_sha1": "5bbac18bc1cd89d370ca969041f964027e3a8f2c",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/EW/prompt.md",
+      "upstream_blob_sha1": "e81761292807a6a518ee6168351c2c5e6746cef7",
+      "local_blob_sha1": "e81761292807a6a518ee6168351c2c5e6746cef7",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/FR/profile.json",
+      "upstream_blob_sha1": "67cb5f555511c48770de669d0a3ad1e4424dd077",
+      "local_blob_sha1": "67cb5f555511c48770de669d0a3ad1e4424dd077",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/FR/prompt.md",
+      "upstream_blob_sha1": "ca8cc384ec70f4adada5b62006b1999fffd1d37b",
+      "local_blob_sha1": "ca8cc384ec70f4adada5b62006b1999fffd1d37b",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/HK/profile.json",
+      "upstream_blob_sha1": "626458de680fa1b792df1d3d8270af2008fdc752",
+      "local_blob_sha1": "626458de680fa1b792df1d3d8270af2008fdc752",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/HK/prompt.md",
+      "upstream_blob_sha1": "92f2446c3ba80cc58ada416a65f72560feb5e4c6",
+      "local_blob_sha1": "92f2446c3ba80cc58ada416a65f72560feb5e4c6",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/IE/profile.json",
+      "upstream_blob_sha1": "c9f2e02f25ea94af08f46a055febb48dc435eb41",
+      "local_blob_sha1": "c9f2e02f25ea94af08f46a055febb48dc435eb41",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/IE/prompt.md",
+      "upstream_blob_sha1": "fc209f3bdad4e7410b84b8b6123c2d9615e27034",
+      "local_blob_sha1": "fc209f3bdad4e7410b84b8b6123c2d9615e27034",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/IN/profile.json",
+      "upstream_blob_sha1": "ff00c537c8ab5d4ff011501912ffccd8a82ba124",
+      "local_blob_sha1": "ff00c537c8ab5d4ff011501912ffccd8a82ba124",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/IN/prompt.md",
+      "upstream_blob_sha1": "00e237fd0eab2786a83300ecb92cd4e5faa0a527",
+      "local_blob_sha1": "00e237fd0eab2786a83300ecb92cd4e5faa0a527",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/NIR/profile.json",
+      "upstream_blob_sha1": "4395d55fb58f685cee12f3bc4bc56ee208d0e815",
+      "local_blob_sha1": "4395d55fb58f685cee12f3bc4bc56ee208d0e815",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/NIR/prompt.md",
+      "upstream_blob_sha1": "74e99ff2579fd6865144db3b363ebe06f90e8277",
+      "local_blob_sha1": "74e99ff2579fd6865144db3b363ebe06f90e8277",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/NL/profile.json",
+      "upstream_blob_sha1": "ba5ad7fd9978980c43aefb029b6ec899cf16d3c7",
+      "local_blob_sha1": "ba5ad7fd9978980c43aefb029b6ec899cf16d3c7",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/NL/prompt.md",
+      "upstream_blob_sha1": "ef19a180260eda078682bb66c362cedceb92b313",
+      "local_blob_sha1": "ef19a180260eda078682bb66c362cedceb92b313",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/NZ/profile.json",
+      "upstream_blob_sha1": "2ff156c8a4f046d45de9155cc6a7012350bf5144",
+      "local_blob_sha1": "2ff156c8a4f046d45de9155cc6a7012350bf5144",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/NZ/prompt.md",
+      "upstream_blob_sha1": "b6685efd7c9e0d96d90d24e89c0acb294ff012b1",
+      "local_blob_sha1": "b6685efd7c9e0d96d90d24e89c0acb294ff012b1",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/README.md",
+      "upstream_blob_sha1": "fb102e5c985999a2f05c34b964d3aa4a64116f3e",
+      "local_blob_sha1": "fb102e5c985999a2f05c34b964d3aa4a64116f3e",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/SCT/profile.json",
+      "upstream_blob_sha1": "cd705d86614958da70d4eb300544df5f75fabc01",
+      "local_blob_sha1": "cd705d86614958da70d4eb300544df5f75fabc01",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/SCT/prompt.md",
+      "upstream_blob_sha1": "cf98f032a10ad4fbbcbf763746ff14e6cac897f7",
+      "local_blob_sha1": "cf98f032a10ad4fbbcbf763746ff14e6cac897f7",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/SG/profile.json",
+      "upstream_blob_sha1": "222241f681196fdff09dd1f58607d1caeae689b0",
+      "local_blob_sha1": "222241f681196fdff09dd1f58607d1caeae689b0",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/SG/prompt.md",
+      "upstream_blob_sha1": "67c724203c352daaec9a8b9cac545394205fe5ed",
+      "local_blob_sha1": "67c724203c352daaec9a8b9cac545394205fe5ed",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/US-CA/profile.json",
+      "upstream_blob_sha1": "12a446c046dc53443b1d8f85d9a34d00fc4e2e5f",
+      "local_blob_sha1": "12a446c046dc53443b1d8f85d9a34d00fc4e2e5f",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/US-CA/prompt.md",
+      "upstream_blob_sha1": "535e988d18ec42d48de0994c887c62e303e208df",
+      "local_blob_sha1": "535e988d18ec42d48de0994c887c62e303e208df",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/US-DE/profile.json",
+      "upstream_blob_sha1": "a6df9ed264a1b5d53037ca834631cbeba506f9b5",
+      "local_blob_sha1": "a6df9ed264a1b5d53037ca834631cbeba506f9b5",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/US-DE/prompt.md",
+      "upstream_blob_sha1": "0cf46dba0a61092d99c427199b7ec314035f42c9",
+      "local_blob_sha1": "0cf46dba0a61092d99c427199b7ec314035f42c9",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/US-FL/profile.json",
+      "upstream_blob_sha1": "b463666b5ac9c31b94f8bb0e0824f6e046e8d15e",
+      "local_blob_sha1": "b463666b5ac9c31b94f8bb0e0824f6e046e8d15e",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/US-FL/prompt.md",
+      "upstream_blob_sha1": "7599d377f06aa24650f41ec2ce39ff1e1afcedc7",
+      "local_blob_sha1": "7599d377f06aa24650f41ec2ce39ff1e1afcedc7",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/US-IL/profile.json",
+      "upstream_blob_sha1": "f4653ebc6b4a8d7492e1fc52e97eff3f6737b1c1",
+      "local_blob_sha1": "f4653ebc6b4a8d7492e1fc52e97eff3f6737b1c1",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/US-IL/prompt.md",
+      "upstream_blob_sha1": "a3ff49958c762d9b27b5b0fd8a3b7eea00533ebb",
+      "local_blob_sha1": "a3ff49958c762d9b27b5b0fd8a3b7eea00533ebb",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/US-MA/profile.json",
+      "upstream_blob_sha1": "ac4e68063812d3c2ab809a9c86610594227fb234",
+      "local_blob_sha1": "ac4e68063812d3c2ab809a9c86610594227fb234",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/US-MA/prompt.md",
+      "upstream_blob_sha1": "7e27efb0696ccf121e1e0588a919696af933afe2",
+      "local_blob_sha1": "7e27efb0696ccf121e1e0588a919696af933afe2",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/US-NY/profile.json",
+      "upstream_blob_sha1": "c0813b05fe52c5eb0ad30c16c1814f4c9f2a0b31",
+      "local_blob_sha1": "c0813b05fe52c5eb0ad30c16c1814f4c9f2a0b31",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/US-NY/prompt.md",
+      "upstream_blob_sha1": "099960bee377ac8128bbe104df9c225dc77f7652",
+      "local_blob_sha1": "099960bee377ac8128bbe104df9c225dc77f7652",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/US-TX/profile.json",
+      "upstream_blob_sha1": "18ffcdb91e39110fc18fea8471cda16447f4c163",
+      "local_blob_sha1": "18ffcdb91e39110fc18fea8471cda16447f4c163",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/US-TX/prompt.md",
+      "upstream_blob_sha1": "140e22b6fc8d6346c4b824c04b8c82623bc4d4a2",
+      "local_blob_sha1": "140e22b6fc8d6346c4b824c04b8c82623bc4d4a2",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/US/profile.json",
+      "upstream_blob_sha1": "a8c8e9bc094ef4348afb488c804b9a2380cfec06",
+      "local_blob_sha1": "a8c8e9bc094ef4348afb488c804b9a2380cfec06",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/US/prompt.md",
+      "upstream_blob_sha1": "3001947db6463221aa54c10a519ab6469dd344b2",
+      "local_blob_sha1": "3001947db6463221aa54c10a519ab6469dd344b2",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/ZA/profile.json",
+      "upstream_blob_sha1": "02359fe13afeb72da3f8f352c9398a441be39a32",
+      "local_blob_sha1": "02359fe13afeb72da3f8f352c9398a441be39a32",
+      "match": true
+    },
+    {
+      "path": "dochaus/jurisdiction/ZA/prompt.md",
+      "upstream_blob_sha1": "ab9f38162d8c6e70632b6c2d99dcb53ddc55a6d9",
+      "local_blob_sha1": "ab9f38162d8c6e70632b6c2d99dcb53ddc55a6d9",
+      "match": true
+    },
+    {
+      "path": "dochaus/playbooks/playbook-dpa/SKILL.md",
+      "upstream_blob_sha1": "ad5fb32ec20b68015d528397957cfd52ddc8013d",
+      "local_blob_sha1": "ad5fb32ec20b68015d528397957cfd52ddc8013d",
+      "match": true
+    },
+    {
+      "path": "dochaus/playbooks/playbook-engagement-letter/SKILL.md",
+      "upstream_blob_sha1": "6b0d1f5a4bbfc12cb3bfc85f5cc2e9bcbdc50ad2",
+      "local_blob_sha1": "6b0d1f5a4bbfc12cb3bfc85f5cc2e9bcbdc50ad2",
+      "match": true
+    },
+    {
+      "path": "dochaus/playbooks/playbook-nda/SKILL.md",
+      "upstream_blob_sha1": "29b2e857152f5b1677ca0a09f141c2ec4a552669",
+      "local_blob_sha1": "29b2e857152f5b1677ca0a09f141c2ec4a552669",
+      "match": true
+    },
+    {
+      "path": "dochaus/playbooks/playbook-saas-msa/SKILL.md",
+      "upstream_blob_sha1": "f2ad12f883b86a173db4997f4e0e7d53fbadb095",
+      "local_blob_sha1": "f2ad12f883b86a173db4997f4e0e7d53fbadb095",
+      "match": true
+    },
+    {
+      "path": "dochaus/playbooks/playbook-services-agreement/SKILL.md",
+      "upstream_blob_sha1": "8ccc8e330e4d5cf9e62a23a2f8bf7e9639716997",
+      "local_blob_sha1": "8ccc8e330e4d5cf9e62a23a2f8bf7e9639716997",
+      "match": true
+    },
+    {
+      "path": "dochaus/skill/citation-verification/SKILL.md",
+      "upstream_blob_sha1": "7a0ebdbbc98484caf55662c36c4778983e56bcb4",
+      "local_blob_sha1": "7a0ebdbbc98484caf55662c36c4778983e56bcb4",
+      "match": true
+    },
+    {
+      "path": "dochaus/skill/cite-check/SKILL.md",
+      "upstream_blob_sha1": "53d4d4140ea0b7b185dd8ac33a1513c670b4b76c",
+      "local_blob_sha1": "53d4d4140ea0b7b185dd8ac33a1513c670b4b76c",
+      "match": true
+    },
+    {
+      "path": "dochaus/skill/clause-library/SKILL.md",
+      "upstream_blob_sha1": "85d271a75b35a0a8951f6d2aded1b33f0e896ce9",
+      "local_blob_sha1": "85d271a75b35a0a8951f6d2aded1b33f0e896ce9",
+      "match": true
+    },
+    {
+      "path": "dochaus/skill/clause-library/references/assignment.md",
+      "upstream_blob_sha1": "ae9c584f48fb70c109f7044629219e15180398b1",
+      "local_blob_sha1": "ae9c584f48fb70c109f7044629219e15180398b1",
+      "match": true
+    },
+    {
+      "path": "dochaus/skill/clause-library/references/confidentiality.md",
+      "upstream_blob_sha1": "7c1a7664fa7a40265acaf7f75089871faba59bfc",
+      "local_blob_sha1": "7c1a7664fa7a40265acaf7f75089871faba59bfc",
+      "match": true
+    },
+    {
+      "path": "dochaus/skill/clause-library/references/data-protection.md",
+      "upstream_blob_sha1": "f52c3e6bbc4a4c6d1e658b1d6533cfbb9ce2c5b2",
+      "local_blob_sha1": "f52c3e6bbc4a4c6d1e658b1d6533cfbb9ce2c5b2",
+      "match": true
+    },
+    {
+      "path": "dochaus/skill/clause-library/references/force-majeure.md",
+      "upstream_blob_sha1": "710ff7a2623c57791ecaf1f21ce60c94eeaf2798",
+      "local_blob_sha1": "710ff7a2623c57791ecaf1f21ce60c94eeaf2798",
+      "match": true
+    },
+    {
+      "path": "dochaus/skill/clause-library/references/governing-law.md",
+      "upstream_blob_sha1": "42cac721ec4fd2c11f7a63276a74c6115907d199",
+      "local_blob_sha1": "42cac721ec4fd2c11f7a63276a74c6115907d199",
+      "match": true
+    },
+    {
+      "path": "dochaus/skill/clause-library/references/indemnification.md",
+      "upstream_blob_sha1": "be142594abe6985a81971d290ce6a5754cec9074",
+      "local_blob_sha1": "be142594abe6985a81971d290ce6a5754cec9074",
+      "match": true
+    },
+    {
+      "path": "dochaus/skill/clause-library/references/intellectual-property.md",
+      "upstream_blob_sha1": "68da6931b41d23cd1fe9444bf5d8773ea73d93a8",
+      "local_blob_sha1": "68da6931b41d23cd1fe9444bf5d8773ea73d93a8",
+      "match": true
+    },
+    {
+      "path": "dochaus/skill/clause-library/references/liability.md",
+      "upstream_blob_sha1": "64dfb8cf417e274ed63e65259363ea73e4b80db7",
+      "local_blob_sha1": "64dfb8cf417e274ed63e65259363ea73e4b80db7",
+      "match": true
+    },
+    {
+      "path": "dochaus/skill/clause-library/references/payment.md",
+      "upstream_blob_sha1": "7304bee692f99435a7589516ee16a4183eda362c",
+      "local_blob_sha1": "7304bee692f99435a7589516ee16a4183eda362c",
+      "match": true
+    },
+    {
+      "path": "dochaus/skill/clause-library/references/remedies.md",
+      "upstream_blob_sha1": "dc287bbc09aa02cafe75bb085af1b8d7f3767fc7",
+      "local_blob_sha1": "dc287bbc09aa02cafe75bb085af1b8d7f3767fc7",
+      "match": true
+    },
+    {
+      "path": "dochaus/skill/clause-library/references/termination.md",
+      "upstream_blob_sha1": "2b3cdde514200b5073a43cfcfd36b73634174960",
+      "local_blob_sha1": "2b3cdde514200b5073a43cfcfd36b73634174960",
+      "match": true
+    },
+    {
+      "path": "dochaus/skill/clause-library/references/warranties.md",
+      "upstream_blob_sha1": "91fb06d950a4f846144033c09304876b44432cc3",
+      "local_blob_sha1": "91fb06d950a4f846144033c09304876b44432cc3",
+      "match": true
+    },
+    {
+      "path": "dochaus/skill/contract-risk-checklist/SKILL.md",
+      "upstream_blob_sha1": "89a5959c49be61298fd408862c2d1b3858f3cf78",
+      "local_blob_sha1": "89a5959c49be61298fd408862c2d1b3858f3cf78",
+      "match": true
+    },
+    {
+      "path": "dochaus/skill/contract-risk-checklist/references/cuad-taxonomy.md",
+      "upstream_blob_sha1": "014641cad3df04108ea0a9176f5aec2a9f34c721",
+      "local_blob_sha1": "014641cad3df04108ea0a9176f5aec2a9f34c721",
+      "match": true
+    },
+    {
+      "path": "dochaus/skill/drafting/SKILL.md",
+      "upstream_blob_sha1": "a6d167f7d53ad6294e164091f6c95bdf10bf114b",
+      "local_blob_sha1": "a6d167f7d53ad6294e164091f6c95bdf10bf114b",
+      "match": true
+    },
+    {
+      "path": "dochaus/skill/employment-review/SKILL.md",
+      "upstream_blob_sha1": "10ead7d9002adba3866a8b483059605d3f722a7e",
+      "local_blob_sha1": "10ead7d9002adba3866a8b483059605d3f722a7e",
+      "match": true
+    },
+    {
+      "path": "dochaus/skill/firm-profile/SKILL.md",
+      "upstream_blob_sha1": "25fbe063b0dcc0fa3a92ec38f1084729ce93d50d",
+      "local_blob_sha1": "25fbe063b0dcc0fa3a92ec38f1084729ce93d50d",
+      "match": true
+    },
+    {
+      "path": "dochaus/skill/firm-profile/references/interview.md",
+      "upstream_blob_sha1": "a99dae9ccff17501ad200f7030261fb3b0717018",
+      "local_blob_sha1": "a99dae9ccff17501ad200f7030261fb3b0717018",
+      "match": true
+    },
+    {
+      "path": "dochaus/skill/legal-research/SKILL.md",
+      "upstream_blob_sha1": "5d3a50b34c354f9a04516b182ed77ca952b78f06",
+      "local_blob_sha1": "5d3a50b34c354f9a04516b182ed77ca952b78f06",
+      "match": true
+    },
+    {
+      "path": "dochaus/skill/missing-protections/SKILL.md",
+      "upstream_blob_sha1": "f9d36d4b62df0738aebbe5455df3e2c4347d28ff",
+      "local_blob_sha1": "f9d36d4b62df0738aebbe5455df3e2c4347d28ff",
+      "match": true
+    },
+    {
+      "path": "dochaus/skill/privilege-review/SKILL.md",
+      "upstream_blob_sha1": "388f63f6073885e05411592c1b6c5548f8f06979",
+      "local_blob_sha1": "388f63f6073885e05411592c1b6c5548f8f06979",
+      "match": true
+    },
+    {
+      "path": "dochaus/skill/redline-conventions/SKILL.md",
+      "upstream_blob_sha1": "9009537b9e1c1822646db28a6a146598d0df4e4b",
+      "local_blob_sha1": "9009537b9e1c1822646db28a6a146598d0df4e4b",
+      "match": true
+    }
+  ],
+  "license_sha256": "a2ab1e6ffea9a1e35b951ac429b594a8984f34ed9b936ef93b1a5f1a60d5abc3",
+  "agent_deltas": [
+    {
+      "path": "dochaus/agent/drafter.md",
+      "url": "https://raw.githubusercontent.com/sure-scale/doc-haus/f3cdfd15f7b675e651773b3f6a8ef9468f56ed14/dochaus/agent/drafter.md",
+      "diff": [
+        "--- \n",
+        "+++ \n",
+        "@@ -15,4 +15,5 @@\n",
+        "   read-document: true",
+        "   list-templates: true",
+        "+  get-template: true",
+        "   draft-document: true",
+        "   create-template: true",
+        "@@ -34,4 +35,10 @@\n",
+        " ",
+        " <rules>",
+        "+- Read a named firm-library template using `get-template` after `list-templates`.",
+        "+  Firm-library templates are reusable drafting bases, not matter documents:",
+        "+  `read-document` and `search-document` search only this matter and cannot read",
+        "+  the library. Do not ask the user to upload a template that list-templates found.",
+        "+  Read its complete body and placeholders before interviewing or assembling it",
+        "+  with draft-document's template/fills mode.",
+        " - You create new documents; you do not modify existing ones. If asked to change",
+        "   an existing document, say that is the redline assistant's job."
+      ]
+    },
+    {
+      "path": "dochaus/agent/extract.md",
+      "url": "https://raw.githubusercontent.com/sure-scale/doc-haus/f3cdfd15f7b675e651773b3f6a8ef9468f56ed14/dochaus/agent/extract.md",
+      "diff": [
+        "--- \n",
+        "+++ \n",
+        "@@ -3,5 +3,5 @@\n",
+        " mode: primary",
+        " temperature: 0.1",
+        "-model: google-vertex/gemini-3.5-flash",
+        "+model: aleph/cerebro",
+        " steps: 20",
+        " # Extraction is retrieval-bound lookup, not deep reasoning. Cap Gemini's thinking"
+      ]
+    },
+    {
+      "path": "dochaus/agent/legal-reviewer.md",
+      "url": "https://raw.githubusercontent.com/sure-scale/doc-haus/f3cdfd15f7b675e651773b3f6a8ef9468f56ed14/dochaus/agent/legal-reviewer.md",
+      "diff": [
+        "--- \n",
+        "+++ \n",
+        "@@ -7,4 +7,5 @@\n",
+        "   \"*\": false",
+        "   read: true",
+        "+  read-document: true",
+        "   search-document: true",
+        "   cite: true",
+        "@@ -61,6 +62,7 @@\n",
+        " ",
+        " <method>",
+        "-- Use `search-document` to locate the relevant clauses; use `read` for surrounding",
+        "-  context. Base every finding on the actual text.",
+        "+- Use `search-document` to locate the relevant clauses and `read-document` for",
+        "+  the complete text of indexed DOCX/PDF documents. Use `read` for plain-text",
+        "+  supporting files, not binary Word/PDF files. Base every finding on the actual text.",
+        " </method>",
+        " "
+      ]
+    },
+    {
+      "path": "dochaus/agent/router.md",
+      "url": "https://raw.githubusercontent.com/sure-scale/doc-haus/f3cdfd15f7b675e651773b3f6a8ef9468f56ed14/dochaus/agent/router.md",
+      "diff": [
+        "--- \n",
+        "+++ \n",
+        "@@ -2,5 +2,5 @@\n",
+        " description: Internal router that picks which assistant should answer a message. Never surfaced to users.",
+        " mode: primary",
+        "-model: google-vertex/gemini-3.5-flash",
+        "+model: aleph/cerebro",
+        " temperature: 0",
+        " tools:"
+      ]
+    }
+  ]
+}

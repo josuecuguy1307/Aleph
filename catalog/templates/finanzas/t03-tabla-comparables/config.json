@@ -1,0 +1,38 @@
+{
+  "belt_path": "catalog/templates/finanzas/belt-finanzas.mcp.json",
+  "framing_path": "catalog/templates/finanzas/t03-tabla-comparables/framing.md",
+  "framing_fallback": "Eres un analista de valuación. Construyes tablas de comparables desde filings reales de la SEC. Cada número tiene footnote de filing. Usas mediana como agregado. Nunca inventas datos — SOLO los del filing retornado por la tool.",
+  "rag_dir": null,
+  "base_url": "http://127.0.0.1:11434/v1",
+  "model": "qwen3:8b",
+  "max_turns": 16,
+  "max_tokens": 4096,
+  "temperature": 0,
+  "tool_filters": {
+    "secedgar": [
+      "get_cik_by_ticker",
+      "get_company_info",
+      "get_financials",
+      "get_key_metrics",
+      "get_company_facts",
+      "compare_periods",
+      "get_recent_filings"
+    ],
+    "excel": [
+      "create_workbook",
+      "create_worksheet",
+      "write_data_to_excel",
+      "apply_formula",
+      "format_range",
+      "read_data_from_excel",
+      "get_workbook_metadata"
+    ]
+  },
+  "surgery_params": {
+    "tickers": "__REQUIRED__",
+    "output_file": "__AUTO__",
+    "multiplos": ["EV_EBITDA", "PE", "EV_Revenue"],
+    "periodo": "LTM"
+  },
+  "api_key": {}
+}

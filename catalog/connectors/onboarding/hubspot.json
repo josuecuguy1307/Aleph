@@ -1,0 +1,97 @@
+{
+  "connector": "hubspot",
+  "auth_method": "personal_token",
+  "tier": "average",
+  "needs_base_url": false,
+  "escape_hatch": true,
+  "requires_sharing": false,
+  "deep_link": "",
+  "api_base": "https://api.hubapi.com",
+  "credential_fields": [
+    {
+      "id": "key",
+      "label": "Tu llave de HubSpot",
+      "shape": "pat-na1-3f9a…-X2",
+      "secret": true
+    }
+  ],
+  "auth": {
+    "scheme": "bearer",
+    "token": "{key}"
+  },
+  "steps": [
+    {
+      "txt": "En HubSpot ve a Settings → Integrations → Private Apps → «Create a private app» → nombre (ej. 'Mi asistente') → en «Scopes» marca leer contactos y negocios → Crear app.",
+      "emphasis": [
+        "Create a private app",
+        "Scopes",
+        "Crear app"
+      ]
+    },
+    {
+      "txt": "Copia la llave de la app (empieza con pat-). Es la única vez que te la muestra — cópiala completa."
+    },
+    {
+      "txt": "Pega tu llave aquí."
+    }
+  ],
+  "validate": {
+    "method": "GET",
+    "path": "/account-info/v3/details",
+    "identity_field": "portalId"
+  },
+  "permissions": [
+    "leer contactos",
+    "leer negocios"
+  ],
+  "restricted_fallback": "Tu cuenta de HubSpot no te deja crear apps privadas — eso lo controla un superadmin. Pedilo a quien administra HubSpot.",
+  "errors": {
+    "invalid": "Esa llave no funcionó o se borró — genera una nueva en tus apps privadas de HubSpot y pégala.",
+    "wrong_account": "Esa llave es de otra cuenta de HubSpot. Usa la de la cuenta donde están tus contactos.",
+    "missing_permission:leer contactos": "A la app le falta permiso de contactos. Edita la app y en «Scopes» marca crm.objects.contacts.read.",
+    "missing_permission:leer negocios": "A la app le falta permiso de negocios. Edita la app y en «Scopes» marca crm.objects.deals.read.",
+    "network": "No pude verificar ahora — prueba de nuevo en un momento."
+  },
+  "capability_line": "Listo — ya puedo ver tus contactos y negocios de HubSpot.",
+  "trust_line": "Tu llave se guarda cifrada · la quitas cuando quieras.",
+  "verification": {
+    "deep_link_ok": false,
+    "anchor_ok": false,
+    "validated_with_test_key": false,
+    "notes": "Private app token (pat-...) = bearer. Crear app privada puede requerir superadmin en algunas cuentas → restricted_fallback. validate /account-info/v3/details (identity portalId). NO confirmé labels ni endpoint en vivo. Sin test key, no validé. [2026-07-06 deep-link audit] SIN deep_link a propósito: la página real de private-apps es app.hubspot.com/private-apps/{portal_id} (la bare da 404) y el widget NO puede inyectar el portal_id → no hay reemplazo confiable a la página de key. Regla: mejor sin link + guía en texto (Settings → Integrations → Private Apps) que un link roto/deprecado. Steps reescritos como guía sin link."
+  },
+  "en": {
+    "steps": [
+      {
+        "txt": "In HubSpot go to Settings → Integrations → Private Apps → «Create a private app» → name it (e.g. 'My assistant') → under «Scopes» check read contacts and deals → Create app.",
+        "emphasis": [
+          "Create a private app",
+          "Scopes",
+          "Create app"
+        ]
+      },
+      {
+        "txt": "Copy the app key (it starts with pat-). This is the only time it's shown — copy the whole thing."
+      },
+      {
+        "txt": "Paste it here."
+      }
+    ],
+    "trust_line": "Your key is stored encrypted · remove it anytime.",
+    "capability_line": "Done — I can now see your HubSpot contacts and deals.",
+    "errors": {
+      "invalid": "That key didn't work or was deleted — generate a new one in your HubSpot private apps and paste it.",
+      "wrong_account": "That key belongs to a different HubSpot account. Use the one from the account where your contacts live.",
+      "missing_permission:leer contactos": "The app is missing the contacts permission. Edit the app and under «Scopes» check crm.objects.contacts.read.",
+      "missing_permission:leer negocios": "The app is missing the deals permission. Edit the app and under «Scopes» check crm.objects.deals.read.",
+      "network": "I couldn't verify right now — try again in a moment."
+    },
+    "credential_fields": [
+      {
+        "id": "key",
+        "label": "Your HubSpot key",
+        "shape": "pat-na1-3f9a…-X2"
+      }
+    ]
+  }
+}

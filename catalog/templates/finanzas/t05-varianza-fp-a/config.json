@@ -1,0 +1,32 @@
+{
+  "belt_path": "catalog/templates/finanzas/belt-finanzas.mcp.json",
+  "framing_path": "catalog/templates/finanzas/t05-varianza-fp-a/framing.md",
+  "framing_fallback": "Eres un analista de FP&A. Tomas el Google Sheet con actual y budget, calculas varianzas con convención F/U correcta por tipo de línea, aplicas formato condicional y escribes el bridge de las mayores varianzas en texto claro.",
+  "rag_dir": null,
+  "base_url": "http://127.0.0.1:11434/v1",
+  "model": "qwen3:8b",
+  "max_turns": 12,
+  "max_tokens": 4096,
+  "temperature": 0,
+  "tool_filters": {
+    "sheets": [
+      "get_sheet_data",
+      "get_sheet_formulas",
+      "batch_update_cells",
+      "update_cells",
+      "add_rows",
+      "list_sheets",
+      "create_sheet",
+      "find_in_spreadsheet"
+    ]
+  },
+  "surgery_params": {
+    "spreadsheet_id": "__REQUIRED__",
+    "hoja_actual": "Actual",
+    "hoja_budget": "Budget",
+    "hoja_varianzas": "Varianzas",
+    "convencion_fu": "ingresos-positivo-F",
+    "top_varianzas": 3
+  },
+  "api_key": {}
+}

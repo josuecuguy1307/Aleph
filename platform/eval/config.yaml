@@ -1,0 +1,57 @@
+# Config de la corrida — TODO lo específico vive acá, nada en runner.py.
+# Validación PARAMETRIZABLE: el Reviewer apunta a otro modelo/task-set editando
+# SOLO este archivo (o pasando --models/--tasks), sin tocar código.
+
+taskset: ../../catalog/evals/finanzas-tasks/taskset.yaml
+python_bin: .venv/bin/python          # intérprete del sandbox run_python + checkers
+workdir_root: runs
+
+limits:
+  max_turns: 14
+  max_output_tokens: 3000             # qwen3-32b emite <think>; necesita aire
+  wall_seconds: 1500                  # por celda — CARRIL LOCAL: qwen3:8b ~80-115s/turno
+  request_timeout: 300                # HTTP por turno (≥180s, REGLA OPERATIVA 06-12)
+  python_timeout: 120
+
+# Carriles en orden de preferencia. api_key_env = NOMBRE de la env var
+# (la key jamás se escribe acá, ni a logs, ni al contexto de ningún modelo).
+# DECISIÓN 2026-06-11 (corrida tick #1): groq directo PRIMERO para esta medición —
+# el carril litellm está VIVO pero su router sustituye modelos vía fallback
+# (observado: alias constructor-code sirvió llama-3.3-70b-versatile), lo que
+# invalida la celda por-modelo. El runner lo detecta vía `modelo_servido`.
+# Para uso de producción (no medición), restaurar litellm primero.
+lanes:
+  # CARRIL LOCAL (DECISIONS 06-12): corrida EQUIPADO-vs-PELADO T5 sin depender del
+  # TPM de Groq free (que bloqueó 0018). Ollama qwen3:8b, OpenAI-compat. health_url
+  # confirma que el daemon responde antes de gastar wall. La key no se usa (local).
+  - name: ollama
+    base_url: http://127.0.0.1:11434/v1
+    health_url: http://127.0.0.1:11434/api/tags
+    api_key_env: OLLAMA_API_KEY_UNUSED
+  - name: groq
+    base_url: https://api.groq.com/openai/v1
+    api_key_env: GROQ_API_KEY
+  - name: litellm
+    base_url: http://localhost:4000/v1
+    health_url: http://localhost:4000/health/liveliness
+    api_key_env: LITELLM_MASTER_KEY
+
+# Top-3 OSS agéntico disponible en Groq — selección 2026-06-11, fuentes en
+# org/artifacts/P011-model-watch-tick1.md. lane_ids mapea carril → id del modelo.
+# NOTA medición: el carril litellm tiene fallbacks de router (constructor-code →
+# premium); el runner registra el modelo SERVIDO para detectar sustitución.
+models:
+  - name: qwen3-8b                    # CARRIL LOCAL — EQUIPADO de la corrida T5
+    lane_ids:
+      ollama: qwen3:8b
+  - name: gpt-oss-120b
+    lane_ids:
+      litellm: constructor-code       # alias del gateway → groq/openai/gpt-oss-120b
+      groq: openai/gpt-oss-120b
+  - name: gpt-oss-20b
+    lane_ids:
+      groq: openai/gpt-oss-20b        # sin alias en el gateway → Groq directo
+  - name: qwen3-32b
+    lane_ids:
+      litellm: explorer-reason        # alias del gateway → groq/qwen/qwen3-32b
+      groq: qwen/qwen3-32b

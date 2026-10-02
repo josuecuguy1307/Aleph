@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:#DED6C7;font-family:'Hanken Grotesk',system-ui,-apple-system,sans-serif;color:#2B2925;-webkit-font-smoothing:antialiased}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes drift{0%,100%{transform:translateX(-7px)}50%{transform:translateX(7px)}}
+  @keyframes driftSlow{0%,100%{transform:translateX(-4px)}50%{transform:translateX(4px)}}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+  @keyframes bobHi{0%,100%{transform:translateY(2px)}50%{transform:translateY(-10px)}}
+  @keyframes sway{0%,100%{transform:rotate(-7deg)}50%{transform:rotate(7deg)}}
+  @keyframes fly{0%{transform:translateX(-9px) rotate(-9deg)}50%{transform:translateX(9px) rotate(9deg)}100%{transform:translateX(-9px) rotate(-9deg)}}
+  @keyframes shadowP{0%,100%{transform:scaleX(1);opacity:.2}50%{transform:scaleX(.66);opacity:.1}}
+  @keyframes shadowHi{0%,100%{transform:scaleX(1);opacity:.22}50%{transform:scaleX(.5);opacity:.08}}
+  @keyframes halo{0%,100%{opacity:.45;transform:scaleX(1)}50%{opacity:.18;transform:scaleX(.7)}}
+  @keyframes trail{0%{opacity:.55;transform:scale(1)}100%{opacity:0;transform:scale(.3)}}
+  .orbit{transform-origin:32px 30px}
+  .ctr{transform-box:fill-box;transform-origin:center}
+  .sh{transform-box:fill-box;transform-origin:center}
+</style>
+</helmet>
+
+<div style="min-height:100vh;padding:42px 40px 72px">
+  <div style="max-width:1180px;margin:0 auto">
+
+    <div style="font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#9A9082">Mascota · variaciones del flotar</div>
+    <h1 style="font-family:'Spectral',Georgia,serif;font-weight:600;font-size:31px;margin:8px 0 6px;letter-spacing:-.015em">Cinco maneras de levitar</h1>
+    <p style="margin:0 0 38px;color:#6F6A60;font-size:14.5px;max-width:74ch;line-height:1.6">El hexágono que flota, en distintos caracteres de levitación — del hover sereno al vuelo inclinado. Mismo personaje, distinta «física». Mirá la sombrita: cuenta tanto como el cuerpo. Decime cuál se siente mejor.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px">
+
+      <!-- 1 · Hover sereno -->
+      <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+        <div style="display:flex;align-items:center;justify-content:center;height:196px;background:#16172A">
+          <svg width="116" height="120" viewBox="0 0 64 72" fill="none">
+            <ellipse class="sh" cx="32" cy="62" rx="11" ry="2.6" fill="#000" style="animation:shadowP 2.6s ease-in-out infinite"></ellipse>
+            <g style="animation:driftSlow 5s ease-in-out infinite"><g style="animation:bob 2.6s ease-in-out infinite">
+              <g class="orbit" style="animation:spin 12s linear infinite">
+                <g transform="rotate(0 32 30)"><ellipse cx="32" cy="30" rx="22" ry="8.5" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="54" cy="30" r="2.7" fill="#C9C6FF"></circle></g>
+                <g transform="rotate(60 32 30)"><ellipse cx="32" cy="30" rx="22" ry="8.5" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="54" cy="30" r="2.7" fill="#C9C6FF"></circle></g>
+                <g transform="rotate(120 32 30)"><ellipse cx="32" cy="30" rx="22" ry="8.5" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="54" cy="30" r="2.7" fill="#C9C6FF"></circle></g>
+              </g>
+              <path d="M32 18 L42.4 24 L42.4 36 L32 42 L21.6 36 L21.6 24 Z" fill="#8E8BF5" stroke="#8E8BF5" stroke-width="4" stroke-linejoin="round"></path>
+              <path d="M26.6 31 q2.4 -3 4.8 0" stroke="#211E3A" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+              <path d="M33.6 31 q2.4 -3 4.8 0" stroke="#211E3A" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+            </g></g>
+          </svg>
+        </div>
+        <div style="padding:14px 16px;border-top:1px solid #F0E8D8">
+          <div style="font-family:'Spectral',serif;font-weight:600;font-size:16px">1 · Hover sereno</div>
+          <div style="font-size:12.5px;color:#7C766B;line-height:1.5;margin-top:3px">El base, calmo y prolijo. Sube y baja apenas, se desliza despacito. Confiable.</div>
+        </div>
+      </div>
+
+      <!-- 2 · Bamboleo -->
+      <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+        <div style="display:flex;align-items:center;justify-content:center;height:196px;background:#16172A">
+          <svg width="116" height="120" viewBox="0 0 64 72" fill="none">
+            <ellipse class="sh" cx="32" cy="62" rx="11" ry="2.6" fill="#000" style="animation:shadowP 3s ease-in-out infinite"></ellipse>
+            <g style="animation:bob 3s ease-in-out infinite"><g class="ctr" style="animation:sway 3s ease-in-out infinite">
+              <g class="orbit" style="animation:spin 12s linear infinite">
+                <g transform="rotate(0 32 30)"><ellipse cx="32" cy="30" rx="22" ry="8.5" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="54" cy="30" r="2.7" fill="#C9C6FF"></circle></g>
+                <g transform="rotate(60 32 30)"><ellipse cx="32" cy="30" rx="22" ry="8.5" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="54" cy="30" r="2.7" fill="#C9C6FF"></circle></g>
+                <g transform="rotate(120 32 30)"><ellipse cx="32" cy="30" rx="22" ry="8.5" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="54" cy="30" r="2.7" fill="#C9C6FF"></circle></g>
+              </g>
+              <path d="M32 18 L42.4 24 L42.4 36 L32 42 L21.6 36 L21.6 24 Z" fill="#8E8BF5" stroke="#8E8BF5" stroke-width="4" stroke-linejoin="round"></path>
+              <path d="M26.6 31 q2.4 -3 4.8 0" stroke="#211E3A" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+              <path d="M33.6 31 q2.4 -3 4.8 0" stroke="#211E3A" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+            </g></g>
+          </svg>
+        </div>
+        <div style="padding:14px 16px;border-top:1px solid #F0E8D8">
+          <div style="font-family:'Spectral',serif;font-weight:600;font-size:16px">2 · Bamboleo</div>
+          <div style="font-size:12.5px;color:#7C766B;line-height:1.5;margin-top:3px">Se inclina suave de lado a lado, como boyando en el agua. Relajado y orgánico.</div>
+        </div>
+      </div>
+
+      <!-- 3 · Levita alto · halo -->
+      <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+        <div style="display:flex;align-items:center;justify-content:center;height:196px;background:#16172A">
+          <svg width="116" height="120" viewBox="0 0 64 72" fill="none">
+            <ellipse class="sh" cx="32" cy="60" rx="13" ry="3.4" fill="#8E8BF5" style="animation:halo 2.4s ease-in-out infinite"></ellipse>
+            <g style="animation:bobHi 2.4s ease-in-out infinite">
+              <g class="orbit" style="animation:spin 11s linear infinite">
+                <g transform="rotate(0 32 30)"><ellipse cx="32" cy="30" rx="22" ry="8.5" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="54" cy="30" r="2.7" fill="#C9C6FF"></circle></g>
+                <g transform="rotate(60 32 30)"><ellipse cx="32" cy="30" rx="22" ry="8.5" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="54" cy="30" r="2.7" fill="#C9C6FF"></circle></g>
+                <g transform="rotate(120 32 30)"><ellipse cx="32" cy="30" rx="22" ry="8.5" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="54" cy="30" r="2.7" fill="#C9C6FF"></circle></g>
+              </g>
+              <path d="M32 18 L42.4 24 L42.4 36 L32 42 L21.6 36 L21.6 24 Z" fill="#8E8BF5" stroke="#8E8BF5" stroke-width="4" stroke-linejoin="round"></path>
+              <path d="M26.6 31 q2.4 -3 4.8 0" stroke="#211E3A" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+              <path d="M33.6 31 q2.4 -3 4.8 0" stroke="#211E3A" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+            </g>
+          </svg>
+        </div>
+        <div style="padding:14px 16px;border-top:1px solid #F0E8D8">
+          <div style="font-family:'Spectral',serif;font-weight:600;font-size:16px">3 · Levita alto · halo</div>
+          <div style="font-size:12.5px;color:#7C766B;line-height:1.5;margin-top:3px">Sube más y abajo le late un resplandor anti-gravedad. El más «poderoso» y futurista.</div>
+        </div>
+      </div>
+
+      <!-- 4 · Vuela inclinado -->
+      <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+        <div style="display:flex;align-items:center;justify-content:center;height:196px;background:#16172A">
+          <svg width="116" height="120" viewBox="0 0 64 72" fill="none">
+            <ellipse class="sh" cx="32" cy="62" rx="11" ry="2.6" fill="#000" style="animation:shadowHi 2.8s ease-in-out infinite"></ellipse>
+            <g class="ctr" style="animation:fly 2.8s ease-in-out infinite">
+              <g class="orbit" style="animation:spin 8s linear infinite">
+                <g transform="rotate(0 32 30)"><ellipse cx="32" cy="30" rx="22" ry="8.5" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="54" cy="30" r="2.7" fill="#C9C6FF"></circle></g>
+                <g transform="rotate(60 32 30)"><ellipse cx="32" cy="30" rx="22" ry="8.5" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="54" cy="30" r="2.7" fill="#C9C6FF"></circle></g>
+                <g transform="rotate(120 32 30)"><ellipse cx="32" cy="30" rx="22" ry="8.5" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="54" cy="30" r="2.7" fill="#C9C6FF"></circle></g>
+              </g>
+              <path d="M32 18 L42.4 24 L42.4 36 L32 42 L21.6 36 L21.6 24 Z" fill="#8E8BF5" stroke="#8E8BF5" stroke-width="4" stroke-linejoin="round"></path>
+              <path d="M26.6 31 q2.4 -3 4.8 0" stroke="#211E3A" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+              <path d="M33.6 31 q2.4 -3 4.8 0" stroke="#211E3A" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+            </g>
+          </svg>
+        </div>
+        <div style="padding:14px 16px;border-top:1px solid #F0E8D8">
+          <div style="font-family:'Spectral',serif;font-weight:600;font-size:16px">4 · Vuela inclinado</div>
+          <div style="font-size:12.5px;color:#7C766B;line-height:1.5;margin-top:3px">Se ladea hacia donde va, como si planeara. Ágil y enérgico — el más «en misión».</div>
+        </div>
+      </div>
+
+      <!-- 5 · Con estela -->
+      <div style="background:#fff;border:1px solid #E7DECE;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -32px rgba(60,45,15,.55)">
+        <div style="display:flex;align-items:center;justify-content:center;height:196px;background:#16172A">
+          <svg width="116" height="120" viewBox="0 0 64 72" fill="none">
+            <ellipse class="sh" cx="32" cy="62" rx="11" ry="2.6" fill="#000" style="animation:shadowP 3.2s ease-in-out infinite"></ellipse>
+            <g style="animation:drift 3.2s ease-in-out infinite">
+              <circle class="ctr" cx="18" cy="30" r="2.4" fill="#8E8BF5" style="animation:trail 1.2s ease-out infinite"></circle>
+              <circle class="ctr" cx="14" cy="30" r="2" fill="#8E8BF5" style="animation:trail 1.2s ease-out infinite .4s"></circle>
+              <circle class="ctr" cx="10" cy="30" r="1.6" fill="#8E8BF5" style="animation:trail 1.2s ease-out infinite .8s"></circle>
+              <g style="animation:bob 3.2s ease-in-out infinite">
+                <g class="orbit" style="animation:spin 10s linear infinite">
+                  <g transform="rotate(0 32 30)"><ellipse cx="32" cy="30" rx="22" ry="8.5" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="54" cy="30" r="2.7" fill="#C9C6FF"></circle></g>
+                  <g transform="rotate(60 32 30)"><ellipse cx="32" cy="30" rx="22" ry="8.5" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="54" cy="30" r="2.7" fill="#C9C6FF"></circle></g>
+                  <g transform="rotate(120 32 30)"><ellipse cx="32" cy="30" rx="22" ry="8.5" stroke="#6E6BD0" stroke-width="1.6"></ellipse><circle cx="54" cy="30" r="2.7" fill="#C9C6FF"></circle></g>
+                </g>
+                <path d="M32 18 L42.4 24 L42.4 36 L32 42 L21.6 36 L21.6 24 Z" fill="#8E8BF5" stroke="#8E8BF5" stroke-width="4" stroke-linejoin="round"></path>
+                <path d="M26.6 31 q2.4 -3 4.8 0" stroke="#211E3A" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+                <path d="M33.6 31 q2.4 -3 4.8 0" stroke="#211E3A" stroke-width="2.1" fill="none" stroke-linecap="round"></path>
+              </g>
+            </g>
+          </svg>
+        </div>
+        <div style="padding:14px 16px;border-top:1px solid #F0E8D8">
+          <div style="font-family:'Spectral',serif;font-weight:600;font-size:16px">5 · Con estela</div>
+          <div style="font-size:12.5px;color:#7C766B;line-height:1.5;margin-top:3px">Deja chispitas que se desvanecen detrás. Juguetón y mágico, como un cometa lento.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:38px;padding-top:24px;border-top:1px solid #CFC6B5">
+      <span style="font-size:13.5px;color:#6F6A60">¿Cuál levitación te gana? La fijo y armo el lockup + la versión quieta para favicon.</span>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

@@ -1,0 +1,37 @@
+{
+ "type": "planilla",
+ "title": "BOM del filtro RC (fixture)",
+ "source": "digikey",
+ "cols": [
+  "Ref",
+  "Parte",
+  "Valor",
+  "Precio USD"
+ ],
+ "rows": [
+  [
+   "R1",
+   "RC0805FR-0710KL",
+   "10 kΩ",
+   "0.10"
+  ],
+  [
+   "C1",
+   "CL21B104KBCNNNC",
+   "100 nF",
+   "0.15"
+  ],
+  [
+   "U1",
+   "MCP6001T-I/OT",
+   "op-amp",
+   "0.42"
+  ],
+  [
+   "J1",
+   "PJ-102A",
+   "jack",
+   "0.65"
+  ]
+ ]
+}

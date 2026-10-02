@@ -1,0 +1,179 @@
+{
+  "_meta": {
+    "belt": "finanzas",
+    "slug": "finanzas",
+    "que_es": "Cinturon MCP del agente de FINANZAS (nicho #1): Excel local real (openpyxl, sin llave), datos de mercado Alpha Vantage (API oficial, BYOK), notebooks Jupyter contra el runtime PROPIO del usuario (BYO infra), macro/filings (fred/secedgar, cards en belt-finanzas-markets) y econometria Stata (declarado, sin card — ver notas).",
+    "verificado": "2026-07-04 PASS-gate verify_catalog_batch.py (batch a05-huerfanos, cliente de PROD assembler.MCPServer): excel PASS — uvx excel-mcp-server 1.28.1 bootea stdio, 25 tools reales, create_workbook escribio un .xlsx REAL en /tmp (paths absolutos obligatorios en stdio). alphavantage SKIP(BYOK) honesto — el server (marketdata-mcp-server oficial, 3 meta-tools TOOL_LIST/TOOL_GET/TOOL_CALL) bootea y lista tools verificado con key placeholder; la llamada real queda gateada a ${ALPHA_VANTAGE_API_KEY} (onboarding alphavantage.json existe; con key 'demo' AV devuelve rate-limit Information, hallazgo ya documentado en el onboarding). jupyter SKIP(BYOK) honesto — uvx jupyter-mcp-server bootea HEADLESS (init OK + 17 tools con runtime dummy); ejecutar de verdad exige el Jupyter PROPIO del usuario (URL+token, onboarding jupyter.json creado). SIN CARD deliberado: sheets (GOOGLE_APPLICATION_CREDENTIALS = service account Google que nadie tiene aca — no se carda sin credencial verificable) y stata (mcp-stata 3.3.0 NO completa initialize sin binario Stata real: discovery falla al boot; Stata no instalado, licencia). Evidencia: reports/catalog-wave-a/evidence-a05-huerfanos.json.",
+    "cards": [
+      {
+        "id": "excel",
+        "label": "Excel local (openpyxl)",
+        "sub": "crea y edita .xlsx reales: hojas, datos, fórmulas, formatos, gráficos y tablas · sin llave",
+        "auth": "keyless",
+        "armario": "archivos",
+        "backed_by": "excel",
+        "tools": [
+          "create_workbook",
+          "create_worksheet",
+          "write_data_to_excel",
+          "read_data_from_excel",
+          "apply_formula",
+          "format_range",
+          "create_chart",
+          "create_table",
+          "get_workbook_metadata"
+        ]
+      },
+      {
+        "id": "alphavantage",
+        "label": "Datos de mercado (Alpha Vantage)",
+        "sub": "precios, series y fundamentals vía la API oficial (TOOL_LIST → TOOL_GET → TOOL_CALL) · tu API key gratis",
+        "auth": "token",
+        "armario": "mundo",
+        "connector": "alphavantage",
+        "backed_by": "alphavantage",
+        "tools": [
+          "TOOL_LIST",
+          "TOOL_GET",
+          "TOOL_CALL"
+        ]
+      },
+      {
+        "id": "jupyter",
+        "label": "Notebooks Jupyter (tu servidor)",
+        "sub": "ejecuta código y celdas en tu Jupyter propio (URL + token) · data science reproducible",
+        "auth": "token",
+        "armario": "apps",
+        "connector": "jupyter",
+        "backed_by": "jupyter",
+        "tools": [
+          "list_notebooks",
+          "use_notebook",
+          "read_notebook",
+          "insert_execute_code_cell",
+          "execute_cell",
+          "execute_code"
+        ]
+      },
+      {
+        "id": "fred-official",
+        "label": "FRED",
+        "sub": "series macro oficiales: búsqueda, catálogo y datos con transformaciones MoM/YoY",
+        "auth": "token",
+        "armario": "mundo",
+        "connector": "fred",
+        "credential_provider": "fred",
+        "service": "fred",
+        "backed_by": "fred_official",
+        "migration_source": "server_declaration",
+        "tools": [
+          "fred_search",
+          "fred_browse",
+          "fred_get_series"
+        ]
+      }
+    ]
+  },
+  "mcpServers": {
+    "excel": {
+      "command": "uvx",
+      "args": [
+        "excel-mcp-server",
+        "stdio"
+      ],
+      "env": {
+        "EXCEL_FILES_PATH": "${PUPPET_WORKDIR}"
+      },
+      "description": "Excel local — openpyxl, cero credenciales. Paths absolutos obligatorios en stdio."
+    },
+    "sheets": {
+      "command": "uvx",
+      "args": [
+        "mcp-google-sheets"
+      ],
+      "env": {
+        "GOOGLE_APPLICATION_CREDENTIALS": "${GOOGLE_APPLICATION_CREDENTIALS}"
+      },
+      "description": "Google Sheets colaborativo. Gate: service account Google Cloud (decisión del operador)."
+    },
+    "stata": {
+      "command": "uvx",
+      "args": [
+        "mcp-stata"
+      ],
+      "env": {
+        "STATA_PATH": "${STATA_PATH}"
+      },
+      "description": "Econometría Stata 17+. Gate: licencia Stata del usuario. Degradación: Jupyter+statsmodels."
+    },
+    "alphavantage": {
+      "command": "uvx",
+      "args": [
+        "--with",
+        "mcp==1.29.0",
+        "--from",
+        "marketdata-mcp-server",
+        "marketdata-mcp"
+      ],
+      "env": {
+        "ALPHA_VANTAGE_API_KEY": "${ALPHA_VANTAGE_API_KEY}"
+      },
+      "description": "Datos de mercado Alpha Vantage oficial. Gate: API key gratis. Workflow: TOOL_LIST->TOOL_GET->TOOL_CALL.",
+      "pin_sdk": {
+        "mcp": "1.29.0",
+        "por_que": "El SDK `mcp` publicó 2.0.0 (major = ruptura) y este server está escrito contra la serie 1.x. Su metadata declara `mcp>=…` —rango abierto—, así que `uvx` resolvía 2.0.0 y el proceso moría en el import. MEDIDO: pinear el PAQUETE no alcanza (tres versiones distintas de mcp-server-git, las tres rotas): el pin tiene que ir en el SDK. `==` exacto, jamás un rango: el rango es el bug con otro nombre."
+      }
+    },
+    "secedgar": {
+      "command": "uvx",
+      "args": [
+        "--with",
+        "mcp==1.29.0",
+        "sec-edgar-mcp"
+      ],
+      "env": {
+        "SEC_EDGAR_USER_AGENT": "${SEC_EDGAR_USER_AGENT}"
+      },
+      "description": "Fundamentals US GAAP desde SEC EDGAR. Cero credenciales (solo User-Agent de cortesía).",
+      "pin_sdk": {
+        "mcp": "1.29.0",
+        "por_que": "Mismo pin que la copia hermana: el SDK `mcp` publicó 2.0.0 (major) y este server está escrito contra la 1.x, con `mcp>=` abierto en su metadata. Este archivo tenía una copia SIN pinear del mismo server — el verificador sólo mide la PRIMERA aparición de cada nombre, así que la copia quedó rota e invisible hasta que el calentamiento del agente la levantó."
+      }
+    },
+    "fred_official": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "fred-mcp-server"
+      ],
+      "env": {
+        "FRED_API_KEY": "${FRED_API_KEY}"
+      },
+      "description": "Series macro FRED (CPI, desempleo, tasas). Gate: API key gratis."
+    },
+    "jupyter": {
+      "command": "uvx",
+      "args": [
+        "jupyter-mcp-server",
+        "--transport",
+        "stdio",
+        "--runtime-url",
+        "${JUPYTER_RUNTIME_URL}",
+        "--runtime-token",
+        "${JUPYTER_TOKEN}",
+        "--document-url",
+        "${JUPYTER_RUNTIME_URL}",
+        "--document-token",
+        "${JUPYTER_TOKEN}",
+        "--document-id",
+        "${JUPYTER_NOTEBOOK_ID}"
+      ],
+      "env": {
+        "JUPYTER_RUNTIME_URL": "${JUPYTER_RUNTIME_URL}",
+        "JUPYTER_TOKEN": "${JUPYTER_TOKEN}",
+        "JUPYTER_NOTEBOOK_ID": "${JUPYTER_NOTEBOOK_ID}"
+      },
+      "description": "Data science reproducible. Gate: infra Jupyter propia con jupyter-collaboration."
+    }
+  }
+}

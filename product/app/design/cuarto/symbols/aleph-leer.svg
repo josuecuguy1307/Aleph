@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96" role="img" aria-label="documentos">
+  <g transform="translate(48 48) scale(1.8687) translate(0.83 0.90)" stroke-linecap="round">
+    <polygon points="-15.80,-2.14 -0.55,6.66 -0.55,7.68 -15.80,-1.12" fill="#D8CFF8" stroke="#D8CFF8" stroke-width="0.62" stroke-linejoin="round"></polygon>
+    <polygon points="14.69,-2.14 -0.55,6.66 -0.55,7.68 14.69,-1.12" fill="#C2B6F1" stroke="#C2B6F1" stroke-width="0.62" stroke-linejoin="round"></polygon>
+    <polygon points="-0.55,-10.94 14.69,-2.14 -0.55,6.66 -15.80,-2.14" fill="#F5F2FF" stroke="#F5F2FF" stroke-width="0.62" stroke-linejoin="round"></polygon>
+    <polygon points="-16.07,-1.41 -0.83,7.39 -0.83,8.42 -16.07,-0.38" fill="#D8CFF8" stroke="#D8CFF8" stroke-width="0.62" stroke-linejoin="round"></polygon>
+    <polygon points="14.41,-1.41 -0.83,7.39 -0.83,8.42 14.41,-0.38" fill="#C2B6F1" stroke="#C2B6F1" stroke-width="0.62" stroke-linejoin="round"></polygon>
+    <polygon points="-0.83,-10.21 14.41,-1.41 -0.83,7.39 -16.07,-1.41" fill="#F5F2FF" stroke="#F5F2FF" stroke-width="0.62" stroke-linejoin="round"></polygon>
+    <polygon points="-16.35,-0.67 -1.11,8.13 -1.11,9.15 -16.35,0.35" fill="#D8CFF8" stroke="#D8CFF8" stroke-width="0.62" stroke-linejoin="round"></polygon>
+    <polygon points="14.13,-0.67 -1.11,8.13 -1.11,9.15 14.13,0.35" fill="#C2B6F1" stroke="#C2B6F1" stroke-width="0.62" stroke-linejoin="round"></polygon>
+    <polygon points="-1.11,-9.47 14.13,-0.67 -1.11,8.13 -16.35,-0.67" fill="#F5F2FF" stroke="#F5F2FF" stroke-width="0.62" stroke-linejoin="round"></polygon>
+    <polygon points="-1.66,-6.94 9.42,-0.54 8.45,0.02 -2.63,-6.38" fill="#553BBB"></polygon>
+    <polygon points="-5.13,-4.94 5.96,1.46 4.99,2.02 -6.10,-4.38" fill="#7C5CF0"></polygon>
+    <polygon points="-8.59,-2.94 -1.94,0.90 -2.91,1.46 -9.56,-2.38" fill="#7C5CF0"></polygon>
+  </g>
+</svg>

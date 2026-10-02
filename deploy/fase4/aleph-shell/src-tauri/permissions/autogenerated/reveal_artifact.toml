@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-reveal-artifact"
+description = "Enables the reveal_artifact command without any pre-configured scope."
+commands.allow = ["reveal_artifact"]
+
+[[permission]]
+identifier = "deny-reveal-artifact"
+description = "Denies the reveal_artifact command without any pre-configured scope."
+commands.deny = ["reveal_artifact"]

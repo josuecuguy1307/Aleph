@@ -1,0 +1,66 @@
+{
+  "arquetipo": "exa",
+  "paso": "initialize",
+  "transporte": "stdio",
+  "servidor": "verificador",
+  "grabado_en": "2026-08-04T09:46:05",
+  "huella_receta": "7a0e0a7b1656",
+  "env_declarado": false,
+  "receta": {
+    "command": "npx",
+    "args": [
+      "-y",
+      "exa-mcp-server"
+    ],
+    "cwd": ""
+  },
+  "peticion": {
+    "metodo": "initialize",
+    "args": {}
+  },
+  "respuesta": {
+    "ok": true
+  },
+  "diagnostico": {
+    "stderr": "",
+    "exit_code": null,
+    "exit_code_fuente": "no expuesto: stdio_client (mcp 2.0.0) hace `yield read_stream, write_stream` y se queda el Process",
+    "murio": false,
+    "t_eof": null,
+    "timeouts": [],
+    "rpc_timeout_s": 45.0,
+    "stderr_lineas": 0,
+    "stderr_bytes": 0,
+    "stderr_cap_bytes": 32768,
+    "stderr_cap_lineas": 80,
+    "command": "npx",
+    "transporte": "sdk-stdio",
+    "entorno": {
+      "omitido": "ambiente de la máquina, no del veredicto"
+    },
+    "server_info": {
+      "name": "exa-search-server",
+      "title": "Exa",
+      "version": "3.4.0",
+      "websiteUrl": "https://exa.ai",
+      "icons": [
+        {
+          "src": "https://exa.ai/images/favicon-32x32.png",
+          "mimeType": "image/png",
+          "sizes": [
+            "32x32"
+          ]
+        }
+      ]
+    },
+    "protocolo": {
+      "cliente": "2025-11-25",
+      "servidor": "2025-11-25",
+      "negociacion": "aceptada"
+    },
+    "detail": "el proceso arrancó pero no respondió al saludo initialize de MCP"
+  },
+  "scrubber": {
+    "hallazgos_neutralizados": 0
+  }
+}

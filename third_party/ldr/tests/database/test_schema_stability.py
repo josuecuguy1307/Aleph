@@ -1,0 +1,447 @@
+#!/usr/bin/env python3
+"""
+Test that database schema (table names) never changes unexpectedly.
+
+Renaming or removing tables will cause data loss for existing users.
+These tests catch accidental schema changes before they're deployed.
+"""
+
+import pytest
+
+
+# Expected table names - DO NOT REMOVE ANY
+# Adding new tables is fine, but removing/renaming breaks existing databases
+EXPECTED_TABLES = {
+    # Auth (in auth.db, not user dbs)
+    "users",
+    # Settings
+    "api_keys",
+    "settings",
+    "user_settings",
+    # Queue
+    "queue_status",
+    "task_metadata",
+    # Research
+    "research",
+    "research_history",
+    "research_resources",
+    "research_strategies",
+    "research_tasks",
+    "search_queries",
+    "search_results",
+    "queued_researches",
+    "user_active_researches",
+    # Reports
+    "reports",
+    "report_sections",
+    # Library
+    "collections",
+    "collection_folders",
+    "collection_folder_files",
+    "documents",
+    "document_blobs",
+    "document_chunks",
+    "document_collections",
+    "download_queue",
+    "library_statistics",
+    "rag_document_status",
+    "rag_indices",
+    "source_types",
+    "upload_batches",
+    # Download tracking
+    "download_tracker",
+    "download_duplicates",
+    "download_attempts",
+    # Metrics
+    "token_usage",
+    "model_usage",
+    "research_ratings",
+    "search_calls",
+    # News
+    "news_cards",
+    "news_interests",
+    "news_subscriptions",
+    "news_user_preferences",
+    "news_user_ratings",
+    "subscription_folders",
+    "user_news_search_history",
+    # File integrity
+    "file_integrity_records",
+    "file_verification_failures",
+    # Providers
+    "provider_models",
+    # Rate limiting
+    "rate_limit_attempts",
+    "rate_limit_estimates",
+    # Domain classification
+    "domain_classifications",
+    # Logs
+    "app_logs",
+    "journals",
+    # Papers (deduplicated academic papers)
+    "papers",
+    "paper_appearances",
+    # Benchmark
+    "benchmark_configs",
+    "benchmark_progress",
+    "benchmark_results",
+    "benchmark_runs",
+    # Notes
+    "note_links",
+    "note_references",
+    "note_research",
+    "note_syntheses",
+    "note_synthesis_sources",
+    "note_versions",
+    # Chat
+    "chat_sessions",
+    "chat_messages",
+    "chat_progress_steps",
+    # Zotero
+    "zotero_sync_state",
+    "zotero_item_map",
+}
+
+
+class TestSchemaStability:
+    """
+    Verify that database table names haven't changed.
+
+    Renaming or removing tables will cause existing user databases
+    to lose data or fail to open properly.
+    """
+
+    def test_no_tables_removed(self):
+        """
+        Ensure no expected tables have been removed.
+
+        Removing a table definition will cause data loss when users
+        upgrade, as SQLAlchemy won't know how to access that data.
+        """
+        from local_deep_research.database.models import Base
+
+        # Get all actual table names from the models
+        actual_tables = set(Base.metadata.tables.keys())
+
+        # Check that all expected tables still exist
+        missing_tables = EXPECTED_TABLES - actual_tables
+
+        assert not missing_tables, (
+            f"CRITICAL: Database tables have been removed!\n"
+            f"Missing tables: {missing_tables}\n\n"
+            "Removing tables will cause data loss for existing users.\n"
+            "If you intentionally removed these tables, you need a migration plan.\n"
+            "Otherwise, REVERT THIS CHANGE."
+        )
+
+    def test_no_tables_renamed(self):
+        """
+        Detect if tables might have been renamed.
+
+        If new tables appear and expected tables are missing,
+        it's likely a rename which will cause data loss.
+        """
+        from local_deep_research.database.models import Base
+
+        actual_tables = set(Base.metadata.tables.keys())
+        missing_tables = EXPECTED_TABLES - actual_tables
+
+        if missing_tables:
+            # Check if there are new tables that might be renames
+            new_tables = actual_tables - EXPECTED_TABLES
+
+            if new_tables:
+                pytest.fail(
+                    f"Possible table rename detected!\n"
+                    f"Missing: {missing_tables}\n"
+                    f"New: {new_tables}\n\n"
+                    "If you renamed tables, existing data will be lost.\n"
+                    "You need a migration to copy data from old to new tables."
+                )
+
+    def test_new_tables_are_documented(self):
+        """
+        Ensure any new tables are added to EXPECTED_TABLES.
+
+        This is a reminder to update this test when adding new tables.
+        New tables should be added to EXPECTED_TABLES to track them.
+        """
+        from local_deep_research.database.models import Base
+
+        actual_tables = set(Base.metadata.tables.keys())
+        new_tables = actual_tables - EXPECTED_TABLES
+
+        # These are okay - just a reminder to update the test
+        if new_tables:
+            pytest.fail(
+                f"New tables detected that aren't in EXPECTED_TABLES:\n"
+                f"{new_tables}\n\n"
+                "Please add these to EXPECTED_TABLES in this test file.\n"
+                "This ensures they'll be protected from accidental removal."
+            )
+
+
+class TestCriticalColumns:
+    """
+    Verify that critical columns in key tables haven't been removed.
+
+    These are columns that store important user data.
+    """
+
+    def test_user_settings_has_required_columns(self):
+        """Verify UserSettings table has all required columns."""
+        from local_deep_research.database.models import UserSettings
+
+        required_columns = {"id", "key", "value", "category"}
+        actual_columns = set(UserSettings.__table__.columns.keys())
+
+        missing = required_columns - actual_columns
+        assert not missing, (
+            f"UserSettings is missing required columns: {missing}\n"
+            "This will break user settings storage."
+        )
+
+    def test_research_has_required_columns(self):
+        """Verify Research table has all required columns."""
+        from local_deep_research.database.models.research import Research
+
+        required_columns = {"id", "query", "status", "mode", "created_at"}
+        actual_columns = set(Research.__table__.columns.keys())
+
+        missing = required_columns - actual_columns
+        assert not missing, (
+            f"Research is missing required columns: {missing}\n"
+            "This will break research history."
+        )
+
+    def test_api_keys_has_required_columns(self):
+        """Verify APIKey table has all required columns."""
+        from local_deep_research.database.models import APIKey
+
+        required_columns = {"id", "provider", "key", "is_active"}
+        actual_columns = set(APIKey.__table__.columns.keys())
+
+        missing = required_columns - actual_columns
+        assert not missing, (
+            f"APIKey is missing required columns: {missing}\n"
+            "This will break API key storage."
+        )
+
+    def test_note_versions_has_exact_column_set(self):
+        """NoteVersion stores the per-edit snapshot used by restore and
+        audit history. The (document_id, content_hash) UNIQUE
+        constraint is part of the dedup contract; any rename or removal
+        of these columns breaks the version-history page silently.
+        """
+        from local_deep_research.database.models.note import NoteVersion
+
+        expected = {
+            "id",
+            "document_id",
+            "title",
+            "content",
+            "tags",
+            "change_type",
+            "change_summary",
+            "content_hash",
+            "created_at",
+        }
+        actual = set(NoteVersion.__table__.columns.keys())
+        missing = expected - actual
+        extra = actual - expected
+        assert not missing, (
+            f"NoteVersion is missing required columns: {sorted(missing)}"
+        )
+        assert not extra, (
+            f"NoteVersion has unexpected columns: {sorted(extra)}. "
+            "If intentional, also update the 0020 migration (and its downgrade) "
+            "and this test."
+        )
+
+    def test_note_links_has_exact_column_set(self):
+        """NoteLink encodes the wiki-link graph. auto_suggested is the
+        distinction between user-typed and AI-suggested links — losing
+        it collapses two distinct UX flows."""
+        from local_deep_research.database.models.note import NoteLink
+
+        expected = {
+            "id",
+            "source_document_id",
+            "target_document_id",
+            "link_text",
+            "auto_suggested",
+            "created_at",
+        }
+        actual = set(NoteLink.__table__.columns.keys())
+        missing = expected - actual
+        extra = actual - expected
+        assert not missing, (
+            f"NoteLink is missing required columns: {sorted(missing)}"
+        )
+        assert not extra, f"NoteLink has unexpected columns: {sorted(extra)}."
+
+    def test_note_research_has_exact_column_set(self):
+        """NoteResearch ties a note to its research runs; display_order
+        and is_collapsed drive the sidebar's ordered/collapsed UI."""
+        from local_deep_research.database.models.note import NoteResearch
+
+        expected = {
+            "id",
+            "document_id",
+            "research_id",
+            "display_order",
+            "is_collapsed",
+            "created_at",
+        }
+        actual = set(NoteResearch.__table__.columns.keys())
+        missing = expected - actual
+        extra = actual - expected
+        assert not missing, (
+            f"NoteResearch is missing required columns: {sorted(missing)}"
+        )
+        assert not extra, (
+            f"NoteResearch has unexpected columns: {sorted(extra)}."
+        )
+
+    def test_note_syntheses_has_exact_column_set(self):
+        """NoteSynthesis is the audit row for an AI synthesis run.
+        result_document_id is SET NULL on result-doc delete; the
+        column must stay nullable and present for the audit trail."""
+        from local_deep_research.database.models.note import NoteSynthesis
+
+        expected = {
+            "id",
+            "result_document_id",
+            "synthesis_type",
+            "created_at",
+        }
+        actual = set(NoteSynthesis.__table__.columns.keys())
+        missing = expected - actual
+        extra = actual - expected
+        assert not missing, (
+            f"NoteSynthesis is missing required columns: {sorted(missing)}"
+        )
+        assert not extra, (
+            f"NoteSynthesis has unexpected columns: {sorted(extra)}."
+        )
+
+    def test_note_synthesis_sources_has_exact_column_set(self):
+        """NoteSynthesisSource is the synthesis ↔ source-note junction.
+        The (synthesis_id, source_document_id) UNIQUE prevents the
+        dedup bug fixed in PR #3277; both columns must stay present."""
+        from local_deep_research.database.models.note import (
+            NoteSynthesisSource,
+        )
+
+        expected = {
+            "id",
+            "synthesis_id",
+            "source_document_id",
+            "created_at",
+        }
+        actual = set(NoteSynthesisSource.__table__.columns.keys())
+        missing = expected - actual
+        extra = actual - expected
+        assert not missing, (
+            f"NoteSynthesisSource is missing required columns: {sorted(missing)}"
+        )
+        assert not extra, (
+            f"NoteSynthesisSource has unexpected columns: {sorted(extra)}."
+        )
+
+    def test_journal_has_exact_column_set(self):
+        """Journal is an LLM-only cache; the column set is deliberately
+        minimal. Lock it down so an accidental add/drop in the model
+        gets caught without a matching migration.
+
+        The journal-quality redesign intentionally excluded the
+        bibliometric columns (issn, h_index, impact_factor, ...) that
+        would have served a Tier 2/3 cache; those values live in the
+        read-only reference DB instead. Re-adding any of them to the
+        model without a new migration would cause the schema drift
+        this test catches.
+        """
+        from local_deep_research.database.models.logs import Journal
+
+        expected = {
+            "id",
+            "name",
+            "name_lower",
+            "quality",
+            "score_source",
+            "quality_model",
+            "quality_analysis_time",
+        }
+        actual = set(Journal.__table__.columns.keys())
+        missing = expected - actual
+        extra = actual - expected
+        assert not missing, (
+            f"Journal model is missing required columns: {sorted(missing)}"
+        )
+        assert not extra, (
+            f"Journal model has unexpected columns: {sorted(extra)}. "
+            "If you intentionally added a column, also update this test "
+            "and the journal-quality migration (and its downgrade)."
+        )
+
+    def test_chat_tables_have_exact_column_sets(self):
+        """Lock down the column sets for the three chat tables introduced
+        in migration 0010. Drift detection — accidental rename, removal,
+        or new column without a migration would surface as a clear diff.
+
+        Mirrors the journals pattern above. Currently `phase` on
+        ChatProgressStep has no behavior tests pinning it; this test
+        catches a silent drop.
+        """
+        from local_deep_research.database.models.chat import (
+            ChatMessage,
+            ChatProgressStep,
+            ChatSession,
+        )
+
+        expected = {
+            ChatSession: {
+                "id",
+                "title",
+                "status",
+                "accumulated_context",
+                "created_at",
+                "message_count",
+            },
+            ChatMessage: {
+                "id",
+                "session_id",
+                "research_id",
+                "role",
+                "message_type",
+                "content",
+                "sequence_number",
+                "created_at",
+            },
+            ChatProgressStep: {
+                "id",
+                "research_id",
+                "session_id",
+                "phase",
+                "content",
+                "sequence_number",
+                "created_at",
+            },
+        }
+        for model, cols in expected.items():
+            actual = set(model.__table__.columns.keys())
+            missing = cols - actual
+            extra = actual - cols
+            assert not missing, (
+                f"{model.__name__} is missing required columns: "
+                f"{sorted(missing)}"
+            )
+            assert not extra, (
+                f"{model.__name__} has unexpected columns: {sorted(extra)}. "
+                "If intentional, update this test and migration 0010 "
+                "(or open a follow-up migration)."
+            )
+
+
+if __name__ == "__main__":
+    pytest.main([__file__, "-v"])

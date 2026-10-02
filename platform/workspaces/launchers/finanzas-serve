@@ -1,0 +1,110 @@
+#!/bin/sh
+# [Gate 4 · F6-FINANZAS] EL LANZADOR DEL PACK DE FINANZAS.
+#
+# Vive en el árbol de ALEPH y no adentro de `third_party/`, por la misma razón que el
+# plugin de Ciencia: el stack importado queda byte-idéntico y la pieza que le habla a la
+# casa se versiona con la casa.
+#
+# HACE DOS COSAS, y las dos tienen su medición atrás:
+#
+# 1. EXPORTA `PYTHONPATH` AL ÁRBOL IMPORTADO.
+#    `api_server.py:332` resuelve su frontend como
+#    `Path(__file__).parent.parent / "frontend" / "dist"`. Corriendo desde el wheel
+#    instalado ese cálculo cae en site-packages y NO encuentra el dist — medido:
+#    `GET /` → 404. Con el árbol en `PYTHONPATH`, `api_server` se resuelve desde el árbol,
+#    el dist aparece y `GET /` → 200 con su `index.html`. El pack necesita esa cara para
+#    embeber el workspace (ley 3.8). En la `.app`, la costura se entrega por
+#    `VIBE_TRADING_FRONTEND_DIST` porque el backend corre como onefile.
+#
+# 2. PASA LA COSTURA POR ENTORNO, NO POR ARCHIVO.
+#    El stack tiene DOS nociones de raíz de runtime y no coinciden:
+#      · `src/config/paths.py:13  get_runtime_root()` → SÍ respeta `VIBE_TRADING_HOME`
+#      · `src/providers/llm.py:430 _ENV_CANDIDATES`   → busca el `.env` en
+#        `~/.vibe-trading/.env` · `<AGENT_DIR>/.env` · `$CWD/.env` — **`VIBE_TRADING_HOME`
+#        no aparece**.
+#    O sea: el `.env` que Aleph escribe en el dir del pack lo ven las sesiones, los runs y
+#    el live… y NO lo ve el cargador del proveedor. Medido: el preflight decía
+#    «LANGCHAIN_MODEL_NAME not set in .env» con el archivo escrito y correcto al lado.
+#    Acá se lee ese `.env` y se exporta al entorno del proceso: `os.environ` ya tiene las
+#    variables, así que da igual que `_ensure_dotenv()` no encuentre archivo.
+#    La lectura del frontend por variable de entorno es una costura neutral: en desarrollo
+#    conserva la ruta relativa y en la `.app` apunta al dato que viaja con Aleph. El arreglo
+#    de fondo (que `_ENV_CANDIDATES` mire `VIBE_TRADING_HOME`) queda declarado como deuda
+#    en FASE6-FINANZAS.md.
+set -e
+AQUI=$(cd "$(dirname "$0")" && pwd)
+RAIZ=$(cd "$AQUI/../../.." && pwd)          # → resource_root()
+STACK="$RAIZ/third_party/vibetrading"
+export PYTHONPATH="$STACK/agent${PYTHONPATH:+:$PYTHONPATH}"
+export VIBE_TRADING_FRONTEND_DIST="$STACK/frontend/dist"
+# The imported server keeps ``frame-ancestors 'none'`` for standalone use.  In
+# Aleph it is deliberately embedded by the workspace iframe; the server-side
+# security middleware requires this launcher marker *and* the aleph_ws query
+# marker before relaxing only the document response.
+export ALEPH_WORKSPACE_EMBED=1
+
+# La costura, del archivo al entorno. Se leen SÓLO las claves que Aleph escribe.
+ENVFILE="${VIBE_TRADING_HOME:-$HOME/.vibe-trading}/.env"
+if [ -f "$ENVFILE" ]; then
+    while IFS= read -r linea; do
+        case "$linea" in
+            LANGCHAIN_PROVIDER=*|LANGCHAIN_MODEL_NAME=*|OPENAI_BASE_URL=*|OPENAI_API_KEY=*)
+                export "$linea" ;;
+            # [F1-CONECTORES] LAS CREDENCIALES DEL USUARIO, DEL VAULT DE LA CASA.
+            # Van en el `case` en el MISMO commit que en `cred_map` de la fila, y no es
+            # burocracia: este `while` lee SÓLO lo que nombra, así que una clave que Aleph
+            # escriba en el `.env` y que acá falte NO llega al stack — y como el archivo
+            # seguiría siendo el nuestro, cualquier verificación que compare el ARCHIVO daría
+            # verde con la credencial parada en la puerta.
+            #
+            # Y hay una segunda razón, medida: este `export` es lo que apaga la SOMBRA. El
+            # stack lee con `override=False` / `os.environ.setdefault`
+            # (`providers/llm.py:777-786`), y el hijo hereda el `os.environ` del sidecar
+            # (`pack.py`, `env={**os.environ, **self._env}`). Si la variable ya venía del
+            # shell del usuario, el `setdefault` le cede y el vault pierde en silencio.
+            # Exportarla acá, después de leer NUESTRO archivo, la deja con nuestro valor
+            # antes de que el stack mire.
+            ALPHA_VANTAGE_API_KEY=*)
+                export "$linea" ;;
+            # [F6 · D8] Las cabeceras `X-Aleph-*` viajan acá adentro, separadas por `\n`
+            # literal. Se expande a saltos reales porque es lo que el SDK de OpenAI parsea
+            # (`providers/llm.py:79 _openai_custom_header_names` corta por línea).
+            OPENAI_CUSTOM_HEADERS=*)
+                OPENAI_CUSTOM_HEADERS=$(printf '%b' "${linea#OPENAI_CUSTOM_HEADERS=}")
+                export OPENAI_CUSTOM_HEADERS ;;
+        esac
+    done < "$ENVFILE"
+fi
+
+# 3. HOME CONTENIDO, Y LA COSTURA DONDE EL STACK LA BUSCA.
+#    Dos superficies del stack leen `Path.home()/".vibe-trading"/".env"` y NO miran
+#    `VIBE_TRADING_HOME`: el cargador del proveedor (`llm.py:430`) y —peor— la pantalla de
+#    Settings (`settings_routes.py:202`), que **cuando no encuentra ningún `.env` muestra
+#    `agent/.env.example` como si fuera la config real**. Medido en la captura: el
+#    encabezado del workspace decía «OpenRouter · deepseek/deepseek-v4-pro» mientras el
+#    turno iba de verdad al borde de Aleph. Eso rompe la LEY DEL CEREBRO ÚNICO en pantalla.
+#    Se resuelve moviendo `HOME` adentro del dir del pack y dejando ahí el `.env` que Aleph
+#    escribió: las dos superficies lo encuentran, el usuario ve «Cerebro de Aleph», y nada
+#    se escribe en el home real del usuario (que puede tener su propio Vibe-Trading).
+if [ -n "$VIBE_TRADING_HOME" ]; then
+    HOME="$VIBE_TRADING_HOME/_home"
+    export HOME
+    mkdir -p "$HOME/.vibe-trading"
+    [ -f "$ENVFILE" ] && cp "$ENVFILE" "$HOME/.vibe-trading/.env" && chmod 600 "$HOME/.vibe-trading/.env"
+fi
+
+# En la `.app` el backend viaja como un onedir autocontenido; en desarrollo se conserva
+# el camino del venv para que el mismo launcher siga siendo útil sobre el árbol fuente.
+BACKEND="$STACK/bin/vibe_trading_backend/vibe_trading_backend"
+if [ -f "$BACKEND" ]; then
+    chmod +x "$BACKEND"
+    # El backend congelado entra directamente por api_server. El subcomando `serve`
+    # pertenece a la CLI interactiva y se omite para no importarla durante el arranque.
+    [ "${1:-}" = "serve" ] && shift
+    exec "$BACKEND" "$@"
+fi
+if [ -x "$STACK/.venv/bin/vibe-trading" ]; then
+    exec "$STACK/.venv/bin/vibe-trading" "$@"
+fi
+echo "finanzas: falta el backend congelado ($BACKEND) o el venv de desarrollo" >&2
+exit 1

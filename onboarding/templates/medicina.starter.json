@@ -1,0 +1,34 @@
+{
+  "schema_version": "v1",
+  "meta": {
+    "name": "Asistente de Radiología",
+    "nicho": "medicina",
+    "descripcion": "Consulta el PACS (DICOM/Orthanc): lista estudios, series y metadata. SOLO metadata — nunca emite un diagnóstico clínico. Requiere un PACS Orthanc encendido."
+  },
+  "model": {
+    "primary": "qwen3:8b",
+    "fallback": null,
+    "base_url": "http://127.0.0.1:11434/v1",
+    "temperature": 0,
+    "max_tokens": 1536,
+    "max_turns": 10
+  },
+  "belt": {
+    "belt_ref": "catalog/templates/medicina/belt-medicina.mcp.json",
+    "tool_filters": { "dicom": ["list_dicom_nodes", "verify_connection", "query_studies", "query_series", "query_instances"] }
+  },
+  "framing": {
+    "ref": null,
+    "inline": "Eres un asistente de radiología. Solo reportas METADATA del PACS (estudios, series, modalidad, accession). NUNCA emites un diagnóstico clínico a partir de imágenes; si te lo piden, aclara que solo das metadata."
+  },
+  "rag": { "enabled": false, "mode": "manual", "dir": null },
+  "keys": {},
+  "gates": { "money_touch": "needs_ok", "send": "needs_ok" },
+  "_onboarding": {
+    "persona": "dev",
+    "first_prompt": "Verifica la conexión al PACS y lista los estudios disponibles con query_studies; resume su metadata.",
+    "runs_keyless": true,
+    "requires_engine": "Orthanc PACS (:8042). Sin PACS → verify_connection lo reporta down; el agente no inventa.",
+    "note": "El framing prohíbe diagnóstico: la honestidad es el eje dominante (trampa)."
+  }
+}

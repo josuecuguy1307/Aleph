@@ -1,0 +1,676 @@
+@import "tailwindcss" source(none);
+
+@import "../styles/aleph-fonts.css";
+@import "../styles/colors.css";
+@import "../styles/tailwind-theme.css";
+
+@import "tw-animate-css";
+
+@import "shadcn/tailwind.css";
+
+@import "katex/dist/katex.min.css";
+
+@import "@fontsource-variable/geist";
+
+@import "@fontsource-variable/ibm-plex-sans";
+
+@source "../../index.html";
+@source "../";
+@source inline("{bg,text,border}-{bronze,gold,brown,orange,tomato,red,ruby,crimson,pink,plum,purple,violet,iris,indigo,blue,cyan,teal,jade,green,grass,sky,mint,lime,yellow,amber,gray,mauve,slate,sage,olive,sand}-{1..12}");
+
+@custom-variant dark (&:is(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *));
+@custom-variant electron {
+  html.openwork-electron & {
+    @slot;
+  }
+}
+@custom-variant windows {
+  html.openwork-electron.openwork-platform-windows & {
+    @slot;
+  }
+}
+@custom-variant mac {
+  html.openwork-electron.openwork-platform-mac & {
+    @slot;
+  }
+}
+@custom-variant linux {
+  html.openwork-electron.openwork-platform-linux & {
+    @slot;
+  }
+}
+
+@utility titlebar-drag {
+  app-region: drag;
+  user-select: none;
+}
+
+@utility titlebar-no-drag {
+  app-region: no-drag;
+}
+
+@keyframes accordion-down {
+  from {
+    height: 0;
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    height: var(--accordion-panel-height);
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes accordion-up {
+  from {
+    height: var(--accordion-panel-height);
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    height: 0;
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+@utility animate-accordion-down {
+  animation: accordion-down 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@utility animate-accordion-up {
+  animation: accordion-up 180ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-accordion-down,
+  .animate-accordion-up {
+    animation-duration: 1ms;
+    transform: none;
+  }
+}
+
+:root {
+  color-scheme: light;
+  /* [Aleph] Estos son los que PINTAN de verdad: el `body` y el shell leen `--dls-*`, no los
+     tokens semánticos, así que mientras apuntaran a la escala Radix el campo seguía siendo
+     #111113 aunque `--background` ya dijera #0B0B0C. Tres planos de la casa: campo → plano
+     → pozo. */
+  /* `--dls-surface` es lo que pinta el SHELL (tres reglas de este archivo lo usan como
+     `background`), así que es el CAMPO, no el plano: en claro el campo de Aleph es #F4F4F5
+     y el blanco queda para las tarjetas (`--dls-canvas`). */
+  --dls-surface: #f4f4f5;
+  --dls-sidebar: #f4f4f5;
+  --dls-app-bg: #f4f4f5;
+  --dls-background: #f4f4f5;
+  --dls-canvas: #ffffff;
+  --dls-surface-muted: #f4f4f5;
+  /* [Aleph] El `dls` es el design system propio del stack. Su borde se apaga y su acento
+     —un azul marino de marca— pasa a la tinta de la casa, que es lo que el sistema usa para
+     la acción; el violeta queda para el 8%. */
+  --dls-border: transparent;
+  --dls-accent: #0a0a0a;
+  --dls-accent-hover: #000000;
+  --dls-accent-fg: #ffffff;
+  --dls-accent-rgb: 1 22 39;
+  --dls-secondary-rgb: 96 100 108;
+  --dls-text-primary: #0a0a0a;
+  --dls-text-secondary: #65656a;
+  --dls-hover: #f4f4f5;
+  --dls-active: #f2f1fe;
+  --dls-radius: 18px;
+  --dls-radius-lg: 22px;
+  --dls-shell-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+  --dls-card-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+  /* [Aleph · 2026-08-11] LA PIEL DE LA CASA, TEMA CLARO.
+     Los tokens SEMÁNTICOS se re-apuntan a `product/app/design/aleph-tokens.css`; la escala
+     Radix (`--slate-*`, `--blue-*`, 3039 líneas en `styles/colors.css`) NO se toca: sigue
+     ahí para lo que la use directo, pero deja de gobernar la piel.
+     El primario INVIERTE el campo (tinta de fondo, papel de letra) porque en este sistema
+     el color es 90/8/2 y el violeta se reserva para el 8%: el acento, el foco, el estado. */
+  --background: #f4f4f5;
+  --foreground: #0a0a0a;
+  --card: #ffffff;
+  --card-foreground: #0a0a0a;
+  --popover: #ffffff;
+  --popover-foreground: #0a0a0a;
+  --popover-border: transparent;
+  --primary: #0a0a0a;
+  --primary-foreground: #ffffff;
+  --secondary: #f4f4f5;
+  --secondary-foreground: #0a0a0a;
+  --muted: #f4f4f5;
+  --muted-foreground: #65656a;
+  --accent: #f2f1fe;
+  --accent-foreground: #5a4fd6;
+  --destructive: #b23a2e;
+  --warning: #8a5d0c;
+  /* CERO BORDES: la jerarquía es sombra + radio, nunca línea. */
+  --border: transparent;
+  --input: #f4f4f5;
+  --ring: #5a4fd6;
+  --chart-1: var(--sky-9);
+  --chart-2: var(--blue-9);
+  --chart-3: var(--indigo-9);
+  --chart-4: var(--violet-9);
+  --chart-5: var(--purple-9);
+  /* El radio del CONTROL en la escala de Aleph: 18px. Era .45rem (7,2px), y de ahí salían
+     los 5,76 · 10,08 · 18,72 que se medían en pantalla. */
+  --radius: 1.125rem;
+  --sidebar: #f4f4f5;
+  --sidebar-foreground: #0a0a0a;
+  --sidebar-primary: #5a4fd6;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f2f1fe;
+  --sidebar-accent-foreground: #5a4fd6;
+  --sidebar-border: transparent;
+  --sidebar-ring: #5a4fd6;
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+  --dls-surface: #0b0b0c;
+  --dls-sidebar: #0b0b0c;
+  --dls-app-bg: #0b0b0c;
+  --dls-background: #0b0b0c;
+  --dls-canvas: #141416;
+  --dls-surface-muted: #1c1c1f;
+  --dls-border: transparent;
+  --dls-accent: #f5f5f6;
+  --dls-accent-hover: #ffffff;
+  --dls-accent-fg: #ffffff;
+  --dls-accent-rgb: 1 22 39;
+  --dls-secondary-rgb: 176 180 186;
+  --dls-text-primary: #f5f5f6;
+  --dls-text-secondary: #a0a0a6;
+  --dls-hover: #1c1c1f;
+  --dls-active: #262636;
+  --dls-shell-shadow: 0 18px 48px rgba(0, 0, 0, 0.32);
+  --dls-card-shadow: 0 14px 36px rgba(0, 0, 0, 0.24);
+}
+
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+}
+
+#root {
+  height: 100%;
+  overflow: hidden;
+}
+
+html {
+  font-size: var(--openwork-font-size, 16px);
+}
+
+body {
+  margin: 0;
+  /* [Aleph] Repetía el stack de sistema en vez de usar el token: dos fuentes de verdad para
+     la misma decisión. Ahora sale de `--font-sans`, que es Outfit. */
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--dls-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.markdown-content [data-openwork-code-block] pre {
+  margin: 0;
+  background: transparent !important;
+}
+
+.markdown-content [data-openwork-code-block] .shiki {
+  background: transparent !important;
+}
+
+:is(.dark, [data-theme="dark"]) .markdown-content [data-openwork-code-block] .shiki,
+:is(.dark, [data-theme="dark"]) .markdown-content [data-openwork-code-block] .shiki span {
+  color: var(--shiki-dark) !important;
+}
+
+:is(.dark, [data-theme="dark"]) .markdown-content [data-openwork-code-block] .shiki span {
+  font-style: var(--shiki-dark-font-style) !important;
+  font-weight: var(--shiki-dark-font-weight) !important;
+  text-decoration: var(--shiki-dark-text-decoration) !important;
+}
+
+/* KaTeX sets its own absolute font-size; keep formulas at the surrounding text size
+   so inline math does not tower over the sentence it sits in. */
+.markdown-content .katex {
+  font-size: 1.1em;
+  color: inherit;
+}
+
+/* Long formulas scroll instead of overflowing the message bubble. */
+.markdown-content .katex-display {
+  margin: 1rem 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.25rem 0;
+}
+
+.markdown-content [data-openwork-math-error] {
+  color: var(--color-red-11, inherit);
+}
+
+.ow-soft-shell {
+  border: 1px solid var(--dls-border);
+  background: var(--dls-surface);
+  border-radius: 2rem;
+  box-shadow: var(--dls-shell-shadow);
+}
+
+/* Arc-style overflow: long labels fade out instead of showing an ellipsis. */
+.ow-fade-truncate {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: clip;
+  mask-image: linear-gradient(to right, black calc(100% - 18px), transparent);
+}
+
+/* Session titles move once from their resting edge; the row and controls stay fixed. */
+.ow-session-title-moving {
+  mask-image: linear-gradient(to right, transparent, black 10px, black calc(100% - 10px), transparent);
+}
+
+.ow-session-title-moving > span {
+  will-change: transform;
+}
+
+.ow-soft-card {
+  border: 1px solid var(--dls-border);
+  background: var(--dls-surface);
+  border-radius: 1.5rem;
+  box-shadow: var(--dls-card-shadow);
+}
+
+.ow-soft-card-quiet {
+  border: 1px solid var(--dls-border);
+  background: var(--dls-sidebar);
+  border-radius: 1.5rem;
+}
+
+.ow-button-primary {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background: var(--dls-accent);
+  color: white;
+  box-shadow: 0 8px 20px -16px rgba(var(--dls-accent-rgb), 0.45);
+}
+
+.ow-button-primary:hover:not(:disabled) {
+  background: var(--dls-accent-hover);
+}
+
+.ow-button-secondary {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  border: 1px solid var(--dls-border);
+  background: var(--dls-surface);
+  color: var(--dls-text-primary);
+  box-shadow: var(--dls-card-shadow);
+}
+
+.ow-button-secondary:hover:not(:disabled) {
+  background: var(--dls-hover);
+}
+
+.ow-button-primary,
+.ow-button-secondary {
+  padding: 0.75rem 1.25rem;
+  font-size: 13px;
+  font-weight: 500;
+  transition: background-color 150ms ease, color 150ms ease, transform 150ms ease, opacity 150ms ease;
+}
+
+.ow-button-primary:active:not(:disabled),
+.ow-button-secondary:active:not(:disabled) {
+  transform: scale(0.99);
+}
+
+.ow-button-primary:disabled,
+.ow-button-secondary:disabled {
+  opacity: 0.5;
+}
+
+.ow-status-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  padding: 0.25rem 0.625rem;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.ow-status-pill-positive {
+  border: 1px solid var(--green-a6);
+  background: var(--green-3);
+  color: var(--green-11);
+}
+
+.ow-status-pill-warning {
+  border: 1px solid var(--amber-a6);
+  background: var(--amber-3);
+  color: var(--amber-11);
+}
+
+.ow-status-pill-neutral {
+  border: 1px solid var(--slate-6);
+  background: var(--slate-2);
+  color: var(--slate-11);
+}
+
+.ow-icon-tile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.85rem;
+  background: var(--slate-3);
+  color: var(--slate-12);
+}
+
+.ow-icon-tile-muted {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.85rem;
+  background: var(--slate-3);
+  color: var(--slate-11);
+}
+
+.ow-input {
+  appearance: none;
+  width: 100%;
+  border: 0;
+  border-radius: 0.9rem;
+  background: var(--slate-1);
+  box-shadow: inset 0 0 0 1px var(--slate-6);
+  color: var(--dls-text-primary);
+}
+
+.ow-input::placeholder {
+  color: var(--slate-11);
+}
+
+.ow-input:focus {
+  outline: none;
+  box-shadow: inset 0 0 0 1px rgba(var(--dls-accent-rgb), 0.28), 0 0 0 3px rgba(var(--dls-accent-rgb), 0.08);
+}
+
+/* Global clickable elements pointer */
+button,
+[role="button"],
+a,
+input[type="submit"],
+input[type="button"],
+input[type="checkbox"],
+input[type="radio"],
+select {
+  cursor: pointer;
+}
+
+button:disabled,
+[role="button"][aria-disabled="true"],
+input:disabled,
+select:disabled {
+  cursor: not-allowed;
+}
+
+@utility animate-spin-slow {
+  animation: spin 3s linear infinite;
+}
+
+@keyframes soft-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+}
+
+@utility animate-soft-pulse {
+  animation: soft-pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Highlight animation for just-saved command */
+@keyframes command-highlight {
+  0% {
+    box-shadow: 0 0 0 0 var(--indigo-a9);
+    border-color: var(--indigo-a9);
+  }
+  50% {
+    box-shadow: 0 0 0 8px var(--indigo-a1);
+    border-color: var(--indigo-a7);
+  }
+  100% {
+    box-shadow: 0 0 0 0 var(--indigo-a1);
+    border-color: var(--slate-a3);
+  }
+}
+
+.command-just-saved {
+  animation: command-highlight 2s ease-out;
+  border-color: var(--indigo-a9);
+}
+
+@keyframes progress-shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(200%);
+  }
+}
+
+@utility animate-progress-shimmer {
+  animation: progress-shimmer 2s infinite linear;
+}
+
+/* Quiet text shimmer for lightweight loading hints (e.g. cloud worker
+   sessions catching up): a soft highlight sweeps across muted text. */
+@keyframes ow-text-shimmer {
+  0% {
+    background-position: 150% 0;
+  }
+  100% {
+    background-position: -50% 0;
+  }
+}
+
+@utility ow-text-shimmer {
+  background-image: linear-gradient(
+    90deg,
+    rgb(var(--dls-secondary-rgb) / 0.7) 0%,
+    rgb(var(--dls-secondary-rgb) / 0.7) 42%,
+    var(--dls-text-primary) 50%,
+    rgb(var(--dls-secondary-rgb) / 0.7) 58%,
+    rgb(var(--dls-secondary-rgb) / 0.7) 100%
+  );
+  background-size: 200% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: ow-text-shimmer 2.4s linear infinite;
+}
+
+/* Quiet, small dot ticker (`:: :: ::`). Each dot pulses briefly in sequence,
+   illuminating left-to-right like a subtle running light. Used for boot,
+   "awaiting first token", and any idle-but-alive hint. */
+@keyframes ow-dot-ticker {
+  0% {
+    background-color: rgb(var(--dls-secondary-rgb) / 0.22);
+    box-shadow: 0 0 0 rgb(var(--dls-accent-rgb) / 0);
+  }
+  20% {
+    background-color: rgb(var(--dls-accent-rgb) / 0.95);
+    box-shadow: 0 0 8px rgb(var(--dls-accent-rgb) / 0.45);
+  }
+  55%,
+  100% {
+    background-color: rgb(var(--dls-secondary-rgb) / 0.22);
+    box-shadow: 0 0 0 rgb(var(--dls-accent-rgb) / 0);
+  }
+}
+
+.ow-dot-ticker {
+  animation: ow-dot-ticker 1.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  background-color: rgb(var(--dls-secondary-rgb) / 0.22);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ow-dot-ticker {
+    animation: none;
+    background-color: rgb(var(--dls-accent-rgb) / 0.6);
+  }
+}
+
+/* Sweep under the active boot checkpoint. Stays in CSS so the gateway can poll
+   without an endless JS animation competing for the main thread. */
+@keyframes ow-stage-shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(400%);
+  }
+}
+
+.ow-stage-shimmer {
+  animation: ow-stage-shimmer 1.6s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ow-stage-shimmer {
+    animation: none;
+    transform: translateX(0);
+  }
+}
+
+.dark,
+[data-theme="dark"] {
+  /* [Aleph] LA PIEL DE LA CASA, TEMA OSCURO. Campo #0B0B0C → plano #141416 → pozo #1C1C1F.
+     El primario vuelve a invertir: acá es la tinta clara con letra oscura. */
+  --background: #0b0b0c;
+  --foreground: #f5f5f6;
+  --card: #141416;
+  --card-foreground: #f5f5f6;
+  --popover: #141416;
+  --popover-foreground: #f5f5f6;
+  --popover-border: transparent;
+  --primary: #f5f5f6;
+  --primary-foreground: #0a0a0a;
+  --secondary: #1c1c1f;
+  --secondary-foreground: #f5f5f6;
+  --muted: #1c1c1f;
+  --muted-foreground: #a0a0a6;
+  --accent: #262636;
+  --accent-foreground: #b7b5f5;
+  --destructive: #e08a7c;
+  --warning: #d9a445;
+  --border: transparent;
+  --input: #1c1c1f;
+  --ring: #8d8bee;
+  --chart-1: var(--sky-9);
+  --chart-2: var(--blue-9);
+  --chart-3: var(--indigo-9);
+  --chart-4: var(--violet-9);
+  --chart-5: var(--purple-9);
+  --sidebar: #0b0b0c;
+  --sidebar-foreground: #f5f5f6;
+  --sidebar-primary: #8d8bee;
+  --sidebar-primary-foreground: #0a0a0a;
+  --sidebar-accent: #262636;
+  --sidebar-accent-foreground: #b7b5f5;
+  --sidebar-border: transparent;
+  --sidebar-ring: #8d8bee;
+}
+
+@theme inline {
+  /* [Aleph] LA LETRA DE LA CASA. Era el stack de sistema del proyecto de origen; ahora es
+     Outfit, vendorizada en `styles/aleph-fonts.css`. El resto de la cadena queda como
+     respaldo por si la fuente no carga. */
+  --font-sans: "Outfit", system-ui, -apple-system, BlinkMacSystemFont, ui-sans-serif, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-heading: -apple-system, BlinkMacSystemFont, system-ui, ui-sans-serif, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --text-sm: 0.8125rem;
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-warning: var(--warning);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover-border: var(--popover-border);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  /* [Aleph] LA ESCALA, EXPLÍCITA. Estaban derivados por multiplicación del radio base
+     (`* 0.6`, `* 1.4`, `* 1.8`…), y de ahí salían los 14 · 14,4 · 25,2 · 46,8 px que se
+     medían en pantalla: valores que no son escalones de nada. El sistema de Aleph tiene
+     SEIS y son 3·6·13·18·22·30 (`--r-*` en aleph-tokens.css). Los dos peldaños que este
+     stack usa por encima del plano se quedan en 30: el sistema no tiene nada más grande. */
+  /* `rounded` a secas (sin sufijo) tomaba el default de Tailwind, 4px, que no es un escalón
+     del sistema. Se declara junto a los demás. */
+  --radius-DEFAULT: 13px;
+  --radius-sm: 6px;
+  --radius-md: 13px;
+  --radius-lg: 18px;
+  --radius-xl: 22px;
+  --radius-2xl: 30px;
+  --radius-3xl: 30px;
+  --radius-4xl: 30px;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+}
+/* The model chip is anchored outside React at a high z-index. Its composer is
+   covered while an artifact is expanded, so the chip must be covered too. */
+body:has([data-artifact-expanded="true"]) [data-aleph-chip] {
+  display: none !important;
+}

@@ -1,0 +1,78 @@
+fastapi>=0.115.0
+uvicorn[standard]>=0.30.0
+httpx>=0.27.0
+pytest>=8.2.0
+pytest-httpx>=0.35.0
+anyio>=4.0.0
+# TRANSPORTE MCP (sesión 2 del SDK) — el puente `platform/inspection/transporte_sdk.py` es
+# el camino real desde este commit, y el cliente viejo queda de rollback
+# (`ALEPH_TRANSPORTE=viejo`). PIN EXACTO, jamás `>=`: 2.0.0 ROMPE la API de la 1.x
+# —`streamablehttp_client` desapareció y `InitializeResult.serverInfo` pasó a `server_info`—
+# así que un rango dejaría que un `pip install` futuro cambie el transporte del producto sin
+# que nadie lo decida. sha256 del wheel:
+#   1cb4c75d2d2c7b8c1d756355e5d82a39f2822cc7f13e22a2051d7ca3592349d6
+# Peso medido contra ESTE venv: +13 paquetes · 1,20 MB en wheels · 5,16 MB en disco · 0
+# conflictos. Trae su propio stack HTTP (`httpx2`/`httpcore2`), que NO es el `httpx` de acá.
+mcp==2.0.0
+cryptography>=42.0
+# ── FRONTERA DE INFERENCIA (Gate 2 · F3) — la usa SÓLO `platform/assembler/adaptador_litellm.py`.
+# PIN EXACTO, jamás `>=`. Y el pin QUE QUERÍAMOS NO SE PUDO PONER; esto es lo que hay:
+#
+#   LO QUE BUSCÁBAMOS  `litellm==1.91.4` — última con `py3-none-any.whl`: wheel UNIVERSAL,
+#       cero `.so`, sin toolchain de build. A partir de 1.92.0 hay wheels por plataforma y
+#       NINGUNO de macOS (medido contra PyPI el 2026-08-03: 1.92.0→1.95.0 publican 0), así
+#       que en Mac `pip` cae al sdist y compila una extensión Rust con maturin.
+#   POR QUÉ NO SE PUDO  1.91.4 declara `Requires-Python >=3.10,<3.14` y el venv del sidecar
+#       es **Python 3.14.5**. `pip install litellm==1.91.4` ahí falla con
+#       «No matching distribution found». Las primeras versiones que soportan 3.14 son
+#       1.93.0 · 1.93.1 · 1.94.0 · 1.94.1 · 1.95.0 — TODAS post-1.92, o sea todas sin wheel
+#       universal. El criterio «sin Rust» y el intérprete del sidecar son incompatibles hoy.
+#   LO QUE SE PUSO  `1.93.0`: la PRIMERA compatible con 3.14, para minimizar la exposición
+#       al churn (1.93.0 → 1.95.0 en vez de 1.91.4 → 1.95.0).
+#
+# ⚠ DECISIÓN ABIERTA, no resuelta acá: si el CI de macOS necesita o no toolchain de Rust.
+#   En ESTA máquina el build de 1.93.0 funcionó con `cargo` fuera del PATH — pero la
+#   máquina tiene rustup instalado y maturin lo encontró igual, así que el experimento NO
+#   prueba nada sobre un runner limpio. **NO MEDIBLE acá.** Las dos salidas posibles:
+#     (a) el CI instala Rust (una línea en el workflow), o
+#     (b) el sidecar baja a Python 3.13 y entonces 1.91.4 —y su wheel universal— vuelven a
+#         estar disponibles. Esa segunda toca el intérprete del producto: no es de F3.
+#
+# MEDIDO de 1.93.0 en un venv 3.14 limpio: 199 MB de site-packages · compila
+# `rust_bridge/_native.cpython-314-darwin.so` · `native_bridge_available()` → True.
+# (1.91.4 en un venv 3.13: 168 MB, sin `.so`, `native_bridge_available()` → False.)
+# NO se instala el extra `[proxy]`: son otros 26 paquetes (fastapi/uvicorn/prisma/boto3…)
+# y 23 MB de dashboard Next.js compilado que un SDK no usa jamás.
+litellm==1.93.0
+# IDENTIDAD (CONTRACT-AUTH-v2) — verificación de los JWT ES256 de Supabase.
+# NO ES OPCIONAL: supabase_jwt.verificar() hace `import jwt` DENTRO de la función y
+# `from jwt import PyJWK` para el JWKS. Nada lo instala transitivamente (pip show pyjwt
+# → Required-by: vacío). Sin esta línea el contenedor lanza ModuleNotFoundError, el
+# `except Exception: return None` de _session_owner_supabase se lo traga, y TODO login
+# de usuario da 401 mudo en producción mientras en dev funciona perfecto. Pasó: costó
+# dos deploys y media tarde de diagnóstico apuntando al entorno equivocado.
+# cryptography (arriba) es su par: PyJWT la necesita para ES256.
+PyJWT>=2.9
+psycopg2-binary>=2.9
+sentry-sdk[fastapi]>=2.0    # [T8-infra] observabilidad: captura de errores (no-op sin SENTRY_DSN)
+# DESCARGA POR TIPO (artifact_export) — archivos reales por tipo de obra, libs PURAS (sin native build)
+openpyxl>=3.1          # planilla → .xlsx real (celdas)
+python-docx>=1.1       # informe → .docx
+reportlab>=4.0         # informe → .pdf
+# [Convergencia · superficie 7] presentacion → .pptx. DECLARADO EXPLÍCITO aunque HOY ya
+# entra transitivo por `markitdown[pptx]` de más abajo: markitdown lo usa para LEER pptx y
+# puede soltarlo en cualquier release suyo. Apoyar una descarga en la transitiva de otro es
+# cómo esto se rompe callado en el próximo build — y el fallo saldría como un .md llamado
+# .pptx, no como un ImportError.
+python-pptx>=1.0       # presentacion → .pptx real (un slide por encabezado)
+# [C1·RAG] ingesta de Conocimiento — extracción de texto de PDF (pura Python, sin native build)
+pypdf>=6.0             # átomo Conocimiento: upload de .pdf → texto → chunks → embeddings BYOK
+# BILLING (T7) — pasarela de pago para comprar presupuesto. OPCIONAL: el código degrada
+# honesto si falta (sin lib / sin STRIPE_SECRET_KEY → endpoint 503 tipado, no un pago fingido).
+stripe>=9.0            # Checkout Session + verificación de firma de webhook
+# PAGOS · TIER (Step 5 · Casa 1) — el puente pago→tier. OJO: es OTRO eje que billing de
+# arriba (aquél acredita PRESUPUESTO con Stripe; éste activa el FLAG DE TIER con Dodo).
+# El extra [webhooks] NO es opcional: `unwrap()` (verificación de firma, spec Standard
+# Webhooks) vive ahí; sin él el webhook no puede verificar y el plano de control no sirve.
+dodopayments[webhooks]>=1.108   # sólo lo importa platform/payments/dodo.py (§4-bis)
+markitdown[pdf,docx,pptx,xlsx]

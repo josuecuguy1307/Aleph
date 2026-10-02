@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title data-i18n="ws.oficina.title">Oficina · Aleph</title>
+
+<!-- La piel sale de los tokens del sistema, como en las otras pantallas. Acá NO se
+     redeclara un color: `aleph-tokens.css` es la única hoja que da vuelta claro/oscuro. -->
+<link rel="stylesheet" href="../vendor/fonts.css">
+<link rel="stylesheet" href="../aleph-tokens.css">
+<link rel="stylesheet" href="./workspace.css">
+
+<script>window.ALEPH_THEME_NOFLOAT=true;</script>
+<script src="../auth.js"></script>
+<script src="../aleph-config.js"></script>
+<script src="../i18n.js?v=ws-1"></script>
+<script src="../theme.js"></script>
+<script src="../piel.js"></script>
+<!-- [convergencia · superficie 8] `nav.js` se carga acá SÓLO por su tabla de destinos
+     (`window.AlephDestinos`), que es la misma que pinta la barra de las otras 17
+     pantallas. No dibuja su barra: `inApp` incluye `/workspaces/` y acá manda `.ws-bar`.
+     Y el cerebro flotante se apaga a mano: es de la Sala, no de encima del lienzo ajeno. -->
+<script>window.ALEPH_NAV_BRAIN_OFF = 1;</script>
+<script src="../nav.js"></script>
+</head>
+<body>
+<!--
+  EL WORKSPACE DE OFICINA. [Gate 4 · F6-oficina · ley 0 · ley 3 · ley 8 · inmersión 3.8]
+
+  QUÉ SE VE ACÁ ADENTRO: el escritorio de trabajo ENTERO, como su proyecto lo parió — sus
+  workspaces, sus sesiones con affordances tipadas, su navegador integrado, sus extensiones
+  y sus documentos. Nada de eso se reescribió ni se re-cableó: la ley 0 dice que el dominio
+  es del stack, y la ley 3 dice que la anatomía del oficio se respeta. Lo único nuestro
+  adentro es el CEREBRO (la cirugía de la ley 2, invisible desde acá porque ocurre del otro
+  lado, en su capa de proveedores).
+
+  POR QUÉ UN WEBVIEW LOCAL Y NO UNA PANTALLA REESCRITA: la jerarquía de visualización de la
+  ley 8 — formas nativas > **webview local** > workspace heredado > generación. Reescribir
+  un escritorio de trabajo completo (sus workspaces, su navegador, sus extensiones y su
+  catálogo de conectores) sería construir dominio, que es exactamente lo que la ley 0
+  prohíbe.
+
+  LA INMERSIÓN (3.8), QUE ES LO QUE GOBIERNA CADA PALABRA DE ESTA PANTALLA:
+
+    · **Cero pantallas intermedias.** Se entra y está el escritorio. No hay una portada que
+      lo presente, ni un «conectá tu cuenta», ni un botón «abrir».
+    · **Cero auth visible.** La sesión es la de Aleph y ya está resuelta antes de llegar
+      acá; el stack no pide cuenta (se le amputó la suya entera).
+    · **Cero palabra que no sea de Aleph.** El nombre del proyecto de origen NO aparece —
+      ni en el título, ni en la barra, ni en un error. Un usuario nuevo no tiene por qué
+      sospechar que existe un repo ajeno; el crédito de la licencia vive en `ATTRIBUTIONS.md`, con
+      su commit y su licencia, que es donde corresponde y donde sí es exigible.
+    · **El contenido conserva su idioma de oficio** (ley 11 matizada). Adentro del lienzo
+      hay `UniProt`, `PDB`, `p-value`, `FASTA` y `notebook`, y así tiene que ser: traducir
+      la nomenclatura científica sería romper el oficio, no localizarlo. Lo que se traduce
+      es EL MARCO (esta barra, este error, este botón), que es de la casa.
+
+  FALLO VISIBLE (no negociable): si el stack no está corriendo, esta pantalla lo DICE, con
+  la causa y qué hacer. Jamás un iframe en blanco.
+-->
+<!-- [rediseño · el frame · Oficina] EL RIEL DE LA CASA — Y SU FINAL.
+     Nació en la fase 2 como sidebar de 260 px, con el hueco de la sección del espacio que
+     nunca se pudo llenar desde este lado del `<iframe>`. El diseño pide UNA barra y la única
+     que puede llevar New chat, Search, Library y las sesiones es la del stack, porque viven
+     de su estado.
+
+     ⚠️ CON EL FRAME PRENDIDO ESTE NODO SE BORRA, no se esconde. El script de más abajo
+     primero MUDA su pie —el nodo entero, con lo que los módulos ya colgaron de él y con lo
+     que van a colgar— a un ancla headless, y recién después hace `riel.remove()`. Mover el
+     pie es lo que hace que borrar el riel no le saque el cable a nadie.
+
+     ⚠️ Y SE QUEDA para el camino de `?piel=off`. Con el frame apagado el stack no dibuja
+     nuestra cabecera, así que si acá tampoco hubiera nada no habría `‹ Inicio` ni `⚙` en
+     ningún lado: el apagado de emergencia sería una trampa. -->
+<aside class="ws-riel">
+  <div class="ws-marca-fila">
+    <img src="../assets/aleph-mascot-v2.png" alt="" width="20" height="20">
+    <span class="ws-wordmark">Aleph</span>
+    <span class="ws-nombre" data-i18n="ws.oficina.nombre">Oficina</span>
+  </div>
+  <a class="ws-volver" href="../Home.dc.html" data-i18n="ws.volver">‹ Inicio</a>
+  <div class="ws-sep"></div>
+  <!-- el hueco de la sección propia del espacio · fase 3 -->
+  <div class="ws-seccion"></div>
+  <!-- ⚠️ EL PIE SE LLAMA TAMBIÉN `ws-bar`: tres módulos (ajustes.js, destinos-del-espacio.js,
+       conectores-del-espacio.js) se montan solos ahí buscando ese nombre y anclando en
+       `#ws-estado`. Conservarlo es lo que hace que no queden tres botones muertos. -->
+  <div class="ws-pie ws-bar">
+    <div class="ws-estado" id="ws-estado" role="status" aria-live="polite"></div>
+  </div>
+</aside>
+
+<main class="ws-lienzo">
+  <iframe id="ws-frame" class="ws-frame" title="Oficina" hidden></iframe>
+  <section class="ws-caido" id="ws-caido" hidden>
+    <h1 class="ws-caido-tit" data-i18n="ws.oficina.caido.tit">El escritorio de Oficina no está corriendo.</h1>
+    <p class="ws-caido-txt" id="ws-caido-txt"></p>
+    <p class="ws-caido-nota" data-i18n="ws.caido.nota">
+      El workspace está instalado; lo que falta es su proceso.
+    </p>
+    <button type="button" class="ws-btn" id="ws-reintentar" data-i18n="ws.reintentar">Reintentar</button>
+  </section>
+</main>
+
+<script src="./ancla-del-pie.js"></script>
+<script src="./superficie-pedida.js"></script>
+<script src="./pie-remoto.js"></script>
+<script src="./aprobaciones-oficina.js"></script>
+<script>
+(function () {
+  "use strict";
+  var tr = function (k, fb) { var s = window.t ? window.t(k) : null; return (s && s !== k) ? s : fb; };
+  var frame = document.getElementById("ws-frame");
+  var caido = document.getElementById("ws-caido");
+  var caidoTxt = document.getElementById("ws-caido-txt");
+  var estado = document.getElementById("ws-estado");
+
+  var WS = "oficina";
+
+  /* [rediseño · el frame · Oficina] CON EL FLAG PRENDIDO, LA BARRA ES UNA Y ES LA DEL STACK.
+   *
+   * ⚠️ ACÁ SE BORRA EL NODO DEL RIEL. Hasta la fase 6 se escondía con `display:none` y eso
+   * era montar encima: el riel seguía ahí, con sus 260 px de layout y su cabecera, peleándose
+   * con la barra del stack. El dueño lo cortó: se borra.
+   *
+   * ⚠️ PERO EL PIE SE MUDA PRIMERO, Y SE MUDA EL NODO. `ajustes.js`,
+   * `destinos-del-espacio.js` y `conectores-del-espacio.js` se montan solos buscando
+   * `.ws-bar` y anclando en `#ws-estado`, y sus paneles se dibujan en ESTE documento con
+   * `position:fixed`. Mudar el nodo entero —no copiarlo, no reimplementarlo— es lo que hace
+   * que cada módulo conserve su botón, su handler, su estado y su panel. El `appendChild`
+   * MUEVE: el nodo que sale del riel es el mismo objeto que entra al ancla.
+   *
+   * ⚠️ Y SE MUDA ANTES DE QUE LOS MÓDULOS CORRAN. Este script es inline y va arriba; los tres
+   * `<script src>` que los traen están al final del documento. Cuando ellos hagan su
+   * `querySelector(".ws-bar")` van a encontrar el pie YA en su lugar nuevo, así que no hay un
+   * instante en que monten en un nodo que después desaparece.
+   *
+   * El ⚙ de `ajustes.js` se apaga: con el frame nativo, el pie del sidebar del stack ya tiene
+   * su `⚙ Settings` y los dos van al mismo `Settings.dc.html`. Dos disparadores del mismo
+   * destino en la misma pantalla es el defecto que `ajustes.js` cuenta en su propio
+   * comentario que ya pasó una vez. */
+  /* [integración] EL CUERPO DE ESTE BLOQUE SE MUDÓ A `ancla-del-pie.js`, TAL CUAL. Era el
+   * único de los seis que estaba bien y por eso es el que se generalizó: las otras cinco
+   * páginas ahora corren ESTE mismo cuerpo, no una versión parecida. Lo único que se queda
+   * acá es el apagado del ⚙ de `ajustes.js`, que es una decisión de Oficina —su pie ya
+   * dibuja un `⚙ Settings` y dos disparadores del mismo destino en la misma pantalla es el
+   * defecto que ese módulo cuenta que ya pasó una vez. */
+  try { if (window.AlephAnclaDelPie.montar(WS)) window.ALEPH_AJUSTES_OFF = true; } catch (e) {}
+
+  /* [integración] EL PIE REMOTO, EN `pie-remoto.js`, IGUAL PARA LAS SEIS. El bloque que
+   * vivía acá estaba en tres páginas y en dos versiones; se generalizó la de Ciencia, que
+   * pregunta por el módulo y no por el texto traducido del botón. El porqué está escrito en
+   * el archivo. */
+  try { window.AlephPieRemoto.montar(); } catch (e) {}
+
+  // La sesión de Aleph, en UN solo lugar: la usan las cabeceras, el hilo y —desde O1— el
+  // ciclo de vida del pack, que necesita el `user_id` porque el proceso corre POR DUEÑO.
+  function usuario() {
+    try {
+      var u = window.AlephSession && window.AlephSession.get ? window.AlephSession.get() : null;
+      if (!u) { var raw = localStorage.getItem("puppet_user") || sessionStorage.getItem("puppet_user"); u = raw ? JSON.parse(raw) : null; }
+      return u || null;
+    } catch (e) { return null; }   // sin sesión: el backend contesta lo que corresponda
+  }
+
+  // El tema RESUELTO de la casa (claro u oscuro, jamás «auto»): es lo único que le sirve a
+  // una superficie que no puede consultar nuestro `localStorage`.
+  function tema() {
+    try {
+      if (window.AlephTheme && window.AlephTheme.resolved) return window.AlephTheme.resolved();
+      return document.documentElement.getAttribute("data-theme") || "dark";
+    } catch (e) { return "dark"; }
+  }
+
+  function headers() {
+    var h = {};
+    var u = usuario();
+    if (u && u.session_token) h["Authorization"] = "Bearer " + u.session_token;
+    return h;
+  }
+
+  // La elegibilidad y el estado los MIDE el backend (`GET /v1/workspaces`), no esta
+  // pantalla: `installed` y `running` son dos hechos distintos y sólo el backend puede
+  // separarlos (desde el navegador, un CORS diría «no corre» sobre algo que sí corre).
+  function mirar() {
+    estado.textContent = tr("ws.buscando", "Buscando el banco de trabajo…");
+    return fetch("/v1/workspaces", { headers: headers() })
+      .then(function (r) { return r.ok ? r.json() : { workspaces: [] }; })
+      .then(function (j) {
+        var w = (j.workspaces || []).filter(function (x) { return x.id === WS; })[0];
+        if (!w) return fallo(tr("ws.no_instalado", "Este workspace no está instalado en esta copia de Aleph."));
+        // [Gate 4 · Fase 4 · O1] ENTRAR LEVANTA EL PACK. Antes de esto, «entrar» era
+        // navegar acá y esperar que alguien hubiera levantado el proceso a mano. El pedido
+        // es idempotente y además REFRESCA la config del stack (su `baseURL` lleva el
+        // puerto del sidecar de AHORA, y su `apiKey` la sesión de ahora), así que se hace
+        // en cada mirada y no sólo la primera.
+        // El HILO y la BIBLIOTECA se resuelven ANTES de levantar, no después: el pack se
+        // los pasa al stack en su config, y el plugin de la casa los necesita desde el
+        // primer turno para poder cerrar el espacio y cruzar los artefactos al puente.
+        if (w.stack && w.stack.autoarranca) {
+          return Promise.all([asegurarHilo(), asegurarSid()])
+            .then(function (r) { return entrar(r[0], r[1]); });
+        }
+        if (!w.stack || !w.stack.running) {
+          return fallo(tr("ws.no_corre", "No responde en {url}.").replace("{url}", (w.stack && w.stack.url) || "—"));
+        }
+        return asegurarHilo().then(function (chatId) { return pintar(w.stack.url, chatId); });
+      })
+      .catch(function (e) { fallo(String(e && e.message || e)); });
+  }
+
+  // ── EL CICLO DE VIDA DEL PACK (O1) ────────────────────────────────────────────────
+  // Entrar levanta · salir apaga. La pantalla no sabe levantar nada: le PIDE al backend,
+  // que es el único que puede ser dueño de un proceso (y ya lo es — `dueno.py`).
+  function entrar(chatId, sid) {
+    estado.textContent = tr("ws.levantando", "Levantando el banco de trabajo…");
+    estado.className = "ws-estado";
+    var h = headers(); h["Content-Type"] = "application/json";
+    var u = usuario();
+    var puppet = new URLSearchParams(location.search).get("puppet") || null;
+    return fetch("/v1/workspaces/" + encodeURIComponent(WS) + "/enter", {
+      method: "POST", headers: h,
+      body: JSON.stringify({ user_id: (u && u.id) || null, puppet_id: puppet,
+                             chat_id: chatId || null, sid: sid || null }),
+    })
+      .then(function (r) {
+        return r.json().catch(function () { return null; }).then(function (j) {
+          if (!r.ok) {
+            // FALLO VISIBLE CON CAUSA: el backend manda `copy` ya redactado; la pantalla
+            // no inventa una segunda opinión sobre por qué no arrancó.
+            var d = (j && j.detail) || {};
+            throw new Error(d.copy || d.detail || tr("ws.no_levanto", "El workspace no llegó a levantarse."));
+          }
+          return j;
+        });
+      })
+      .then(function (j) { return pintar(j.url, chatId); });
+  }
+
+  // LA BIBLIOTECA ES UNA SOLA. El `sid` sale de `artSid` de La Sala —no de una regla
+  // copiada acá—, porque usar otra clave partiría la Biblioteca del mismo agente en dos
+  // mitades invisibles entre sí. Se importa el módulo en vez de duplicar la regla; si el
+  // import falla, se sigue sin `sid` y el artefacto cae donde el backend decida, que es
+  // peor que compartir pero mejor que romper el arranque.
+  function asegurarSid() {
+    var puppet = new URLSearchParams(location.search).get("puppet") || null;
+    // [O5] Primero la memoria del dueño: volver al workspace tiene que devolver LA MISMA
+    // Biblioteca, y no la que el navegador de turno tenga guardada. Si todavía no hay
+    // memoria, se deriva por la regla de La Sala y se recuerda — así la primera vez ata las
+    // dos mitades y desde ahí manda el dominio, no la UI.
+    return memoria().then(function (m) {
+      if (m.sid) return m.sid;
+      return import("../sala-v2/artefactos.js")
+        .then(function (mod) {
+          var sid = mod.artSid(puppet);
+          if (sid) recordar({ sid: sid });
+          return sid;
+        })
+        .catch(function () { return null; });
+    });
+  }
+
+  function salir(gracia) {
+    var h = headers(); h["Content-Type"] = "application/json";
+    var u = usuario();
+    var cuerpo = JSON.stringify({ user_id: (u && u.id) || null,
+                                  gracia_s: (typeof gracia === "number" ? gracia : null) });
+    // `keepalive` para que el pedido sobreviva a la navegación. Si el motor lo ignora, el
+    // pack NO queda huérfano: lo cierra el cosechador del dueño y, en el peor caso, el
+    // `apagar_todo()` del cierre del sidecar. Degrada a «tarda más», nunca a «queda vivo».
+    try {
+      return fetch("/v1/workspaces/" + encodeURIComponent(WS) + "/leave",
+                   { method: "POST", headers: h, body: cuerpo, keepalive: true });
+    } catch (e) { return Promise.resolve(); }
+  }
+
+  function pintar(url, chatId) {
+    estado.textContent = tr("ws.vivo", "en vivo");
+    estado.className = "ws-estado ws-vivo";
+    caido.hidden = true;
+    // El src se pone UNA vez: re-asignarlo en cada mirada recargaría el banco de
+    // trabajo debajo de las manos del usuario — y acá adentro puede haber un kernel
+    // corriendo, que es peor que perder una pantalla.
+    if (!frame.getAttribute("src")) {
+      // [O3 · inmersión nivel-2] LO QUE EL LIENZO NECESITA SABER DE LA CASA. El iframe corre
+      // en OTRO ORIGEN, así que no puede leer nuestro tema ni nuestro idioma de su
+      // `localStorage`: se los mandamos. Sin `aleph_scheme`, el stack seguía al sistema
+      // operativo y salía claro adentro de una casa oscura — las dos capas sin fundir que
+      // la caminata vio y la captura confirmó.
+      /* [integración] EL IDIOMA CRUZA EL BORDE, IGUAL QUE EL TEMA. El mecanismo ya existía
+         —`aleph_lang`, escrito para Diseño— pero lo mandaba UNA sola página. Un cable que
+         sirve para un espacio y no para los otros cinco es medio cable: la casa se ve en
+         español y el workspace contesta en inglés. Se manda el idioma RESUELTO de la casa,
+         un espejo exacto de `aleph_scheme`. Vacío = el stack decide como hasta hoy. */
+      var _lang = "";
+      try { _lang = (window.AlephI18n && window.AlephI18n.lang) ? window.AlephI18n.lang() : ""; } catch (e) {}
+
+      var q = "?aleph_ws=" + WS
+        + "&aleph_label=" + encodeURIComponent(tr("ws.oficina.nombre", "Oficina"))
+        + (_lang ? "&aleph_lang=" + encodeURIComponent(_lang) : "")
+        + "&aleph_scheme=" + encodeURIComponent(tema())
+        + "&aleph_embed=1"
+        + (chatId ? "&aleph_chat=" + encodeURIComponent(chatId) : "")
+        // [rediseño · fase 1 · cable (b)] LA VERSIÓN DE PIEL. Vacío = el stack como está
+        // hoy. Ver ../piel.js y third_party/<stack>/…/public/aleph-piel.js.
+        + ((window.AlephPiel && window.AlephPiel.query(WS)) || "");
+      /* [integración] EL DESTINO PEDIDO POR SETTINGS. Sin `?ir=` ni `?panel=` esto es
+       * exactamente lo que había: `url + "/" + q`. Con ellos, el espacio abre parado en la
+       * superficie. El cuerpo y el saneo viven en `superficie-pedida.js`. */
+      var _sup = window.AlephSuperficie;
+      frame.src = url + (_sup ? _sup.ruta() : "/") + q + (_sup ? _sup.panel() : "");
+    }
+    frame.hidden = false;
+    return Promise.resolve();
+  }
+
+  // El shell es dueño del tema. Si cambia mientras el stack está abierto, se le da primero
+  // una señal viva y se actualiza la misma URL dinámica que se usó al entrar; los stacks
+  // heredados que no escuchan el mensaje reciben la piel correcta al recargar su documento.
+  function sincronizarTema() {
+    var scheme = tema();
+    try {
+      if (frame.contentWindow) frame.contentWindow.postMessage({ type: "aleph-theme", scheme: scheme }, "*");
+    } catch (_) {}
+    if (!frame.getAttribute("src")) return;
+    try {
+      var next = new URL(frame.src, location.href);
+      if (next.searchParams.get("aleph_scheme") === scheme) return;
+      next.searchParams.set("aleph_scheme", scheme);
+      frame.src = next.toString();
+    } catch (_) {}
+  }
+  window.addEventListener("aleph:theme-changed", sincronizarTema);
+
+  /* [rediseño · fase 3 · opción A] `‹ Inicio` VIVE ADENTRO DEL STACK Y VUELVE POR ACÁ.
+   * El bloque de la casa que `aleph-piel.js` monta arriba del sidebar del stack no puede
+   * navegar el padre: corre en OTRO ORIGEN, así que `parent.location` es inalcanzable y un
+   * `<a target="_top">` queda bloqueado. Pide el destino por mensaje y esta cáscara —que sí
+   * conoce su ruta— resuelve. Es el mismo contrato que `aleph-open-settings` ya usaba en
+   * Oficina desde agosto; lo único nuevo es el tipo. */
+  window.addEventListener("message", function (event) {
+    if (event.source !== frame.contentWindow) return;
+    if (!event.data || event.data.type !== "aleph-go-home") return;
+    window.location.href = "../Home.dc.html";
+  });
+
+
+
+  // El escritorio embebido conserva sus herramientas de oficio, pero Aleph es dueño de
+  // la configuración de cuenta y apariencia. El iframe no puede navegar el padre entre
+  // orígenes: pide el destino por mensaje y esta cáscara, que sí conoce su ruta, resuelve
+  // el enlace a nuestros Ajustes.
+  window.addEventListener("message", function (event) {
+    if (event.source !== frame.contentWindow) return;
+    var data = event.data || {};
+    if (data.type !== "aleph-open-settings") return;
+    var section = data.section === "ai" ? "keys" : data.section === "appearance" ? "pref" : "perfil";
+    // El ESPACIO viaja con el destino. Sin esto, los Ajustes no saben de dónde venís y no
+    // pueden ofrecer la sección de este espacio — que es la única parte de la config de
+    // Oficina que Aleph no tenía ya.
+    window.location.href = "../Settings.dc.html?seccion=" + encodeURIComponent(section)
+      + "&espacio=" + encodeURIComponent(WS);
+  });
+
+  // ── EL HILO DE ESTE WORKSPACE (modelo de hilos 3.6) ───────────────────────────────
+  // Hilo POR WORKSPACE + el de La Sala. Compartido entre los dos: identidad,
+  // instrucciones y cinturón — porque los tres cuelgan del AGENTE, no del hilo. NO
+  // compartido: el historial, que es justamente lo que separa un `chat_id` de otro.
+  //
+  // [Gate 4 · Fase 4 · O5] LA DEUDA D1, SALDADA. La clave vivía en `localStorage` bajo
+  // `aleph_ws_chat_oficina`, o sea una clave de INSTALACIÓN: dos cuentas en la misma
+  // máquina compartían el hilo. Ahora la memoria es del backend, con clave `(dueño,
+  // workspace)` — dominio, no UI (ley técnica 4). El `localStorage` queda SÓLO como el
+  // camino de quien no tiene sesión: sin dueño no hay memoria, y perder el hilo de una
+  // pestaña anónima es mejor que dárselo a otra cuenta.
+  var CLAVE_HILO = "aleph_ws_chat_oficina";
+
+  /** Cómo quedó este workspace para ESTE dueño. `{}` cuando todavía no entró nadie. */
+  function memoria() {
+    var u = usuario();
+    if (!u || !u.id) return Promise.resolve({});
+    return fetch("/v1/workspaces/" + encodeURIComponent(WS) + "/memoria?user_id=" + encodeURIComponent(u.id),
+                 { headers: headers() })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (j) { return (j && j.memoria) || {}; })
+      .catch(function () { return {}; });
+  }
+
+  /** Guarda cómo quedó. Es fire-and-forget: recordar no puede demorar entrar. */
+  function recordar(campos) {
+    var u = usuario();
+    if (!u || !u.id) return Promise.resolve(null);
+    var h = headers(); h["Content-Type"] = "application/json";
+    var cuerpo = {}; for (var k in campos) if (campos[k]) cuerpo[k] = campos[k];
+    cuerpo.user_id = u.id;
+    return fetch("/v1/workspaces/" + encodeURIComponent(WS) + "/memoria",
+                 { method: "PUT", headers: h, body: JSON.stringify(cuerpo) })
+      .catch(function () { return null; });
+  }
+
+  function asegurarHilo() {
+    var u = usuario();
+    if (!u || !u.id) {
+      // Sin sesión: el camino viejo, y sólo para esta pestaña.
+      var suelto = null;
+      try { suelto = localStorage.getItem(CLAVE_HILO); } catch (e) {}
+      return Promise.resolve(suelto);
+    }
+    return memoria().then(function (m) {
+      if (m.chat_id) return m.chat_id;
+      return crearHilo(u);
+    });
+  }
+
+  function crearHilo(u) {
+    var h = headers(); h["Content-Type"] = "application/json";
+    var puppet = new URLSearchParams(location.search).get("puppet") || null;
+    return fetch("/v1/chats", {
+      method: "POST", headers: h,
+      body: JSON.stringify(puppet ? { puppet_id: puppet } : {}),
+    })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (j) {
+        var id = j && (j.id || (j.chat && j.chat.id));
+        if (!id) return null;
+        recordar({ chat_id: id });                  // el hilo queda en la memoria del dueño
+        // El nombre, ANTES del primer mensaje: `append_message` bautiza un hilo sin
+        // título con el contenido del primer turno, así que renombrar después no
+        // alcanzaría — el hilo del workspace quedaría llamándose como una pregunta
+        // suelta y el usuario no lo distinguiría del de La Sala.
+        return fetch("/v1/chats/" + encodeURIComponent(id), {
+          method: "PATCH", headers: h,
+          body: JSON.stringify({ title: tr("ws.oficina.hilo", "Oficina") }),
+        }).then(function () { return id; }).catch(function () { return id; });
+      })
+      .catch(function () { return null; });         // sin hilo, el turno igual corre
+  }
+
+  function fallo(motivo) {
+    estado.textContent = tr("ws.apagado", "apagado");
+    estado.className = "ws-estado ws-apagado";
+    caidoTxt.textContent = motivo;
+    frame.hidden = true;
+    caido.hidden = false;
+  }
+
+  document.getElementById("ws-reintentar").addEventListener("click", mirar);
+
+  // ── SALIR, POR LOS DOS CAMINOS QUE EXISTEN ────────────────────────────────────────
+  // (1) EL VOLVER, que es el camino real y el único determinista: se avisa ANTES de
+  //     navegar. Un `pagehide` durante una navegación es una carrera; un click no.
+  // (2) `pagehide` como respaldo, para el cierre de la ventana y para cualquier salida
+  //     que no pase por ese link. Si el motor descarta el pedido, el pack no queda
+  //     huérfano: lo cierra el cosechador del dueño y, en el peor caso, el cierre del
+  //     sidecar. Degrada a «tarda más», nunca a «queda vivo».
+  var volver = document.querySelector(".ws-volver");
+  if (volver) {
+    volver.addEventListener("click", function (ev) {
+      if (ev.defaultPrevented || ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.button) return;
+      ev.preventDefault();
+      var destino = volver.getAttribute("href");
+      var irse = function () { location.href = destino; };
+      // No se le hace esperar al usuario por el apagado: 600 ms de techo y se va igual.
+      var reloj = setTimeout(irse, 600);
+      salir().then(function () { clearTimeout(reloj); irse(); },
+                   function () { clearTimeout(reloj); irse(); });
+    });
+  }
+  window.addEventListener("pagehide", function () { salir(); });
+
+  // ── LA VIGILANCIA: MIRAR UNA VEZ NO ALCANZA ───────────────────────────────────────
+  // EL DEFECTO, medido el 2026-08-28 en Oficina contra la `.app` instalada `1a5b6aef`:
+  // `mirar()` corría UNA sola vez, al cargar. Cuando el pack se apagó después de esa
+  // mirada —dos `POST /v1/workspaces/oficina/leave` a las 08:56:56, disparados por el
+  // `pagehide` de ESTA misma cáscara al salir por otra pestaña— acá no se enteró nadie:
+  // el iframe siguió montado mostrando una app muerta, y el composer de adentro dejó de
+  // enviar SIN DECIR NADA. La consola era todo `ERR_CONNECTION_REFUSED` y la pantalla,
+  // normal.
+  //
+  // Lo peor no es el apagado —es legítimo, el ciclo de vida es de la casa— sino que la
+  // pantalla de caído YA EXISTÍA, con su copy y su botón de reintento, y era
+  // INALCANZABLE después de la carga. Código muerto por no mirar de nuevo: la misma
+  // forma que el filtro por requisito de Gate 2.5.
+  //
+  // POR QUÉ NO SE REUSA `mirar()` EN EL INTERVALO. Con `autoarranca` en true, `mirar()`
+  // RE-ENTRA: levantaría el pack solo, cada N segundos, sin que nadie lo haya pedido —
+  // un vigilante que resucita lo que vigila deja de ser un vigilante. Esta mirada es de
+  // sólo lectura; revivir sigue siendo del botón «Reintentar», que ya llama a `mirar()`.
+  //
+  // POR QUÉ SE LIMPIA `frame.src`. `pintar()` sólo asigna el src `if (!frame.getAttribute("src"))`, a
+  // propósito (re-asignarlo recargaría un kernel vivo). Pero un pack que vuelve lo hace
+  // en OTRO PUERTO, así que sin limpiarlo el reintento repintaría el puerto muerto y el
+  // botón no arreglaría nada.
+  var VIGILANCIA_MS = 5000;
+  var vigilancia = null;
+  var mirando = false;
+
+  function vigilar() {
+    if (vigilancia || document.hidden) return;
+    vigilancia = setInterval(function () {
+      if (mirando || document.hidden || !caido.hidden) return;
+      mirando = true;
+      fetch("/v1/workspaces", { headers: headers() })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (j) {
+          if (!j) return;
+          var w = (j.workspaces || []).filter(function (x) { return x.id === WS; })[0];
+          if (w && w.stack && w.stack.running) return;
+          clearInterval(vigilancia); vigilancia = null;
+          frame.removeAttribute("src");
+          fallo(tr("ws.se_apago",
+                   "El escritorio se apagó mientras lo usabas. Suele pasar al salir del " +
+                   "workspace en otra pestaña o ventana: el escritorio es uno solo para " +
+                   "toda la casa. Reintenta para volver a levantarlo."));
+        })
+        .catch(function () { /* un chequeo que falla no apaga nada: se reintenta solo */ })
+        .then(function () { mirando = false; });
+    }, VIGILANCIA_MS);
+  }
+
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden) { clearInterval(vigilancia); vigilancia = null; }
+    else if (caido.hidden) vigilar();
+  });
+
+
+
+  mirar().then(vigilar, vigilar);
+  // Seam público, mismo patrón que `window.__salaV2`: la vara mide producción, no un
+  // arnés paralelo.
+  window.__wsOficina = { mirar: mirar, frame: frame, asegurarHilo: asegurarHilo,
+                         CLAVE_HILO: CLAVE_HILO, entrar: entrar, salir: salir,
+                         memoria: memoria, recordar: recordar, asegurarSid: asegurarSid };
+})();
+</script>
+<script src="./modelo-del-espacio.js"></script>
+<script>
+/* [un solo picker en las siete] EL CEREBRO SE ELIGE EN LA BARRA DE LA CASA. Va ANTES que
+   los otros dos paneles para que el picker quede primero: es lo que el usuario cambia
+   seguido, y los otros dos son trámite. */
+(function(){ try { window.AlephModeloDelEspacio.montar("oficina"); }
+  catch(e) { /* el panel es accesorio: si falla, el lienzo sigue entero */ } })();
+</script>
+<script src="./destinos-del-espacio.js"></script>
+<script type="module" src="./conectores-del-espacio.js"></script>
+<script type="module">
+/* [F3] Los conectores de ESTE espacio, en la barra. `usuario` se le pasa para que el
+   estado salga a nombre del dueño; sin sesión el panel igual abre y dice «no sé».
+   ⚠️ ESTE BLOQUE ES `type="module"` Y ESO ES EL ARREGLO, NO UN DETALLE DE ESTILO.
+   `conectores-del-espacio.js` se carga con `type="module"`, o sea DIFERIDO: corre después de
+   parsear el documento. Este llamante era un script clásico, que corre en el acto — así que
+   pedía `window.AlephConectoresDelEspacio.montar` cuando todavía no existía, el `try/catch`
+   se comía el `TypeError` y el panel de conectores **nunca se montó**. Un botón sin cable, y
+   en silencio. Lo arreglaron primero Finanzas, después Ciencia y Diseño; en Oficina seguía vivo
+   hasta la sesión de integración, que lo contó en los seis y cerró los tres que faltaban. */
+(function(){ try { window.AlephConectoresDelEspacio.montar("oficina",
+    function(){ try { return (window.AlephSession && window.AlephSession.get) ? window.AlephSession.get() : null; } catch(e){ return null; } });
+  } catch(e) { /* el panel es accesorio: si falla, el lienzo sigue entero */ } })();
+</script>
+<script>
+/* [convergencia · superficie 8] Los destinos de la casa, en la barra. Va DESPUÉS del
+   panel de Conectores para que los dos botones queden siempre en el mismo orden. */
+(function(){ try { window.AlephDestinosDelEspacio.montar("oficina"); }
+  catch(e) { /* el panel es accesorio: si falla, el lienzo sigue entero */ } })();
+</script>
+</body>
+</html>

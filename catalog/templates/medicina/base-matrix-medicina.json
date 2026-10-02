@@ -1,0 +1,28 @@
+{
+  "_meta": {
+    "que_es": "base_matrix del belt MEDICINA. Declara las tools del VISOR (windowing / extract_slice / segment_structure: lectura + analisis de imagen sobre el volumen CT de Orthanc, SIN escribir al PACS) como auto-ejecuta, para que el agente no quede paralizado pidiendo OK por cada corte. READ-ONLY: ninguna tool escribe, mueve ni borra. El legal-gate de medicina (platform/safety/legal_gates.py) planta SIEMPRE require_human + bloqueo de prod (HIPAA, dev/test sin PHI real) por encima de esta base.",
+    "consumido_por": "assemble_and_run(recipe, base_matrix=<este json>) o auto-carga via _meta.base_matrix del belt-medicina.mcp.json.",
+    "principio": "seguro pero no paralizado — mirar/medir imagen fluye (lectura local, baja consecuencia, no diagnostica); cualquier efecto externo lo frena el legal-gate (require_human). NO escribe al PACS.",
+    "fuente": "platform/gates/recipe_enforcer.py + platform/safety/legal_gates.py (postura medicina) + base-matrix-ingenieria.json (patron ing-fem-headless)."
+  },
+  "tier": "average",
+  "default_level": "auto-ejecuta",
+  "rules": [
+    {
+      "id": "med-visor-lectura",
+      "match": { "server": "segmentacion", "tools": ["windowing", "extract_slice", "segment_structure", "render_volume_3d"] },
+      "level": "auto-ejecuta",
+      "what": "ver/medir imagen del CT: aplicar ventana, extraer un corte, segmentar una estructura, generar el volumen 3D (solo lectura)",
+      "where": "el volumen CT de prueba en Orthanc (READ-ONLY; no escribe al PACS, no diagnostica)",
+      "preview_kind": "accion"
+    },
+    {
+      "id": "med-dicom-consulta",
+      "match": { "server": "dicom", "tools": ["list_dicom_nodes", "verify_connection", "query_patients", "query_studies", "query_series", "query_instances"] },
+      "level": "auto-ejecuta",
+      "what": "consultar metadata del PACS (C-FIND, solo lectura)",
+      "where": "el PACS de dev/test (Orthanc local; solo consulta)",
+      "preview_kind": "accion"
+    }
+  ]
+}

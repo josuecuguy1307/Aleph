@@ -1,0 +1,92 @@
+"""Regression (#735): connector CLI renderers must tolerate broker_sdk schemas.
+
+The shared ``connector positions`` / ``connector account`` renderers were written
+for the IBKR result shape (``position``/``avg_cost``/``sec_type``/``summary``).
+Longbridge (and other ``broker_sdk`` connectors) return ``quantity``/``cost_price``/
+``market``/``balances``, so every non-matching key rendered as an empty cell.
+"""
+
+from __future__ import annotations
+
+from unittest.mock import patch
+
+import pytest
+
+from cli import _legacy
+
+pytestmark = pytest.mark.unit
+
+
+def test_first_present_keeps_zero_and_skips_none() -> None:
+    row = {"position": 0.0, "quantity": 5.0}
+    # A real zero position must win over the fallback key, not be skipped.
+    assert _legacy._first_present(row, "position", "quantity") == 0.0
+    assert _legacy._first_present({"quantity": 5.0}, "position", "quantity") == 5.0
+    assert _legacy._first_present({"position": None, "quantity": 5.0}, "position", "quantity") == 5.0
+    assert _legacy._first_present({}, "position", "quantity") is None
+
+
+def test_connector_positions_renders_longbridge_schema(capsys) -> None:
+    longbridge_result = {
+        "status": "ok",
+        "profile_id": "longbridge-paper-trade",
+        "positions": [
+            {
+                "symbol": "AAPL.US",
+                "symbol_name": "Apple",
+                "quantity": 20.0,
+                "available_quantity": 20.0,
+                "cost_price": 321.5,
+                "currency": "USD",
+                "market": "US",
+            }
+        ],
+    }
+    with patch("src.trading.service.get_positions", return_value=longbridge_result):
+        rc = _legacy.cmd_connector_positions("longbridge-paper-trade")
+
+    assert rc == _legacy.EXIT_SUCCESS
+    out = capsys.readouterr().out
+    assert "AAPL.US" in out
+    assert "20" in out       # quantity → Qty
+    assert "321.5" in out    # cost_price → Avg Cost
+    assert "US" in out       # market → Type
+
+
+def test_connector_account_renders_balances_table(capsys) -> None:
+    longbridge_account = {
+        "status": "ok",
+        "profile_id": "longbridge-paper-trade",
+        "balances": [
+            {
+                "currency": "USD",
+                "total_cash": 10_000.0,
+                "net_assets": 12_345.0,
+                "buy_power": 20_000.0,
+                "init_margin": 0.0,
+                "maintenance_margin": 0.0,
+            }
+        ],
+    }
+    rc = _legacy._print_connector_account(longbridge_account)
+
+    assert rc == _legacy.EXIT_SUCCESS
+    out = capsys.readouterr().out
+    assert "No account summary returned." not in out
+    assert "USD" in out
+    assert "12" in out and "345" in out  # net_assets 12,345 rendered
+
+
+def test_connector_account_still_handles_ibkr_summary(capsys) -> None:
+    ibkr_account = {
+        "status": "ok",
+        "profile_id": "ibkr-local",
+        "accounts": ["DU123"],
+        "summary": [{"account": "DU123", "tag": "NetLiquidation", "value": "50000", "currency": "USD"}],
+    }
+    rc = _legacy._print_connector_account(ibkr_account)
+
+    assert rc == _legacy.EXIT_SUCCESS
+    out = capsys.readouterr().out
+    assert "NetLiquidation" in out
+    assert "50000" in out

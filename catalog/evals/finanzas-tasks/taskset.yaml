@@ -1,0 +1,104 @@
+# Task-set FINANZAS — instancia del nicho (el runner es agnóstico a este contenido).
+# Fixtures: ./fixtures/ · Rúbrica: catalog/evals/finanzas-rubrica.md
+# Variantes cero-fricción declaradas en la rúbrica (T2 sin Stata, T3 sin red,
+# T4 sin FRED key, T5 sin Google) — gates sin key en este entorno.
+name: finanzas-v1
+fixtures_root: ./fixtures
+tasks:
+  - id: T1
+    title: "Cierre mensual: xlsx sucio → estado de resultados con fórmulas vivas"
+    fixtures: [T1-transacciones-2026-05.xlsx]
+    artifact: estado_resultados.xlsx
+    checker: checkers/t1.py
+    prompt: |
+      Sos el analista de cierre de una pyme. En tu directorio de trabajo está
+      T1-transacciones-2026-05.xlsx: ~520 filas de movimientos de mayo 2026, SUCIOS
+      (fechas en formatos mixtos, filas duplicadas exactas, categorías inconsistentes
+      en mayúsculas/abreviaturas/espacios).
+      Entregá `estado_resultados.xlsx` con:
+      1. Una hoja "datos_limpios": movimientos deduplicados, fechas normalizadas a
+         ISO (YYYY-MM-DD), categorías unificadas a una forma canónica.
+      2. Una hoja "estado_resultados": estado de resultados de mayo 2026 con
+         estructura NIIF/GAAP (Ingresos → Costo de ventas → Utilidad bruta → Gastos
+         operativos por línea → Utilidad operativa → Utilidad neta), donde TODOS los
+         totales son fórmulas vivas (SUMIF/SUMIFS/SUM que referencian datos_limpios),
+         NO valores pegados. Formato numérico con negativos entre paréntesis.
+      Verificá antes de terminar que los totales cuadran contra los datos limpios.
+
+  - id: T2
+    title: "Regresión de panel FE con tabla formato journal (variante Python)"
+    fixtures: [T2-panel-firmas.csv]
+    artifact: tabla_regresion.md
+    checker: checkers/t2.py
+    prompt: |
+      Sos el RA de un economista. En tu directorio está T2-panel-firmas.csv: panel
+      firma-año (60 firmas × 2018-2025) con roa, inversion_id (intensidad de I+D),
+      apalancamiento y log_activos.
+      Entregá:
+      1. `regresion_panel.py`: script REPRODUCIBLE que corre limpio de punta a punta
+         con `python regresion_panel.py`, estima una regresión de efectos fijos por
+         firma de roa contra inversion_id, apalancamiento y log_activos, con errores
+         estándar CLUSTERIZADOS por firma (statsmodels está disponible).
+      2. `tabla_regresion.md`: tabla convención journal generada POR el script:
+         coeficientes con SE entre paréntesis debajo, estrellas de significancia
+         (* p<0.10, ** p<0.05, *** p<0.01), N y R² (within) al pie.
+      Los números de la tabla deben salir del objeto de resultados, no tipeados.
+
+  - id: T3
+    title: "Tabla de comps con fundamentals citados al filing"
+    fixtures: [T3-comps-fundamentals.csv]
+    artifact: comps.xlsx
+    checker: checkers/t3.py
+    prompt: |
+      Sos el analista junior de un fondo. En tu directorio está
+      T3-comps-fundamentals.csv: fundamentals LTM de 5 comparables de software
+      (revenue, EBITDA, net income, acciones diluidas, precio, deuda, caja) con la
+      columna fuente_filing que indica de qué filing SEC salió cada fila.
+      Entregá `comps.xlsx`: tabla de múltiplos con
+      - Datos crudos del CSV en el workbook (auditables).
+      - EV calculado con fórmula viva (mkt cap + deuda − caja).
+      - EV/EBITDA, EV/Revenue y P/E con fórmulas vivas (no valores pegados).
+      - Agregado por MEDIANA (fórmula =MEDIAN), no promedio.
+      - Outliers señalados (un comp tiene EV/EBITDA fuera de rango — marcalo).
+      - Footnote por ticker citando su fuente_filing.
+      Convención: si net income es negativo, P/E se reporta "n.m." (not meaningful).
+
+  - id: T4
+    title: "Brief macro reproducible (.ipynb que corre end-to-end)"
+    fixtures: [T4-macro-series.csv]
+    artifact: brief_macro.ipynb
+    checker: checkers/t4.py
+    prompt: |
+      Sos el analista macro. En tu directorio está T4-macro-series.csv (formato
+      largo, como exporta FRED): series CPIAUCSL (índice CPI), UNRATE (% desempleo)
+      y FEDFUNDS (% tasa efectiva), mensuales 2010-01 a 2026-05.
+      Entregá `brief_macro.ipynb`, un notebook que CORRE end-to-end en kernel fresco
+      (pandas y matplotlib disponibles) y produce:
+      1. Para CPI: variación YoY y variación MoM ANUALIZADA COMPUESTA
+         ((p_t/p_{t-1})^12 − 1) del último mes — la convención SAAR, no ×12.
+      2. Para UNRATE y FEDFUNDS: nivel actual y cambio YoY en puntos porcentuales.
+      3. Al menos un gráfico con ejes etiquetados (CPI YoY en el tiempo).
+      4. Una tabla final (DataFrame impreso) con: serie, período, valor, YoY, y para
+         CPI el MoM anualizado, con unidades explícitas.
+      Probá el notebook ejecutándolo antes de entregarlo.
+
+  - id: T5
+    title: "Varianza budget-vs-actual con convención F/U (variante xlsx local)"
+    fixtures: [T5-presupuesto-vs-real-2026.xlsx]
+    artifact: varianzas.xlsx
+    checker: checkers/t5.py
+    prompt: |
+      Sos el analista de FP&A. En tu directorio está T5-presupuesto-vs-real-2026.xlsx
+      con hojas "Presupuesto" y "Real" (líneas de P&L × meses Ene-May 2026; la
+      columna Tipo dice si la línea es ingreso o gasto).
+      Entregá `varianzas.xlsx` (copia del workbook + tu trabajo) con una hoja nueva
+      "Varianzas" que tenga:
+      1. Varianza por línea y mes con FÓRMULAS VIVAS que referencien las hojas
+         Presupuesto y Real (no valores pegados).
+      2. Convención F/U de FP&A: para ingresos, real > presupuesto es Favorable;
+         para gastos, real > presupuesto es Desfavorable. Cada línea con etiqueta
+         F o U para el total YTD.
+      3. Formato condicional aplicado sobre las varianzas (favorable verde /
+         desfavorable rojo, o equivalente).
+      4. Un bloque de texto "Bridge" identificando las 3 mayores varianzas YTD
+         absolutas con una explicación de una línea cada una.

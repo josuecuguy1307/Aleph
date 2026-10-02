@@ -1,0 +1,57 @@
+{
+  "name": "open-codesign",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Open-source AI design tool — prompt to interactive prototype, slide deck, and marketing assets. Multi-model, BYOK or ChatGPT login, runs on your laptop.",
+  "license": "MIT",
+  "homepage": "https://github.com/OpenCoworkAI/open-codesign",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OpenCoworkAI/open-codesign.git"
+  },
+  "bugs": {
+    "url": "https://github.com/OpenCoworkAI/open-codesign/issues"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "packageManager": "pnpm@10.33.4",
+  "scripts": {
+    "prepare": "husky",
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "test": "turbo run test",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "typecheck": "turbo run typecheck",
+    "format": "biome format --write .",
+    "docs:dev": "pnpm --filter open-codesign-website dev",
+    "docs:build": "pnpm --filter open-codesign-website build",
+    "docs:preview": "pnpm --filter open-codesign-website preview",
+    "smoke": "tsx scripts/smoke-models.ts",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "turbo run build && changeset publish"
+  },
+  "pnpm": {
+    "overrides": {
+      "@xmldom/xmldom@<0.8.13": "0.8.13",
+      "fast-xml-parser@<5.7.0": ">=5.7.0",
+      "vitepress>vite": "6.4.2",
+      "esbuild@<0.25.0": ">=0.25.0"
+    }
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.4.15",
+    "@changesets/cli": "^2.27.11",
+    "@iarna/toml": "^2.2.5",
+    "@open-codesign/core": "workspace:*",
+    "@open-codesign/shared": "workspace:*",
+    "@types/node": "^22.19.19",
+    "acorn": "^8.14.0",
+    "husky": "^9.1.7",
+    "tsx": "^4.19.2",
+    "turbo": "^2.9.14",
+    "typescript": "^6.0.3"
+  }
+}

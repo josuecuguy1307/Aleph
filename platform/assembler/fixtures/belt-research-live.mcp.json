@@ -1,0 +1,218 @@
+{
+  "_meta": {
+    "belt": "research-live",
+    "que_es": "Belt RESEARCH ejecutable: literatura real (Crossref, keyless) + cómputo real (Python sandbox, keyless) + persistir la cita en TU Zotero (token BYOK). Encadena búsqueda → cálculo → escritura para una mini-review citada.",
+    "legs": "crossref=búsqueda keyless · pysandbox=cómputo (anti-fabricación) · zotero=escritura BYOK (${ZOTERO_API_KEY} inyectada por el broker desde la cuenta conectada).",
+    "credencial": "zotero: provider personal_token. Sin la llave, el server falla CERRADO (missing_credential) — nunca inventa. La llave se conecta vía POST /v1/connectors/zotero/connect (connect-wizard genérico) y se inyecta al run por keys.zotero.byok_ref.",
+    "slug": "research-live",
+    "cards": [
+      {
+        "id": "crossref",
+        "connector": "crossref",
+        "label": "Crossref",
+        "sub": "papers reales con DOI verificable",
+        "auth": "keyless",
+        "armario": "mundo",
+        "backed_by": "crossref",
+        "tools": [
+          "search_works",
+          "get_work"
+        ]
+      },
+      {
+        "id": "openalex",
+        "connector": "openalex",
+        "label": "OpenAlex",
+        "sub": "catálogo académico abierto · 250M+ trabajos con citas",
+        "auth": "keyless",
+        "armario": "mundo",
+        "backed_by": "openalex",
+        "tools": [
+          "openalex_search"
+        ]
+      },
+      {
+        "id": "arxiv",
+        "connector": "arxiv",
+        "label": "arXiv",
+        "sub": "preprints de física, CS, matemática y más",
+        "auth": "keyless",
+        "armario": "mundo",
+        "backed_by": "arxiv",
+        "tools": [
+          "arxiv_search"
+        ]
+      },
+      {
+        "id": "pubmed",
+        "connector": "pubmed",
+        "label": "PubMed",
+        "sub": "estudios y literatura médica publicada (PubMed/NCBI) · con PMID y DOI",
+        "auth": "keyless",
+        "armario": "mundo",
+        "backed_by": "pubmed",
+        "tools": [
+          "pubmed_search"
+        ]
+      },
+      {
+        "id": "orcid",
+        "connector": "orcid",
+        "label": "ORCID",
+        "sub": "buscar un investigador o autor y la lista de sus publicaciones (ORCID, lectura)",
+        "auth": "keyless",
+        "armario": "mundo",
+        "backed_by": "orcid",
+        "tools": [
+          "orcid_search",
+          "orcid_works"
+        ]
+      },
+      {
+        "id": "pysandbox",
+        "connector": "pysandbox",
+        "label": "Python (cómputo)",
+        "sub": "todo número de ejecución real (anti-fabricación)",
+        "auth": "keyless",
+        "armario": "datos",
+        "backed_by": "pysandbox",
+        "tools": [
+          "run_python"
+        ]
+      },
+      {
+        "id": "zotero",
+        "connector": "zotero",
+        "label": "Zotero",
+        "sub": "lee tu biblioteca y guarda citas en ella",
+        "auth": "personal_token",
+        "armario": "mundo",
+        "backed_by": "zotero",
+        "tools": [
+          "whoami",
+          "list_items",
+          "create_item"
+        ]
+      },
+      {
+        "id": "github",
+        "connector": "github",
+        "label": "GitHub",
+        "sub": "lee tus repos, archivos y commits (read-only)",
+        "auth": "personal_token",
+        "armario": "mundo",
+        "backed_by": "github",
+        "tools": [
+          "github_whoami",
+          "github_list_repos",
+          "github_get_file",
+          "github_list_commits",
+          "github_search_repos"
+        ]
+      },
+      {
+        "id": "exa",
+        "connector": "exa",
+        "label": "Exa (web)",
+        "sub": "búsqueda neural en la web abierta",
+        "auth": "personal_token",
+        "armario": "mundo",
+        "backed_by": "exa",
+        "tools": [
+          "exa_search",
+          "exa_get_contents"
+        ]
+      }
+    ]
+  },
+  "mcpServers": {
+    "crossref": {
+      "command": "python3",
+      "args": [
+        "${PUPPET_BELTS}/research/crossref_server.py"
+      ],
+      "description": "Crossref MCP (stdio, keyless, read-only). search_works / get_work — papers reales con DOI verificable desde api.crossref.org."
+    },
+    "openalex": {
+      "command": "python3",
+      "args": [
+        "${PUPPET_BELTS}/research/openalex_server.py"
+      ],
+      "description": "OpenAlex MCP (stdio, keyless). search_works — catálogo académico abierto (api.openalex.org), título/DOI/autores/año/citas reales."
+    },
+    "arxiv": {
+      "command": "python3",
+      "args": [
+        "${PUPPET_BELTS}/research/arxiv_server.py"
+      ],
+      "description": "arXiv MCP (stdio, keyless). search — preprints reales de export.arxiv.org (ATOM), título/id/autores/año/categoría/DOI."
+    },
+    "pubmed": {
+      "command": "python3",
+      "args": [
+        "${PUPPET_BELTS}/research/pubmed_server.py"
+      ],
+      "description": "PubMed MCP (stdio, keyless). search — literatura biomédica vía E-utilities de NCBI (esearch→esummary), título/PMID/autores/año/DOI."
+    },
+    "orcid": {
+      "command": "python3",
+      "args": [
+        "${PUPPET_BELTS}/research/orcid_server.py"
+      ],
+      "description": "ORCID MCP (stdio, keyless, Public API read). search (investigadores) / works (obras públicas de un ORCID iD). El write a tu registro (OAuth) es follow-up."
+    },
+    "pysandbox": {
+      "command": "python3",
+      "args": [
+        "${PUPPET_BELTS}/generalistas/pysandbox_server.py"
+      ],
+      "env": {
+        "PUPPET_WORKDIR": "${PUPPET_WORKDIR}"
+      },
+      "description": "Python-sandbox MCP (stdio, keyless). run_python ejecuta código en subproceso aislado — todo número viene de ejecución real (bar anti-fabricación)."
+    },
+    "zotero": {
+      "command": "python3",
+      "args": [
+        "${PUPPET_BELTS}/research/zotero_server.py"
+      ],
+      "env": {
+        "ZOTERO_API_KEY": "${ZOTERO_API_KEY}"
+      },
+      "description": "Zotero MCP (stdio, BYOK). whoami (lectura) / create_item (escribe una referencia en tu biblioteca, devuelve la KEY real). Llave inyectada por el broker; sin llave falla cerrado.",
+      "prueba_credencial": {
+        "tool": "whoami",
+        "args": {},
+        "por_que": "literalmente «quién soy segun esta llave»: cero argumentos, cero costo, y es LECTURA. `create_item` ESCRIBE en la biblioteca del usuario y queda prohibida."
+      }
+    },
+    "github": {
+      "command": "python3",
+      "args": [
+        "${PUPPET_BELTS}/research/github_server.py"
+      ],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PERSONAL_ACCESS_TOKEN}"
+      },
+      "description": "GitHub MCP (stdio, BYOK, READ-ONLY). github_whoami / github_list_repos / github_get_file / github_list_commits / github_search_repos — lee tus repos, archivos y commits reales. Token inyectado por el broker; sin token falla cerrado. Escritura (commits) es follow-up con su gate."
+    },
+    "exa": {
+      "command": "python3",
+      "args": [
+        "${PUPPET_REPO}/platform/assembler/fixtures/exa_server.py"
+      ],
+      "env": {
+        "EXA_API_KEY": "${EXA_API_KEY}"
+      },
+      "description": "Exa MCP (stdio, BYOK). exa_search (búsqueda neural en la web abierta) / exa_get_contents (texto de una URL) — fuentes que NO son papers académicos. Key inyectada por el broker; sin key falla cerrado. Exa cobra por búsqueda (costDollars real devuelto).",
+      "prueba_credencial": {
+        "tool": "web_search_exa",
+        "args": {
+          "query": "aleph credential check",
+          "numResults": 1
+        },
+        "por_que": "de sus DOS tools es la única que valida la llave contra Exa; numResults=1 es la consulta más barata. `web_fetch_exa` además pegaría a un sitio de terceros."
+      }
+    }
+  }
+}

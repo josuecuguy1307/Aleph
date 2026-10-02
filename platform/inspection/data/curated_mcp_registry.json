@@ -1,0 +1,65 @@
+{
+  "_doc": "Override curado del resolver de MCPs — CHICO y versionado. NO es la fuente (la fuente es el registro oficial registry.modelcontextprotocol.io + el matcher de similitud). Sirve para: (1) PIN anti-impostor duro de servicios de alto valor (fija el server name verificado para que nadie con nombre parecido lo desplace), (2) llenar GAPS del registro público (servicios cuyo MCP oficial NO está publicado bajo namespace verificado, ej. github), (3) semilla offline si el registro se cae. Cada 'pin' apunta al name canónico del registro (el resolver lo confirma vivo + valida). Un 'manual' trae el endpoint directo cuando el registro no lo tiene. Verificado contra el registro vivo 2026-06-22.",
+  "services": {
+    "stripe": {
+      "pin": "com.stripe/mcp",
+      "aliases": ["stripe payments", "stripe billing", "stripe api"],
+      "signature": ["stripe"],
+      "note": "namespace com.stripe verificado por DNS de stripe.com; hosted https://mcp.stripe.com con Authorization: Bearer sk_..."
+    },
+    "airtable": {
+      "pin": "com.airtable/mcp",
+      "aliases": ["air table", "airtable base"],
+      "signature": ["airtable", "record", "base"],
+      "note": "namespace com.airtable verificado; hosted https://mcp.airtable.com/mcp"
+    },
+    "github": {
+      "aliases": ["gh", "github.com", "git hub"],
+      "signature": ["repo", "issue", "pull", "github"],
+      "manual": {
+        "transport": "http",
+        "url": "https://api.githubcopilot.com/mcp/",
+        "header_name": "Authorization",
+        "header_template": "Bearer {key}",
+        "display_name": "GitHub (official Copilot MCP)"
+      },
+      "note": "GAP del registro: escaneadas 800 entradas de 'github', NINGUNA con vendor verificado == github (solo wrappers de comunidad: ai.smithery/*, com.mcparmory/github, e io.github.<org>/* de terceros). El MCP oficial de GitHub se sirve en api.githubcopilot.com pero no está publicado en el registro público bajo namespace verificado (2026-06-22). Pin manual al endpoint oficial; el matcher por sí solo devuelve 'no encontrado' para 'github' (correcto: no equipar un wrapper de comunidad con el PAT del usuario)."
+    },
+    "notion": {
+      "pin": "com.notion/mcp",
+      "aliases": ["notion.so"],
+      "signature": ["notion", "page", "database"],
+      "note": "namespace com.notion verificado; hosted https://mcp.notion.com/mcp"
+    },
+    "linear": {
+      "pin": "app.linear/linear",
+      "aliases": ["linear.app"],
+      "signature": ["linear", "issue"],
+      "note": "namespace app.linear verificado; hosted https://mcp.linear.app/sse (transporte SSE)"
+    },
+    "huggingface": {
+      "pin": "co.huggingface/hf-mcp-server",
+      "aliases": ["hugging face", "hf", "huggingface hub"],
+      "signature": ["hf", "model", "dataset", "space"],
+      "note": "namespace co.huggingface verificado; hosted https://huggingface.co/mcp"
+    },
+    "exa": {
+      "pin": "ai.exa/exa",
+      "aliases": ["exa.ai", "exa search", "exa labs"],
+      "signature": ["exa", "search", "web"],
+      "note": "Declarado por pin curado; revalidado contra el registro vivo en la vara de Obra 1."
+    },
+    "alphavantage": {
+      "pin": "io.github.alphavantage/alpha_vantage_mcp",
+      "aliases": ["alpha vantage", "alphavantage.co"],
+      "signature": ["alphavantage", "quote", "series"],
+      "note": "Declarado por pin curado; revalidado contra el registro vivo en la vara de Obra 1."
+    },
+    "context7": {
+      "pin": "io.github.upstash/context7",
+      "aliases": ["context 7", "context7 docs"],
+      "signature": ["context7", "docs", "library"],
+      "note": "Context7 es publicado por Upstash; revalidado contra el registro vivo en la vara de Obra 1."
+    }
+  }
+}

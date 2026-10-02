@@ -1,0 +1,972 @@
+import type {
+  CancelGenerationPayloadV1,
+  ChatAppendInput,
+  ChatMessage,
+  ChatMessageRow,
+  ClaudeCodeUserType,
+  CommentCreateInput,
+  CommentRow,
+  CommentStatus,
+  Design,
+  DesignSnapshot,
+  ExternalConfigsDetection,
+  GeneratePayloadV1,
+  ListEventsInput,
+  ListEventsResult,
+  LocalInputFile,
+  ModelRef,
+  OnboardingState,
+  PreviewMode,
+  ReasoningLevel,
+  ReportEventInput,
+  ReportEventResult,
+  ResourceStateV1,
+  SelectedElement,
+  SnapshotCreateInput,
+  SupportedOnboardingProvider,
+  WireApi,
+} from '@open-codesign/shared';
+import { contextBridge, ipcRenderer as electronIpcRenderer } from 'electron';
+
+/* [Aleph] EL TRANSPORTE SE INYECTA, la fachada es una sola.
+ *
+ * Este archivo no es un pasamanos: es una FACHADA TIPADA. De sus 105 invocaciones, 40 le
+ * agregan al payload el sobre `{ schemaVersion: 1 }` y 38 nombran argumentos posicionales
+ * (`createDesign(name)` → `{ name }`). Esa traducción es la que el renderer da por hecha.
+ *
+ * Cuando Diseño corre DENTRO de Aleph no hay Electron en la página: el renderer habla por
+ * HTTP con el puente del main (`main/headless-bridge.ts`). Antes, `renderer/src/web-bridge.ts`
+ * intentaba REPLICAR esta fachada con un Proxy y una tabla de nombres — y no podía: repetir
+ * 40 sobres y 38 mapeos a mano es una copia que se desincroniza sola. Se veía como una
+ * cascada de errores al abrir el workspace: primero «expects an object payload», después
+ * «expects an object with name», después «name must be a non-empty string».
+ *
+ * Ahora la fachada se construye UNA vez, acá, y recibe su transporte por parámetro: en
+ * Electron es `ipcRenderer`, y en la webview de Aleph es el cliente HTTP/SSE. Un solo lugar
+ * define qué se manda; el canal por el que viaja es lo único que cambia. */
+export interface IpcTransport {
+  invoke: (channel: string, ...args: unknown[]) => Promise<unknown>;
+  on: (channel: string, listener: (event: unknown, payload: never) => void) => void;
+  removeListener: (channel: string, listener: (event: unknown, payload: never) => void) => void;
+}
+import type {
+  ConnectionTestError,
+  ConnectionTestResult,
+  ModelsListResponse,
+  TestEndpointResponse,
+} from '../main/connection-ipc';
+import type { ImageGenerationSettingsView } from '../main/image-generation-settings';
+
+export type {
+  ClaudeCodeUserType,
+  ConnectionTestError,
+  ConnectionTestResult,
+  ExternalConfigsDetection,
+  ImageGenerationSettingsView,
+  ModelsListResponse,
+  PreviewMode,
+  TestEndpointResponse,
+};
+
+export interface ValidateKeyResult {
+  ok: true;
+  modelCount: number;
+}
+export interface ValidateKeyError {
+  ok: false;
+  code: '401' | '402' | '429' | 'network' | 'parse';
+  message: string;
+}
+
+export type ExportFormat = 'html' | 'pdf' | 'pptx' | 'zip' | 'markdown';
+export type WorkspaceFileKind =
+  | 'html'
+  | 'jsx'
+  | 'tsx'
+  | 'css'
+  | 'js'
+  | 'markdown'
+  | 'text'
+  | 'image'
+  | 'video'
+  | 'audio'
+  | 'pdf'
+  | 'document'
+  | 'design-system'
+  | 'asset';
+export interface WorkspaceFileEntry {
+  path: string;
+  kind: WorkspaceFileKind;
+  size: number;
+  updatedAt: string;
+}
+export interface WorkspaceDirectoryEntry {
+  path: string;
+  name: string;
+  type: 'file' | 'directory';
+  kind?: WorkspaceFileKind;
+  size?: number;
+  updatedAt?: string;
+}
+export interface WorkspaceFileReadResult extends WorkspaceFileEntry {
+  content: string;
+}
+export type WorkspaceDocumentPreviewFormat =
+  | 'doc'
+  | 'docx'
+  | 'ppt'
+  | 'pptx'
+  | 'rtf'
+  | 'xls'
+  | 'xlsx'
+  | 'unknown';
+export interface WorkspaceDocumentPreviewStat {
+  label: string;
+  value: string;
+}
+export interface WorkspaceDocumentPreviewSection {
+  title: string;
+  lines: string[];
+  imageDataUrls?: string[];
+}
+export interface WorkspaceDocumentPreviewResult {
+  schemaVersion: 1;
+  path: string;
+  fileName: string;
+  format: WorkspaceDocumentPreviewFormat;
+  title: string;
+  size: number;
+  updatedAt: string;
+  stats: WorkspaceDocumentPreviewStat[];
+  sections: WorkspaceDocumentPreviewSection[];
+  thumbnailDataUrl?: string;
+}
+export interface WorkspaceDocumentThumbnailResult {
+  schemaVersion: 1;
+  path: string;
+  thumbnailDataUrl: string | null;
+}
+
+export interface PreviewDetectCandidate {
+  url: string;
+  source: string;
+  status: 'matched' | 'native-runtime-required' | 'not-preview' | 'unreachable';
+  httpStatus?: number;
+  contentType?: string;
+  title?: string;
+  error?: string;
+}
+
+export interface PreviewDetectResult {
+  schemaVersion: 1;
+  found: boolean;
+  url: string | null;
+  candidates: PreviewDetectCandidate[];
+  message: string;
+}
+
+export type WorkspaceImportSource = 'composer' | 'workspace' | 'canvas' | 'clipboard';
+export type WorkspaceImportKind = 'reference' | 'asset';
+export interface WorkspaceImportFileInput {
+  path: string;
+  name?: string;
+  size?: number;
+}
+export interface WorkspaceImportBlobInput {
+  name?: string;
+  mediaType: string;
+  dataBase64: string;
+}
+export interface WorkspaceImportResult {
+  path: string;
+  absolutePath: string;
+  name: string;
+  size: number;
+  mediaType: string;
+  kind: WorkspaceImportKind;
+  source: WorkspaceImportSource;
+}
+
+export interface RenameDesignOptions {
+  renameWorkspace?: boolean;
+}
+
+export interface ExportInvokeResponse {
+  status: 'saved' | 'download' | 'cancelled' | 'failed';
+  dataUrl?: string;
+  filename?: string;
+  path?: string;
+  bytes?: number;
+  /** [Convergencia · superficie 7] La causa tipada como DATO — un throw no sobrevive al IPC. */
+  code?: string;
+  /** Clave i18n del copy que la causa ya declara (`err.<CODE>`). */
+  messageKey?: string;
+  /** Texto en inglés de respaldo, para una causa sin traducción todavía. */
+  message?: string;
+}
+
+/** Qué formatos puede producir ESTA máquina ahora mismo. */
+export type ExporterReadiness = Record<ExportFormat, boolean>;
+export interface ExportInvokePayload {
+  format: ExportFormat;
+  artifactSource: string;
+  defaultFilename?: string;
+  designId?: string;
+  designName?: string;
+  workspacePath?: string;
+  sourcePath?: string;
+}
+
+export interface ProviderRow {
+  provider: string;
+  maskedKey: string;
+  baseUrl: string | null;
+  isActive: boolean;
+  label: string;
+  /** Stored entry name — differs from `label` for codex-imported rows
+   *  where `label` is the localized alias "Codex (imported)". */
+  name: string;
+  builtin: boolean;
+  wire: WireApi;
+  defaultModel: string;
+  hasKey: boolean;
+  reasoningLevel?: ReasoningLevel;
+  /** Per-provider opt-in to skip TLS verification on outbound HTTPS.
+   *  Built-in providers force-ignore this flag at runtime; only surfaced
+   *  for custom/imported providers. See #229. */
+  tlsRejectUnauthorized?: boolean;
+  error?: 'decryption_failed' | string;
+}
+
+// `ClaudeCodeUserType` and `ExternalConfigsDetection` now live in
+// `packages/shared/src/detection.ts` so main and preload stay in lockstep —
+// see that file for the drift-risk background. The inline definitions that
+// used to live here are gone; re-exports above keep downstream imports
+// from breaking.
+
+export interface AppPaths {
+  config: string;
+  configFolder: string;
+  logs: string;
+  logsFolder: string;
+  data: string;
+}
+
+export type StorageKind = 'config' | 'logs' | 'data';
+
+export type UpdateChannel = 'stable' | 'beta';
+
+export interface GenerateArtifact {
+  id: string;
+  type: string;
+  title: string;
+  content: string;
+  designParams: unknown[];
+  sourceFormat?: 'jsx' | 'html' | 'svg' | 'markdown';
+  renderRuntime?: 'react' | 'static-html' | 'svg' | 'none';
+  entryPath?: string;
+  createdAt: string;
+}
+
+export interface GenerateResponse {
+  message: string;
+  artifacts: GenerateArtifact[];
+  inputTokens: number;
+  outputTokens: number;
+  costUsd: number;
+  resourceState?: ResourceStateV1;
+}
+
+export interface Preferences {
+  updateChannel: UpdateChannel;
+  generationTimeoutSec: number;
+  checkForUpdatesOnStartup: boolean;
+  dismissedUpdateVersion: string;
+  diagnosticsLastReadTs: number;
+  memoryEnabled: boolean;
+  workspaceMemoryAutoUpdate: boolean;
+  userMemoryAutoUpdate: boolean;
+  proxyUrl: string;
+}
+
+export interface MemoryFileRead {
+  content: string;
+  path: string;
+  hash: string;
+  mtimeMs: number;
+  updatedAt: string;
+  source: 'primary' | 'legacy' | 'user';
+}
+
+export interface UserMemoryConsolidationResult {
+  updated: boolean;
+  candidateCount: number;
+}
+
+/**
+ * Streaming events emitted by the live agent runtime. Kept deliberately loose
+ * so the core event shape can evolve without a lockstep preload change —
+ * useAgentStream in the renderer tolerates unknown event types by ignoring
+ * them.
+ */
+export interface AgentStreamEvent {
+  type:
+    | 'turn_start'
+    | 'text_delta'
+    | 'turn_end'
+    | 'tool_call_start'
+    | 'tool_call_result'
+    | 'fs_updated'
+    | 'agent_end'
+    | 'error';
+  designId: string;
+  /** Trace ID linking this event to the main-process generation log entry.
+   *  Matches the generationId from the codesign:v1:generate payload — always
+   *  present because the main process supplies it from baseCtx. */
+  generationId: string;
+  // turn_start
+  turnId?: string;
+  // text_delta
+  delta?: string;
+  // turn_end
+  finalText?: string;
+  // tool_call_start
+  toolName?: string;
+  command?: string;
+  args?: Record<string, unknown>;
+  verbGroup?: string;
+  toolCallId?: string;
+  // Completed host-side activity may arrive as a single tool_call_start event
+  // after the agent run has ended.
+  result?: unknown;
+  durationMs?: number;
+  status?: 'done' | 'error';
+  // tool_call_result
+  // fs_updated — emitted whenever the agent edit tool mutates a file in the
+  // virtual fs. Renderer uses this to re-render the iframe live during
+  // generation so the user can watch the design take shape.
+  path?: string;
+  content?: string;
+  // error
+  message?: string;
+  code?: string;
+}
+
+export interface GenerationStatusResult {
+  schemaVersion: 1;
+  running: Array<{ designId: string; generationId: string; startedAt: number }>;
+  /**
+   * Turns that already answered but still have detached work hitting the model
+   * (workspace memory, session brief). Not `running`: they hold no design lock and the
+   * composer stays open. Reported so "nothing is running" stops being a lie.
+   */
+  trailing?: Array<{ designId: string; generationId: string; startedAt: number }>;
+}
+
+/**
+ * Ask-tool wire shape. Mirrors packages/core/src/tools/ask.ts — duplicated
+ * here so the preload does not take a hard dep on `@open-codesign/core`.
+ * Keep in lockstep with the TypeBox schema in that file.
+ */
+export type AskQuestionType = 'text-options' | 'svg-options' | 'slider' | 'file' | 'freeform';
+export interface AskTextOptionsQuestion {
+  id: string;
+  type: 'text-options';
+  prompt: string;
+  options: string[];
+  multi?: boolean;
+}
+export interface AskSvgOptionsQuestion {
+  id: string;
+  type: 'svg-options';
+  prompt: string;
+  options: Array<{ id: string; label: string; svg: string }>;
+}
+export interface AskSliderQuestion {
+  id: string;
+  type: 'slider';
+  prompt: string;
+  min: number;
+  max: number;
+  step: number;
+  default?: number;
+  unit?: string;
+}
+export interface AskFileQuestion {
+  id: string;
+  type: 'file';
+  prompt: string;
+  accept?: string[];
+  multiple?: boolean;
+}
+export interface AskFreeformQuestion {
+  id: string;
+  type: 'freeform';
+  prompt: string;
+  placeholder?: string;
+  multiline?: boolean;
+}
+export type AskQuestion =
+  | AskTextOptionsQuestion
+  | AskSvgOptionsQuestion
+  | AskSliderQuestion
+  | AskFileQuestion
+  | AskFreeformQuestion;
+export interface AskInput {
+  questions: AskQuestion[];
+  rationale?: string;
+}
+export interface AskAnswer {
+  questionId: string;
+  value: string | number | string[] | null;
+}
+export interface AskResult {
+  status: 'answered' | 'cancelled';
+  answers: AskAnswer[];
+}
+export interface AskRequest {
+  requestId: string;
+  sessionId: string;
+  input: AskInput;
+}
+
+export function createCodesignApi(ipcRenderer: IpcTransport) {
+  const api = {
+  detectProvider: (key: string) =>
+    ipcRenderer.invoke('codesign:detect-provider', key) as Promise<string | null>,
+  doneVerify: (artifact: string) =>
+    ipcRenderer.invoke('done:verify:v1', { artifact }) as Promise<{
+      errors: Array<{ message: string; source?: string; lineno?: number }>;
+    }>,
+  generate: (payload: {
+    prompt: string;
+    history: ChatMessage[];
+    model: ModelRef;
+    baseUrl?: string;
+    referenceUrl?: string;
+    attachments: LocalInputFile[];
+    generationId: string;
+    designId: string;
+    previousSource?: string;
+  }) =>
+    ipcRenderer.invoke('codesign:v1:generate', {
+      schemaVersion: 1,
+      ...payload,
+    } satisfies GeneratePayloadV1) as Promise<GenerateResponse>,
+  cancelGeneration: (generationId: string) =>
+    ipcRenderer.invoke('codesign:v1:cancel-generation', {
+      schemaVersion: 1,
+      generationId,
+    } satisfies CancelGenerationPayloadV1),
+  generationStatus: () =>
+    ipcRenderer.invoke('codesign:v1:generation-status') as Promise<GenerationStatusResult>,
+  generateTitle: (prompt: string) =>
+    ipcRenderer.invoke('codesign:v1:generate-title', { prompt }) as Promise<string>,
+  applyComment: (payload: {
+    designId: string;
+    generationId: string;
+    artifactSource: string;
+    comment: string;
+    selection: SelectedElement;
+    model?: ModelRef;
+    referenceUrl?: string;
+    attachments?: LocalInputFile[];
+  }) => ipcRenderer.invoke('codesign:apply-comment', payload) as Promise<GenerateResponse>,
+  pickInputFiles: () =>
+    ipcRenderer.invoke('codesign:pick-input-files') as Promise<LocalInputFile[]>,
+  pickDesignSystemDirectory: () =>
+    ipcRenderer.invoke('codesign:pick-design-system-directory') as Promise<OnboardingState>,
+  clearDesignSystem: () =>
+    ipcRenderer.invoke('codesign:clear-design-system') as Promise<OnboardingState>,
+  export: (payload: ExportInvokePayload) =>
+    ipcRenderer.invoke('codesign:export', payload) as Promise<ExportInvokeResponse>,
+  exporterReadiness: () =>
+    ipcRenderer.invoke('codesign:exporter-readiness') as Promise<ExporterReadiness>,
+  locale: {
+    getSystem: () => ipcRenderer.invoke('locale:get-system') as Promise<string>,
+    getCurrent: () => ipcRenderer.invoke('locale:get-current') as Promise<string>,
+    set: (locale: string) => ipcRenderer.invoke('locale:set', locale) as Promise<string>,
+  },
+  checkForUpdates: () => ipcRenderer.invoke('codesign:check-for-updates'),
+  downloadUpdate: () => ipcRenderer.invoke('codesign:download-update'),
+  installUpdate: () => ipcRenderer.invoke('codesign:install-update'),
+  onUpdateAvailable: (cb: (info: unknown) => void) => {
+    const listener = (_e: unknown, info: unknown) => cb(info);
+    ipcRenderer.on('codesign:update-available', listener);
+    return () => ipcRenderer.removeListener('codesign:update-available', listener);
+  },
+  onboarding: {
+    getState: () => ipcRenderer.invoke('onboarding:get-state') as Promise<OnboardingState>,
+    validateKey: (input: {
+      provider: SupportedOnboardingProvider;
+      apiKey: string;
+      baseUrl?: string;
+    }) =>
+      ipcRenderer.invoke('onboarding:validate-key', input) as Promise<
+        ValidateKeyResult | ValidateKeyError
+      >,
+    saveKey: (input: {
+      provider: SupportedOnboardingProvider;
+      apiKey: string;
+      modelPrimary: string;
+      baseUrl?: string;
+    }) => ipcRenderer.invoke('onboarding:save-key', input) as Promise<OnboardingState>,
+    skip: () => ipcRenderer.invoke('onboarding:skip') as Promise<OnboardingState>,
+  },
+  settings: {
+    listProviders: () => ipcRenderer.invoke('settings:v1:list-providers') as Promise<ProviderRow[]>,
+    addProvider: (input: {
+      provider: SupportedOnboardingProvider;
+      apiKey: string;
+      modelPrimary: string;
+      baseUrl?: string;
+    }) => ipcRenderer.invoke('settings:v1:add-provider', input) as Promise<ProviderRow[]>,
+    deleteProvider: (provider: string) =>
+      ipcRenderer.invoke('settings:v1:delete-provider', provider) as Promise<ProviderRow[]>,
+    setActiveProvider: (input: { provider: string; modelPrimary: string }) =>
+      ipcRenderer.invoke('settings:v1:set-active-provider', input) as Promise<OnboardingState>,
+    getPaths: () => ipcRenderer.invoke('settings:v1:get-paths') as Promise<AppPaths>,
+    chooseStorageFolder: (kind: StorageKind) =>
+      ipcRenderer.invoke('settings:v1:choose-storage-folder', kind) as Promise<AppPaths>,
+    openFolder: (path: string) =>
+      ipcRenderer.invoke('settings:v1:open-folder', path) as Promise<void>,
+    openTemplatesFolder: () =>
+      ipcRenderer.invoke('codesign:v1:open-templates-folder') as Promise<void>,
+    resetOnboarding: () => ipcRenderer.invoke('settings:v1:reset-onboarding') as Promise<void>,
+    toggleDevtools: () => ipcRenderer.invoke('settings:v1:toggle-devtools') as Promise<void>,
+    validateKey: (input: {
+      provider: SupportedOnboardingProvider;
+      apiKey: string;
+      baseUrl?: string;
+    }) =>
+      ipcRenderer.invoke('onboarding:validate-key', input) as Promise<
+        ValidateKeyResult | ValidateKeyError
+      >,
+  },
+  config: {
+    setProviderAndModels: (input: {
+      provider: SupportedOnboardingProvider;
+      apiKey: string;
+      modelPrimary: string;
+      baseUrl?: string;
+      setAsActive: boolean;
+    }) =>
+      ipcRenderer.invoke('config:v1:set-provider-and-models', {
+        schemaVersion: 1,
+        ...input,
+      }) as Promise<OnboardingState>,
+    addProvider: (input: {
+      id: string;
+      name: string;
+      wire: WireApi;
+      baseUrl: string;
+      apiKey: string;
+      defaultModel: string;
+      httpHeaders?: Record<string, string>;
+      queryParams?: Record<string, string>;
+      envKey?: string;
+      tlsRejectUnauthorized?: boolean;
+      setAsActive: boolean;
+    }) => ipcRenderer.invoke('config:v1:add-provider', input) as Promise<OnboardingState>,
+    updateProvider: (input: {
+      id: string;
+      name?: string;
+      baseUrl?: string;
+      defaultModel?: string;
+      wire?: WireApi;
+      httpHeaders?: Record<string, string>;
+      queryParams?: Record<string, string>;
+      /** `null` explicitly clears the override and falls back to the model
+       *  default; a level string sets it; omit to leave untouched. */
+      reasoningLevel?: ReasoningLevel | null;
+      /** Non-empty string rotates the stored secret; empty string clears it
+       *  (keyless providers); omit to leave the existing secret untouched. */
+      apiKey?: string;
+      /** Per-provider TLS verification opt-out (#229). Omit to leave
+       *  untouched; `false`/`true` writes the field through. */
+      tlsRejectUnauthorized?: boolean;
+    }) => ipcRenderer.invoke('config:v1:update-provider', input) as Promise<OnboardingState>,
+    removeProvider: (id: string) =>
+      ipcRenderer.invoke('config:v1:remove-provider', id) as Promise<OnboardingState>,
+    setActiveProviderAndModel: (input: { provider: string; modelPrimary: string }) =>
+      ipcRenderer.invoke(
+        'config:v1:set-active-provider-and-model',
+        input,
+      ) as Promise<OnboardingState>,
+    testEndpoint: (input: {
+      wire: WireApi;
+      baseUrl: string;
+      apiKey: string;
+      httpHeaders?: Record<string, string>;
+      allowPrivateNetwork?: boolean;
+      tlsRejectUnauthorized?: boolean;
+    }) => ipcRenderer.invoke('config:v1:test-endpoint', input) as Promise<TestEndpointResponse>,
+    listEndpointModels: (input: { wire: WireApi; baseUrl: string; apiKey: string }) =>
+      ipcRenderer.invoke('config:v1:list-endpoint-models', input) as Promise<
+        { ok: true; models: string[] } | { ok: false; error: string }
+      >,
+    detectExternalConfigs: () =>
+      ipcRenderer.invoke('config:v1:detect-external-configs') as Promise<ExternalConfigsDetection>,
+    importCodexConfig: () =>
+      ipcRenderer.invoke('config:v1:import-codex-config') as Promise<OnboardingState>,
+    importClaudeCodeConfig: () =>
+      ipcRenderer.invoke('config:v1:import-claude-code-config') as Promise<OnboardingState>,
+    importGeminiConfig: () =>
+      ipcRenderer.invoke('config:v1:import-gemini-config') as Promise<OnboardingState>,
+    importOpencodeConfig: () =>
+      ipcRenderer.invoke('config:v1:import-opencode-config') as Promise<OnboardingState>,
+  },
+  preferences: {
+    get: () => ipcRenderer.invoke('preferences:v1:get') as Promise<Preferences>,
+    update: (patch: Partial<Preferences>) =>
+      ipcRenderer.invoke('preferences:v1:update', patch) as Promise<Preferences>,
+  },
+  memory: {
+    getUser: () => ipcRenderer.invoke('memory:v1:get-user') as Promise<MemoryFileRead | null>,
+    updateUser: (content: string) =>
+      ipcRenderer.invoke('memory:v1:update-user', content) as Promise<MemoryFileRead | null>,
+    openUserMemory: () => ipcRenderer.invoke('memory:v1:open-user') as Promise<void>,
+    consolidateUserMemoryNow: () =>
+      ipcRenderer.invoke('memory:v1:consolidate-user') as Promise<UserMemoryConsolidationResult>,
+    clearUserMemoryCandidates: () =>
+      ipcRenderer.invoke('memory:v1:clear-user-candidates') as Promise<void>,
+  },
+  imageGeneration: {
+    get: () =>
+      ipcRenderer.invoke('image-generation:v1:get') as Promise<ImageGenerationSettingsView>,
+    update: (patch: Partial<ImageGenerationSettingsView> & { apiKey?: string }) =>
+      ipcRenderer.invoke(
+        'image-generation:v1:update',
+        patch,
+      ) as Promise<ImageGenerationSettingsView>,
+  },
+  connection: {
+    test: (input: { provider: SupportedOnboardingProvider; apiKey: string; baseUrl: string }) =>
+      ipcRenderer.invoke('connection:v1:test', input) as Promise<
+        ConnectionTestResult | ConnectionTestError
+      >,
+    testActive: () =>
+      ipcRenderer.invoke('connection:v1:test-active') as Promise<
+        ConnectionTestResult | ConnectionTestError
+      >,
+    testProvider: (providerId: string) =>
+      ipcRenderer.invoke('connection:v1:test-provider', providerId) as Promise<
+        ConnectionTestResult | ConnectionTestError
+      >,
+  },
+  models: {
+    list: (input: { provider: SupportedOnboardingProvider; apiKey: string; baseUrl: string }) =>
+      ipcRenderer.invoke('models:v1:list', input) as Promise<ModelsListResponse>,
+    listForProvider: (providerId: string) =>
+      ipcRenderer.invoke('models:v1:list-for-provider', providerId) as Promise<ModelsListResponse>,
+  },
+  files: {
+    list: (designId: string) =>
+      ipcRenderer.invoke('codesign:files:v1:list', {
+        schemaVersion: 1,
+        designId,
+      }) as Promise<WorkspaceFileEntry[]>,
+    listDir: (designId: string, path = '.') =>
+      ipcRenderer.invoke('codesign:files:v1:list-dir', {
+        schemaVersion: 1,
+        designId,
+        path,
+      }) as Promise<WorkspaceDirectoryEntry[]>,
+    read: (designId: string, path: string) =>
+      ipcRenderer.invoke('codesign:files:v1:read', {
+        schemaVersion: 1,
+        designId,
+        path,
+      }) as Promise<WorkspaceFileReadResult>,
+    preview: (designId: string, path: string) =>
+      ipcRenderer.invoke('codesign:files:v1:preview', {
+        schemaVersion: 1,
+        designId,
+        path,
+      }) as Promise<WorkspaceDocumentPreviewResult>,
+    thumbnail: (designId: string, path: string) =>
+      ipcRenderer.invoke('codesign:files:v1:thumbnail', {
+        schemaVersion: 1,
+        designId,
+        path,
+      }) as Promise<WorkspaceDocumentThumbnailResult>,
+    write: (designId: string, path: string, content: string) =>
+      ipcRenderer.invoke('codesign:files:v1:write', {
+        schemaVersion: 1,
+        designId,
+        path,
+        content,
+      }) as Promise<WorkspaceFileReadResult>,
+    importToWorkspace: (input: {
+      designId: string;
+      source: WorkspaceImportSource;
+      files?: WorkspaceImportFileInput[];
+      blobs?: WorkspaceImportBlobInput[];
+      timestamp?: string;
+    }) =>
+      ipcRenderer.invoke('codesign:files:v1:import-to-workspace', {
+        schemaVersion: 1,
+        ...input,
+      }) as Promise<WorkspaceImportResult[]>,
+    subscribe: (designId: string) =>
+      ipcRenderer.invoke('codesign:files:v1:subscribe', {
+        schemaVersion: 1,
+        designId,
+      }) as Promise<{ ok: true }>,
+    unsubscribe: (designId: string) =>
+      ipcRenderer.invoke('codesign:files:v1:unsubscribe', {
+        schemaVersion: 1,
+        designId,
+      }) as Promise<{ ok: true }>,
+    onChanged: (cb: (event: { schemaVersion: 1; designId: string }) => void) => {
+      const listener = (_e: unknown, event: { schemaVersion: 1; designId: string }) => cb(event);
+      ipcRenderer.on('codesign:files:v1:changed', listener);
+      return () => ipcRenderer.removeListener('codesign:files:v1:changed', listener);
+    },
+  },
+  snapshots: {
+    listDesigns: () =>
+      ipcRenderer.invoke('snapshots:v1:list-designs', { schemaVersion: 1 }) as Promise<Design[]>,
+    createDesign: (name: string, workspacePath?: string | null) =>
+      ipcRenderer.invoke('snapshots:v1:create-design', {
+        schemaVersion: 1,
+        name,
+        ...(workspacePath !== undefined ? { workspacePath } : {}),
+      }) as Promise<Design>,
+    getDesign: (id: string) =>
+      ipcRenderer.invoke('snapshots:v1:get-design', {
+        schemaVersion: 1,
+        id,
+      }) as Promise<Design | null>,
+    renameDesign: (id: string, name: string, options?: RenameDesignOptions) =>
+      ipcRenderer.invoke('snapshots:v1:rename-design', {
+        schemaVersion: 1,
+        id,
+        name,
+        ...(options?.renameWorkspace !== undefined
+          ? { renameWorkspace: options.renameWorkspace }
+          : {}),
+      }) as Promise<Design>,
+    setThumbnail: (id: string, thumbnailText: string | null) =>
+      ipcRenderer.invoke('snapshots:v1:set-thumbnail', {
+        schemaVersion: 1,
+        id,
+        thumbnailText,
+      }) as Promise<Design>,
+    softDeleteDesign: (id: string) =>
+      ipcRenderer.invoke('snapshots:v1:soft-delete-design', {
+        schemaVersion: 1,
+        id,
+      }) as Promise<Design>,
+    duplicateDesign: (id: string, name: string) =>
+      ipcRenderer.invoke('snapshots:v1:duplicate-design', {
+        schemaVersion: 1,
+        id,
+        name,
+      }) as Promise<Design>,
+    list: (designId: string) =>
+      ipcRenderer.invoke('snapshots:v1:list', { schemaVersion: 1, designId }) as Promise<
+        DesignSnapshot[]
+      >,
+    get: (id: string) =>
+      ipcRenderer.invoke('snapshots:v1:get', {
+        schemaVersion: 1,
+        id,
+      }) as Promise<DesignSnapshot | null>,
+    create: (input: SnapshotCreateInput) =>
+      ipcRenderer.invoke('snapshots:v1:create', {
+        schemaVersion: 1,
+        ...input,
+      }) as Promise<DesignSnapshot>,
+    delete: (id: string) =>
+      ipcRenderer.invoke('snapshots:v1:delete', { schemaVersion: 1, id }) as Promise<void>,
+    pickWorkspaceFolder: () =>
+      ipcRenderer.invoke('snapshots:v1:workspace:pick', {
+        schemaVersion: 1,
+      }) as Promise<string | null>,
+    updateWorkspace: (designId: string, workspacePath: string, migrateFiles: boolean) =>
+      ipcRenderer.invoke('snapshots:v1:workspace:update', {
+        schemaVersion: 1,
+        designId,
+        workspacePath,
+        migrateFiles,
+      }) as Promise<Design>,
+    openWorkspaceFolder: (designId: string) =>
+      ipcRenderer.invoke('snapshots:v1:workspace:open', {
+        schemaVersion: 1,
+        designId,
+      }) as Promise<void>,
+    checkWorkspaceFolder: (designId: string) =>
+      ipcRenderer.invoke('snapshots:v1:workspace:check', {
+        schemaVersion: 1,
+        designId,
+      }) as Promise<{ exists: boolean }>,
+    updatePreview: (designId: string, previewMode: PreviewMode, previewUrl?: string | null) =>
+      ipcRenderer.invoke('snapshots:v1:preview:update', {
+        schemaVersion: 1,
+        designId,
+        previewMode,
+        previewUrl: previewUrl ?? null,
+      }) as Promise<Design>,
+    detectPreview: (designId: string) =>
+      ipcRenderer.invoke('snapshots:v1:preview:detect', {
+        schemaVersion: 1,
+        designId,
+      }) as Promise<PreviewDetectResult>,
+  },
+  chat: {
+    list: (designId: string) =>
+      ipcRenderer.invoke('chat:v1:list', {
+        schemaVersion: 1,
+        designId,
+      }) as Promise<ChatMessageRow[]>,
+    append: (input: ChatAppendInput) =>
+      ipcRenderer.invoke('chat:v1:append', {
+        schemaVersion: 1,
+        ...input,
+      }) as Promise<ChatMessageRow>,
+    seedFromSnapshots: (designId: string) =>
+      ipcRenderer.invoke('chat:v1:seed-from-snapshots', {
+        schemaVersion: 1,
+        designId,
+      }) as Promise<{ inserted: number }>,
+    updateToolStatus: (_input: {
+      designId: string;
+      seq: number;
+      status: 'done' | 'error';
+      result?: unknown;
+      durationMs?: number;
+      errorMessage?: string;
+    }) =>
+      ipcRenderer.invoke('chat:v1:update-tool-status', {
+        schemaVersion: 1,
+        ..._input,
+      }) as Promise<{ ok: true }>,
+    onAgentEvent: (cb: (event: AgentStreamEvent) => void) => {
+      const listener = (_e: unknown, event: AgentStreamEvent) => cb(event);
+      ipcRenderer.on('agent:event:v1', listener);
+      return () => ipcRenderer.removeListener('agent:event:v1', listener);
+    },
+  },
+  comments: {
+    add: (input: CommentCreateInput) =>
+      ipcRenderer.invoke('comments:v1:add', {
+        schemaVersion: 1,
+        ...input,
+      }) as Promise<CommentRow>,
+    list: (designId: string, snapshotId?: string) =>
+      ipcRenderer.invoke('comments:v1:list', {
+        schemaVersion: 1,
+        designId,
+        ...(snapshotId !== undefined ? { snapshotId } : {}),
+      }) as Promise<CommentRow[]>,
+    listPendingEdits: (designId: string) =>
+      ipcRenderer.invoke('comments:v1:list-pending-edits', {
+        schemaVersion: 1,
+        designId,
+      }) as Promise<CommentRow[]>,
+    update: (designId: string, id: string, patch: { text?: string; status?: CommentStatus }) =>
+      ipcRenderer.invoke('comments:v1:update', {
+        schemaVersion: 1,
+        designId,
+        id,
+        patch,
+      }) as Promise<CommentRow | null>,
+    remove: (designId: string, id: string) =>
+      ipcRenderer.invoke('comments:v1:remove', {
+        schemaVersion: 1,
+        designId,
+        id,
+      }) as Promise<{ removed: boolean }>,
+    markApplied: (designId: string, ids: string[], snapshotId: string) =>
+      ipcRenderer.invoke('comments:v1:mark-applied', {
+        schemaVersion: 1,
+        designId,
+        ids,
+        snapshotId,
+      }) as Promise<CommentRow[]>,
+  },
+  diagnostics: {
+    log: (entry: {
+      schemaVersion: 1;
+      level: 'info' | 'warn' | 'error';
+      scope: string;
+      message: string;
+      data?: Record<string, unknown>;
+      stack?: string;
+    }) => ipcRenderer.invoke('diagnostics:v1:log', entry) as Promise<void>,
+    recordRendererError: (input: {
+      schemaVersion: 1;
+      code: string;
+      scope: string;
+      message: string;
+      stack?: string;
+      runId?: string;
+      context?: Record<string, unknown>;
+    }) =>
+      ipcRenderer.invoke('diagnostics:v1:recordRendererError', input) as Promise<{
+        schemaVersion: 1;
+        eventId: number | null;
+      }>,
+    openLogFolder: () => ipcRenderer.invoke('diagnostics:v1:openLogFolder') as Promise<void>,
+    exportDiagnostics: () =>
+      ipcRenderer.invoke('diagnostics:v1:exportDiagnostics') as Promise<string>,
+    showItemInFolder: (path: string) =>
+      ipcRenderer.invoke('diagnostics:v1:showItemInFolder', path) as Promise<void>,
+    listEvents: (input: ListEventsInput) =>
+      ipcRenderer.invoke('diagnostics:v1:listEvents', input) as Promise<ListEventsResult>,
+    reportEvent: (input: ReportEventInput) =>
+      ipcRenderer.invoke('diagnostics:v1:reportEvent', input) as Promise<ReportEventResult>,
+    isFingerprintRecentlyReported: (fingerprint: string) =>
+      ipcRenderer.invoke('diagnostics:v1:isFingerprintRecentlyReported', {
+        schemaVersion: 1,
+        fingerprint,
+      }) as Promise<{
+        schemaVersion: 1;
+        reported: boolean;
+        ts?: number;
+        issueUrl?: string;
+      }>,
+  },
+  openExternal: (url: string) =>
+    ipcRenderer.invoke('codesign:v1:open-external', url) as Promise<void>,
+  ask: {
+    pending: () => ipcRenderer.invoke('ask:list-pending') as Promise<AskRequest[]>,
+    onRequest: (cb: (req: AskRequest) => void) => {
+      const listener = (_e: unknown, req: AskRequest) => cb(req);
+      ipcRenderer.on('ask:request', listener);
+      return () => ipcRenderer.removeListener('ask:request', listener);
+    },
+    resolve: (requestId: string, result: AskResult) =>
+      ipcRenderer.invoke('ask:resolve', { requestId, ...result }) as Promise<void>,
+  },
+  permission: {
+    onRequest: (cb: (request: { requestId: string; sessionId: string; command: string }) => void) => {
+      const listener = (_event: unknown, request: { requestId: string; sessionId: string; command: string }) => cb(request);
+      ipcRenderer.on('permission:request', listener);
+      return () => ipcRenderer.removeListener('permission:request', listener);
+    },
+    resolve: (requestId: string, scope: 'deny' | 'once' | 'always') =>
+      ipcRenderer.invoke('permission:resolve', { requestId, scope }) as Promise<void>,
+  },
+};
+  return api;
+}
+
+/* La fachada de Electron: el transporte es `ipcRenderer`, tal como era.
+ *
+ * El efecto de módulo va detrás de una guarda porque este archivo ahora tiene DOS
+ * consumidores: el preload real (Electron) y el renderer embebido, que importa
+ * `createCodesignApi` para no duplicar la fachada. Al importarlo desde el navegador,
+ * `electron` resuelve al stub de `renderer/src/electron-stub.ts` y `exposeInMainWorld`
+ * TIRA a propósito — sin esta guarda, ese throw mataba el módulo entero al cargarlo y la
+ * webview quedaba en blanco con `window.codesign` undefined. */
+const esStub = (contextBridge as unknown as { __alephStub?: boolean }).__alephStub === true;
+
+if (!esStub) {
+  const api = createCodesignApi(electronIpcRenderer as unknown as IpcTransport);
+  contextBridge.exposeInMainWorld('codesign', api);
+  contextBridge.exposeInMainWorld('api', { permission: api.permission });
+}
+
+export type CodesignApi = ReturnType<typeof createCodesignApi>;

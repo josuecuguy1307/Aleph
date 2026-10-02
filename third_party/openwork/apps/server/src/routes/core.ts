@@ -1,0 +1,409 @@
+import { dirname } from "node:path";
+import type { createOpencodeClient } from "@opencode-ai/sdk/v2/client";
+import { EnvStoreReadError, InvalidEnvKeyError, isValidEnvKey, type EnvService } from "../env-file.js";
+import { syncManagedProviderAuth } from "../managed-provider-auth.js";
+import { ApiError } from "../errors.js";
+import { safeAppendAbsoluteFile as appendFile, safeEnsureAbsoluteDir as mkdir } from "../safe-fs.js";
+import type { TokenService } from "../tokens.js";
+import type { Capabilities, ServerConfig, WorkspaceInfo } from "../types.js";
+import { addRoute, type Route } from "./registry.js";
+
+type JsonResponse = (data: unknown, status?: number) => Response;
+type ReadJsonBody = (request: Request) => Promise<Record<string, unknown>>;
+type ParseOptionalBoolean = (value: string | null, name: string) => boolean | undefined;
+type FetchRuntimeControl = (path: string, init?: { method?: string; body?: unknown }) => Promise<unknown>;
+type WorkspaceOpencodeClient = ReturnType<typeof createOpencodeClient>;
+
+interface RegisterCoreRoutesOptions {
+  routes: Route[];
+  config: ServerConfig;
+  tokens: TokenService;
+  env: EnvService;
+  serverVersion: string;
+  opencodeVersion: string;
+  jsonResponse: JsonResponse;
+  readJsonBody: ReadJsonBody;
+  readOptionalJsonBody: ReadJsonBody;
+  parseOptionalBoolean: ParseOptionalBoolean;
+  ensureWritable: (config: ServerConfig) => void;
+  buildCapabilities: (config: ServerConfig) => Capabilities;
+  fetchRuntimeControl: FetchRuntimeControl;
+  resolveWorkspace: (config: ServerConfig, id: string) => Promise<WorkspaceInfo>;
+  resolveOpencodeDirectory: (workspace: WorkspaceInfo) => string | null;
+  createWorkspaceOpencodeClient: (config: ServerConfig, workspace: WorkspaceInfo) => WorkspaceOpencodeClient;
+  serializeWorkspace: (workspace: ServerConfig["workspaces"][number]) => unknown;
+  resolveDevLogPath: () => string | null;
+  createOpenAiRealtimeVoiceSession: (env: EnvService, input: unknown) => Promise<unknown>;
+  /** [Aleph] `server.ts` la pasa en las tres llamadas de registro de rutas, pero ninguna
+   *  ruta la declaraba ni la consume: quedó suelta cuando la amputación se llevó el camino
+   *  que la usaba. Se declara OPCIONAL en vez de borrarla del llamador —tres líneas menos
+   *  de diferencia con el upstream— y así el typecheck pasa sin cambiar comportamiento.
+   *  El día que una ruta necesite refrescar el registro de un MCP desde su estado vivo, ya
+   *  la tiene a mano. */
+  refreshRegistrationFromLiveStatus?: (
+    config: ServerConfig,
+    workspace: WorkspaceInfo,
+    name: string,
+    mcpConfig: Record<string, unknown>,
+    liveStatus: unknown,
+    liveError?: unknown,
+  ) => boolean;
+  managedProviderAuthLogger?: {
+    warn: (message: string, attributes?: Record<string, unknown>) => void;
+    error: (message: string, attributes?: Record<string, unknown>) => void;
+  };
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function optionalTrimmedString(value: unknown): string | undefined {
+  return typeof value === "string" && value.trim().length > 0 ? value.trim() : undefined;
+}
+
+export function registerCoreRoutes(options: RegisterCoreRoutesOptions): void {
+  const {
+    routes,
+    config,
+    tokens,
+    env,
+    serverVersion,
+    opencodeVersion,
+    jsonResponse,
+    readJsonBody,
+    readOptionalJsonBody,
+    parseOptionalBoolean,
+    ensureWritable,
+    buildCapabilities,
+    fetchRuntimeControl,
+    resolveWorkspace,
+    resolveOpencodeDirectory,
+    createWorkspaceOpencodeClient,
+    serializeWorkspace,
+    resolveDevLogPath,
+    createOpenAiRealtimeVoiceSession,
+    managedProviderAuthLogger,
+  } = options;
+  const envPendingChangesByRuntime = new Map<string, boolean>();
+
+  const healthResponse = () => jsonResponse({
+    ok: true,
+    version: serverVersion,
+    opencodeVersion,
+    uptimeMs: Date.now() - config.startedAt,
+  });
+
+  addRoute(routes, "GET", "/health", "none", async () => healthResponse());
+
+  addRoute(routes, "GET", "/w/:id/health", "none", async () => healthResponse());
+
+  // Dev log sink: append browser console + error events to a file that an
+  // operator (or an AI driver) can tail. Unauth on purpose because this is
+  // scoped to the dev host and needs to work before clients finish wiring
+  // tokens; it is also a no-op when OPENWORK_DEV_LOG_FILE is unset.
+  addRoute(routes, "POST", "/dev/log", "none", async (ctx) => {
+    const target = resolveDevLogPath();
+    if (!target) {
+      return jsonResponse({ ok: false, reason: "dev_log_disabled" }, 404);
+    }
+    let payload: unknown = null;
+    try {
+      payload = await ctx.request.json();
+    } catch {
+      return jsonResponse({ ok: false, reason: "invalid_json" }, 400);
+    }
+    const entries = Array.isArray(payload) ? payload : [payload];
+    try {
+      await mkdir(dirname(target));
+      const lines = entries
+        .map((entry) => {
+          const at = new Date().toISOString();
+          try {
+            return JSON.stringify(isRecord(entry) ? { at, ...entry } : { at, raw: String(entry) });
+          } catch {
+            return JSON.stringify({ at, raw: String(entry) });
+          }
+        })
+        .join("\n");
+      await appendFile(target, `${lines}\n`);
+    } catch (error) {
+      return jsonResponse({ ok: false, reason: error instanceof Error ? error.message : String(error) }, 500);
+    }
+    return jsonResponse({ ok: true, count: entries.length });
+  });
+
+  addRoute(routes, "GET", "/dev/log", "none", async () => {
+    // Probe response: always 200 so the client's capability probe doesn't
+    // log a noisy "Failed to load resource: 404" in the browser console
+    // when the sink is simply disabled. Clients should key on `ok` + `reason`
+    // in the body, not on HTTP status.
+    const target = resolveDevLogPath();
+    if (!target) {
+      return jsonResponse({ ok: false, reason: "dev_log_disabled" });
+    }
+    return jsonResponse({ ok: true, path: target });
+  });
+
+  addRoute(routes, "GET", "/w/:id/status", "client", async (ctx) => {
+    const workspace = await resolveWorkspace(config, ctx.params.id);
+    return jsonResponse({
+      ok: true,
+      version: serverVersion,
+      opencodeVersion,
+      uptimeMs: Date.now() - config.startedAt,
+      readOnly: config.readOnly,
+      approval: config.approval,
+      corsOrigins: config.corsOrigins,
+      workspaceCount: 1,
+      activeWorkspaceId: workspace.id,
+      workspace: serializeWorkspace(workspace),
+      authorizedRoots: config.authorizedRoots,
+      server: {
+        host: config.host,
+        port: config.port,
+        configPath: config.configPath ?? null,
+      },
+      tokenSource: {
+        client: config.tokenSource,
+        host: config.hostTokenSource,
+      },
+    });
+  });
+
+  addRoute(routes, "GET", "/w/:id/capabilities", "client", async () => {
+    return jsonResponse(buildCapabilities(config));
+  });
+
+  addRoute(routes, "GET", "/w/:id/workspaces", "client", async (ctx) => {
+    const workspace = await resolveWorkspace(config, ctx.params.id);
+    return jsonResponse({ items: [serializeWorkspace(workspace)], activeId: workspace.id });
+  });
+
+  addRoute(routes, "GET", "/status", "client", async () => {
+    const active = config.workspaces[0];
+    return jsonResponse({
+      ok: true,
+      version: serverVersion,
+      opencodeVersion,
+      uptimeMs: Date.now() - config.startedAt,
+      readOnly: config.readOnly,
+      approval: config.approval,
+      corsOrigins: config.corsOrigins,
+      workspaceCount: config.workspaces.length,
+      activeWorkspaceId: active?.id ?? null,
+      workspace: active ? serializeWorkspace(active) : null,
+      authorizedRoots: config.authorizedRoots,
+      server: {
+        host: config.host,
+        port: config.port,
+        configPath: config.configPath ?? null,
+      },
+      tokenSource: {
+        client: config.tokenSource,
+        host: config.hostTokenSource,
+      },
+    });
+  });
+
+  addRoute(routes, "GET", "/runtime/versions", "client", async () => {
+    const snapshot = await fetchRuntimeControl("/runtime/versions");
+    return jsonResponse(snapshot);
+  });
+
+  addRoute(routes, "POST", "/runtime/upgrade", "host", async (ctx) => {
+    const body = await readJsonBody(ctx.request);
+    const result = await fetchRuntimeControl("/runtime/upgrade", { method: "POST", body });
+    return jsonResponse(result, 202);
+  });
+
+  addRoute(routes, "GET", "/w/:id/runtime/versions", "client", async () => {
+    const snapshot = await fetchRuntimeControl("/runtime/versions");
+    return jsonResponse(snapshot);
+  });
+
+  addRoute(routes, "POST", "/w/:id/runtime/upgrade", "host", async (ctx) => {
+    const body = await readJsonBody(ctx.request);
+    const result = await fetchRuntimeControl("/runtime/upgrade", { method: "POST", body });
+    return jsonResponse(result, 202);
+  });
+
+  addRoute(routes, "GET", "/whoami", "client", async (ctx) => {
+    return jsonResponse({ ok: true, actor: ctx.actor ?? null });
+  });
+
+  addRoute(routes, "GET", "/capabilities", "client", async () => {
+    return jsonResponse(buildCapabilities(config));
+  });
+
+  addRoute(routes, "GET", "/workspaces", "client", async () => {
+    const active = config.workspaces[0] ?? null;
+    const items = config.workspaces.map(serializeWorkspace);
+    return jsonResponse({ items, workspaces: items, activeId: active?.id ?? null });
+  });
+
+  addRoute(routes, "GET", "/tokens", "host", async () => {
+    const items = await tokens.list();
+    return jsonResponse({ items });
+  });
+
+  addRoute(routes, "POST", "/tokens", "host", async (ctx) => {
+    ensureWritable(config);
+    const body = await readJsonBody(ctx.request);
+    const scopeRaw = typeof body.scope === "string" ? body.scope.trim() : "";
+    const scope = scopeRaw === "owner" || scopeRaw === "collaborator" || scopeRaw === "viewer" ? scopeRaw : null;
+    if (!scope) {
+      throw new ApiError(400, "invalid_scope", "Token scope must be owner, collaborator, or viewer");
+    }
+    const label = typeof body.label === "string" ? body.label.trim() : undefined;
+    const issued = await tokens.create(scope, { label });
+    return jsonResponse(issued, 201);
+  });
+
+  addRoute(routes, "DELETE", "/tokens/:id", "host", async (ctx) => {
+    ensureWritable(config);
+    const ok = await tokens.revoke(ctx.params.id);
+    if (!ok) {
+      throw new ApiError(404, "token_not_found", "Token not found");
+    }
+    return jsonResponse({ ok: true });
+  });
+
+  function rethrowEnvStoreReadError(error: unknown): never {
+    if (error instanceof EnvStoreReadError) {
+      throw new ApiError(
+        409,
+        error.code,
+        "Environment variable store is invalid. Fix or remove the local env file before editing.",
+      );
+    }
+    throw error;
+  }
+
+  // User-level env vars (see apps/app/pr/environment-variables.md). All routes
+  // require the desktop host token (not owner bearer tokens). List callers can
+  // request metadata-only results so renderer settings panes do not receive
+  // every raw secret value up front. Reload semantics are driven from the UI
+  // after a write; this surface is user-scoped, not workspace-scoped, so no audit.
+  addRoute(routes, "GET", "/env", "host-token", async (ctx) => {
+    const includeValues = parseOptionalBoolean(ctx.url.searchParams.get("includeValues"), "includeValues") ?? true;
+    const items = await env.list().catch(rethrowEnvStoreReadError);
+    return jsonResponse({
+      items: items.map((item) => ({
+        key: item.key,
+        updatedAt: item.updatedAt,
+        hasValue: item.value.length > 0,
+        ...(includeValues ? { value: item.value } : {}),
+      })),
+    });
+  });
+
+  addRoute(routes, "GET", "/env/keys", "host-token", async () => {
+    const items = await env.list().catch(rethrowEnvStoreReadError);
+    return jsonResponse({ keys: items.map((item) => item.key) });
+  });
+
+  function envRuntimeKeyFromUrl(url: URL): string {
+    return url.searchParams.get("runtimeKey")?.trim() || "default";
+  }
+
+  addRoute(routes, "GET", "/env/status", "host-token", async (ctx) => {
+    const runtimeKey = envRuntimeKeyFromUrl(ctx.url);
+    return jsonResponse({ runtimeKey, pendingChanges: envPendingChangesByRuntime.get(runtimeKey) === true });
+  });
+
+  addRoute(routes, "PUT", "/env/status", "host-token", async (ctx) => {
+    const body = await readJsonBody(ctx.request);
+    const runtimeKey = typeof body.runtimeKey === "string" && body.runtimeKey.trim()
+      ? body.runtimeKey.trim()
+      : "default";
+    const pendingChanges = body.pendingChanges === true;
+    if (pendingChanges) {
+      envPendingChangesByRuntime.set(runtimeKey, true);
+    } else {
+      envPendingChangesByRuntime.delete(runtimeKey);
+    }
+    return jsonResponse({ runtimeKey, pendingChanges });
+  });
+
+  addRoute(routes, "GET", "/env/:key", "host-token", async (ctx) => {
+    const key = ctx.params.key;
+    if (!isValidEnvKey(key)) {
+      throw new ApiError(400, "invalid_env_key", "Invalid environment variable name");
+    }
+    const item = (await env.list().catch(rethrowEnvStoreReadError)).find((entry) => entry.key === key);
+    if (!item) {
+      throw new ApiError(404, "env_not_found", "Environment variable not found");
+    }
+    return jsonResponse({
+      item: {
+        key: item.key,
+        updatedAt: item.updatedAt,
+        hasValue: item.value.length > 0,
+        value: item.value,
+      },
+    });
+  });
+
+  addRoute(routes, "PUT", "/env", "host-token", async (ctx) => {
+    ensureWritable(config);
+    const body = await readJsonBody(ctx.request);
+    const rawEntries = Array.isArray(body.entries)
+      ? body.entries
+      : [{ key: body.key, value: body.value }];
+    const entries: Array<{ key: string; value: string }> = [];
+    for (const raw of rawEntries) {
+      if (!isRecord(raw)) {
+        throw new ApiError(400, "invalid_entry", "Each entry must be an object");
+      }
+      const key = typeof raw.key === "string" ? raw.key.trim() : "";
+      const value = typeof raw.value === "string" ? raw.value : "";
+      if (!isValidEnvKey(key)) {
+        throw new ApiError(400, "invalid_env_key", "Invalid environment variable name");
+      }
+      entries.push({ key, value });
+    }
+    if (entries.length === 0) {
+      throw new ApiError(400, "no_entries", "No entries provided");
+    }
+    try {
+      await env.upsertMany(entries);
+    } catch (error) {
+      if (error instanceof EnvStoreReadError) {
+        rethrowEnvStoreReadError(error);
+      }
+      if (error instanceof InvalidEnvKeyError) {
+        throw new ApiError(
+          400,
+          error.code,
+          error.code === "reserved_env_key"
+            ? "Environment variable name is reserved for OpenWork internals"
+            : "Invalid environment variable name",
+        );
+      }
+      throw error;
+    }
+    // A stored credential is useless until the engine holds it: deliver it now
+    // rather than waiting for the next engine start.
+    await syncManagedProviderAuth({ config, env, logger: managedProviderAuthLogger }).catch(() => undefined);
+    return jsonResponse({ ok: true, count: entries.length });
+  });
+
+  addRoute(routes, "DELETE", "/env/:key", "host-token", async (ctx) => {
+    ensureWritable(config);
+    const key = ctx.params.key;
+    if (!isValidEnvKey(key)) {
+      throw new ApiError(400, "invalid_env_key", "Invalid environment variable name");
+    }
+    const removed = await env.delete(key).catch(rethrowEnvStoreReadError);
+    if (!removed) {
+      throw new ApiError(404, "env_not_found", "Environment variable not found");
+    }
+    return jsonResponse({ ok: true });
+  });
+
+  addRoute(routes, "POST", "/voice/realtime/session", "host", async (ctx) => {
+    const body = await readJsonBody(ctx.request);
+    return jsonResponse(await createOpenAiRealtimeVoiceSession(env, body));
+  });
+}

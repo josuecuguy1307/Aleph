@@ -1,0 +1,25 @@
+{
+  "mcpServers": {
+    "backtest": {
+      "command": "uv",
+      "args": ["run","--no-project","--with","yfinance","--with","numpy","python3","${PUPPET_BELTS}/finanzas/backtest_server.py"],
+      "transport": "stdio",
+      "description": "Backtest REAL de cartera via yfinance: Sharpe, retorno, vol, drawdown."
+    },
+    "finanzas": {
+      "command": "python3",
+      "args": ["${PUPPET_BELTS}/finanzas/finanzas_data_server.py"],
+      "description": "Datos finanzas: worldbank_series (keyless), alphavantage_quote (BYOK), build_workbook."
+    },
+    "gmail": {
+      "command": "python3",
+      "args": ["${PUPPET_BELTS}/cowork/gmail_draft_server.py"],
+      "description": "Gmail: create_draft (borrador real, auto), send_email (ENVIAR = send-gate HELD)."
+    }
+  },
+  "_meta": {"slug":"quant-afternoon","cards":[
+    {"id":"backtest","connector":"backtest","label":"Backtest","auth":"keyless","backed_by":"backtest","tools":["backtest_portfolio"]},
+    {"id":"finanzas","connector":"finanzas","label":"Datos financieros","auth":"mixed","backed_by":"finanzas","tools":["worldbank_series","alphavantage_quote"]},
+    {"id":"gmail","connector":"gmail","label":"Gmail","auth":"oauth","backed_by":"gmail","tools":["create_draft","send_email"]}
+  ]}
+}

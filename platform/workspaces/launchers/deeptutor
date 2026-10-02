@@ -1,0 +1,187 @@
+#!/usr/bin/env bash
+# Aleph Educación — un grupo de proceso del pack F4, no dos servicios sueltos.
+# El dueño crea una sesión para ESTE launcher y pack.py mata su grupo completo al salir;
+# por eso el backend Python y Next no pueden sobrevivirle como huérfanos.
+set -euo pipefail
+
+HERE="$(cd "$(dirname "$0")" && pwd)"
+ROOT="$(cd "$HERE/../../.." && pwd)"
+STACK="$ROOT/third_party/deeptutor"
+RUNTIME="${DEEPTUTOR_HOME:?DEEPTUTOR_HOME no fue materializado por el pack}"
+WEB_PORT="${ALEPH_PACK_PORT:?ALEPH_PACK_PORT no fue elegido por el pack}"
+BACKEND_PORT="$((WEB_PORT + 1))"
+# ⚠️ SE RESUELVE A RUTA ABSOLUTA ACÁ, ANTES DE QUE EL PATH CAMBIE. Más abajo este
+# launcher antepone su propio `bin/` con un `python3` para el SANDBOX, y si este valor
+# quedara siendo el string «python3» el arranque de desarrollo
+# (`"$PYTHON" -m deeptutor.api.run_server`) terminaría corriendo con el intérprete del
+# sandbox —que tiene matplotlib y NO tiene las dependencias del stack— y el pack no
+# levantaría. Dos usos del mismo nombre, dos intérpretes distintos: se separan acá.
+PYTHON="${ALEPH_DEEPTUTOR_PYTHON:-python3}"
+PYTHON="$(command -v "$PYTHON" 2>/dev/null || printf '%s' "$PYTHON")"
+BACKEND_ROOT="${ALEPH_DEEPTUTOR_BACKEND:-$ROOT/third_party/deeptutor/bin/deeptutor_backend}"
+BACKEND_BIN="$BACKEND_ROOT/deeptutor_backend"
+NODE="${ALEPH_DEEPTUTOR_NODE:-$ROOT/third_party/deeptutor/bin/node}"
+
+[ -d "$STACK" ] || { echo "falta el stack de Educación: $STACK" >&2; exit 64; }
+[ -f "$STACK/web/.next/standalone/server.js" ] || {
+  echo "falta el dist standalone de Educación" >&2; exit 65;
+}
+
+# La sesión está sólo en model_catalog.json (0600), jamás en el entorno. Sí viajan los
+# punteros y puertos necesarios para que el proxy Next hable al backend local del pack.
+export PYTHONPATH="$STACK${PYTHONPATH:+:$PYTHONPATH}"
+export DEEPTUTOR_HOME="$RUNTIME"
+export BACKEND_PORT
+export FRONTEND_PORT="$WEB_PORT"
+export DEEPTUTOR_API_BASE_URL="http://127.0.0.1:$BACKEND_PORT"
+export DEEPTUTOR_AUTH_ENABLED="false"
+# El API del pack es de la máquina, no de la red: los dos únicos clientes son el proxy Next
+# de la línea de abajo y el propio launcher, y ambos hablan por loopback. El pack lo declara
+# acá además de traer el default en `run_server.py`, para que apagar la autenticación no
+# dependa de que nadie más ate el puerto a otra interfaz.
+export DEEPTUTOR_BIND_HOST="127.0.0.1"
+
+# ── EL SANDBOX DE EJECUCIÓN, PRENDIDO — Y CON UN INTÉRPRETE QUE ALEPH RESUELVE ─────────
+# [Educación · los artefactos · 2026-08-27 · decisión del dueño]
+#
+# QUÉ DESTRABA. `exec` y `code_execution` son las ÚNICAS dos manos con las que el tutor
+# puede, en un turno de chat, dibujar un gráfico o escribir un archivo — o sea producir un
+# artefacto. Sin backend de sandbox no montan, y la cadena es esta, leída entera:
+#   `sandbox/config.py:66 build_backend` → None sin ninguna de las tres variables
+#   → `sandbox/service.py:68 isolation_level() = OFF`
+#   → `agentic_pipeline.py:588 _exec_allowed() = False`
+#   → `:612-613 has_exec = has_code = False`
+#   → `_shared/tool_composition._CONDITIONAL_MOUNT_FLAGS` las deja afuera.
+# Medido antes de esta línea: 68 `workspace_step` de educacion con `tools_declared` que
+# nunca pasó de 11 (con las dos serían 13), `tool_steps: 0` en los 24 turnos del stack, y
+# el turno en que el dueño pidió una gráfica contestado con un dibujo ASCII y la frase
+# «The graph can't be rendered as an image in this chat» — que era verdad.
+#
+# Es una variable del ENTORNO del proceso, o sea del launcher, que es nuestro: cero líneas
+# del motor del stack.
+export DEEPTUTOR_SANDBOX_ALLOW_SUBPROCESS=1
+
+# ── EL INTÉRPRETE SE DECLARA, NO SE HEREDA ─────────────────────────────────────────────
+# `code_execution` corre literalmente `python3 {src}` (`tools/builtin/__init__.py:287`) y
+# el backend del sandbox le pasa el `PATH` del proceso tal cual
+# (`sandbox/backends.py:180 _SAFE_ENV_KEYS`). O sea que **el PATH del launcher ES el
+# mecanismo**: no hace falta inventar uno, y no hay que tocarle una línea al stack.
+#
+# Y HAY QUE RESOLVERLO, no confiarse. Medido en esta Mac, `python3` por `PATH`:
+#     /opt/miniconda3/bin/python3      matplotlib 3.10.8   ← el único que importa
+#     /opt/homebrew/bin/python3        ModuleNotFoundError
+#     /Library/Frameworks/…/python3    ModuleNotFoundError
+#     /usr/local/bin/python3           ModuleNotFoundError
+#     /usr/bin/python3                 ModuleNotFoundError
+# Y una `.app` de macOS lanzada desde el Finder NO hereda el PATH del shell interactivo:
+# ahí `python3` es `/usr/bin/python3`, que es justo el que no sirve. Heredar el PATH
+# habría funcionado en la máquina del que lo escribió y en ninguna otra — lo que el
+# contrato del repo prohíbe con todas las letras.
+#
+# ORDEN DE CANDIDATOS, de lo más declarado a lo más encontrado:
+#   1. `ALEPH_EDUCACION_PYTHON` — el override explícito, gana siempre.
+#   2. `<stack>/bin/python3` — el lugar donde el build puede hornear uno propio el día que
+#      quiera dejar de depender de la máquina. Queda declarado aunque hoy no exista.
+#   3. el primer `python3` alcanzable que **importe matplotlib de verdad** (se prueba, no
+#      se supone).
+#   4. si ninguno importa: el primer `python3` que exista igual. `exec` y `code_execution`
+#      siguen sirviendo para calcular, contar y escribir archivos de texto; lo que va a
+#      fallar es el gráfico, y va a fallar con el error real de Python en vez de con un
+#      tutor inventando que no puede.
+EDU_BIN="$RUNTIME/bin"
+mkdir -p "$EDU_BIN"
+EDU_PY=""
+EDU_PY_FALLBACK=""
+for _cand in "${ALEPH_EDUCACION_PYTHON:-}" "$STACK/bin/python3" \
+             "$(command -v python3 2>/dev/null || true)" \
+             /opt/miniconda3/bin/python3 /opt/homebrew/bin/python3 \
+             /usr/local/bin/python3 /usr/bin/python3; do
+  [ -n "$_cand" ] && [ -x "$_cand" ] || continue
+  [ -n "$EDU_PY_FALLBACK" ] || EDU_PY_FALLBACK="$_cand"
+  if "$_cand" -c "import matplotlib" >/dev/null 2>&1; then EDU_PY="$_cand"; break; fi
+done
+[ -n "$EDU_PY" ] || EDU_PY="$EDU_PY_FALLBACK"
+
+if [ -n "$EDU_PY" ]; then
+  # UN SHIM, NO UN SYMLINK, y el motivo es `MPLBACKEND`. El backend del sandbox sólo deja
+  # pasar PATH · HOME · LANG · LC_ALL · TMPDIR (`backends.py:180`), así que una variable
+  # de entorno nuestra NO llega al subproceso: tiene que ponerla algo que ya esté del otro
+  # lado. Sin ella, matplotlib en macOS elige el backend `MacOSX`, que quiere una sesión
+  # gráfica; en un subproceso de un servicio eso es un cuelgue o una ventana robándole el
+  # foco al usuario. `Agg` dibuja a archivo, que es exactamente lo que se pide acá.
+  # Se respeta un `MPLBACKEND` que ya venga puesto: la declaración no pisa una decisión.
+  printf '%s\n' '#!/bin/sh' \
+    '# Generado por Aleph al entrar al workspace. El intérprete de `code_execution`.' \
+    'MPLBACKEND="${MPLBACKEND:-Agg}"; export MPLBACKEND' \
+    "exec \"$EDU_PY\" \"\$@\"" > "$EDU_BIN/python3"
+  chmod 755 "$EDU_BIN/python3"
+  PATH="$EDU_BIN:$PATH"
+  export PATH
+  # Se exporta lo RESUELTO para que una vara —y el log— puedan decir con qué corrió, en
+  # vez de deducirlo. Un dato medido vale más que una inferencia sobre el PATH.
+  ALEPH_EDUCACION_PYTHON_RESUELTO="$EDU_PY"
+  export ALEPH_EDUCACION_PYTHON_RESUELTO
+  if "$EDU_PY" -c "import matplotlib" >/dev/null 2>&1; then
+    echo "[aleph] sandbox de Educación: python3 → $EDU_PY (con matplotlib)" >&2
+  else
+    echo "[aleph] sandbox de Educación: python3 → $EDU_PY — SIN matplotlib: el cálculo y" \
+         "los archivos de texto andan, el gráfico va a fallar con el error real" >&2
+  fi
+else
+  echo "[aleph] sandbox de Educación: no se encontró ningún python3; \`code_execution\`" \
+       "en Python no va a poder correr (\`exec\` con shell sí)" >&2
+fi
+
+# main.yaml — LA CONFIG QUE NADIE MATERIALIZABA.
+# Cuatro routers del tutor (`co_writer`, `knowledge`, `question`, `quiz_judge`) llaman a
+# `load_config_with_main("main.yaml")` al importarse, y esa función NO tiene default: si el
+# archivo no está bajo `<DEEPTUTOR_HOME>/data/user/settings/`, tira FileNotFoundError y el
+# router no se monta. El bootstrap del stack (`ensure_runtime_settings_files()`) sólo crea
+# los `.json`, y el archivo tampoco viaja en el repo de origen —verificado contra el árbol
+# del commit 456f9c2—, así que faltaba siempre, no sólo en un montaje de desarrollo.
+#
+# Materializarlo es del PACK, no del stack: Aleph ya es dueño de este runtime (elige el
+# puerto, arma el directorio y escribe model_catalog.json). Se crea SÓLO si falta, para no
+# pisar lo que el usuario haya ajustado, y con lo mínimo que sus lectores consultan
+# (`system.language`; `paths` y `logging` quedan vacíos y el stack inyecta sus rutas).
+DT_SETTINGS="$RUNTIME/data/user/settings"
+if [ ! -f "$DT_SETTINGS/main.yaml" ]; then
+  mkdir -p "$DT_SETTINGS"
+  cat > "$DT_SETTINGS/main.yaml" <<'YAML'
+# Generado por Aleph al entrar al workspace. Se crea una sola vez: si lo editás, se respeta.
+system:
+  language: en
+paths: {}
+logging: {}
+YAML
+fi
+
+if [ -f "$BACKEND_BIN" ] && [ ! -x "$BACKEND_BIN" ]; then
+  chmod 700 "$BACKEND_BIN"
+fi
+if [ -x "$BACKEND_BIN" ]; then
+  "$BACKEND_BIN" &
+else
+  "$PYTHON" -m deeptutor.api.run_server &
+fi
+API_PID=$!
+(
+  cd "$STACK/web/.next/standalone"
+  HOSTNAME=127.0.0.1 PORT="$WEB_PORT" "$NODE" server.js
+) &
+WEB_PID=$!
+
+terminar() {
+  kill -TERM "$WEB_PID" "$API_PID" 2>/dev/null || true
+  wait "$WEB_PID" "$API_PID" 2>/dev/null || true
+}
+trap terminar EXIT INT TERM
+
+# Si uno de los dos cae, el launcher cae y el dueño deja una causa visible; no hay una UI
+# verde sirviendo sobre un API muerto ni un API suelto sin su pantalla. macOS trae Bash
+# 3.2, cuyo wait no acepta -n. El shell recolecta sus hijos asíncronos, así que kill -0
+# deja de encontrar el PID al terminar cualquiera. El trap apaga y espera al otro.
+while kill -0 "$API_PID" 2>/dev/null && kill -0 "$WEB_PID" 2>/dev/null; do
+  sleep 0.25
+done
+exit 1

@@ -1,0 +1,26 @@
+{
+  "schema_version": "v1",
+  "meta": {
+    "name": "Agente Educación (E2E Fase 2)",
+    "nicho": "educacion",
+    "descripcion": "Tutor riguroso que muestra el paso y delega la aritmética a herramientas (mismo motor, framing de tutor)."
+  },
+  "model": {
+    "primary": "openai/gpt-oss-120b",
+    "fallback": "llama-3.3-70b-versatile",
+    "base_url": "https://api.groq.com/openai/v1",
+    "temperature": 0,
+    "max_tokens": 1024,
+    "max_turns": 6
+  },
+  "belt": {
+    "belt_ref": "platform/assembler/fixtures/belt-calc.mcp.json",
+    "tool_filters": { "calc": ["add", "mul"] }
+  },
+  "framing": {
+    "inline": "Sos un tutor de matemática riguroso. Resolvé mostrando el razonamiento paso a paso, y para CUALQUIER cuenta usá SIEMPRE la herramienta (add, mul), nunca de memoria. Cerrá con el resultado final claro."
+  },
+  "rag": { "enabled": false },
+  "keys": {},
+  "gates": {}
+}

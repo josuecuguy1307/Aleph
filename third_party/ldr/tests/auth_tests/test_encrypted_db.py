@@ -1,0 +1,447 @@
+"""
+Test encrypted database management.
+"""
+
+import os
+import shutil
+import tempfile
+from pathlib import Path
+
+import pytest
+from sqlalchemy import inspect, text
+
+from local_deep_research.database.auth_db import get_auth_db_session
+from local_deep_research.database.encrypted_db import DatabaseManager
+from local_deep_research.database.models.auth import User
+
+
+@pytest.fixture
+def temp_data_dir():
+    """Create a temporary data directory for testing."""
+    temp_dir = tempfile.mkdtemp()
+    yield Path(temp_dir)
+    shutil.rmtree(temp_dir)
+
+
+@pytest.fixture
+def db_manager(temp_data_dir, monkeypatch):
+    """Create a DatabaseManager with test configuration."""
+    monkeypatch.setenv("LDR_DATA_DIR", str(temp_data_dir))
+    manager = DatabaseManager()
+    manager.data_dir = temp_data_dir / "encrypted_databases"
+    manager.data_dir.mkdir(parents=True, exist_ok=True)
+    yield manager
+    manager.close_all_databases()
+
+
+@pytest.fixture
+def auth_user(temp_data_dir, monkeypatch):
+    """Create a test user in auth database."""
+    monkeypatch.setenv("LDR_DATA_DIR", str(temp_data_dir))
+
+    # Initialize auth database
+    from local_deep_research.database.auth_db import init_auth_database
+
+    init_auth_database()
+
+    # Create user
+    auth_db = get_auth_db_session()
+    user = User(username="testuser")
+    auth_db.add(user)
+    auth_db.commit()
+    auth_db.close()
+
+    return user
+
+
+class TestDatabaseManager:
+    """Test the DatabaseManager class."""
+
+    def test_user_db_path(self, db_manager):
+        """Test generating user database paths."""
+        path = db_manager._get_user_db_path("testuser")
+
+        assert path.parent == db_manager.data_dir
+        assert path.name.startswith("ldr_user_")
+        assert path.name.endswith(".db")
+
+        # Same username should generate same path
+        path2 = db_manager._get_user_db_path("testuser")
+        assert path == path2
+
+        # Different username should generate different path
+        path3 = db_manager._get_user_db_path("otheruser")
+        assert path != path3
+
+    def test_create_user_database(self, db_manager, auth_user):
+        """Test creating an encrypted database for a user."""
+        engine = db_manager.create_user_database("testuser", "testpassword123")
+
+        assert engine is not None
+        assert db_manager.is_user_connected("testuser")
+
+        # Test that database is encrypted and accessible
+        with engine.connect() as conn:
+            result = conn.execute(
+                text("SELECT name FROM sqlite_master WHERE type='table'")
+            )
+            tables = [row[0] for row in result]
+            assert len(tables) > 0  # Should have created tables
+
+        # Database file should exist
+        db_path = db_manager._get_user_db_path("testuser")
+        assert db_path.exists()
+
+    def test_create_duplicate_database(self, db_manager, auth_user):
+        """Test that creating duplicate database fails."""
+        db_manager.create_user_database("testuser", "testpassword123")
+
+        with pytest.raises(ValueError, match="Database already exists"):
+            db_manager.create_user_database("testuser", "differentpassword")
+
+    def test_open_user_database(self, db_manager, auth_user):
+        """Test opening an existing encrypted database."""
+        # Create database first
+        db_manager.create_user_database("testuser", "testpassword123")
+        db_manager.close_user_database("testuser")
+
+        # Open it
+        engine = db_manager.open_user_database("testuser", "testpassword123")
+        assert engine is not None
+
+        # Test access
+        with engine.connect() as conn:
+            conn.execute(text("SELECT 1"))
+
+    def test_open_with_wrong_password(self, db_manager, auth_user):
+        """Test that opening with wrong password fails."""
+        db_manager.create_user_database("testuser", "correctpassword")
+        db_manager.close_user_database("testuser")
+
+        engine = db_manager.open_user_database("testuser", "wrongpassword")
+        assert engine is None
+
+    def test_open_nonexistent_database(self, db_manager):
+        """Test opening a database that doesn't exist."""
+        engine = db_manager.open_user_database("nonexistent", "password")
+        assert engine is None
+
+    def test_close_user_database(self, db_manager, auth_user):
+        """Test closing a user's database connection."""
+        db_manager.create_user_database("testuser", "testpassword123")
+        assert db_manager.is_user_connected("testuser")
+
+        db_manager.close_user_database("testuser")
+        assert not db_manager.is_user_connected("testuser")
+
+    def test_get_session(self, db_manager, auth_user):
+        """Test getting a database session."""
+        db_manager.create_user_database("testuser", "testpassword123")
+
+        session = db_manager.get_session("testuser")
+        assert session is not None
+
+        # get_session returns a new session each time in the current implementation
+        session2 = db_manager.get_session("testuser")
+        assert session2 is not None
+
+    def test_check_database_integrity(self, db_manager, auth_user):
+        """Test checking database integrity."""
+        db_manager.create_user_database("testuser", "testpassword123")
+
+        is_valid = db_manager.check_database_integrity("testuser")
+        assert isinstance(is_valid, bool)
+        assert is_valid is True
+
+        # Test with non-existent user
+        is_valid = db_manager.check_database_integrity("nonexistent")
+        assert is_valid is False
+
+    @pytest.mark.skipif(
+        os.environ.get("CI") == "true"
+        or os.environ.get("GITHUB_ACTIONS") == "true",
+        reason="Password change with encrypted DB re-keying is complex to test in CI",
+    )
+    def test_change_password(self, db_manager, auth_user):
+        """Test changing database encryption password."""
+        db_manager.create_user_database("testuser", "oldpassword")
+
+        # Change password
+        success = db_manager.change_password(
+            "testuser", "oldpassword", "newpassword"
+        )
+        assert success is True
+
+        # Try to open with new password
+        engine = db_manager.open_user_database("testuser", "newpassword")
+        assert engine is not None
+
+        # Old password should fail
+        db_manager.close_user_database("testuser")
+        engine = db_manager.open_user_database("testuser", "oldpassword")
+        assert engine is None
+
+    @pytest.mark.skipif(
+        os.environ.get("CI") == "true"
+        or os.environ.get("GITHUB_ACTIONS") == "true",
+        reason="Password change with encrypted DB re-keying is complex to test in CI",
+    )
+    def test_change_password_wrong_old(self, db_manager, auth_user):
+        """Test changing password with wrong old password."""
+        db_manager.create_user_database("testuser", "correctpassword")
+
+        success = db_manager.change_password(
+            "testuser", "wrongpassword", "newpassword"
+        )
+        assert success is False
+
+    def test_user_exists(self, db_manager, auth_user):
+        """Test checking if user exists."""
+        # User exists in auth DB
+        assert db_manager.user_exists("testuser") is True
+
+        # User doesn't exist
+        assert db_manager.user_exists("nonexistent") is False
+
+    def test_memory_usage(self, db_manager, auth_user):
+        """Test getting memory usage statistics."""
+        stats = db_manager.get_memory_usage()
+        assert stats["active_connections"] == 0
+        assert stats["active_sessions"] == 0
+        assert stats["estimated_memory_mb"] == 0
+
+        # Create connections
+        db_manager.create_user_database("testuser", "password1")
+        db_manager.get_session("testuser")
+
+        stats = db_manager.get_memory_usage()
+        assert stats["active_connections"] == 1
+        assert stats["active_sessions"] == 0  # Sessions are not tracked
+        assert stats["estimated_memory_mb"] == 3.5
+
+    def test_pragmas_applied(self, db_manager, auth_user):
+        """Test that SQLCipher pragmas are correctly applied."""
+        engine = db_manager.create_user_database("testuser", "testpassword123")
+
+        with engine.connect() as conn:
+            # Check journal mode
+            result = conn.execute(text("PRAGMA journal_mode"))
+            assert result.scalar() == "wal"
+
+            # Check cipher settings
+            result = conn.execute(text("PRAGMA kdf_iter"))
+            # Default KDF iterations
+            assert result.scalar() == "256000"
+
+            result = conn.execute(text("PRAGMA cipher_page_size"))
+            # Default page size is 16384 (16KB)
+            assert result.scalar() == "16384"
+
+    def test_is_user_connected(self, db_manager, auth_user):
+        """Test the is_user_connected method."""
+        assert not db_manager.is_user_connected("testuser")
+
+        db_manager.create_user_database("testuser", "testpassword123")
+        assert db_manager.is_user_connected("testuser")
+
+        db_manager.close_user_database("testuser")
+        assert not db_manager.is_user_connected("testuser")
+
+    def test_whitespace_password_rejected(self, db_manager, auth_user):
+        """Test that whitespace-only passwords are rejected."""
+        with pytest.raises(
+            ValueError, match="password cannot be None or empty"
+        ):
+            db_manager.create_user_database("testuser", "   ")
+
+    def test_create_database_runs_alembic_migrations(
+        self, db_manager, auth_user
+    ):
+        """create_user_database produces a database with alembic_version at head."""
+        engine = db_manager.create_user_database("testuser", "testpassword123")
+        inspector = inspect(engine)
+        assert "alembic_version" in inspector.get_table_names()
+
+        from local_deep_research.database.alembic_runner import (
+            get_current_revision,
+            get_head_revision,
+        )
+
+        assert get_current_revision(engine) == get_head_revision()
+
+    def test_open_database_runs_alembic_migrations(self, db_manager, auth_user):
+        """open_user_database runs migrations on existing encrypted DB."""
+        db_manager.create_user_database("testuser", "testpassword123")
+        db_manager.close_user_database("testuser")
+
+        engine = db_manager.open_user_database("testuser", "testpassword123")
+        assert engine is not None
+        inspector = inspect(engine)
+        assert "alembic_version" in inspector.get_table_names()
+
+        from local_deep_research.database.alembic_runner import (
+            get_current_revision,
+            get_head_revision,
+        )
+
+        assert get_current_revision(engine) == get_head_revision()
+
+
+class TestConnectionVerification:
+    """Tests for connection verification functionality."""
+
+    def test_verify_connection_correct_password(self, db_manager, auth_user):
+        """Verify connection verification returns True with correct password."""
+        from src.local_deep_research.database.sqlcipher_utils import (
+            apply_sqlcipher_pragmas,
+            set_sqlcipher_key,
+            verify_sqlcipher_connection,
+        )
+        from src.local_deep_research.database.sqlcipher_compat import (
+            get_sqlcipher_module,
+        )
+
+        # Create database
+        db_manager.create_user_database("testuser", "testpassword123")
+        db_path = db_manager._get_user_db_path("testuser")
+        db_manager.close_user_database("testuser")
+
+        # Verify connection with correct password
+        sqlcipher = get_sqlcipher_module()
+        conn = sqlcipher.connect(str(db_path))
+        cursor = conn.cursor()
+        # Existing database: key first, then cipher_* pragmas
+        set_sqlcipher_key(cursor, "testpassword123", db_path=db_path)
+        apply_sqlcipher_pragmas(cursor, creation_mode=False)
+
+        assert verify_sqlcipher_connection(cursor) is True
+        cursor.close()
+        conn.close()
+
+    def test_verify_connection_wrong_password(self, db_manager, auth_user):
+        """Verify accessing encrypted data with wrong password fails."""
+        from src.local_deep_research.database.sqlcipher_utils import (
+            apply_sqlcipher_pragmas,
+            set_sqlcipher_key,
+        )
+        from src.local_deep_research.database.sqlcipher_compat import (
+            get_sqlcipher_module,
+        )
+
+        # Create database
+        db_manager.create_user_database("testuser", "correctpassword")
+        db_path = db_manager._get_user_db_path("testuser")
+        db_manager.close_user_database("testuser")
+
+        # Try to access encrypted data with wrong password
+        sqlcipher = get_sqlcipher_module()
+        conn = sqlcipher.connect(str(db_path))
+        cursor = conn.cursor()
+        set_sqlcipher_key(cursor, "wrongpassword", db_path=db_path)
+        apply_sqlcipher_pragmas(cursor, creation_mode=False)
+        cursor.close()
+
+        # Accessing actual encrypted data should fail
+        with pytest.raises(Exception):
+            conn.execute(
+                "SELECT name FROM sqlite_master WHERE type='table'"
+            ).fetchall()
+
+        conn.close()
+
+    def test_all_pragmas_applied_comprehensive(self, db_manager, auth_user):
+        """Comprehensive test verifying ALL SQLCipher pragmas are applied."""
+        from src.local_deep_research.database.sqlcipher_utils import (
+            get_sqlcipher_settings,
+        )
+
+        settings = get_sqlcipher_settings()
+        engine = db_manager.create_user_database("testuser", "testpassword123")
+
+        with engine.connect() as conn:
+            # Cipher settings (must be set before key)
+            page_size = conn.execute(text("PRAGMA cipher_page_size")).scalar()
+            assert str(page_size) == str(settings["page_size"]), (
+                f"cipher_page_size mismatch: expected {settings['page_size']}, got {page_size}"
+            )
+
+            hmac_algo = conn.execute(
+                text("PRAGMA cipher_hmac_algorithm")
+            ).scalar()
+            assert hmac_algo == settings["hmac_algorithm"], (
+                f"cipher_hmac_algorithm mismatch: expected {settings['hmac_algorithm']}, got {hmac_algo}"
+            )
+
+            kdf_algo = conn.execute(
+                text("PRAGMA cipher_kdf_algorithm")
+            ).scalar()
+            assert kdf_algo == settings["kdf_algorithm"], (
+                f"cipher_kdf_algorithm mismatch: expected {settings['kdf_algorithm']}, got {kdf_algo}"
+            )
+
+            # Settings that go after key
+            kdf_iter = conn.execute(text("PRAGMA kdf_iter")).scalar()
+            assert str(kdf_iter) == str(settings["kdf_iterations"]), (
+                f"kdf_iter mismatch: expected {settings['kdf_iterations']}, got {kdf_iter}"
+            )
+
+            # Performance settings
+            journal_mode = conn.execute(text("PRAGMA journal_mode")).scalar()
+            assert journal_mode.lower() == "wal", (
+                f"journal_mode should be WAL, got {journal_mode}"
+            )
+
+            temp_store = conn.execute(text("PRAGMA temp_store")).scalar()
+            assert temp_store == 2, (
+                f"temp_store should be 2 (MEMORY), got {temp_store}"
+            )
+
+            busy_timeout = conn.execute(text("PRAGMA busy_timeout")).scalar()
+            assert busy_timeout == 10000, (
+                f"busy_timeout should be 10000, got {busy_timeout}"
+            )
+
+            synchronous = conn.execute(text("PRAGMA synchronous")).scalar()
+            assert synchronous == 1, (
+                f"synchronous should be 1 (NORMAL), got {synchronous}"
+            )
+
+    def test_create_sqlcipher_connection_helper(self, db_manager, auth_user):
+        """Test the create_sqlcipher_connection helper function."""
+        from src.local_deep_research.database.sqlcipher_utils import (
+            create_sqlcipher_connection,
+        )
+
+        # Create database first
+        db_manager.create_user_database("testuser", "testpassword123")
+        db_path = db_manager._get_user_db_path("testuser")
+        db_manager.close_user_database("testuser")
+
+        # Use helper function to open
+        conn = create_sqlcipher_connection(
+            str(db_path), password="testpassword123"
+        )
+        assert conn is not None
+
+        # Verify connection works
+        result = conn.execute("SELECT 1").fetchone()
+        assert result == (1,)
+
+        conn.close()
+
+    def test_create_sqlcipher_connection_wrong_password(
+        self, db_manager, auth_user
+    ):
+        """Test create_sqlcipher_connection fails with wrong password."""
+        from src.local_deep_research.database.sqlcipher_utils import (
+            create_sqlcipher_connection,
+        )
+
+        # Create database first
+        db_manager.create_user_database("testuser", "correctpassword")
+        db_path = db_manager._get_user_db_path("testuser")
+        db_manager.close_user_database("testuser")
+
+        # Wrong password should raise an error
+        with pytest.raises(Exception):
+            create_sqlcipher_connection(str(db_path), password="wrongpassword")

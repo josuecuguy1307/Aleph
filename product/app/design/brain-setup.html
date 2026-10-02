@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Configurar el modelo · Aleph</title>
+<link rel="stylesheet" href="vendor/fonts.css">
+<script src="./aleph-config.js"></script>
+<script src="./vendor/supabase.min.js"></script>
+<script src="./supabase-auth.js"></script>
+<script src="./auth.js"></script>
+<script src="./theme.js"></script>
+<script src="./brain-status.js"></script>
+<link rel="stylesheet" href="aleph-tokens.css"><!-- [identidad visual] la piel: tokens, forma y tipografía en un solo lugar -->
+<style>
+  :root{--bg:#151625;--paper:#202138;--paper2:#191a2c;--ink:#edebfa;--muted:#a7a3c8;--faint:#74718f;--line:#343552;--line2:#484a70;--accent:#8e8bf5;--accent-ink:#151625;--green:#7be0a8;--amber:#e7c06a;--red:#f49a9a}
+  [data-theme="light"]{--bg:#f1eff8;--paper:#fff;--paper2:#f5f3fb;--ink:#25213e;--muted:#66627d;--faint:#85819a;--line:#e5e1f1;--line2:#d5d0e6;--accent:#6a57dc;--accent-ink:#fff;--green:#217a51;--amber:#9a680d;--red:#b83b3b}
+  *{box-sizing:border-box} body{margin:0;min-height:100vh;background:var(--bg);color:var(--ink);font-family:var(--font-ui);-webkit-font-smoothing:antialiased}
+  .wrap{width:min(720px,calc(100% - 32px));margin:0 auto;padding:42px 0 64px}.brand{font-family:var(--font-display);font-size:20px;font-weight:500;margin-bottom:34px}.brand span{color:var(--accent)}
+  h1{font:500 28px/1.15 var(--font-display);margin:0 0 8px;letter-spacing:0}.lead{margin:0 0 28px;color:var(--muted);font-size:14px;line-height:1.55}
+  .panel{background:var(--paper);border:1px solid var(--line);border-radius:var(--r-sm);padding:24px}.mode{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:24px}.mode button,.choice{appearance:none;width:100%;border:1px solid var(--line2);border-radius:var(--r-xs);background:var(--paper2);color:var(--ink);font:inherit;text-align:left;cursor:pointer}.mode button{padding:12px 14px;font-weight:500}.mode button span{display:block;margin-top:3px;color:var(--muted);font-size:12px;font-weight:400}.mode button.on,.choice.on{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+  .section[hidden]{display:none}.field{display:block;margin:16px 0 0;font-size:12px;font-weight:500;color:var(--muted)}select,input{width:100%;margin-top:6px;border:1px solid var(--line2);border-radius:var(--r-xs);background:var(--paper2);color:var(--ink);font:inherit;font-size:14px;padding:10px 11px;outline:0}select:focus,input:focus{border-color:var(--accent)}.choices{display:grid;gap:8px;margin-top:8px}.choice{padding:12px 13px}.choice b,.choice span{display:block}.choice span{margin-top:2px;color:var(--muted);font-size:12px}.meta{font-size:12px;color:var(--faint);line-height:1.5;margin:8px 0 0}.status{min-height:19px;margin-top:18px;font-size:13px;line-height:1.45}.status.ok{color:var(--green)}.status.bad{color:var(--red)}.status.warn{color:var(--amber)}.actions{display:flex;justify-content:flex-end;gap:10px;margin-top:24px}.button{border:1px solid var(--line2);border-radius:var(--r-xs);background:var(--paper2);color:var(--ink);font:inherit;font-size:13px;font-weight:500;padding:10px 14px;cursor:pointer}.button.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}.button:disabled{opacity:.55;cursor:wait}@media (max-width:520px){.wrap{width:min(100% - 24px,720px);padding-top:26px}.panel{padding:18px}.mode{grid-template-columns:1fr}.actions{justify-content:stretch}.button{flex:1}}
+  .cli-config{margin-top:18px;padding:15px;border:1px solid var(--line);border-radius:var(--r-xs)}.cli-config h2{font:500 16px var(--font-ui);margin:0 0 10px}.cli-config .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.cli-config .row label{font-size:13px}.cli-config .row input{width:auto;margin:0}.cli-config .path-row{display:flex;gap:8px;align-items:end}.cli-config .path-row input{min-width:0;flex:1}.cli-config .diagnostic{white-space:pre-line;overflow-wrap:anywhere}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <div class="brand">Aleph<span>.</span></div>
+  <h1>Configurar el modelo</h1>
+  <p class="lead">Elige cómo ejecuta Aleph. La configuración queda disponible al volver a la Sala o al Cuarto.<br><a href="Modelos.dc.html" style="color:var(--accent)">Ver todos los modelos →</a> <span style="color:var(--faint)">(los 3 modos, las categorías y los que corren en tu máquina)</span></p>
+  <section class="panel" aria-label="Configuración del modelo">
+    <div class="mode" role="tablist" aria-label="Tipo de modelo">
+      <button id="apiMode" type="button" role="tab">API propia<span>Proveedor, modelo y clave de tu cuenta.</span></button>
+      <button id="cliMode" type="button" role="tab">CLI local<span>Claude Code o Codex con tu sesión local.</span></button>
+    </div>
+    <div id="apiSection" class="section">
+      <label class="field">Proveedor<select id="apiProvider"></select></label>
+      <label class="field">Modelo<select id="apiModel"></select></label>
+      <label class="field">API key<input id="apiSecret" type="password" autocomplete="off" placeholder="Pega una key nueva si quieres actualizarla"></label>
+      <p id="apiKeyHint" class="meta"></p>
+    </div>
+    <div id="cliSection" class="section" hidden>
+      <div id="cliChoices" class="choices" role="radiogroup" aria-label="CLI"></div>
+      <div class="cli-config">
+        <h2>Ejecutable local</h2>
+        <div class="row" role="radiogroup" aria-label="Detección del ejecutable">
+          <label><input type="radio" name="cliDetection" id="cliAuto" value="auto" checked> Automático</label>
+          <label><input type="radio" name="cliDetection" id="cliManual" value="manual"> Manual</label>
+        </div>
+        <div class="path-row"><label class="field" style="flex:1">Ruta del ejecutable<input id="cliPath" type="text" autocomplete="off" spellcheck="false" placeholder="/opt/homebrew/bin/codex"></label><button id="cliBrowse" class="button" type="button">Elegir…</button></div>
+        <p id="cliDiagnostic" class="meta diagnostic" aria-live="polite"></p>
+        <div class="row"><button id="cliDetect" class="button" type="button">Detectar</button><button id="cliVerify" class="button" type="button">Verificar</button><button id="cliReset" class="button" type="button">Restablecer auto</button></div>
+      </div>
+      <label class="field">Modelo solicitado<select id="cliModel"></select></label>
+      <p id="cliHint" class="meta">El estado del CLI se confirma al ejecutar. La selección no simula una sesión local.</p>
+    </div>
+    <div id="status" class="status" role="status" aria-live="polite"></div>
+    <div class="actions"><button id="cancel" class="button" type="button">Cancelar</button><button id="save" class="button primary" type="button">Guardar y continuar</button></div>
+  </section>
+</main>
+<script type="module">
+  import { cliSubmodels } from "./cuarto/cuarto.models.js";
+
+  const PROVIDERS = {
+    groq: { label: "Groq", baseUrl: "https://api.groq.com/openai/v1", models: [["openai/gpt-oss-120b", "GPT-OSS 120B"], ["llama-3.3-70b-versatile", "Llama 3.3 70B"], ["qwen/qwen3-32b", "Qwen3 32B"]] },
+    openai: { label: "OpenAI", baseUrl: "https://api.openai.com/v1", models: [["gpt-4o", "GPT-4o"]] },
+    anthropic: { label: "Anthropic", baseUrl: "https://api.anthropic.com/v1", models: [["claude-opus-4-8", "Claude Opus 4.8"]] },
+    openrouter: { label: "OpenRouter", baseUrl: "https://openrouter.ai/api/v1", models: [["openai/gpt-4o", "GPT-4o"]] },
+    gemini: { label: "Gemini", baseUrl: "https://generativelanguage.googleapis.com/v1beta/openai", models: [["gemini-2.5-flash", "Gemini 2.5 Flash"]] },
+  };
+  let CLIS = { claude_cli: "Claude Code", codex_cli: "Codex" }; // E1-FALLBACK sidecar viejo
+  const $ = (id) => document.getElementById(id);
+  const query = new URLSearchParams(location.search);
+  let mode = query.get("mode") === "cli" ? "cli" : "api";
+  let cli = query.get("brain") || "claude_cli";
+  let keys = [];
+  let cliChoices = {}, cliStates = {}, cliService = {};
+
+  function session() { try { return window.AlephSession?.get?.() || JSON.parse(sessionStorage.getItem("puppet_user") || localStorage.getItem("puppet_user") || "null"); } catch { return null; } }
+  function safeReturn() {
+    const fallback = "/cuarto/cuarto.pixi.html";
+    try {
+      const target = new URL(query.get("return") || fallback, location.origin);
+      if (target.origin !== location.origin) return fallback;
+      // [Convergencia · superficie 7 · paso 3] LA MODERNA ENTRA A LA ALLOWLIST, y la vieja
+      // se queda: esto es un guard anti-open-redirect, no una preferencia de producto.
+      // Sacar la vieja acá mientras siga servida devolvería al `fallback` a cualquiera que
+      // esté configurando su cerebro desde ella — o sea, romper una pantalla viva para
+      // adelantar un borrado que todavía no pasó. Sale cuando salga la pantalla.
+      if (target.pathname === "/sala-v2/sala-v2.html"
+          || target.pathname === "/sala/sala.html"
+          || target.pathname === "/cuarto/cuarto.pixi.html") return target.pathname;
+    } catch {}
+    return fallback;
+  }
+  function status(text, kind = "") { const node = $("status"); node.textContent = text || ""; node.className = "status " + kind; }
+  function cliFetch(url, options = {}) {
+    const headers = new Headers(options.headers || {});
+    const cap = window.__ALEPH_LAUNCH_CAP__;
+    if (typeof cap === "string" && cap) headers.set("X-Aleph-Launch", cap);
+    return fetch(url, {...options, headers});
+  }
+  function renderModels() {
+    const selected = $("apiProvider").value;
+    const remembered = window.AlephBrain?.getConfiguration?.();
+    const wanted = remembered?.mode === "api" && remembered.provider === selected ? remembered.model : "";
+    $("apiModel").innerHTML = PROVIDERS[selected].models.map(([id, label]) => `<option value="${id}">${label}</option>`).join("");
+    if (wanted && PROVIDERS[selected].models.some(([id]) => id === wanted)) $("apiModel").value = wanted;
+    const has = keys.some((item) => String(item.provider || item).toLowerCase() === selected);
+    $("apiKeyHint").textContent = has ? "Ya hay una key guardada para este proveedor. Deja el campo vacío para conservarla." : "La key se guarda en tu cuenta; no se guarda en la configuración local.";
+  }
+  function renderCli() {
+    $("cliChoices").innerHTML = Object.entries(CLIS).map(([id, label]) => `<button class="choice ${id === cli ? "on" : ""}" type="button" data-cli="${id}" role="radio" aria-checked="${id === cli}"><b>${label}</b><span>Usar la sesión local existente.</span></button>`).join("");
+    document.querySelectorAll("[data-cli]").forEach((button) => button.onclick = () => { cli = button.dataset.cli; renderCli(); });
+    const saved = window.AlephBrain?.getConfiguration?.();
+    const wanted = saved?.mode === "cli" && saved.id === cli ? saved.cliModel : "";
+    $("cliModel").innerHTML = cliSubmodels(cli).map((item) => `<option value="${item.id}">${item.label}</option>`).join("");
+    $("cliModel").value = wanted || "";
+    const choice = cliChoices[cli] || {mode:"auto", path:""};
+    $("cliAuto").checked = choice.mode !== "manual";
+    $("cliManual").checked = choice.mode === "manual";
+    $("cliPath").value = choice.mode === "manual" ? choice.path || "" : choice.resolved_path || "";
+    $("cliPath").disabled = choice.mode !== "manual";
+    $("cliBrowse").disabled = choice.mode !== "manual";
+    const state = cliStates[cli] || {};
+    const auth = state.auth_state === "authenticated" ? "autenticado" : state.auth_state === "expired" ? "sesión vencida" : state.auth_state === "not_authenticated" ? "sin sesión" : "no verificado";
+    const access = state.access_state === "denied" ? "denegado por el proveedor" : state.access_state === "allowed" ? "verificado" : "sin probar";
+    $("cliDiagnostic").textContent = `Binario: ${state.installed ? "encontrado" : "no encontrado"} · Autenticación: ${auth}\nAcceso al proveedor: ${access} · Ejecución: ${state.last_test_state || "sin probar"}\nRuta: ${choice.resolved_path || "sin resolver"}\nServicio: ${cliService.state || "desconocido"}${choice.configuration_error ? "\nConfiguración: " + choice.configuration_error : ""}`;
+  }
+  async function refreshCli() {
+    try {
+      const [settings, state] = await Promise.all([cliFetch("/v1/brains/executables"), fetch("/v1/brains/status")]);
+      if (settings.ok) cliChoices = (await settings.json()).providers || {};
+      if (state.ok) { const data = await state.json(); cliStates = data.providers || {}; cliService = data.service || {}; }
+      renderCli();
+    } catch { status("No pude verificar los ejecutables locales.", "warn"); }
+  }
+  async function setCliExecutable(detectionMode, path = "") {
+    const r = await cliFetch("/v1/brains/executables", {method:"PUT", headers:{"Content-Type":"application/json"}, body:JSON.stringify({provider_id:cli, mode:detectionMode, path})});
+    if (!r.ok) {
+      const data = await r.json().catch(() => ({}));
+      status(data.detail?.detail || `No pude guardar la ruta (${r.status}).`, "bad");
+      return false;
+    }
+    status("Configuración del ejecutable guardada.", "ok");
+    await refreshCli();
+    return true;
+  }
+  function render() {
+    $("apiMode").classList.toggle("on", mode === "api"); $("apiMode").setAttribute("aria-selected", String(mode === "api"));
+    $("cliMode").classList.toggle("on", mode === "cli"); $("cliMode").setAttribute("aria-selected", String(mode === "cli"));
+    $("apiSection").hidden = mode !== "api"; $("cliSection").hidden = mode !== "cli";
+    renderModels(); renderCli();
+  }
+  async function loadKeys() {
+    const user = session();
+    if (!user?.id) { status("Inicia sesión para guardar una API key en tu cuenta.", "warn"); return; }
+    try {
+      const response = await fetch(`/v1/users/${encodeURIComponent(user.id)}/keys`);
+      const data = response.ok ? await response.json() : {};
+      keys = Array.isArray(data.keys) ? data.keys : (Array.isArray(data) ? data : []);
+    } catch { keys = []; }
+    renderModels();
+  }
+  async function saveApi() {
+    const provider = $("apiProvider").value, model = $("apiModel").value, secret = $("apiSecret").value.trim();
+    const user = session(), has = keys.some((item) => String(item.provider || item).toLowerCase() === provider);
+    if (!user?.id || !user?.session_token) { status("Inicia sesión antes de guardar una API propia.", "bad"); return false; }
+    if (!secret && !has) { status("Pega una API key para este proveedor.", "bad"); return false; }
+    if (secret) {
+      const response = await fetch("/v1/keys", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ user_id: user.id, provider, secret }) });
+      if (!response.ok) { status(`No se pudo guardar la API key (${response.status}).`, "bad"); return false; }
+    }
+    const info = PROVIDERS[provider];
+    return window.AlephBrain?.setConfiguration?.({ mode: "api", id: "tuapi", provider, model, modelId: "byok", baseUrl: info.baseUrl });
+  }
+  function saveCli() { return window.AlephBrain?.setConfiguration?.({ mode: "cli", id: cli, cliModel: $("cliModel").value || "" }); }
+  async function save() {
+    $("save").disabled = true; status("Guardando…");
+    const config = mode === "api" ? await saveApi() : saveCli();
+    if (config) location.assign(safeReturn());
+    else if (!$("status").textContent || $("status").textContent === "Guardando…") status("No se pudo guardar la configuración.", "bad");
+    $("save").disabled = false;
+  }
+
+  $("apiProvider").innerHTML = Object.entries(PROVIDERS).map(([id, item]) => `<option value="${id}">${item.label}</option>`).join("");
+  const saved = window.AlephBrain?.getConfiguration?.();
+  if (saved?.mode === "api" && PROVIDERS[saved.provider]) $("apiProvider").value = saved.provider;
+  if (saved?.mode === "cli") cli = saved.id;
+  $("apiMode").onclick = () => { mode = "api"; render(); };
+  $("cliMode").onclick = () => { mode = "cli"; render(); };
+  $("apiProvider").onchange = renderModels;
+  $("cliAuto").onchange = () => setCliExecutable("auto");
+  $("cliManual").onchange = () => { cliChoices[cli] = {mode:"manual", path:$("cliPath").value}; renderCli(); status("Elige o escribe una ruta y pulsa Verificar.", "warn"); };
+  $("cliPath").oninput = () => { cliChoices[cli] = {mode:"manual", path:$("cliPath").value}; };
+  $("cliBrowse").onclick = async () => {
+    try {
+      const path = await window.__TAURI__?.core?.invoke?.("choose_cli_executable");
+      if (path) { $("cliPath").value = path; cliChoices[cli] = {mode:"manual", path}; }
+      else if (!window.__TAURI__?.core?.invoke) status("Escribe la ruta completa del ejecutable.", "warn");
+    } catch { status("No pude abrir el selector; escribe la ruta completa.", "warn"); }
+  };
+  $("cliDetect").onclick = refreshCli;
+  $("cliReset").onclick = () => setCliExecutable("auto");
+  $("cliVerify").onclick = async () => {
+    if (!$("cliManual").checked) { await refreshCli(); status("Detección automática actualizada.", "ok"); return; }
+    const path = $("cliPath").value.trim();
+    const r = await cliFetch("/v1/brains/executables/verify", {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({provider_id:cli,mode:"manual",path})}).catch(() => null);
+    if (!r?.ok) { const data = await r?.json().catch(() => ({})); status(data?.detail?.detail || "El ejecutable no pasó la verificación.", "bad"); return; }
+    await setCliExecutable("manual", path);
+  };
+  $("save").onclick = save;
+  $("cancel").onclick = () => location.assign(safeReturn());
+  (async () => {
+    try {
+      const r = await fetch("/v1/brains/status");
+      const d = r.ok ? await r.json() : {};
+      if (d.catalog && d.catalog.length) {
+        const next = {};
+        d.catalog.forEach((c) => { next[c.provider_id] = c.display_name || c.picker_label; });
+        CLIS = next;
+        if (window.AlephBrain?.applyCliCatalog) window.AlephBrain.applyCliCatalog(d.catalog);
+        if (!CLIS[cli]) cli = Object.keys(CLIS)[0];
+      }
+    } catch {}
+    if (saved?.mode === "cli" && CLIS[saved.id]) cli = saved.id;
+    render();
+    refreshCli();
+    loadKeys();
+  })();
+</script>
+</body>
+</html>

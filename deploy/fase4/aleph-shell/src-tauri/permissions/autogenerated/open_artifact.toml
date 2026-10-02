@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-open-artifact"
+description = "Enables the open_artifact command without any pre-configured scope."
+commands.allow = ["open_artifact"]
+
+[[permission]]
+identifier = "deny-open-artifact"
+description = "Denies the open_artifact command without any pre-configured scope."
+commands.deny = ["open_artifact"]

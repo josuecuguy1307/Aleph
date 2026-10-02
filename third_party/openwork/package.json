@@ -1,0 +1,13 @@
+{
+  "name": "@aleph/openwork-mit-workspace",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Aleph-owned pnpm workspace wrapper for the MIT OpenWork import.",
+  "scripts": {
+    "build": "pnpm --filter @openwork/app build",
+    "build:app": "pnpm --filter @openwork/app build",
+    "build:server": "pnpm --filter openwork-server build",
+    "typecheck": "pnpm --filter @openwork/app typecheck"
+  },
+  "packageManager": "pnpm@11.4.0"
+}

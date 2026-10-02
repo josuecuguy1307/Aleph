@@ -1,0 +1,47 @@
+{
+  "connector": "gmail",
+  "auth_method": "oauth",
+  "tier": "good",
+  "provider": "google",
+  "scopes": [
+    "gmail.compose",
+    "gmail.readonly"
+  ],
+  "validate": {
+    "method": "GET",
+    "path": "/gmail/v1/users/me/profile",
+    "identity_field": "emailAddress"
+  },
+  "permissions": [
+    "leer correo",
+    "crear borradores"
+  ],
+  "capability_line": "Listo — ya puedo preparar borradores de correo y leer tu bandeja. Enviar siempre te pide el OK.",
+  "trust_line": "Conectas con tu cuenta de Google · enviar pasa por tu aprobación · lo desconectas cuando quieras.",
+  "escape_hatch": true,
+  "restricted_fallback": "Tu Gmail es de una cuenta institucional y tu organización controla qué apps se conectan. Si no te deja, lo habilita el admin de Google Workspace.",
+  "verification": {
+    "deep_link_ok": true,
+    "anchor_ok": false,
+    "validated_with_test_key": false,
+    "notes": "Gmail draft + send-gate = OAuth Google (Familia 3). REQUIERE app OAuth de Google registrada + verificación de Google para estos scopes. ENVIAR siempre pasa por el send-gate (HELD sin el OK del usuario por approve-by-HTTP). App OAuth de Google cableada (client_id+secret en infra/.env; redirect :8130/callback)."
+  },
+  "api_base": "https://gmail.googleapis.com",
+  "en": {
+    "capability_line": "Ready — I can now prepare email drafts and read your inbox. Sending always asks for your OK.",
+    "trust_line": "You connect with your Google account · sending goes through your approval · you disconnect it anytime."
+  },
+  "oauth": {
+    "revoke_url": "https://oauth2.googleapis.com/revoke",
+    "authorize_url": "https://accounts.google.com/o/oauth2/v2/auth",
+    "token_url": "https://oauth2.googleapis.com/token",
+    "scope": "https://www.googleapis.com/auth/gmail.compose https://www.googleapis.com/auth/gmail.readonly",
+    "client_id_env": "GOOGLE_CLIENT_ID",
+    "client_secret_env": "GOOGLE_CLIENT_SECRET",
+    "authorize_params": {
+      "access_type": "offline",
+      "prompt": "consent"
+    },
+    "unconfigured_message": "Conectar Gmail necesita la app OAuth de Google de Aleph (con aprobación)."
+  }
+}

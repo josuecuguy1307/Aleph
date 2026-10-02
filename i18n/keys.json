@@ -1,0 +1,943 @@
+{
+  "render.informe.empty": {
+    "es": "Informe vacío.",
+    "en": "Empty report."
+  },
+  "render.planilla.empty": {
+    "es": "Planilla vacía.",
+    "en": "Empty spreadsheet."
+  },
+  "render.planilla.sort": {
+    "es": "ordenar por esta columna",
+    "en": "sort by this column"
+  },
+  "render.web.empty": {
+    "es": "Sin contenido web.",
+    "en": "No web content."
+  },
+  "render.doc.empty": {
+    "es": "Documento vacío.",
+    "en": "Empty document."
+  },
+  "render.cad.empty": {
+    "es": "Sin geometría 3D.",
+    "en": "No 3D geometry."
+  },
+  "render.schematic.empty": {
+    "es": "Sin esquemático.",
+    "en": "No schematic."
+  },
+  "render.schematic.unreadable": {
+    "es": "Esquemático SVG ilegible.",
+    "en": "Unreadable SVG schematic."
+  },
+  "render.fieldplot.empty": {
+    "es": "Sin datos de campo.",
+    "en": "No field data."
+  },
+  "render.dicom.empty": {
+    "es": "Sin imagen DICOM.",
+    "en": "No DICOM image."
+  },
+  "render.volume3d.empty": {
+    "es": "Sin malla de volumen 3D.",
+    "en": "No 3D volume mesh."
+  },
+  "render.renderizando": {
+    "es": "Renderizando…",
+    "en": "Rendering…"
+  },
+  "render.modelo_3d": {
+    "es": "modelo 3D",
+    "en": "3D model"
+  },
+  "render.volumen_3d": {
+    "es": "volumen 3D",
+    "en": "3D volume"
+  },
+  "render.preview_web": {
+    "es": "vista previa web",
+    "en": "web preview"
+  },
+  "render.convergence.sin_iteraciones": {
+    "es": "Sin iteraciones de convergencia.",
+    "en": "No convergence iterations."
+  },
+  "render.sin_curva": {
+    "es": "Sin curva.",
+    "en": "No curve."
+  },
+  "render.equity": {
+    "es": "curva de equity (capital ×{x} en el período)",
+    "en": "equity curve (capital ×{x} over the period)"
+  },
+  "render.orbit_hint": {
+    "es": "arrastra: rotar · rueda: zoom",
+    "en": "drag: rotate · wheel: zoom"
+  },
+  "render.no_render": {
+    "es": "No se pudo renderizar.",
+    "en": "Couldn't render."
+  },
+  "render.contenido_crudo": {
+    "es": "contenido crudo",
+    "en": "raw content"
+  },
+  "render.convergence.limit": {
+    "es": "límite: ",
+    "en": "limit: "
+  },
+  "render.convergence.verdict_pass": {
+    "es": "PASA",
+    "en": "PASS",
+    "review": true
+  },
+  "render.convergence.verdict_fail": {
+    "es": "FALLA",
+    "en": "FAIL",
+    "review": true
+  },
+  "render.imagen.empty": {
+    "es": "Sin imagen.",
+    "en": "No image."
+  },
+  "render.imagen.alt": {
+    "es": "imagen generada",
+    "en": "generated image"
+  },
+  "render.dashboard.empty": {
+    "es": "Este dashboard todavía no tiene gráficos con datos.",
+    "en": "This dashboard has no charts with data yet."
+  },
+  "render.escena_3d": {
+    "es": "escena 3D",
+    "en": "3D scene"
+  },
+  "render.fuentes": {
+    "es": "Fuentes",
+    "en": "Sources",
+    "review": true
+  },
+  "cuarto.zone.lee.label": {
+    "es": "Lee",
+    "en": "Reads"
+  },
+  "cuarto.zone.lee.sub": {
+    "es": "trae dato",
+    "en": "brings data"
+  },
+  "cuarto.zone.procesa.label": {
+    "es": "Procesa",
+    "en": "Processes"
+  },
+  "cuarto.zone.procesa.sub": {
+    "es": "transforma",
+    "en": "transforms"
+  },
+  "cuarto.zone.actua.label": {
+    "es": "Actúa",
+    "en": "Acts"
+  },
+  "cuarto.zone.actua.sub": {
+    "es": "saca",
+    "en": "sends out"
+  },
+  "cuarto.zone.nucleo.label": {
+    "es": "Núcleo",
+    "en": "Core"
+  },
+  "cuarto.zone.nucleo.sub": {
+    "es": "el agente",
+    "en": "the agent"
+  },
+  "cuarto.lens.lee.verb": {
+    "es": "lee",
+    "en": "reads"
+  },
+  "cuarto.lens.procesa.verb": {
+    "es": "procesa",
+    "en": "processes"
+  },
+  "cuarto.lens.actua.verb": {
+    "es": "actúa",
+    "en": "acts"
+  },
+  "cuarto.door.label": {
+    "es": "Conexión (MCP)",
+    "en": "Connection (MCP)"
+  },
+  "cuarto.door.hint": {
+    "es": "Puerta + llave: conecta una app y caen sus tools.",
+    "en": "Door + key: connect an app and its tools drop in."
+  },
+  "cuarto.nucleo.identity": {
+    "es": "Asistente",
+    "en": "Assistant"
+  },
+  "obra.fem.tool_description": {
+    "es": "Corre un análisis FEM (elementos finitos) REAL con CalculiX sobre una viga en voladizo paramétrica de acero (empotrada en un extremo, carga transversal en el otro). Devuelve la tensión de von Mises máxima y mínima (MPa), el desplazamiento máximo (mm) y un mapa de campo renderizable. Úsalo cuando el usuario pida análisis estructural, de esfuerzos/tensiones, deflexión o FEM. Todo número sale del solver, nunca de memoria. Para DIMENSIONAR de forma iterativa: llámala con la geometría actual, lee max_von_mises_MPa, compara contra yield_strength_MPa, y si excede, llámala DE NUEVO con una sección mayor. Cada llamada en el mismo run se acumula como una iteración de convergencia.",
+    "en": "Runs a REAL FEM (finite-element) analysis with CalculiX on a parametric steel cantilever beam (fixed at one end, transverse load at the other). Returns the maximum and minimum von Mises stress (MPa), the maximum displacement (mm), and a renderable field map. Use it when the user asks for structural, stress/strain, deflection, or FEM analysis. Every number comes from the solver, never from memory. To size iteratively: call it with the current geometry, read max_von_mises_MPa, compare against yield_strength_MPa, and if it exceeds, call it AGAIN with a larger section. Each call within the same run accumulates as a convergence iteration."
+  },
+  "obra.fem.param_length": {
+    "es": "Largo de la viga en mm (default 1000).",
+    "en": "Beam length in mm (default 1000)."
+  },
+  "obra.fem.param_width": {
+    "es": "Ancho de sección en mm (default 100).",
+    "en": "Section width in mm (default 100)."
+  },
+  "obra.fem.param_height": {
+    "es": "Alto de sección en mm (default 100).",
+    "en": "Section height in mm (default 100)."
+  },
+  "obra.fem.param_force": {
+    "es": "Carga transversal en N (default 10000).",
+    "en": "Transverse load in N (default 10000)."
+  },
+  "obra.fem.param_material_name": {
+    "es": "Nombre del material (default Steel).",
+    "en": "Material name (default Steel)."
+  },
+  "obra.fem.param_youngs_modulus": {
+    "es": "Módulo de Young en MPa (default 210000).",
+    "en": "Young's modulus in MPa (default 210000)."
+  },
+  "obra.fem.param_poisson": {
+    "es": "Coef. de Poisson (default 0.30).",
+    "en": "Poisson's ratio (default 0.30)."
+  },
+  "obra.fem.param_density": {
+    "es": "Densidad kg/m^3 (default 7900).",
+    "en": "Density in kg/m^3 (default 7900)."
+  },
+  "obra.fem.param_mesh_size": {
+    "es": "Tamaño de elemento de malla en mm (opcional).",
+    "en": "Mesh element size in mm (optional)."
+  },
+  "obra.fem.param_yield_strength": {
+    "es": "Límite admisible de von Mises del material (yield) en MPa para el chequeo de falla y el gráfico de convergencia (default 250, acero).",
+    "en": "Allowable von Mises stress (yield) in MPa, for the failure check and the convergence chart (default 250, steel)."
+  },
+  "obra.fem.err_freecadcmd_missing": {
+    "es": "freecadcmd no encontrado en %s (FreeCAD no instalado)",
+    "en": "freecadcmd not found at %s (FreeCAD not installed)"
+  },
+  "obra.fem.err_timeout": {
+    "es": "tiempo de FEM agotado (>%ss)",
+    "en": "FEM timeout (>%ss)"
+  },
+  "obra.fem.err_no_result": {
+    "es": "el motor FEM no produjo resultado (ver freecadcmd)",
+    "en": "the FEM solver produced no result (see freecadcmd)"
+  },
+  "obra.fem.title": {
+    "es": "Convergencia FEM — dimensionado de viga",
+    "en": "Beam sizing via FEM convergence",
+    "review": true
+  },
+  "obra.fem.metric_von_mises": {
+    "es": "von Mises máx",
+    "en": "max von Mises",
+    "review": true
+  },
+  "obra.fem.note": {
+    "es": "Análisis FEM real con CalculiX. La decisión de qué geometría probar es tuya.",
+    "en": "Real FEM analysis with CalculiX. Which geometry to test is your call."
+  },
+  "obra.fem.err_unknown_tool": {
+    "es": "herramienta desconocida %s",
+    "en": "unknown tool %s"
+  },
+  "obra.fem.err_internal": {
+    "es": "error: %s",
+    "en": "error: %s"
+  },
+  "obra.fem.err_method_not_found": {
+    "es": "método no encontrado: %s",
+    "en": "Method not found: %s"
+  },
+  "chart.title": {
+    "es": "{} — velas diarias (6m) · Yahoo Finance",
+    "en": "{} — daily candles (6m) · Yahoo Finance",
+    "review": true
+  },
+  "chart.price_axis": {
+    "es": "Precio (USD)",
+    "en": "Price (USD)",
+    "review": true
+  },
+  "chart.subtitle": {
+    "es": "QUANT · {} | retorno 6m: {}% · vol. anualizada: {}%",
+    "en": "QUANT · {} | 6m return: {}% · annualized vol: {}%",
+    "review": true
+  },
+  "chart.equity_axis": {
+    "es": "Capital (comprar y mantener, base 100)",
+    "en": "Equity (buy & hold, base 100)",
+    "review": true
+  },
+  "sala.title": {
+    "es": "Sala de uso · Aleph",
+    "en": "Workroom · Aleph"
+  },
+  "sala.spine.sala": {
+    "es": "Sala",
+    "en": "Workroom"
+  },
+  "sala.spine.biblioteca": {
+    "es": "Biblioteca",
+    "en": "Library"
+  },
+  "sala.spine.taller": {
+    "es": "Taller",
+    "en": "Workshop"
+  },
+  "sala.lib.h": {
+    "es": "Biblioteca",
+    "en": "Library"
+  },
+  "sala.lib.sub": {
+    "es": "la obra de esta sesión",
+    "en": "this session's work"
+  },
+  "sala.lib.empty": {
+    "es": "Aún no hay nada. Asígnale una tarea a tu agente para empezar.",
+    "en": "Nothing here yet. Give your agent a task to begin."
+  },
+  "sala.lib.gutter": {
+    "es": "Arrastra para ensanchar la Biblioteca",
+    "en": "Drag to widen the Library"
+  },
+  "sala.lib.kind_obra": {
+    "es": "obra",
+    "en": "work"
+  },
+  "sala.lib.obra_title": {
+    "es": "Obra",
+    "en": "Work"
+  },
+  "sala.agent.name": {
+    "es": "Tu agente",
+    "en": "Your agent"
+  },
+  "sala.agent.ready": {
+    "es": "listo para una tarea",
+    "en": "ready for a task"
+  },
+  "sala.agent.ready_more": {
+    "es": "listo para seguir",
+    "en": "ready to continue"
+  },
+  "sala.agent.working": {
+    "es": "trabajando…",
+    "en": "working…"
+  },
+  "sala.composer.at_title": {
+    "es": "Conecta tus archivos y conectores (@)",
+    "en": "Attach your files and connectors (@)"
+  },
+  "sala.composer.clip_title": {
+    "es": "Adjuntar un archivo a la memoria del agente",
+    "en": "Attach a file to your agent's memory"
+  },
+  "sala.composer.mic_title": {
+    "es": "Dictar (voz → texto)",
+    "en": "Dictate (voice → text)"
+  },
+  "sala.composer.ph": {
+    "es": "Asígnale una tarea — ej: «arma un informe del cierre de mayo» · @ para conectar tus archivos",
+    "en": "Give it a task — e.g. “build a report on the May close” · @ to attach your files"
+  },
+  "sala.composer.send": {
+    "es": "Enviar",
+    "en": "Send"
+  },
+  "sala.chat.gutter": {
+    "es": "Arrastra para ensanchar el chat / la obra",
+    "en": "Drag to resize the chat / the work"
+  },
+  "sala.canvas.sub": {
+    "es": "lo que tu agente produce, aquí",
+    "en": "what your agent produces, here"
+  },
+  "sala.canvas.building": {
+    "es": "armando…",
+    "en": "building…"
+  },
+  "sala.canvas.constructing": {
+    "es": "Construyendo tu obra…",
+    "en": "Building your work…"
+  },
+  "sala.dl.btn": {
+    "es": "↓ Descargar",
+    "en": "↓ Download"
+  },
+  "sala.dl.btn_file": {
+    "es": "↓ descargar",
+    "en": "↓ download"
+  },
+  "sala.src.btn": {
+    "es": "⟨⟩ Código",
+    "en": "⟨⟩ Source"
+  },
+  "sala.src.btn_title": {
+    "es": "Ver la fuente / el cambio real (read-only, con diff vs la versión previa)",
+    "en": "View the source / the actual change (read-only, with a diff vs the previous version)"
+  },
+  "sala.revert.btn": {
+    "es": "↺ Revertir",
+    "en": "↺ Revert"
+  },
+  "sala.revert.btn_title": {
+    "es": "Volver el artefacto a su versión anterior",
+    "en": "Return the artifact to its previous version"
+  },
+  "sala.info.btn_title": {
+    "es": "Detalles: metadatos · versiones · bitácora",
+    "en": "Details: metadata · versions · log"
+  },
+  "sala.fs.btn_title": {
+    "es": "Pantalla completa",
+    "en": "Full screen"
+  },
+  "sala.fs.exit_title": {
+    "es": "Salir de pantalla completa",
+    "en": "Exit full screen"
+  },
+  "sala.share.btn": {
+    "es": "🖥 Mi pantalla",
+    "en": "🖥 My screen"
+  },
+  "sala.share.btn_title": {
+    "es": "Comparte TU pantalla (ej. tu CAD) al lado de la obra — 100% en tu navegador, no sale a la red, el agente no la ve",
+    "en": "Share YOUR screen (e.g. your CAD) next to the work — 100% in your browser, it never leaves your network, the agent can't see it"
+  },
+  "sala.share.live": {
+    "es": "Mi pantalla · en vivo — solo en tu browser, no sale a la red",
+    "en": "My screen · live — stays in your browser, never leaves your network"
+  },
+  "sala.share.stop": {
+    "es": "Dejar de compartir",
+    "en": "Stop sharing"
+  },
+  "sala.share.on": {
+    "es": "● Compartiendo",
+    "en": "● Sharing"
+  },
+  "sala.share.unsupported": {
+    "es": "Tu navegador no permite compartir pantalla aquí — prueba en Chrome/Edge de escritorio.",
+    "en": "Your browser can't share the screen here — try desktop Chrome/Edge."
+  },
+  "sala.share.fail": {
+    "es": "No pude iniciar la captura de pantalla.",
+    "en": "I couldn't start the screen capture."
+  },
+  "sala.footer.edit_hint": {
+    "es": "Pídele cambios por chat",
+    "en": "Ask it for changes in chat"
+  },
+  "sala.gesture.schematic": {
+    "es": "arrastra: pan · rueda: zoom",
+    "en": "drag: pan · wheel: zoom"
+  },
+  "sala.gesture.dicom": {
+    "es": "arrastra: window/level",
+    "en": "drag: window/level"
+  },
+  "sala.src.diff_h": {
+    "es": "Cambio vs versión anterior",
+    "en": "Change vs previous version"
+  },
+  "sala.src.src_h": {
+    "es": "Fuente (lo que el agente edita under-the-hood)",
+    "en": "Source (what the agent edits under the hood)"
+  },
+  "sala.src.version_ro": {
+    "es": "Versión guardada · solo lectura",
+    "en": "Saved version · read-only"
+  },
+  "sala.dl.fmt_pagina": {
+    "es": "Página (.html)",
+    "en": "Page (.html)"
+  },
+  "sala.dl.fmt_datos": {
+    "es": "Datos (.csv)",
+    "en": "Data (.csv)"
+  },
+  "sala.dl.fmt_imagen": {
+    "es": "Imagen (.png)",
+    "en": "Image (.png)"
+  },
+  "sala.dl.fmt_escena": {
+    "es": "Escena (.html)",
+    "en": "Scene (.html)"
+  },
+  "sala.dl.fmt_texto": {
+    "es": "Texto (.md)",
+    "en": "Text (.md)"
+  },
+  "sala.err.dl_obra": {
+    "es": "No pude generar la descarga de esa obra.",
+    "en": "I couldn't generate that work's download."
+  },
+  "sala.err.dl_dicom": {
+    "es": "No pude exportar la imagen del corte.",
+    "en": "I couldn't export the slice image."
+  },
+  "sala.err.dl": {
+    "es": "No pude generar la descarga.",
+    "en": "I couldn't generate the download."
+  },
+  "sala.info.metadatos": {
+    "es": "Metadatos",
+    "en": "Metadata"
+  },
+  "sala.info.tipo": {
+    "es": "Tipo",
+    "en": "Type"
+  },
+  "sala.info.formato": {
+    "es": "Formato",
+    "en": "Format"
+  },
+  "sala.info.tamano": {
+    "es": "Tamaño",
+    "en": "Size"
+  },
+  "sala.info.versiones": {
+    "es": "Versiones",
+    "en": "Versions"
+  },
+  "sala.info.sin_guardar": {
+    "es": "sin guardar",
+    "en": "not saved"
+  },
+  "sala.info.guardada": {
+    "es": "Guardada",
+    "en": "Saved"
+  },
+  "sala.info.si": {
+    "es": "sí",
+    "en": "yes"
+  },
+  "sala.info.actual": {
+    "es": "actual",
+    "en": "current"
+  },
+  "sala.info.ver": {
+    "es": "ver",
+    "en": "view"
+  },
+  "sala.info.sin_guardar_todavia": {
+    "es": "Sin guardar todavía.",
+    "en": "Not saved yet."
+  },
+  "sala.info.bitacora": {
+    "es": "Bitácora",
+    "en": "Log"
+  },
+  "sala.info.sin_acciones": {
+    "es": "Sin acciones registradas todavía.",
+    "en": "No actions recorded yet."
+  },
+  "sala.fmt.tabla": {
+    "es": "Tabla",
+    "en": "Table"
+  },
+  "sala.fmt.imagen": {
+    "es": "Imagen",
+    "en": "Image"
+  },
+  "sala.deleg.asked": {
+    "es": "Le pedí a",
+    "en": "I asked"
+  },
+  "sala.deleg.that": {
+    "es": " que: ",
+    "en": " to: "
+  },
+  "sala.deleg.that_plain": {
+    "es": " que ",
+    "en": " to "
+  },
+  "sala.deleg.ver": {
+    "es": "ver ▸",
+    "en": "view ▸"
+  },
+  "sala.deleg.ocultar": {
+    "es": "ocultar ▾",
+    "en": "hide ▾"
+  },
+  "sala.deleg.devolvio": {
+    "es": "devolvió: ",
+    "en": "returned: "
+  },
+  "sala.ledger.continue": {
+    "es": "↳ Sigo con: «",
+    "en": "↳ Continuing with: «"
+  },
+  "sala.ledger.new": {
+    "es": "✦ Tarea nueva: «",
+    "en": "✦ New task: «"
+  },
+  "sala.obra.fallback": {
+    "es": "la obra",
+    "en": "the work"
+  },
+  "sala.revert.none": {
+    "es": "No hay un cambio para revertir todavía.",
+    "en": "There's no change to revert yet."
+  },
+  "sala.revert.no_prev": {
+    "es": "No hay una versión previa para revertir.",
+    "en": "There's no previous version to revert to."
+  },
+  "sala.revert.done": {
+    "es": "Listo — revertí la obra al estado anterior.",
+    "en": "Done — I reverted the work to its previous state."
+  },
+  "sala.chip.chart": {
+    "es": "Agrega un gráfico con esos números",
+    "en": "Add a chart with those numbers"
+  },
+  "sala.chip.totals": {
+    "es": "Agrega una fila de totales",
+    "en": "Add a totals row"
+  },
+  "sala.chip.inflation": {
+    "es": "Ajusta los valores por inflación",
+    "en": "Adjust the values for inflation"
+  },
+  "sala.chip.summary": {
+    "es": "Agrega un resumen ejecutivo al inicio",
+    "en": "Add an executive summary at the top"
+  },
+  "sala.chip.conclusion": {
+    "es": "Agrega una conclusión",
+    "en": "Add a conclusion"
+  },
+  "sala.chip.table": {
+    "es": "Agrega una tabla con los números",
+    "en": "Add a table with the numbers"
+  },
+  "sala.chip.revert": {
+    "es": "Revierte ese último cambio",
+    "en": "Revert that last change"
+  },
+  "sala.at.loading": {
+    "es": "Cargando tus archivos…",
+    "en": "Loading your files…"
+  },
+  "sala.at.obra_sub": {
+    "es": "obra de esta sesión",
+    "en": "work from this session"
+  },
+  "sala.at.doc_sub": {
+    "es": "doc de memoria",
+    "en": "memory doc"
+  },
+  "sala.at.grp_cosas": {
+    "es": "Tus archivos",
+    "en": "Your files"
+  },
+  "sala.at.grp_conectores": {
+    "es": "Conectores",
+    "en": "Connectors"
+  },
+  "sala.at.empty": {
+    "es": "Nada para conectar todavía — al producir obras o conectar tu belt aparecen aquí.",
+    "en": "Nothing to attach yet — produce works or connect your belt and they show up here."
+  },
+  "sala.pill.remove": {
+    "es": "quitar",
+    "en": "remove"
+  },
+  "sala.at.connected_1": {
+    "es": "Listo — conecté ",
+    "en": "Done — I connected "
+  },
+  "sala.at.connected_2": {
+    "es": " y lo dejé conectado. Pídeme que lo use.",
+    "en": " and left it attached. Ask me to use it."
+  },
+  "sala.attach.img_heavy": {
+    "es": "Esa imagen es muy pesada (máx 4 MB).",
+    "en": "That image is too heavy (max 4 MB)."
+  },
+  "sala.attach.img_ok": {
+    "es": "Conecté tu imagen — queda adjunta aquí. Escribe qué quieres que haga con ella y envía: la va a leer de verdad.",
+    "en": "I attached your image — it stays right here. Type what you want done with it and send: it will actually read it."
+  },
+  "sala.attach.file_big": {
+    "es": "Ese archivo es muy grande para la memoria (máx 400 KB de texto).",
+    "en": "That file is too big for memory (max 400 KB of text)."
+  },
+  "sala.attach.file_ok_1": {
+    "es": "Guardé «",
+    "en": "I saved «"
+  },
+  "sala.attach.file_ok_2": {
+    "es": "» en la memoria de tu agente y lo conecté. Ya lo mira en este run.",
+    "en": "» to your agent's memory and attached it. It's already reading it in this run."
+  },
+  "sala.attach.file_fail": {
+    "es": "No pude guardar ese archivo.",
+    "en": "I couldn't save that file."
+  },
+  "sala.mic.unsupported": {
+    "es": "Tu navegador no permite grabar audio.",
+    "en": "Your browser can't record audio."
+  },
+  "sala.mic.denied": {
+    "es": "No se concedió permiso al micrófono (o no hay uno disponible).",
+    "en": "Microphone permission wasn't granted (or none is available)."
+  },
+  "sala.mic.retry": {
+    "es": "No te entendí bien — prueba de nuevo.",
+    "en": "I didn't quite catch that — try again."
+  },
+  "sala.mic.fail": {
+    "es": "No pude transcribir ahora.",
+    "en": "I couldn't transcribe right now."
+  },
+  "sala.power.veloz": {
+    "es": "Veloz",
+    "en": "Fast"
+  },
+  "sala.power.estandar": {
+    "es": "Estándar",
+    "en": "Standard"
+  },
+  "sala.power.tuapi": {
+    "es": "Tu API",
+    "en": "Your API"
+  },
+  "sala.power.veloz_sub": {
+    "es": "gpt-oss 20B · rápido y liviano",
+    "en": "gpt-oss 20B · fast and light"
+  },
+  "sala.power.estandar_sub": {
+    "es": "gpt-oss 120B · el más capaz incluido",
+    "en": "gpt-oss 120B · the most capable included"
+  },
+  "sala.power.gemini_sub": {
+    "es": "Google · multimodal (ve imágenes)",
+    "en": "Google · multimodal (sees images)"
+  },
+  "sala.power.deepseek_sub": {
+    "es": "OpenRouter · fuerte en código/CAD · sin rate-limit",
+    "en": "OpenRouter · strong at code/CAD · no rate limit"
+  },
+  "sala.power.tuapi_sub": {
+    "es": "conecta tu propia llave (Claude / GPT)",
+    "en": "connect your own key (Claude / GPT)"
+  },
+  "sala.power.grp": {
+    "es": "Potencia del modelo",
+    "en": "Model power"
+  },
+  "sala.power.activo": {
+    "es": "activo",
+    "en": "active"
+  },
+  "sala.power.prefix": {
+    "es": "Potencia: ",
+    "en": "Power: "
+  },
+  "sala.power.your_api": {
+    "es": " (tu API)",
+    "en": " (your API)"
+  },
+  "sala.power.byok_1": {
+    "es": "Listo — este run corre con TU API (",
+    "en": "Done — this run uses YOUR API ("
+  },
+  "sala.err.title": {
+    "es": "⚠ No salió",
+    "en": "⚠ Didn't work"
+  },
+  "sala.err.retry": {
+    "es": "↻ Reintentar",
+    "en": "↻ Retry"
+  },
+  "sala.err.edit": {
+    "es": "Editar el pedido",
+    "en": "Edit the request"
+  },
+  "sala.err.default": {
+    "es": "Algo se cortó antes de terminar.",
+    "en": "Something got cut off before finishing."
+  },
+  "sala.err.conn_chat": {
+    "es": "Se cortó la conexión. No llegué a responder.",
+    "en": "The connection dropped. I didn't get to answer."
+  },
+  "sala.err.conn_start": {
+    "es": "Se cortó la conexión antes de comenzar. Prueba de nuevo.",
+    "en": "The connection dropped before starting. Try again."
+  },
+  "sala.err.empty_model": {
+    "es": "No pude completar eso — el modelo no devolvió nada. Prueba de nuevo o reformula el pedido.",
+    "en": "I couldn't complete that — the model returned nothing. Try again or rephrase the request."
+  },
+  "sala.err.conn_build": {
+    "es": "Se cortó la conexión mientras construía la obra.",
+    "en": "The connection dropped while building the work."
+  },
+  "sala.chat.go_ahead": {
+    "es": "Adelante — cuéntame qué necesitas.",
+    "en": "Go ahead — tell me what you need."
+  },
+  "sala.honesty.send": {
+    "es": "enviar un mensaje (correo/whatsapp)",
+    "en": "send a message (email/whatsapp)"
+  },
+  "sala.honesty.post": {
+    "es": "publicar en una red/plataforma",
+    "en": "post to a network/platform"
+  },
+  "sala.honesty.pay": {
+    "es": "mover plata / pagar",
+    "en": "move money / pay"
+  },
+  "sala.honesty.calendar": {
+    "es": "escribir en tu calendario",
+    "en": "write to your calendar"
+  },
+  "sala.honesty.msg_1": {
+    "es": "No puedo ",
+    "en": "I can't "
+  },
+  "sala.honesty.msg_2": {
+    "es": " desde aquí: este agente trabaja con lo que está a la vista —cálculo, datos, archivos, web— y no toca tus cuentas. Para eso equipa/conecta la herramienta (ej: Gmail, Slack, tu banco) en el Cuarto y vuelvo a tener el permiso. Si quieres, te lo dejo REDACTADO aquí y lo envías tú.",
+    "en": " from here: this agent works with what's in plain sight — computation, data, files, web — and doesn't touch your accounts. To do that, equip/connect the tool (e.g. Gmail, Slack, your bank) in the Workshop and I'll have the permission. If you want, I'll leave it DRAFTED here and you send it yourself."
+  },
+  "sala.tool.search_works": {
+    "es": "Buscó en Crossref",
+    "en": "Searched Crossref"
+  },
+  "sala.tool.get_work": {
+    "es": "Trajo la referencia",
+    "en": "Fetched the reference"
+  },
+  "sala.tool.worldbank": {
+    "es": "Serie del Banco Mundial",
+    "en": "World Bank series"
+  },
+  "sala.tool.alphavantage": {
+    "es": "Precios de Alpha Vantage",
+    "en": "Alpha Vantage prices"
+  },
+  "sala.tool.run_python": {
+    "es": "Calculó con Python",
+    "en": "Computed with Python"
+  },
+  "sala.tool.build_workbook": {
+    "es": "Preparó la planilla",
+    "en": "Built the spreadsheet"
+  },
+  "sala.tool.create_item": {
+    "es": "Guardó en Zotero",
+    "en": "Saved to Zotero"
+  },
+  "sala.act.crossref": {
+    "es": "Busqué en Crossref",
+    "en": "I searched Crossref"
+  },
+  "sala.act.get_work": {
+    "es": "Traje la referencia",
+    "en": "I fetched the reference"
+  },
+  "sala.act.run_python": {
+    "es": "Calculé con Python",
+    "en": "I computed with Python"
+  },
+  "sala.act.build_workbook": {
+    "es": "Preparé la planilla",
+    "en": "I built the spreadsheet"
+  },
+  "sala.act.create_item": {
+    "es": "Guardé en Zotero",
+    "en": "I saved to Zotero"
+  },
+  "sala.obra.ver": {
+    "es": "ver →",
+    "en": "view →"
+  },
+  "sala.obra.la_obra": {
+    "es": "La obra",
+    "en": "The work"
+  },
+  "sala.receipt.zotero": {
+    "es": "Guardado en Zotero",
+    "en": "Saved to Zotero"
+  },
+  "sala.receipt.readback": {
+    "es": " · confirmado por re-lectura",
+    "en": " · confirmed by read-back"
+  },
+  "sala.receipt.open": {
+    "es": "abrir →",
+    "en": "open →"
+  },
+  "sala.receipt.failed_in": {
+    "es": "falló en ",
+    "en": "failed at "
+  },
+  "sala.receipt.fail_title": {
+    "es": "No se pudo guardar",
+    "en": "Couldn't save"
+  },
+  "sala.gate.email": {
+    "es": "mandar un correo",
+    "en": "send an email"
+  },
+  "sala.gate.money": {
+    "es": "mover tu dinero",
+    "en": "move your money"
+  },
+  "sala.gate.generic": {
+    "es": "una acción sensible",
+    "en": "a sensitive action"
+  },
+  "sala.gate.title": {
+    "es": "🔒 Pide tu OK",
+    "en": "🔒 Asks your OK"
+  },
+  "sala.gate.msg_1": {
+    "es": "Tu agente quiere ",
+    "en": "Your agent wants to "
+  },
+  "sala.gate.msg_2": {
+    "es": ". Nada sale hasta que confirmes.",
+    "en": ". Nothing goes out until you confirm."
+  },
+  "sala.gate.approve": {
+    "es": "Aprobar",
+    "en": "Approve"
+  },
+  "sala.gate.later": {
+    "es": "Ahora no",
+    "en": "Not now"
+  },
+  "sala.gate.done": {
+    "es": "✓ Hecho",
+    "en": "✓ Done"
+  },
+  "sala.gate.sent": {
+    "es": "Lo envié.",
+    "en": "I sent it."
+  },
+  "sala.gate.resolved": {
+    "es": "Quedó resuelto.",
+    "en": "It's resolved."
+  },
+  "sala.gate.declined": {
+    "es": "No se hizo",
+    "en": "Not done"
+  },
+  "sala.gate.declined_sub": {
+    "es": "Queda todo listo para cuando quieras.",
+    "en": "Everything stays ready for when you want it."
+  }
+}

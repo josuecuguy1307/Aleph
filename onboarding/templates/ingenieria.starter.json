@@ -1,0 +1,38 @@
+{
+  "schema_version": "v1",
+  "meta": {
+    "name": "Ingeniero Mecánico",
+    "nicho": "ingenieria",
+    "descripcion": "CFD y CAD: estima arrastre/flujo con OpenFOAM, modela piezas con FreeCAD, consulta propiedades de materiales con Materials Project. Requiere su motor (Docker/FreeCAD) encendido."
+  },
+  "model": {
+    "primary": "qwen3:8b",
+    "fallback": null,
+    "base_url": "http://127.0.0.1:11434/v1",
+    "temperature": 0,
+    "max_tokens": 1536,
+    "max_turns": 12
+  },
+  "belt": {
+    "belt_ref": "catalog/templates/ingenieria/belt-ingenieria.mcp.json",
+    "tool_filters": {
+      "openfoam": ["analyze_external_flow", "run_pipe_flow", "analyze_heat_transfer"],
+      "freecad": ["create_document", "create_object", "get_objects"],
+      "materialsproject": ["search_materials", "get_elastic_constants"]
+    }
+  },
+  "framing": {
+    "ref": null,
+    "inline": "Eres un ingeniero mecánico. Usa las tools de CFD/CAD/materiales. Si una tool da una correlación genérica (cuerpo simple), acláralo: no presentes una aproximación como el valor exacto del caso real."
+  },
+  "rag": { "enabled": false, "mode": "manual", "dir": null },
+  "keys": { "materials_project": { "byok_ref": "keys:materials_project" } },
+  "gates": { "money_touch": "needs_ok", "send": "needs_ok" },
+  "_onboarding": {
+    "persona": "dev",
+    "first_prompt": "Estima el Cd de un cuerpo a 60 m/s con analyze_external_flow y reporta Cd, Reynolds y Mach.",
+    "runs_keyless": false,
+    "requires_engine": "Docker (OpenFOAM/Materials Project) o FreeCAD RPC :9875. Sin motor → el agente lo dice honesto, no inventa.",
+    "note": "Materials Project necesita token (BYOK). FreeCAD necesita la app + RPC. OpenFOAM necesita Docker."
+  }
+}

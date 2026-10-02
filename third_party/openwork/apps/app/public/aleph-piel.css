@@ -1,0 +1,2167 @@
+/* aleph-piel.css — LA PIEL DE ALEPH ADENTRO DE ESTE STACK.
+ * [rediseño · fase 3 · opción A · decisión del dueño]
+ *
+ * ⚠️ ESTE ARCHIVO ES EL MISMO EN LOS SEIS STACKS, byte a byte, y una vara lo exige. Es la
+ * misma regla que gobierna `aleph-picker-unico.js` desde agosto y por el mismo motivo: seis
+ * copias que derivan son seis lugares donde arreglar el mismo bug. Por eso acá adentro está
+ * el mapeo de LOS SEIS: un stack ignora los nombres de token que no usa, así que declarar de
+ * más no cuesta nada y declarar por separado costaría la deriva.
+ *
+ * ⚠️ SÓLO SE APLICA CON `aleph_piel=v2`. `aleph-piel.js` (fase 1) es el interruptor: sin el
+ * flag esta hoja ni se pide, y la cara del stack queda EXACTAMENTE como hoy. Si algo sale
+ * mal en un stack se apaga con una palabra, sin build de emergencia. Ésa fue la condición
+ * del dueño para aceptar la opción A.
+ *
+ * QUÉ TOCA Y QUÉ NO
+ *   toca   color, letra y las medidas del MARCO
+ *   NO toca sus secciones, su contenido ni sus datos. RECENT SESSIONS, Library, Terminal,
+ *          Compute y Matters son del stack: se RESTILAN por token, no se reemplazan.
+ *   NO toca un solo componente ajeno: todo entra por la línea que ya existía en su
+ *          `index.html`, que es la costura que la Ley 6 de `third_party/README.md` permite.
+ *
+ * EL TEMA. Cada stack señala «oscuro» a su manera —medido: `[data-theme="dark"]` en Oficina,
+ * `.dark` en Finanzas, Educación y Diseño, `prefers-color-scheme` en Legal y Ciencia—. En vez
+ * de adivinar, `aleph-piel.js` escribe `data-aleph-scheme` en el `<html>` con el valor que la
+ * casa ya manda en la URL (`aleph_scheme`, fase 1). Ese es el interruptor que manda; los
+ * selectores propios de cada stack quedan como respaldo para el caso de que la casa no lo
+ * mande.
+ */
+
+/* ── LA LETRA ─────────────────────────────────────────────────────────────────────────
+ * Las tres familias del estándar, subset LATIN + LATIN-EXT (12 woff2, 117 KB). El subset es
+ * el mismo criterio con el que ya se vendorizó Outfit acá: la interfaz es ES/EN y bajar los
+ * 20 archivos completos sería pagar cirílico, griego y devanagari por nada.
+ * Se sirven desde `public/fonts/`, o sea sin red: Aleph es offline-first. */
+@font-face {
+  font-family: 'Instrument Serif';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(/fonts/instrumentserif-a8c4bd7c.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Instrument Serif';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(/fonts/instrumentserif-60c06664.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(/fonts/jetbrainsmono-9c38cb2d.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(/fonts/jetbrainsmono-2c32b9b3.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(/fonts/jetbrainsmono-9c38cb2d.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(/fonts/jetbrainsmono-2c32b9b3.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 200;
+  font-display: swap;
+  src: url(/fonts/poppins-45d9ed43.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 200;
+  font-display: swap;
+  src: url(/fonts/poppins-244dd57d.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url(/fonts/poppins-c2857fb5.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url(/fonts/poppins-643e38d8.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(/fonts/poppins-1fae5e73.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(/fonts/poppins-3dc5d0c5.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(/fonts/poppins-f8f0c286.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(/fonts/poppins-289e0afc.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* ── LA PALETA DE LA CASA ─────────────────────────────────────────────────────────────
+ * Los doce del estándar más los cuatro de estado, con los valores EXACTOS que quedaron en
+ * `product/app/design/aleph-tokens.css` después de las fases 1 y 2 — incluida la corrección
+ * del contraste contra el propio tinte de cada estado (4,5:1 en el peor de los seis fondos). */
+:root {
+  --al-lienzo:   #f4f3f1;  --al-sidebar:  #f7f6f4;  --al-tarjeta:  #ffffff;
+  --al-hairline: #e8e6e2;
+  --al-tinta:    #1c1c1a;  --al-texto2:   #3c3c37;  --al-apoyo:    #57574f;
+  --al-etiqueta: #6b6b64;
+  --al-indigo:   #4747c9;  --al-indigo-2: #4747c9;  --al-lavanda:  #eceafd;
+  --al-boton:    #141412;  --al-sobre-indigo: #ffffff;
+  --al-verde: #107636;  --al-ambar: #885e16;  --al-rojo: #b6392b;  --al-info: #376d87;
+
+  /* ⚠️ LOS MISMOS DOCE, EN TRIPLETE HSL. No es duplicación decorativa: FINANZAS
+   * (vibetrading) usa el shadcn VIEJO, donde la variable guarda `H S% L%` SIN función y su
+   * Tailwind compila `hsl(var(--background))`. Meterle un hex ahí produce `hsl(#f4f3f1)`,
+   * que es inválido y cae a TRANSPARENTE — en silencio, sin un error en consola.
+   * Lo destapó la PANTALLA, no la vara: el sidebar de Finanzas pasó de blanco a fundido con
+   * el lienzo y la píldora del ítem activo desapareció. Medido: su `--background` declara
+   * `240 5% 96%`; los otros cuatro stacks declaran color (hex u oklch) y no necesitan esto.
+   * Los valores salen de convertir los hex de arriba, no de elegirlos de nuevo. */
+  --al-lienzo-h:   40 12% 95%;   --al-sidebar-h:  40 16% 96%;   --al-tarjeta-h:  0 0% 100%;
+  --al-hairline-h: 40 12% 90%;
+  --al-tinta-h:    60 4% 11%;    --al-texto2-h:   60 4% 23%;    --al-apoyo-h:    60 5% 33%;
+  --al-etiqueta-h: 60 3% 41%;
+  --al-indigo-h:   240 55% 53%;  --al-indigo-2-h: 240 55% 53%;  --al-lavanda-h:  246 83% 95%;
+  --al-boton-h:    60 5% 7%;
+  --al-rojo-h:     6 62% 44%;
+
+  --al-serif: 'Instrument Serif', Georgia, serif;
+  --al-ui:    'Poppins', system-ui, -apple-system, sans-serif;
+  --al-mono:  'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --al-riel:  260px;
+  /* El tinte del HOVER. No existía y yo lo usaba con un respaldo `rgba(0,0,0,.04)`:
+     negro sobre negro, o sea un hover INVISIBLE en oscuro. Va en alfa para que sirva en
+     los dos temas sin declarar dos colores. Lo levantó la sesión del frame de Oficina y
+     lleva su nombre y sus valores, para que al mergear quede UNA sola copia. */
+  --al-lienzo2: rgba(0,0,0,.045);
+}
+
+/* El oscuro DERIVADO, no invertido: mismo eje de temperatura (fondos H40, texto H60) y la
+ * misma escalera de contraste que el claro (15,4 · 10,0 · 6,6 · 5,0 contra su lienzo). */
+[data-aleph-scheme="dark"],
+[data-theme="dark"], .dark, html.dark, html[data-color-scheme="dark"] {
+  --al-lienzo:   #0f0e0d;  --al-lienzo2: rgba(255,255,255,.06);  --al-sidebar:  #141412;  --al-tarjeta:  #1a1917;
+  --al-hairline: #2b2a27;
+  --al-tinta:    #e6e6e3;  --al-texto2:   #bbbbb5;  --al-apoyo:    #97978f;
+  --al-etiqueta: #838379;
+  --al-indigo:   #9494e4;  --al-indigo-2: #b6b6ed;  --al-lavanda:  #1b1839;
+  --al-boton:    #e6e6e3;  --al-sobre-indigo: #141412;
+  --al-verde: #17a84c;  --al-ambar: #c38720;  --al-rojo: #dc7569;  --al-info: #579bba;
+  --al-lienzo-h:   30 7% 5%;     --al-sidebar-h:  60 5% 7%;     --al-tarjeta-h:  40 6% 10%;
+  --al-hairline-h: 45 5% 16%;
+  --al-tinta-h:    60 6% 90%;    --al-texto2-h:   60 4% 72%;    --al-apoyo-h:    60 4% 58%;
+  --al-etiqueta-h: 60 4% 49%;
+  --al-indigo-h:   240 60% 74%;  --al-indigo-2-h: 240 60% 82%;  --al-lavanda-h:  245 41% 16%;
+  --al-boton-h:    60 6% 90%;
+  --al-rojo-h:     6 62% 64%;
+}
+/* Y si la casa no mandó el esquema, se respeta el del sistema — salvo que el stack diga
+ * claro explícitamente. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-aleph-scheme="light"]):not([data-theme="light"]):not(.light):not([data-color-scheme="light"]) {
+    --al-lienzo:   #0f0e0d;  --al-lienzo2: rgba(255,255,255,.06);  --al-sidebar:  #141412;  --al-tarjeta:  #1a1917;
+    --al-hairline: #2b2a27;
+    --al-tinta:    #e6e6e3;  --al-texto2:   #bbbbb5;  --al-apoyo:    #97978f;
+    --al-etiqueta: #838379;
+    --al-indigo:   #9494e4;  --al-indigo-2: #b6b6ed;  --al-lavanda:  #1b1839;
+    --al-boton:    #e6e6e3;  --al-sobre-indigo: #141412;
+    --al-verde: #17a84c;  --al-ambar: #c38720;  --al-rojo: #dc7569;  --al-info: #579bba;
+    --al-lienzo-h:   30 7% 5%;     --al-sidebar-h:  60 5% 7%;     --al-tarjeta-h:  40 6% 10%;
+    --al-hairline-h: 45 5% 16%;
+    --al-tinta-h:    60 6% 90%;    --al-texto2-h:   60 4% 72%;    --al-apoyo-h:    60 4% 58%;
+    --al-etiqueta-h: 60 4% 49%;
+    --al-indigo-h:   240 60% 74%;  --al-indigo-2-h: 240 60% 82%;  --al-lavanda-h:  245 41% 16%;
+    --al-boton-h:    60 6% 90%;
+    --al-rojo-h:     6 62% 64%;
+  }
+}
+
+/* ── LA LETRA, APLICADA ───────────────────────────────────────────────────────────────
+ * Sin `*`: teñir cada elemento rompería los iconos de fuente y los bloques que el stack
+ * pinta con su mono a propósito. Se aplica en la raíz y hereda.
+ *
+ * ⚠️ ACÁ SÍ VA `!important`, Y ES LA ÚNICA VEZ EN TODA LA HOJA. Medido en Educación: con la
+ * hoja última en el `<head>` los COLORES ganaban (el fondo computaba #f4f3f1) y la LETRA no
+ * — seguía en Outfit. Es esperable: el color entra por token, así que gana quien defina el
+ * token; la familia entra por una regla sobre `body`, y ahí compite con las del stack, que
+ * son más específicas o llegan después (Next inyecta hojas post-hidratación).
+ * Subir la especificidad con selectores inventados (`html body:not(#x)`) sería el mismo
+ * `!important` disfrazado y más difícil de leer. Se pone donde hace falta, en dos líneas, y
+ * se dice por qué. Todo lo demás de esta hoja gana por cascada limpia. */
+:root, body { font-family: var(--al-ui) !important; }
+code, pre, kbd, samp, .font-mono, [class*="mono"] { font-family: var(--al-mono) !important; }
+
+/* ── EL MAPEO, STACK POR STACK ────────────────────────────────────────────────────────
+ * De acá para abajo no hay un color literal: todo apunta a `--al-*`.
+ *
+ * ⚠️ Y TODOS LOS BLOQUES VAN ACOTADOS POR `data-aleph-ws`. NINGUNO EN UN `:root` SUELTO.
+ * Este archivo decía antes que «los otros cinco simplemente no tienen esos nombres
+ * declarados y no pasa nada», y eso era FALSO — medido, no discutido:
+ *
+ *     nombre       lo DECLARAN                              lo USAN
+ *     --muted      Legal(#65656a) Finanzas Oficina Educación   Legal ×45
+ *     --accent     Legal(#5a4fd6) Oficina Educación            Legal ×81
+ *     --border     Legal(transparent) Finanzas Oficina Educ.   Legal ×62
+ *
+ * En Legal esos tres son de TEXTO y de LÍNEA, no de fondo, así que el bloque compartido de
+ * shadcn le pintaba el subtítulo de cada pantalla, el chip de ID de cada matter y EL ÍTEM
+ * ACTIVO DE LA BARRA con un color de FONDO. Resultado en pantalla: blanco sobre blanco y
+ * lavanda sobre lavanda. La regla de esta hoja pasa a ser explícita:
+ *
+ *     UN BLOQUE DE TOKENS EN UNA HOJA COMPARTIDA PISA A CUALQUIERA QUE USE EL MISMO
+ *     NOMBRE. Se acota a los stacks que ese nombre lee, y se dice cuáles y por qué.
+ *
+ * La única excepción es la paleta `--al-*` de arriba: es NUESTRO namespace —contado sobre
+ * los seis árboles, cero stacks declaran un `--al-`—, y además es la fuente que todos estos
+ * bloques leen, así que acotarla sería apagar el mapeo entero.
+ *
+ * El alcance de cada bloque sale de contar QUIÉN LO USA en los seis árboles, no de quién lo
+ * declara: un stack que declara un nombre y no lo usa no necesita nuestro valor.
+ *
+ * ⚠️ LA CONSECUENCIA, DICHA: de acá en más el mapeo entero depende de `data-aleph-ws`, que
+ * `aleph-piel.js` escribe SÓLO si la URL trajo `aleph_ws`. Las seis páginas de la casa lo
+ * mandan siempre (`workspaces/<id>.html`, `var WS = "<id>"` — contados los seis: `ciencia ·
+ * oficina · legal · educacion · diseno · finanzas`, sin acentos, que son los ids de
+ * `espacios-tabla.js`). Lo que cambia es el caso de a mano: abrir un stack con
+ * `?aleph_piel=v2` y SIN `aleph_ws` ahora da letra y frame sin paleta, donde antes daba una
+ * paleta adivinada. Es correcto —sin saber qué stack es, no hay mapeo que valga— y es una
+ * razón más para certificar con el default que va a correr y no con el flag puesto a mano. */
+
+/* OFICINA · openwork — sus semánticos son `--dls-*` (38 definiciones en app/index.css).
+ * ⚠️ MEDIDO: ya traían la paleta VIEJA de Aleph hardcodeada (#f4f4f5, #0a0a0a, #0b0b0c…),
+ * copiada a mano en agosto. O sea que Oficina mostraba los colores de Aleph de ANTES del
+ * rediseño. Acá dejan de ser una copia y pasan a derivar.
+ * ALCANCE: `oficina`. Contado en los seis árboles, los `--dls-*` los usa Oficina y nadie
+ * más (45 usos ahí, 0 en los otros cinco). El prefijo ya los aislaba de hecho; acotarlos es
+ * decirlo, y que un stack que mañana use ese prefijo no herede una piel que no pidió. */
+:root[data-aleph-ws="oficina"] {
+  --dls-surface: var(--al-lienzo);       --dls-sidebar: var(--al-sidebar);
+  --dls-app-bg: var(--al-lienzo);        --dls-background: var(--al-lienzo);
+  --dls-canvas: var(--al-tarjeta);       --dls-surface-muted: var(--al-sidebar);
+  --dls-border: var(--al-hairline);
+  --dls-accent: var(--al-boton);         --dls-accent-hover: var(--al-boton);
+  --dls-accent-fg: var(--al-lienzo);
+  --dls-text-primary: var(--al-tinta);   --dls-text-secondary: var(--al-apoyo);
+  --dls-hover: var(--al-sidebar);        --dls-active: var(--al-lavanda);
+}
+
+/* SHADCN NUEVO (Oficina y Educación) — la variable guarda un COLOR: `--background:#f4f4f5`,
+ * `--primary:#0a0a0a`. Estos dos se skinnean con los hex de la casa, tal cual.
+ *
+ * ⚠️ ESTE ERA EL BLOQUE QUE PISABA, Y ES EL DE NOMBRES MÁS GENÉRICOS DE LA HOJA. Medido en
+ * los seis árboles, quiénes USAN estos 19 nombres:
+ *
+ *     Educación 5.167 · Legal 188 · Oficina 31 · Finanzas 6 · Ciencia 0 · Diseño 0
+ *
+ * ALCANCE: `oficina, educacion`, que son los dos que el propio comentario ya nombraba.
+ * · LEGAL queda AFUERA a propósito: usa `--muted`, `--accent` y `--border` con otra
+ *   semántica —texto y línea, no fondo— y los declara él. Su mapeo vive en su bloque.
+ * · FINANZAS queda afuera y no pierde nada: su bloque `:root[data-aleph-ws="finanzas"]`
+ *   declara los MISMOS 19 en triplete HSL y ya le ganaba por especificidad, así que este
+ *   bloque era inerte ahí. Ahora además no lo alcanza.
+ * · CIENCIA y DISEÑO no usan ninguno de los 19 (contado: 0 y 0). Este bloque les creaba 19
+ *   variables que nadie leía. */
+:root[data-aleph-ws="oficina"],
+:root[data-aleph-ws="educacion"] {
+  --background: var(--al-lienzo);        --foreground: var(--al-tinta);
+  --card: var(--al-tarjeta);             --card-foreground: var(--al-tinta);
+  --popover: var(--al-tarjeta);          --popover-foreground: var(--al-tinta);
+  --primary: var(--al-boton);            --primary-foreground: var(--al-lienzo);
+  --secondary: var(--al-sidebar);        --secondary-foreground: var(--al-tinta);
+  --muted: var(--al-sidebar);            --muted-foreground: var(--al-apoyo);
+  --accent: var(--al-lavanda);           --accent-foreground: var(--al-indigo-2);
+  --destructive: var(--al-rojo);         --destructive-foreground: var(--al-lienzo);
+  --border: var(--al-hairline);          --input: var(--al-hairline);
+  --ring: var(--al-indigo);
+}
+
+/* FINANZAS · vibetrading — shadcn VIEJO: la variable guarda `H S% L%` PELADO y su Tailwind
+ * compila `hsl(var(--background))`. Por eso este bloque va con los tripletes y no con los
+ * hex, y por eso va ACOTADO al stack: los mismos nombres los usan Oficina y Educación en el
+ * shadcn NUEVO, donde la variable guarda un COLOR. Un solo `:root` para los tres servía a
+ * dos y rompía al tercero — en silencio, porque `hsl(#f4f3f1)` no tira error: cae a
+ * transparente. Lo vio la PANTALLA (el sidebar de Finanzas fundido con el lienzo y la
+ * píldora del ítem activo desaparecida), no la vara, que seguía 35/35 en verde.
+ * El alcance sale de `data-aleph-ws`, que `aleph-piel.js` ya sabe y ahora escribe. */
+:root[data-aleph-ws="finanzas"] {
+  --background: var(--al-lienzo-h);      --foreground: var(--al-tinta-h);
+  --card: var(--al-tarjeta-h);           --card-foreground: var(--al-tinta-h);
+  --popover: var(--al-tarjeta-h);        --popover-foreground: var(--al-tinta-h);
+  --primary: var(--al-boton-h);          --primary-foreground: var(--al-lienzo-h);
+  --secondary: var(--al-sidebar-h);      --secondary-foreground: var(--al-tinta-h);
+  --muted: var(--al-sidebar-h);          --muted-foreground: var(--al-apoyo-h);
+  --accent: var(--al-lavanda-h);         --accent-foreground: var(--al-indigo-2-h);
+  --destructive: var(--al-rojo-h);       --destructive-foreground: var(--al-lienzo-h);
+  --border: var(--al-hairline-h);        --input: var(--al-hairline-h);
+  --ring: var(--al-indigo-h);
+}
+
+/* OFICINA · openwork — la primitiva `--sidebar-*` de shadcn.
+ * ⚠️ ESTE BLOQUE DECÍA «EDUCACIÓN · deeptutor … más su `--sidebar-*`» Y EL DUEÑO ESTABA
+ * MAL. Contado sobre los seis árboles: deeptutor declara los 19 nombres shadcn y CERO
+ * `--sidebar-*` (grep en `app/globals.css`: 0). El único que los declara y los usa es
+ * Oficina (10 usos). Un bloque que nombra al stack equivocado es un bloque que nadie va a
+ * saber dónde tocar. ALCANCE: `oficina`. */
+:root[data-aleph-ws="oficina"] {
+  --sidebar: var(--al-sidebar);                    --sidebar-foreground: var(--al-tinta);
+  --sidebar-primary: var(--al-boton);              --sidebar-primary-foreground: var(--al-lienzo);
+  --sidebar-accent: var(--al-lavanda);             --sidebar-accent-foreground: var(--al-indigo-2);
+  --sidebar-border: var(--al-hairline);            --sidebar-ring: var(--al-indigo);
+}
+
+/* ⚠️ [fase 5 · 5.2] LEGAL Y CIENCIA — ESTE BLOQUE ESTABA ESCRITO CONTRA NOMBRES QUE NO
+ * EXISTEN. Decía «su capa semántica es `--theme-*` / `--text-*`» y de los doce nombres que
+ * escribía, `--theme-background`, `--theme-surface`, `--theme-panel`, `--theme-text` y
+ * `--text-primary` tienen CERO definiciones en los dos árboles (contado sobre sus `dist`).
+ * O sea: la piel de estos dos stacks era casi entera INERTE — les llegaba la letra, que la
+ * hoja aplica directo sobre `:root, body`, y nada más. La vara de la fase 3 no lo veía
+ * porque medía que el navegador COMPUTA nuestros tokens, no que nuestros tokens PINTEN.
+ *
+ * Los de abajo salen de leer sus `dist`, no de adivinar:
+ *   dochaus   → `body{background:var(--bg)}`, y su familia es `--bg` · `--panel` · `--text`
+ *   openscience → `body{background:var(--color-bg)}` y `--color-bg:var(--background-base)`,
+ *                 así que se pisa la capa BASE y toda su capa `--color-*` hereda sola.
+ *
+ * ⚠️ Y VAN ACOTADOS POR `data-aleph-ws`. `--bg`, `--panel`, `--text` son nombres genéricos:
+ * sueltos en un `:root` compartido le pisarían variables homónimas a los otros cinco. */
+:root[data-aleph-ws="legal"] {
+  --bg: var(--al-lienzo);                 --bg-sunken: var(--al-sidebar);
+  --panel: var(--al-tarjeta);             --panel-hover: var(--al-sidebar);
+  --text: var(--al-tinta);                --text-secondary: var(--al-apoyo);
+
+  /* ══ [Legal · el frame] LOS CINCO NOMBRES QUE OTRO BLOQUE LE PISABA, Y LO QUE FALTABA ══
+   * MEDIDO EN PANTALLA el 2026-09-09, con el flag puesto y el stack vivo:
+   *
+   *     .page-sub            color rgb(247,246,244)  ← #f7f6f4, el gris del SIDEBAR
+   *     .matter-ref          color rgb(236,234,253)  ← #eceafd, LAVANDA sobre lavanda
+   *     .nav-item.active     color rgb(236,234,253) sobre rgb(242,241,254)
+   *
+   * O sea: el subtítulo de cada pantalla, el chip de ID de cada matter y EL ÍTEM ACTIVO DE
+   * LA BARRA estaban ilegibles — texto casi blanco sobre blanco, lavanda sobre lavanda.
+   *
+   * LA CAUSA no es de dochaus: es el bloque «SHADCN NUEVO», que va en un `:root` SIN acotar
+   * y declara `--muted` y `--accent`. Esos dos nombres también son de dochaus, con OTRA
+   * semántica: `--muted:#65656a` es su gris de TEXTO y `--accent:#5a4fd6` su índigo de
+   * TEXTO/enlace. El bloque compartido los convertía en un FONDO y en un TINTE, y de ahí el
+   * texto invisible. Contado sobre sus 56 tokens de `:root`, los pisados son cinco:
+   * `--accent`, `--border`, `--danger`, `--info` y `--muted`. Es exactamente el peligro que
+   * este archivo ya declaraba para `--bg`/`--panel`/`--text` («nombres genéricos: sueltos en
+   * un `:root` compartido le pisarían variables homónimas a los otros cinco») — pasó igual,
+   * con otros nombres.
+   *
+   * SE ARREGLA ACÁ Y NO ACOTANDO EL BLOQUE COMPARTIDO: `:root[data-aleph-ws="legal"]` gana
+   * por especificidad sin importar el orden, y no le toca la piel a los otros cinco stacks
+   * —que hoy dependen de ese bloque y tienen sesiones vivas encima—. `--danger` y `--info`
+   * se quedan como están: ahí el mapeo compartido SÍ es el correcto.
+   *
+   * ⚠️ RETIRO POR ESCRITO EL «⛔ SUS BORDES NO SE TOCAN» QUE ESTABA ACÁ. Decía que poner la
+   * línea de pelo era dibujarle bordes a un diseño que eligió no tenerlos, y las dos mitades
+   * eran falsas:
+   *   (a) YA se los estaba dibujando — `--border` sale pisado a `var(--al-hairline)` por el
+   *       mismo bloque compartido, y la barra de Legal se mide hoy con
+   *       `border-right-color: rgb(232,230,226)`; el hueco declarado nunca existió;
+   *   (b) el artboard 38a los PIDE: `border-right:1px solid #e8e6e2` en la barra y
+   *       `border:1px solid #e8e6e2;border-radius:18px` en cada tarjeta.
+   * Así que se declara acá, a propósito. `--border-soft` y `--border-strong` NO: esos nadie
+   * los pisa, y ponerles línea sí sería inventarle bordes a lo que no los dibuja. */
+  --muted: var(--al-apoyo);               --faint: var(--al-etiqueta);
+  --placeholder: var(--al-etiqueta);
+  --accent: var(--al-indigo);             --accent-hover: var(--al-indigo-2);
+  --accent-active: var(--al-indigo-2);
+  --accent-soft: var(--al-lavanda);       --accent-soft-hover: var(--al-lavanda);
+  --accent-muted: var(--al-indigo-2);
+  --text-on-accent: var(--al-sobre-indigo);
+  --border: var(--al-hairline);
+  /* La mono del estándar. dochaus la deja en el stack del sistema y la hoja sólo la aplica
+   * por `code, pre, kbd, samp, .font-mono, [class*="mono"]` — y el chip de ID de un matter
+   * (`.matter-ref`) no matchea ninguno de esos: pinta con `var(--font-mono)`. Medido:
+   * `ui-monospace, "SF Mono", Menlo`. JetBrains Mono ya viaja vendorizada en
+   * `public/fonts/`, así que alcanza con re-apuntar el nombre que el stack ya usa. */
+  --font-mono: var(--al-mono);
+  --font-sans: var(--al-ui);              --font-display: var(--al-ui);
+  --font-serif: var(--al-serif);
+}
+:root[data-aleph-ws="ciencia"] {
+  --background-base: var(--al-lienzo);    --background-weak: var(--al-sidebar);
+  --background-strong: var(--al-tarjeta); --background-stronger: var(--al-tarjeta);
+  --text-base: var(--al-texto2);          --text-strong: var(--al-tinta);
+  --text-weak: var(--al-apoyo);           --text-weaker: var(--al-etiqueta);
+  --border-base: var(--al-hairline);
+}
+
+/* ⚠️ [fase 5 · 5.1] DISEÑO · codesign — LA MITAD DE ESTE BLOQUE TAMBIÉN ESTABA MUERTA.
+ * Contado sobre su `out/renderer` recién horneado: `--color-bg` 0, `--color-panel` 0,
+ * `--color-text` 0, `--color-accent-fg` 0. Sobrevivían `--color-surface`, `--color-border`,
+ * `--color-text-muted` y `--color-accent`. Su body pinta con `var(--color-background)`
+ * —que no escribíamos— y por eso Diseño se quedaba en su `#f4f4f5`.
+ * Va acotado porque comparte el prefijo `--color-` con Ciencia, que lo usa con OTRA
+ * semántica: sin acotar, el bloque de uno le reescribe la paleta al otro. */
+:root[data-aleph-ws="diseno"] {
+  --color-background: var(--al-lienzo);            --color-background-secondary: var(--al-sidebar);
+  --color-surface: var(--al-tarjeta);              --color-surface-elevated: var(--al-tarjeta);
+  --color-surface-hover: var(--al-sidebar);        --color-surface-active: var(--al-lavanda);
+  --color-text-primary: var(--al-tinta);           --color-text-secondary: var(--al-apoyo);
+  --color-text-muted: var(--al-etiqueta);
+  --color-accent: var(--al-indigo);                --color-accent-hover: var(--al-indigo-2);
+  /* ⛔ Sus bordes tampoco: `--color-border`, `-subtle`, `-muted` y `-strong` los declara
+   * `transparent`, igual que dochaus. Misma decisión de oficio, mismo hueco declarado. */
+}
+
+/* ── LOS CUATRO ESTADOS ───────────────────────────────────────────────────────────────
+ * Un tono por estado, dos luces. Detrás del ámbar hay 294 aprobaciones pendientes reales en
+ * la `aleph.db` de esta máquina: no es decoración.
+ *
+ * Decía «EN LOS SEIS» y son CINCO, contado por uso: Ciencia 113 · Diseño 64 · Legal 29 ·
+ * Oficina 1 · Finanzas 0 usos pero los DECLARA (`--success`, `--warning`, `--danger`,
+ * `--info` en triplete) · Educación no los declara ni los usa.
+ * Acá la semántica SÍ coincide en los cinco —un rojo es un rojo de estado en todos—, así
+ * que el mapeo era correcto; lo que faltaba era el alcance. `--danger` y `--info` son de
+ * los nombres más genéricos que existen: sueltos, el día que un stack los use para otra
+ * cosa se repite el defecto de `--muted`. */
+:root[data-aleph-ws="legal"],
+:root[data-aleph-ws="finanzas"],
+:root[data-aleph-ws="oficina"],
+:root[data-aleph-ws="ciencia"],
+:root[data-aleph-ws="diseno"] {
+  --success: var(--al-verde);   --color-success: var(--al-verde);   --theme-success: var(--al-verde);
+  --warning: var(--al-ambar);   --color-warning: var(--al-ambar);   --theme-warning: var(--al-ambar);
+  --error:   var(--al-rojo);    --color-error:   var(--al-rojo);    --theme-error:   var(--al-rojo);
+  --danger:  var(--al-rojo);    --color-info:    var(--al-info);    --theme-info:    var(--al-info);
+  --info:    var(--al-info);
+}
+
+/* ⚠️ [CIENCIA · las pantallas sueltas] `--color-danger` FALTABA, y no era decorativo.
+ * Contado en `third_party/openscience/frontend/workspace`: **cero** declaraciones del nombre,
+ * y VEINTICUATRO usos escritos como `var(--color-danger, #b23a2e)` — el visor de artefactos,
+ * el notebook y sus salidas de error. Sin la declaración, los veinticuatro caían SIEMPRE al
+ * respaldo literal, que es un rojo de modo CLARO: en oscuro quedaba un rojo apagado sobre
+ * fondo oscuro, y ninguno es el rojo del estándar. Mismo defecto de los tokens fantasma que
+ * Oficina barrió, con otro nombre. En claro casi no se nota; el daño es de modo oscuro.
+ *
+ * ⚠️ VA ACOTADO, Y NO AL `:root` DE LOS ESTADOS. Lo escribí primero suelto y estaba mal:
+ * `--color-danger` NO es como sus doce hermanos. Contado por USO, que es el método que este
+ * archivo ya adoptó —declararlo y no usarlo no pide nuestro valor—:
+ *
+ *     Legal 21 usos · Ciencia 24 · Diseño 2 · Finanzas 0 · Educación 0 · Oficina 0
+ *
+ * y además **Legal lo DECLARA él mismo** (`packages/console/app/src/style/token/color.css`,
+ * 4 veces: `#ff3b30` claro y `#ff453a` oscuro). Suelto, nuestra línea le ganaba por orden de
+ * cascada —la hoja entra última en el `<head>`— y le cambiaba SU rojo sin que nadie lo
+ * pidiera: exactamente el defecto de `--muted`/`--accent`/`--border` que este archivo cuenta
+ * más arriba. Legal queda ADENTRO del alcance a propósito —la semántica coincide y sus otros
+ * estados ya se mapean igual (`--danger`, `--info`, `--color-success`, `--color-warning`, que
+ * también declara él)— pero por decisión escrita, no por descuido de alcance.
+ * Los tres que NO lo usan quedan afuera: no se les crea una variable que nadie lee. */
+:root[data-aleph-ws="legal"],
+:root[data-aleph-ws="ciencia"],
+:root[data-aleph-ws="diseno"] {
+  --color-danger: var(--al-rojo);
+}
+
+/* [CIENCIA · un solo acento] El azul propio de un stack, por token. La hoja del estándar fija
+ * UN acento y lo dice sin rodeos: «Cualquier color de una pantalla vieja que no entrara en
+ * esta lista se cayó». Donde un stack tenía su azul clavado, se le cambia el literal por este
+ * nombre con SU valor de respaldo: con la piel apagada queda igual, con la piel puesta es el
+ * índigo de la casa.
+ *
+ * ⚠️ ACOTADO A SU ÚNICO CONSUMIDOR. `--aleph-*` es nuestro namespace y ningún stack declara
+ * uno (medido en los seis árboles: 0), así que suelto no PISARÍA a nadie — pero la excepción
+ * que este archivo le da a `--al-*` es porque esa paleta es la FUENTE que todos los bloques
+ * acotados leen. Ésta no: es un mapeo, y hoy lo lee un solo archivo
+ * (`openscience/.../components/prompt-input.css`, 3 usos). El día que otro espacio se lleve
+ * su azul propio, se agrega su `data-aleph-ws` acá y se ve quién lo pidió. */
+:root[data-aleph-ws="ciencia"] {
+  --aleph-acento: var(--al-indigo);
+}
+
+/* ── EL MARCO ─────────────────────────────────────────────────────────────────────────
+ * 260 px, el fondo del sidebar y su línea de pelo. Se ancla por los atributos ESTABLES que
+ * el propio stack expone —`data-sidebar` en Oficina y Educación (primitiva shadcn)— y no por
+ * clases generadas, que cambian con cada build de Tailwind.
+ * ⚠️ ACÁ TERMINA LO QUE ESTA FASE TOCA DEL MARCO. El bloque estándar de arriba (mascota ·
+ * Aleph · ‹ Inicio) lo MONTA `aleph-piel.js`, que es el molde del picker. Lo de adentro —sus
+ * secciones y RECENT SESSIONS— no se reemplaza: hereda estos tokens y ya. */
+[data-sidebar="sidebar"] {
+  background: var(--al-sidebar);
+  border-right: 1px solid var(--al-hairline);
+}
+[data-sidebar="header"], [data-sidebar="footer"] { background: transparent; }
+
+/* El bloque de la casa que `aleph-piel.js` inserta arriba de todo. */
+.aleph-piel-cabecera {
+  display: flex; align-items: baseline; gap: 8px;
+  padding: 10px 14px 4px; min-width: 0;
+  font-family: var(--al-ui);
+}
+.aleph-piel-cabecera img { width: 20px; height: 20px; display: block; align-self: center; flex: none; }
+.aleph-piel-marca { font-family: var(--al-serif); font-size: 16px; color: var(--al-tinta); flex: none; }
+.aleph-piel-espacio { font-size: 13px; color: var(--al-apoyo); min-width: 0;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.aleph-piel-inicio {
+  display: block; margin: 6px 10px 8px; padding: 8px 12px;
+  border: 0; width: calc(100% - 20px); text-align: left; cursor: pointer;
+  border-radius: 10px; background: transparent;
+  font: 400 13.5px var(--al-ui); color: var(--al-apoyo);
+}
+.aleph-piel-inicio:hover { background: var(--al-tarjeta); color: var(--al-tinta); }
+.aleph-piel-sep { height: 1px; margin: 0 10px 10px; background: var(--al-hairline); }
+
+/* ══ EL FRAME · UNA SOLA BARRA ═════════════════════════════════════════════════════════
+ * [rediseño · fase 6 · Ley 6 tercera cirugía]
+ *
+ * ⚠️ EL ANCHO ES DEL DISEÑO, NO UNA PREFERENCIA. El documento sellado fija 260 px para las
+ * once pantallas («sidebar de 260px con la mascota y el nombre del workspace»). Oficina hoy
+ * mide 220 —medido en su DOM—, así que la barra que el usuario ve no es la del diseño aunque
+ * lleve nuestros colores. Se corrige acá y no en su código: es piel, no estructura.
+ *
+ * ⚠️ `--sidebar-width` ANTES QUE UN `width` A MANO. shadcn maneja el ancho por variable y
+ * respeta el colapso; pisarlo con `width:260px !important` rompería el estado colapsado, que
+ * el diseño dibuja ([colapsar] en la cabecera). Se mueve la perilla que ya existe. */
+/* ALCANCE: `oficina`. `--sidebar-width` es de shadcn y, contado en los seis árboles, sólo
+   openwork lo lee (2 archivos; los otros cinco, cero). Legal fija su ancho en su propio
+   bloque, con `--al-riel`. */
+[data-aleph-piel="v2"][data-aleph-ws="oficina"] {
+  --sidebar-width: 260px;
+}
+
+/* El pie y la cabecera del FRAME NATIVO — los escribe el componente del stack, no la
+ * inyección. Las clases `aleph-frame-*` las pone su propio JSX; acá sólo viven sus estilos,
+ * que es lo que la piel siempre hizo. Las `aleph-piel-*` de abajo son el camino VIEJO, que
+ * queda para los stacks que todavía no tienen frame nativo. */
+[data-aleph-piel="v2"] .aleph-frame-cabecera {
+  display: flex; flex-direction: column; gap: 2px;
+  padding: 4px 4px 0;
+}
+[data-aleph-piel="v2"] .aleph-frame-marca {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 8px 10px;
+  min-width: 0;
+}
+[data-aleph-piel="v2"] .aleph-frame-wordmark {
+  font-family: var(--al-serif);
+  font-size: 19px; line-height: 1; color: var(--al-tinta); flex: none;
+}
+[data-aleph-piel="v2"] .aleph-frame-espacio {
+  font: 400 12.5px/1 var(--al-ui);
+  color: var(--al-etiqueta);
+  padding-top: 3px;
+  /* Y NO SE DESBORDA. En Oficina esta etiqueta comparte renglón con los controles de la
+     cabecera, así que sin el recorte «Oficina» salía como «Ofic…» empujando a los botones.
+     En Finanzas no molesta: con `flex:1` y texto corto, el recorte nunca se activa. */
+  min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  /* `flex:1` hace de separador: es el `<span style="flex:1">` que el artboard mete entre el
+     nombre del espacio y el glifo de plegar, sin agregar un nodo vacío. */
+  flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+/* El botón de plegar, relocalizado desde el pie. Caja de 26 con radio 7, como el artboard. */
+[data-aleph-piel="v2"] .aleph-frame-plegar {
+  width: 26px; height: 26px; flex: none; margin-left: auto;
+  display: flex; align-items: center; justify-content: center;
+  border: 0; border-radius: 7px; background: transparent; cursor: pointer;
+  color: var(--al-etiqueta);
+}
+[data-aleph-piel="v2"] .aleph-frame-plegar:hover { background: var(--al-lienzo2); }
+[data-aleph-piel="v2"] .aleph-frame-inicio {
+  display: block; width: 100%;
+  padding: 7px 8px; border: 0; border-radius: 8px;
+  background: transparent; text-align: left; cursor: pointer;
+  font: 400 13.5px/1.2 var(--al-ui);
+  color: var(--al-tinta);
+}
+[data-aleph-piel="v2"] .aleph-frame-inicio:hover { background: var(--al-lienzo2); }
+/* El «‹» y la palabra ahora son dos spans —para poder esconder sólo la palabra cuando la
+   barra está plegada—, así que el aire entre ellos lo pone el margen y no un espacio en el
+   texto, que es invisible de mantener. */
+[data-aleph-piel="v2"] .aleph-frame-inicio-flecha { margin-inline-end: 5px; }
+/* [Finanzas · el bloque estándar] LA FILA `New chat`, primera del raíz.
+   Las medidas son las de la pieza 04: 14px peso 400, y el activo pasa a 500 e índigo, que es
+   lo que la hoja del estándar dice de las filas del sidebar. Usa los mismos tokens `--al-*`
+   que el resto del frame, así que sigue el tema sin un hex clavado. */
+[data-aleph-piel="v2"] .aleph-frame-fila {
+  display: flex; align-items: center; gap: 11px;
+  margin: 0 4px; padding: 10px 12px; border-radius: 11px;
+  font: 400 14px/1.2 var(--al-ui);
+  color: var(--al-texto2); text-decoration: none;
+}
+[data-aleph-piel="v2"] .aleph-frame-fila:hover { background: var(--al-lienzo2); }
+[data-aleph-piel="v2"] .aleph-frame-fila-glifo {
+  width: 20px; flex: none; display: flex; align-items: center; justify-content: center;
+  color: inherit;
+}
+/* `New chat` es la primaria: el diseño la pinta en índigo sobre tarjeta blanca, que es el
+   mismo tratamiento del ítem activo. */
+[data-aleph-piel="v2"] .aleph-frame-fila-primaria {
+  font-weight: 500;
+  color: var(--al-indigo);
+  background: var(--al-tarjeta);
+  box-shadow: 0 1px 2px rgba(0,0,0,.05);
+}
+[data-aleph-piel="v2"] .aleph-frame-fila-primaria:hover { background: var(--al-tarjeta); }
+
+[data-aleph-piel="v2"] .aleph-frame-sep {
+  height: 1px; margin: 8px 4px 4px;
+  background: var(--al-hairline);
+}
+[data-aleph-piel="v2"] .aleph-frame-pie {
+  margin-top: auto;
+  padding: 8px;
+  border-top: 1px solid var(--al-hairline);
+}
+
+/* [rediseño · fase 6 · el frame · Educación] LA VARIANTE EMBEBIDA DEL PIE.
+ * Educación ya tiene su propio bloque de pie —con su línea y su padding— y ahí abajo va la
+ * cuenta. Si el pie del frame trajera además su `border-top` y su `margin-top:auto`, la
+ * pantalla mostraría DOS líneas donde el diseño dibuja una, y el `⚙` se despegaría de la
+ * cuenta en vez de ser la fila de arriba del mismo bloque. */
+[data-aleph-piel="v2"] .aleph-frame-pie--embebido {
+  margin-top: 0;
+  padding: 0;
+  border-top: 0;
+}
+
+/* El botón de colapsar de la cabecera. Es EL DEL STACK, mudado: acá vive sólo su caja.
+ * El diseño lo pone al final de la fila de marca, en 26×26 con radio 7. */
+/* LA LÍNEA DE PELO DE LA BARRA, PARA QUIEN NO ES SHADCN. El bloque «EL MARCO» de más
+ * arriba ancla en `[data-sidebar="sidebar"]`; Educación no expone ese atributo (medido:
+ * grep = 0 en todo `deeptutor`), así que su barra salía a 260 px, con el fondo correcto y
+ * SIN la línea. El stack declara `data-aleph-sidebar` en su propio `<aside>` y acá se le
+ * da el borde que el diseño pide. El fondo NO se repite: ya lo trae por `--secondary`. */
+[data-aleph-piel="v2"] [data-aleph-sidebar] {
+  border-right: 1px solid var(--al-hairline);
+}
+
+/* El separador entre el bloque raíz de la casa y la sección del espacio. Va al peso del
+ * diseño —la hairline entera— y no a una fracción de ella: medio pelo no se ve. */
+[data-aleph-piel="v2"] .aleph-frame-sep-raiz {
+  background: var(--al-hairline);
+}
+
+[data-aleph-piel="v2"] .aleph-frame-colapsar {
+  margin-inline-start: auto;
+  display: flex; align-items: center; justify-content: center;
+  width: 26px; height: 26px; flex: none;
+  padding: 0; border: 0; border-radius: 7px;
+  background: transparent; cursor: pointer;
+  /* El token real es `--al-etiqueta` (#6b6b64 claro · #838379 oscuro). Acá había un
+   * `--al-apagado` que no existía y caía al respaldo literal del gris CLARO; el barrido de
+   * `813f53fc` declaró los seis fantasmas y `a0fc54f4` sacó los 42 respaldos, así que estas
+   * reglas van SIN fallback, como el resto de la hoja: el token, o nada. */
+  color: var(--al-etiqueta);
+}
+[data-aleph-piel="v2"] .aleph-frame-colapsar:hover {
+  /* ⚠️ ACÁ HABÍA UN PARÉNTESIS DE MÁS —`var(--al-lienzo2))`— y eso no es un detalle: una
+   * declaración con sintaxis inválida el navegador la TIRA ENTERA, sin un error. O sea que
+   * este hover no pintaba nunca y la pantalla no lo decía. Lo encontró la sesión de Legal al
+   * juntar las hojas; el arreglo es de un carácter y la regla vuelve a existir. */
+  background: var(--al-lienzo2);
+  color: var(--al-tinta);
+}
+[data-aleph-piel="v2"] .aleph-frame-pie-item {
+  display: flex; align-items: center; gap: 10px; width: 100%;
+  padding: 8px 10px; border: 0; border-radius: 10px;
+  background: transparent; cursor: pointer; text-align: left;
+  font: 400 13.5px/1.2 var(--al-ui);
+  color: var(--al-tinta);
+}
+[data-aleph-piel="v2"] .aleph-frame-pie-item:hover { background: var(--al-lienzo2); }
+[data-aleph-piel="v2"] .aleph-frame-pie-glifo {
+  width: 16px; flex: none; font-size: 14px; line-height: 1;
+  color: var(--al-etiqueta);
+}
+
+[data-aleph-piel="v2"] .aleph-piel-pie {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 8px 4px;
+  border-top: 1px solid var(--al-hairline);
+}
+[data-aleph-piel="v2"] .aleph-piel-pie-item {
+  display: flex; align-items: center; gap: 10px;
+  width: 100%;
+  padding: 8px 10px;
+  border: 0; border-radius: 10px;
+  background: transparent;
+  color: var(--al-tinta);
+  font: 400 13.5px/1.2 var(--al-ui);
+  text-align: left;
+  cursor: pointer;
+}
+[data-aleph-piel="v2"] .aleph-piel-pie-item:hover {
+  background: var(--al-lienzo2);
+}
+[data-aleph-piel="v2"] .aleph-piel-pie-glifo {
+  width: 16px; flex: none;
+  font-size: 14px; line-height: 1;
+  color: var(--al-etiqueta);
+}
+
+/* Los grupos y el sub-grupo del diseño (`FINANZAS 62`, `˅ Más en Finanzas`). La etiqueta va
+ * en JetBrains Mono con tracking, tal como el documento la fija; el contador, al final. */
+[data-aleph-piel="v2"] .aleph-frame-grupo {
+  display: flex; align-items: center; gap: 8px;
+  padding: 14px 12px 6px;
+}
+[data-aleph-piel="v2"] .aleph-frame-grupo-txt {
+  font: 500 11px/1 var(--al-mono);
+  letter-spacing: .11em;
+  color: var(--al-etiqueta);
+  flex: 1; min-width: 0;
+}
+[data-aleph-piel="v2"] .aleph-frame-grupo-num {
+  font: 500 11px/1 var(--al-mono);
+  color: var(--al-etiqueta);
+}
+[data-aleph-piel="v2"] .aleph-frame-mas-cab {
+  display: flex; align-items: center; gap: 8px; width: 100%;
+  padding: 7px 12px; border: 0; background: transparent; cursor: pointer;
+  font: 400 13.5px/1.2 var(--al-ui);
+  color: var(--al-apoyo); text-align: left;
+}
+[data-aleph-piel="v2"] .aleph-frame-mas-flecha { width: 10px; flex: none; font-size: 11px; }
+[data-aleph-piel="v2"] .aleph-frame-mas-cuerpo { padding-inline-start: 14px; }
+
+/* ══ [Finanzas · las pantallas sueltas] LAS SIETE REGLAS DE LA PIEZA 12 ═══════════════
+   Medido contra las seis (`AlphaZoo · Reports · Scheduled · Correlation · Runtime ·
+   Compare`): color propio 0, degradados 0 — eso ya estaba limpio. Y cada pantalla tiene UN
+   solo `<h1>`: los cuatro de AlphaZoo viven en componentes distintos (`BrowseView`,
+   `DetailView`, `BenchView`), o sea uno por vista. La regla que NO se cumplía es el peso:
+   los títulos son `font-semibold`, que es 600, y la hoja del estándar dice «nunca negritas
+   de 600 en la UI: el peso máximo es 500».
+
+   SE ARREGLA ACÁ Y NO EN SEIS `.tsx` a propósito: es tipografía, vive en la piel, y así el
+   camino sin frame queda intacto. El tamaño va a los 44px del diseño sólo para el título de
+   pantalla —el `<h1>`—, no para los `<h2>` de sección, que la pieza 12 deja como labels.
+
+   🔧 CORRECCIÓN (integración) · ESTA REGLA ESTABA FUERA DE SU NAMESPACE. Se escribió midiendo
+   las pantallas sueltas de Finanzas, y Legal la reusa a propósito (su pieza 12 la cita: «el
+   `<h1>` ya lo arregla la regla `main h1` de arriba»). Pero el selector no nombraba espacio,
+   así que le llegaba a los SEIS — y en Oficina el `<h1>` del `<main>` NO es un título de
+   pantalla suelta: es el título de la sesión en la cabecera, declarado `text-[13px]`. Salía a
+   44px, se desbordaba del panel y decía «New session» en letras enormes. Un espacio se comió
+   la regla de otro. Ahora nombra a los dos que la midieron. */
+[data-aleph-piel="v2"][data-aleph-ws="finanzas"] main h1,
+[data-aleph-piel="v2"][data-aleph-ws="legal"] main h1 {
+  font: 300 44px/1.05 var(--al-ui);
+  letter-spacing: -.02em;
+  color: var(--al-tinta);
+}
+/* Ningún peso 600 en el lienzo del frame: el techo es 500 y se reserva para lo activo. */
+[data-aleph-piel="v2"] main .font-semibold,
+[data-aleph-piel="v2"] main .font-bold { font-weight: 500; }
+
+/* ══ [Finanzas · la barrita de chat] LA CAJA, TAL CUAL EL ARTBOARD ═══════════════════
+   Medidas leídas del artboard de Finanzas: envoltorio de 900 de ancho máximo, tarjeta
+   blanca de radio 22 con hairline y padding 16/18/12, el texto ARRIBA y los controles
+   DEBAJO, los dos símbolos de 34 con radio 10 (los dos palitos en lavanda), el chip del
+   modelo y enviar como círculo negro de 38.
+
+   El texto va arriba por `flex-wrap` + `order`, no por reordenar el JSX: es la misma caja
+   con otra disposición, y con el frame apagado no cambia nada. */
+[data-aleph-piel="v2"] [data-agent-composer] > div { max-width: 900px; }
+[data-aleph-piel="v2"] form > div.rounded-2xl {
+  flex-wrap: wrap; align-items: center; gap: 14px 8px;
+  border-radius: 22px; border-color: var(--al-hairline);
+  padding: 16px 18px 12px;
+}
+[data-aleph-piel="v2"] form > div.rounded-2xl > textarea {
+  order: -1; flex: 1 0 100%; min-height: 0; padding: 0;
+  font: 300 15px/1.5 var(--al-ui);
+}
+/* Los dos símbolos: 34 y radio 10. Los dos palitos llevan el acento porque son los que
+   abren las opciones de la sesión. */
+[data-aleph-piel="v2"] form > div.rounded-2xl > button,
+[data-aleph-piel="v2"] form > div.rounded-2xl > div > button {
+  width: 34px; height: 34px; border-radius: 10px; border-color: transparent;
+}
+[data-aleph-piel="v2"] form button[aria-haspopup="menu"] {
+  background: var(--al-lavanda);
+  color: var(--al-indigo);
+}
+/* El chip del modelo, escrito en el componente. */
+[data-aleph-piel="v2"] .aleph-chip-modelo {
+  margin-left: auto; display: inline-flex; align-items: center; gap: 8px;
+  background: var(--al-lienzo); border-radius: 999px; padding: 8px 14px;
+  max-width: 240px;
+}
+[data-aleph-piel="v2"] .aleph-chip-modelo-glifo { font-size: 12px; color: var(--al-indigo); }
+[data-aleph-piel="v2"] .aleph-chip-modelo-nom {
+  font: 400 13px var(--al-ui);
+  color: var(--al-texto2);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+/* Enviar: círculo negro de 38, el primario que declara la hoja del estándar.
+   ⚠️ ACOTADO AL COMPOSER, Y ESTO ES UN ARREGLO. El selector decía `form button[type=submit]`
+   a secas: cualquier botón de envío de cualquier formulario de cualquiera de los seis. En
+   Finanzas daba igual —su único `<form>` es el composer—, pero al encender la piel en Diseño
+   se comía el «Renombrar» de `RenameDesignDialog.tsx:78` y lo dejaba como un círculo negro de
+   38 px con el rótulo adentro. Medido ANTES de encender, no después. El conjunto que matchea
+   en Finanzas es idéntico; lo que cambia es lo que YA NO matchea en los otros cinco. */
+[data-aleph-piel="v2"] form > div.rounded-2xl > button[type="submit"] {
+  width: 38px; height: 38px; border-radius: 999px; border-color: transparent;
+  /* ⚠️ EL `color:#fff` CLAVADO ERA FLECHA BLANCA SOBRE BOTÓN CASI BLANCO EN OSCURO.
+     `--al-boton` da vuelta con el tema (#141412 en claro, #e6e6e3 en oscuro) y la tinta de
+     encima tenía que darse vuelta con él; clavada en blanco, en claro no se nota y en oscuro
+     el glifo desaparece. `--al-sobre-indigo` es el token que da vuelta (#ffffff / #141412).
+     Lo cazó la sesión del frame de Oficina al juntar las hojas. Deuda de nombre declarada:
+     el token se llama «sobre-indigo» y acá se usa sobre el botón negro — los valores son los
+     correctos, el nombre le queda chico. Se renombra cuando un tercer lugar lo pida. */
+  background: var(--al-boton); color: var(--al-sobre-indigo);
+  /* El artboard mete un `<span style="flex:1">` entre los dos símbolos y el bloque de la
+     derecha. Acá el aire lo pone el margen automático — y va en ENVIAR, que es el que
+     siempre está. El chip puede no estar (todavía no llegó el nombre del modelo) y con el
+     `auto` sólo en el chip, enviar se pegaba a los dos palitos. Cuando el chip SÍ está, él
+     se lleva el aire y enviar vuelve a pegarse a su lado, como en el dibujo. */
+  margin-left: auto;
+}
+/* 🔧 [integración · corrección] ESTA ANULACIÓN NUNCA CORRIÓ: PERDÍA POR ESPECIFICIDAD.
+   Estaba escrita como `[data-aleph-piel="v2"] .aleph-chip-modelo ~ button[type="submit"]`,
+   que pesa (0,3,1), contra la regla de arriba —`… form > div.rounded-2xl >
+   button[type="submit"]`— que pesa (0,3,3) y GANA por sus dos elementos de más. O sea que
+   enviar se quedaba con su `margin-left: auto` Y el chip tenía el suyo: dos márgenes
+   automáticos en la misma fila se REPARTEN el hueco libre, y el chip quedaba clavado en el
+   MEDIO de la barrita en vez de pegado a enviar.
+
+   Se vio en pantalla y no la vio ningún grep: el selector existía, la regla estaba escrita,
+   y leerla daba la impresión de que hacía algo. Es la misma familia que «la ausencia de una
+   señal no es una medición», del lado del CSS — una regla presente no es una regla aplicada.
+   El estándar de la barrita pide «clip y config a la izquierda · modelo y enviar a la
+   derecha». Ahora el selector lleva el mismo camino que la regla que anula, más la clase, y
+   pesa (0,4,3). */
+[data-aleph-piel="v2"] form > div.rounded-2xl > .aleph-chip-modelo ~ button[type="submit"] { margin-left: 0; }
+[data-aleph-piel="v2"] form > div.rounded-2xl > button[type="submit"]:disabled { opacity: .35; }
+
+/* SIN CONVERSACIÓN, EL SALUDO Y LA BARRITA VAN JUNTOS EN EL CENTRO — y cuando hay
+   conversación la barrita baja al fondo, como en cualquier chat. Es lo que dibuja el
+   artboard: la barrita no está clavada abajo con un hilo que todavía no empezó. */
+[data-aleph-piel="v2"] [data-agent-vacio="1"] .chat-scroll-container {
+  flex: 0 0 auto; margin-top: auto; overflow: visible;
+}
+[data-aleph-piel="v2"] [data-agent-vacio="1"] [data-agent-composer] {
+  border-top: 0; background: transparent; margin-bottom: auto;
+}
+
+/* [Finanzas · la cuenta del pie] Medidas del artboard: avatar de 28 redondo, el nombre en
+   12.5 y el rol en 11.5 apagado, con padding 8/12 debajo de Settings. */
+[data-aleph-piel="v2"] .aleph-frame-cuenta {
+  display: flex; align-items: center; gap: 10px; padding: 8px 12px;
+}
+[data-aleph-piel="v2"] .aleph-frame-cuenta-ava {
+  width: 28px; height: 28px; border-radius: 999px; flex: none;
+  background: var(--al-hairline);
+}
+[data-aleph-piel="v2"] .aleph-frame-cuenta-txt {
+  display: flex; flex-direction: column; min-width: 0;
+}
+[data-aleph-piel="v2"] .aleph-frame-cuenta-nom {
+  font: 400 12.5px var(--al-ui);
+  color: var(--al-tinta);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+[data-aleph-piel="v2"] .aleph-frame-cuenta-rol {
+  font: 300 11.5px var(--al-ui);
+  color: var(--al-etiqueta);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+
+/* ══ [Finanzas · el lienzo vacío] EL SALUDO A LA MEDIDA DEL ARTBOARD ═════════════════════
+   Medido en `Aleph Finanzas.dc.html`, pantalla 6a: la mascota va a 92 y el saludo a
+   `300 52px/1.05` con `letter-spacing:-.02em`, los dos en una fila con gap 24, y 34 de aire
+   hasta la barrita. El stack los tenía en 68 y `200 40px` con gap 12 — de ahí que el saludo
+   se leyera chico y la barrita, al lado, enorme. No se toca el ciclo de idiomas ni sus
+   tiempos: son los mismos de la casa, y con el frame apagado esta pantalla queda igual. */
+/* 🔧 [integración] LA BASE DEL SALUDO SUBE A ESTA HOJA, QUE ES LA QUE TIENEN LOS SEIS.
+   Hasta ahora la hoja traía sólo los AJUSTES (tamaño, peso, color) y la base —posición,
+   ciclo de idiomas, halo de la mascota— vivía en el `index.css` DE VIBETRADING. O sea que
+   el saludo sólo existía donde ese archivo existe. Cuando el dueño pidió que Ciencia también
+   abriera con la mascota en el medio, copiarlo adentro de Ciencia habría sido una TERCERA
+   copia — y esta misma hoja ya declaraba la deuda: «se unifica cuando el tercer espacio pida
+   el saludo». Pidió. Se unifica acá.
+   El camino sin frame no se toca: las reglas de vibetrading siguen donde estaban y gobiernan
+   cuando el flag está apagado; éstas, al estar scopeadas, sólo mandan adentro de Aleph. */
+[data-aleph-piel="v2"] .aleph-mark {
+  width: 112px; height: 112px; flex: none;
+  display: flex; align-items: center; justify-content: center;
+  /* El halo va por TOKEN y no por el `--primary` del stack: es el acento de Aleph, y clavado
+     al del stack cambiaría de color según en cuál de los seis se mire el mismo elemento. */
+  background: radial-gradient(circle, color-mix(in srgb, var(--al-indigo) 15%, transparent) 0%, transparent 76%);
+}
+[data-aleph-piel="v2"] .aleph-mark img,
+[data-aleph-piel="v2"] .aleph-mark svg { width: 92px; height: 92px; }
+[data-aleph-piel="v2"] .aleph-mark + .aleph-greet { margin-left: 12px; }  /* gap-3 (12) + 12 = 24 */
+/* La caja del saludo se queda FIJA —así el alto y la mascota no saltan al cambiar de
+   idioma— pero cada idioma se centra dentro de ella: con `flex-start` y una caja más ancha
+   que el texto, «Buenos días» quedaba corrido a la izquierda del centro de la pantalla.
+   El ancho sube a 440 porque a 52px el más largo («Bon après-midi») no entra en 320. */
+[data-aleph-piel="v2"] .aleph-greet { position: relative; height: 58px; min-width: 440px; }
+[data-aleph-piel="v2"] .aleph-g { justify-content: center; }
+/* Los siete idiomas se apilan en la MISMA caja para que el alto no salte al cambiar; cada uno
+   se ve 12 s dentro de una vuelta de 35, con el `animation-delay` escalonado que le pone
+   quien lo pinta. Mismos números que la casa (`sala.html`). */
+[data-aleph-piel="v2"] .aleph-g {
+  position: absolute; inset: 0;
+  display: flex; align-items: center;
+  opacity: 0; white-space: nowrap;
+  animation: aleph-greet-ciclo 35s infinite;
+}
+@keyframes aleph-greet-ciclo {
+  0%    { opacity: 0; transform: translateY(5px); }
+  2.3%  { opacity: 1; transform: translateY(0); }
+  11.4% { opacity: 1; transform: translateY(0); }
+  14.3% { opacity: 0; transform: translateY(-5px); }
+  100%  { opacity: 0; }
+}
+/* Sin movimiento, el saludo no desaparece: se queda el primero. Una animación apagada que
+   deja todo en `opacity:0` es una pantalla en blanco para quien pidió menos movimiento. */
+@media (prefers-reduced-motion: reduce) {
+  [data-aleph-piel="v2"] .aleph-g { animation: none; }
+  [data-aleph-piel="v2"] .aleph-g:first-child { opacity: 1; }
+}
+/* ⚠️ EL PESO Y EL TRACKING SALEN DE LA HOJA, NO DEL ARTBOARD, y el dueño lo cortó así:
+   «manda la hoja del estándar». La hoja (`Aleph Estandar.dc.html`, sección «Letras») fija
+   `font:200 40px 'Poppins'; letter-spacing:-.028em` con la glosa «el saludo, el único texto
+   en 200»; los artboards mandan en el TAMAÑO, que es lo que sabe cuánto mide en su pantalla.
+   Yo había horneado `300 … -.02em` leyéndolo del artboard 6a de Finanzas — y ese valor es,
+   carácter por carácter, el token de TÍTULO DE PANTALLA de la hoja (el que está bien puesto
+   en `main h1`, más abajo). El artboard usó el token del `<h1>` para un elemento que resulta
+   ser un `<h1>`; no estaba anulando la hoja. Bajo 300 la hoja se contradice sola: declara
+   Poppins 200/300/400/500 en uso y el 200 no lo usaría NADA en todo el sistema. */
+[data-aleph-piel="v2"] .aleph-g {
+  font: 200 52px/1.05 var(--al-ui);
+  letter-spacing: -.028em;
+  color: var(--al-tinta);
+}
+/* Los 34 de aire entre el saludo y la barrita. El `pb-14` del stack (56) es el único
+   separador que queda cuando las dos CTA se apagan con el frame puesto. */
+[data-aleph-piel="v2"] .aleph-lienzo-vacio { padding-bottom: 34px; }
+
+/* La barra del artboard mide 260; el stack la tenía en `w-64` (256). Se ata a esa misma
+   clase para NO tocar el estado plegado, que es `w-12` y no lo dibuja el artboard. */
+[data-aleph-piel="v2"] aside.w-64 { width: 260px; }
+
+
+/* «Show N more», el pie de la lista de sesiones que dibuja el artboard: `400 13px` apagado,
+   alineado con los renglones y con el mismo hueco a la izquierda que el punto de estado. */
+[data-aleph-piel="v2"] .aleph-frame-vermas {
+  display: block; width: 100%; text-align: left;
+  margin: 4px 0 2px; padding: 9px 12px 4px 29px;
+  border: 0; background: transparent; cursor: pointer;
+  font: 400 13px var(--al-ui);
+  color: var(--al-etiqueta);
+}
+[data-aleph-piel="v2"] .aleph-frame-vermas:hover { color: var(--al-tinta); }
+
+
+/* ══ LA FILA DE SESIÓN, A LA MEDIDA DEL ARTBOARD, EN LOS QUE NO LA TENÍAN ═══════════════
+   [integración]
+
+   EL DEFECTO, MEDIDO. El dueño dijo «los chats no están igual de tamaño». Contado sobre la
+   hoja: sólo Ciencia y Legal tenían reglas con la medida del diseño; los otros cuatro se
+   quedaban con el alto nativo de su stack. Medido en pantalla a 1440, paso entre filas:
+
+       Ciencia   ~37 px      (9 + 9 de padding + la línea)
+       Oficina   ~31,7 px
+       Educación ~31,5 px
+       Finanzas  ~29,7 px
+
+   Siete píxeles de diferencia entre la primera y la última, en barras que el estándar quiere
+   idénticas: «igualar el estilo, la alineación y el frame».
+
+   ⚠️ POR QUÉ DOS SELECTORES Y NO UNO. Las filas de estos stacks son utilidades de Tailwind:
+   no hay una clase estable a la que agarrarse. Educación y Finanzas reciben un
+   `data-aleph-sesion` puesto en LA FILA —no en el contenedor: bajar por estructura desde el
+   contenedor también agarraba los botones de renombrar y borrar—. Oficina no necesitó ninguna
+   edición: sus dos variantes de fila ya traían `data-session-tab-id`, que es un asidero suyo,
+   estable y con dueño. Se busca por FUNCIÓN, no por nombre.
+
+   ⚠️ Y EL SANGRADO POR PROFUNDIDAD DE OFICINA NO SE PISA. Sus filas llevan un
+   `paddingInlineStart` INLINE que escalona el anidado 12px por nivel; el inline gana sobre
+   esta hoja, así que el escalón se conserva y de acá sólo entra el alto. Clavarlo con
+   `!important` habría aplanado el árbol de sesiones sin que nadie lo pidiera. */
+[data-aleph-piel="v2"] [data-aleph-sesion],
+[data-aleph-piel="v2"][data-aleph-ws="oficina"] [data-session-tab-id] {
+  /* `flex: none` por el mismo motivo que en Ciencia (ver la regla de
+     `.session-sidebar__session` más abajo): estas filas viven en listas que scrollean, y un
+     ítem de flex encoge por defecto. Acá todavía no se vio porque las tres listas cortan en
+     7 — pero el «Show N more» de Educación las abre a 31 de un click, y ahí aparecería. Se
+     declara ahora, que es cuando se entendió, y no cuando muerda. */
+  flex: none;
+  padding: 9px 12px;
+  border-radius: 10px;
+  font: 300 13.5px/1.35 var(--al-ui);
+}
+
+
+/* ══ [Finanzas · la barra PLEGADA] ═══════════════════════════════════════════════════════
+   El artboard no dibuja este estado, pero SÍ dibuja el botón que lleva a él — y en la
+   cabecera, que es donde lo puse. O sea que existe, y tiene que verse.
+
+   Lo destapó una captura y no una vara: plegada, las filas del stack ya se centraban solas
+   (`renderNav` sabe de `collapsed`), pero las piezas del frame —la marca, `‹ Inicio`,
+   `New chat`, la etiqueta de grupo, «Más en …», el pie y la cuenta— seguían pintando su
+   texto en 48 px de ancho y se desbordaban unas sobre otras. Ya estaba roto antes de esta
+   tanda —el botón vivía en el pie—, pero al subirlo a la cabecera queda a un click, así que
+   es mío arreglarlo.
+
+   Va todo por CSS y colgado de `aside.w-12`, la clase que el propio `Layout` ya escribe al
+   plegar: sin estado nuevo, sin prop nueva, y sin tocar un handler. */
+[data-aleph-piel="v2"] aside.w-12 .aleph-frame-marca { padding: 6px 0 10px; justify-content: center; }
+[data-aleph-piel="v2"] aside.w-12 .aleph-frame-wordmark,
+[data-aleph-piel="v2"] aside.w-12 .aleph-frame-espacio,
+[data-aleph-piel="v2"] aside.w-12 .aleph-frame-inicio-txt,
+[data-aleph-piel="v2"] aside.w-12 .aleph-frame-grupo-txt,
+[data-aleph-piel="v2"] aside.w-12 .aleph-frame-grupo-num,
+[data-aleph-piel="v2"] aside.w-12 .aleph-frame-mas-cab span:not(.aleph-frame-mas-flecha),
+[data-aleph-piel="v2"] aside.w-12 .aleph-frame-pie-item > span:not(.aleph-frame-pie-glifo),
+[data-aleph-piel="v2"] aside.w-12 .aleph-frame-cuenta-txt,
+[data-aleph-piel="v2"] aside.w-12 .aleph-frame-fila > span:not(.aleph-frame-fila-glifo) { display: none; }
+
+/* La marca se queda sola y el glifo de plegar se va: plegada, el que hace falta es el `»`
+   de volver a abrir, y ése ya vive en el pie del stack, que plegado sí se dibuja. */
+[data-aleph-piel="v2"] aside.w-12 .aleph-frame-plegar { display: none; }
+
+[data-aleph-piel="v2"] aside.w-12 .aleph-frame-fila,
+[data-aleph-piel="v2"] aside.w-12 .aleph-frame-inicio,
+[data-aleph-piel="v2"] aside.w-12 .aleph-frame-pie-item { justify-content: center; padding: 8px 0; gap: 0; }
+[data-aleph-piel="v2"] aside.w-12 .aleph-frame-inicio { display: flex; }
+[data-aleph-piel="v2"] aside.w-12 .aleph-frame-mas-cab { justify-content: center; padding: 7px 0; }
+[data-aleph-piel="v2"] aside.w-12 .aleph-frame-mas-cuerpo { padding-inline-start: 0; }
+[data-aleph-piel="v2"] aside.w-12 .aleph-frame-grupo { padding: 8px 0 4px; justify-content: center; }
+/* La etiqueta de grupo se queda sin texto: en su lugar, el hilo que separa las secciones. */
+[data-aleph-piel="v2"] aside.w-12 .aleph-frame-grupo::before {
+  content: ""; display: block; width: 24px; height: 1px; background: var(--al-hairline);
+}
+[data-aleph-piel="v2"] aside.w-12 .aleph-frame-cuenta { justify-content: center; padding: 8px 0; gap: 0; }
+
+
+/* ⚠️ [integración] ACÁ VIVÍA EL CHIP DEL ESFUERZO DE RAZONAMIENTO Y SE FUE AL MENÚ DE LOS
+   DOS PALITOS. Era un segundo chip en la fila y el artboard 6a dibuja UNO solo
+   —`✳ Claude Code ⌄`—. La nota de ese mismo artboard («Reasoning Effort a la derecha → los
+   dos al composer») se cumple igual adentro de los palitos, que también son el composer, y
+   la hoja del estándar lo cierra: «Dos símbolos en todos los espacios y nada más» y «Dos
+   palitos: todas las opciones de la sesión».
+   Las dos reglas que había acá se van con él: sin `.aleph-chip-razon` en el DOM eran CSS
+   muerto, y el `margin-left:auto` que empujaba el par a la derecha vuelve a ser el del propio
+   chip del modelo, que ya lo trae. */
+
+
+/* ══ OFICINA · LA BARRITA DE CHAT Y EL SALUDO ══════════════════════════════════════════
+ * [el frame · Oficina · piezas 03, 07 y 09]
+ *
+ * Lo de arriba es de la cabecera y el pie, que son de los seis. Esto es lo que Oficina
+ * necesita además, y las medidas salen del HTML del mockup leído, no de memoria: caja radio
+ * 22 con `padding:16px 18px 12px`, clip y dos palitos de 34×34 radio 10 —el segundo sobre
+ * lavanda—, el enviar como círculo NEGRO de 38 con la flecha sola, y la pista del atajo
+ * AFUERA de la caja.
+ *
+ * ⚠️ DEUDA DECLARADA, y es de convergencia: el saludo está DOS VECES en esta hoja. Finanzas
+ * lo resuelve con `.aleph-mark` + `.aleph-greet` y Oficina con `.aleph-hero-saludo`, porque
+ * cada stack llegó por su lado a la misma pieza del diseño. Las dos son correctas y ninguna
+ * pisa a la otra, pero son un solo elemento del estándar con dos nombres. Se unifica cuando
+ * el tercer espacio pida el saludo — antes sería elegir a ciegas cuál de las dos gana. */
+
+/* Los controles de la cabecera, a la derecha de la fila de la marca: el colapsar que el
+ * mockup dibuja y —declarado como divergencia en `app-sidebar.tsx`— las dos flechas del
+ * historial, que se mudaron acá para que no quedara una segunda barra arriba. */
+[data-aleph-piel="v2"] .aleph-frame-acciones {
+  margin-inline-start: auto; flex: none;
+  display: flex; align-items: center; gap: 2px;
+}
+[data-aleph-piel="v2"] .aleph-frame-colapsar {
+  color: var(--al-etiqueta);
+}
+/* ══ LA BARRITA DE CHAT ═══════════════════════════════════════════════════════════════
+ * [el frame · piezas 07 y 09]
+ *
+ * ⚠️ LAS MEDIDAS SON LAS DEL MOCKUP, LEÍDAS DE SU HTML, no de memoria. La pieza 07 declara:
+ * caja radio 22 con `padding:16px 18px 12px`; el clip y los dos palitos de 34×34 con radio
+ * 10, el segundo sobre lavanda; el chip del modelo en píldora sobre el lienzo; el enviar
+ * como círculo NEGRO de 38 con la flecha sola; y la pista del atajo AFUERA de la caja, en
+ * 11.5px de apoyo. Eso es lo que hay acá abajo, valor por valor.
+ *
+ * ⚠️ POR TOKEN, NO POR HEX. El mockup dibuja el borde en `#e4e2de` y la hoja del estándar
+ * declara el hairline en `#e8e6e2`: gana el token, porque es el que da vuelta en oscuro. Un
+ * hex clavado acá sería un borde claro sobre un fondo negro la primera vez que alguien
+ * cambie el tema.
+ *
+ * LO QUE ES JSX Y NO CSS vive en `surface/composer/composer.tsx`, colgado del mismo flag: el
+ * ícono de los dos palitos (el enchufe se fue), el rótulo del botón de enviar (se fue al
+ * `aria-label`) y la pista. Medida y color, acá; estructura, allá. */
+[data-aleph-piel="v2"] .aleph-composer {
+  border-radius: 22px !important;
+  border-color: var(--al-hairline) !important;
+  background: var(--al-tarjeta) !important;
+}
+/* El relleno del mockup. La clase interna del stack trae 16/12/8; el diseño pide 16 arriba,
+ * 18 a los lados y 12 abajo. Se ataca el hijo directo, que es el único que lo lleva. */
+[data-aleph-piel="v2"] .aleph-composer > .px-4 {
+  padding: 16px 18px 12px !important;
+}
+[data-aleph-piel="v2"] .aleph-composer [data-lexical-editor],
+[data-aleph-piel="v2"] .aleph-composer-ph {
+  font: 300 15px/1.5 var(--al-ui) !important;
+}
+/* El placeholder va en el gris de etiqueta, OPACO. La clase del stack lo pone al 70 % de un
+ * gris que ya es claro; sobre el blanco de la caja eso queda por debajo del contraste que el
+ * resto del texto de apoyo respeta. El mockup lo dibuja en `#6b6b64`, que es el token. */
+[data-aleph-piel="v2"] .aleph-composer-ph {
+  color: var(--al-etiqueta) !important;
+}
+[data-aleph-piel="v2"] .aleph-composer-clip,
+[data-aleph-piel="v2"] .aleph-composer-palitos {
+  width: 34px !important; height: 34px !important; max-height: 34px !important;
+  border-radius: 10px !important;
+}
+[data-aleph-piel="v2"] .aleph-composer-clip { color: var(--al-texto2) !important; }
+/* Los dos palitos van SIEMPRE sobre lavanda, abierto o cerrado: en el mockup el tinte es del
+ * botón, no de su estado. El estado abierto lo dice el propio menú, que aparece. */
+[data-aleph-piel="v2"] .aleph-composer-palitos {
+  background: var(--al-lavanda) !important;
+  color: var(--al-indigo) !important;
+}
+[data-aleph-piel="v2"] .aleph-composer-enviar {
+  width: 38px !important; height: 38px !important; max-height: 38px !important;
+  padding: 0 !important; border-radius: 999px !important;
+  background: var(--al-boton) !important;
+  color: var(--al-sobre-indigo) !important;
+}
+/* ⚠️ [integración] EL ENVIAR DESHABILITADO SE APAGA, NO CAMBIA DE COLOR. Había TRES
+ * tratamientos para el mismo estado del mismo elemento del estándar, y se veían distintos
+ * entre espacios —lo cazó el dueño mirando la pantalla—:
+ *
+ *     Ciencia  `.aleph-barrita-enviar:disabled`     opacity .35   → sigue negro
+ *     Legal    `.composer-fila .send-btn:disabled`  opacity .35   → sigue negro
+ *     Oficina  acá                                  background    → pasaba a CLARO
+ *
+ * El artboard 07 dibuja el enviar como círculo NEGRO `#141412`; el estado apagado no lo
+ * dibuja, así que ninguna de las tres era «la del diseño». Pero el círculo tiene que seguir
+ * siendo el mismo botón: se apaga con opacidad, como los otros dos, y no se convierte en otro
+ * color. Dos de tres ya lo hacían así. */
+[data-aleph-piel="v2"] .aleph-composer-enviar:disabled {
+  background: var(--al-boton) !important;
+  color: var(--al-sobre-indigo) !important;
+  opacity: .35;
+}
+
+/* El chip del modelo de Oficina, contra el botón de enviar. Su composer parte la fila en dos
+ * grupos y el chip vive en el izquierdo, así que sin esto quedaba pegado a los dos palitos y
+ * el hueco caía en el medio. El artboard pone el `flex:1` ANTES del chip; esto es lo mismo,
+ * dicho desde el chip. */
+[data-aleph-piel="v2"] .aleph-composer-modelo { margin-inline-start: auto; }
+[data-aleph-piel="v2"] .aleph-composer-pista {
+  margin-top: 8px; padding-inline-start: 4px;
+  font: 300 11.5px/1.4 var(--al-ui);
+  color: var(--al-etiqueta);
+}
+/* LA CAJA DEL MENÚ Y LA FILA — lo que la hoja del estándar dice que se estandariza. Lo que
+ * hay ADENTRO sigue siendo de cada espacio: acá adentro son Agents · Commands · Skills ·
+ * Library · Configure, que es exactamente lo que la pieza 35c dibuja para este espacio. */
+[data-aleph-piel="v2"] .aleph-composer-menu {
+  border-radius: 18px !important;
+  border-color: var(--al-hairline) !important;
+  background: var(--al-tarjeta) !important;
+}
+/* LA FILA. El mockup la da en 14px de Poppins con `padding:11px 18px` y el chevron a la
+ * derecha; el chevron ya estaba.
+ *
+ * ⚠️ DIVERGENCIA DECLARADA, Y ES DE ESTRUCTURA: el mockup 35c dibuja el menú en UNA columna
+ * de 312 px —la lista, y se entra a cada sección—. Acá son dos paneles a la vez: la lista a
+ * la izquierda y su contenido a la derecha. Pasarlo a una columna sería meterle un nivel de
+ * navegación a un menú que hoy muestra todo de una, o sea cambiarle el funcionamiento a un
+ * botón que ya existe, que es justo lo que la regla prohíbe. Se estandariza lo que la hoja
+ * dice que se estandariza —el símbolo, el botón, la caja y la fila— y la columna queda
+ * anotada para que la decida el dueño. */
+[data-aleph-piel="v2"] .aleph-composer-menu button {
+  font-family: var(--al-ui);
+}
+[data-aleph-piel="v2"] .aleph-composer-menu > div > div:first-child > button {
+  padding: 11px 18px;
+  font-size: 14px;
+  border-radius: 12px;
+}
+/* EL SALUDO DEL INICIO DE SESIÓN (pieza 03 · 5a).
+ * ⚠️ DOS DOCUMENTOS, DOS VALORES, Y GANA CADA UNO EN LO SUYO. El archivo dedicado de Oficina
+ * dibuja el saludo en `font:300 52px/1.05`; la hoja del estándar dice, en su tabla de letras,
+ * que el saludo es «Poppins 200 · el único texto en 200», con tracking −.028em. Se toma el
+ * PESO y el TRACKING de la hoja —que es la que gobierna el estándar y es posterior— y el
+ * TAMAÑO del archivo de la pantalla, que es el que sabe cuánto mide acá. */
+[data-aleph-piel="v2"] .aleph-hero-saludo {
+  margin: 0;
+  font: 200 52px/1.05 var(--al-ui);
+  letter-spacing: -.028em;
+  color: var(--al-tinta);
+}
+
+
+/* ══ [CIENCIA · el frame] LA FILA, COMPLETA ═══════════════════════════════════════════
+   `aleph-frame-fila` nació en Finanzas con lo que su artboard pedía: glifo + rótulo. El de
+   Ciencia (`Aleph Ciencia.dc.html`, 3a) le pide cuatro cosas más —el atajo en mono, un valor
+   al final (`Local`), el punto de estado y el ESTADO ACTIVO, que hasta ahora sólo tenía la
+   fila primaria— y las pide para todos: `Library 128` y `FINANZAS 62` son el mismo patrón.
+   Por eso viven acá y no en la hoja del stack: una fila de Ciencia y una de Finanzas tienen
+   que medir igual, y eso no se sostiene con dos hojas.
+
+   ⚠️ LAS REGLAS NUEVAS VAN CALIFICADAS POR ELEMENTO (`button.aleph-frame-fila`). Finanzas
+   dibuja sus filas con `<a>`; darle `width` y `background` a la clase pelada le cambiaría la
+   suya sin que nadie lo pida. Es la misma lección que este archivo ya tiene escrita arriba
+   con `--bg` y `--color-*`: un nombre compartido sin acotar le pisa la cara al vecino. */
+[data-aleph-piel="v2"] button.aleph-frame-fila {
+  width: calc(100% - 8px);
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--al-ui);
+}
+/* ⚠️ ESTA REGLA EXISTE PORQUE LA PANTALLA LO DIJO. `New chat` salía SIN su tarjeta blanca:
+   el reset de arriba —que un `<button>` necesita, porque su fondo por defecto es
+   `buttonface`— tiene un `button` de más y llega después en el archivo, así que le ganaba a
+   `.aleph-frame-fila-primaria`. Medido: `background-color: rgba(0,0,0,0)` donde el artboard
+   pinta `#ffffff`. La vara estaba en verde igual: miraba que la fila existiera y dijera
+   «New chat», no de qué color era. */
+[data-aleph-piel="v2"] button.aleph-frame-fila-primaria,
+[data-aleph-piel="v2"] button.aleph-frame-fila[data-activa="true"] {
+  background: var(--al-tarjeta);
+  box-shadow: 0 1px 2px rgba(0,0,0,.05);
+}
+[data-aleph-piel="v2"] button.aleph-frame-fila-primaria:hover,
+[data-aleph-piel="v2"] button.aleph-frame-fila[data-activa="true"]:hover {
+  background: var(--al-tarjeta);
+}
+[data-aleph-piel="v2"] button.aleph-frame-fila:disabled { cursor: wait; opacity: .55; }
+[data-aleph-piel="v2"] .aleph-frame-fila-txt {
+  flex: 1; min-width: 0;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+/* El ítem activo: tarjeta blanca e índigo, el mismo tratamiento que la hoja del estándar
+   fija para las filas del sidebar («el activo pasa a 500 e indigo»). */
+[data-aleph-piel="v2"] .aleph-frame-fila[data-activa="true"] {
+  background: var(--al-tarjeta);
+  color: var(--al-indigo);
+  font-weight: 500;
+  box-shadow: 0 1px 2px rgba(0,0,0,.05);
+}
+/* El atajo, el contador y el valor: mono, apagados, al final de la fila. La hoja del
+   estándar los manda a JetBrains Mono («IDs, atajos, versiones, cifras»). */
+[data-aleph-piel="v2"] .aleph-frame-fila-atajo,
+[data-aleph-piel="v2"] .aleph-frame-fila-num {
+  flex: none;
+  font: 400 11px/1 var(--al-mono);
+  color: var(--al-etiqueta);
+  font-variant-numeric: tabular-nums;
+}
+[data-aleph-piel="v2"] .aleph-frame-fila-valor {
+  flex: none;
+  font: 400 11.5px/1 var(--al-ui);
+  color: var(--al-etiqueta);
+}
+/* El punto de estado. El verde dice «en línea» y NADA más, como la hoja lo reserva; el
+   apagado es la línea de pelo, o sea el mismo gris que separa, no un rojo de alarma: no
+   tener una shell abierta no es un fallo. */
+[data-aleph-piel="v2"] .aleph-frame-fila-punto {
+  width: 7px; height: 7px; flex: none; border-radius: 999px;
+  background: var(--al-hairline);
+}
+[data-aleph-piel="v2"] .aleph-frame-fila-punto[data-estado="vivo"] { background: var(--al-verde); }
+
+
+/* ══ [CIENCIA · el frame] LA BARRA DE CIENCIA ═════════════════════════════════════════
+   Ciencia era el único de los seis sin `aleph-frame`, así que acá no hay una barra ajena que
+   restilar: hay una barra NUESTRA (`session.tsx`, rama `frame.activo`) que necesita su forma.
+   Va acotada por `data-aleph-ws` como los bloques de token de arriba, y además por
+   `[data-aleph-frame="v2"]` en el propio `<aside>`: con el flag apagado ninguna de estas
+   reglas matchea y la barra del stack queda exactamente como estaba.
+
+   ⚠️ EL `.session-sidebar` DE ESTE STACK SE DECLARA CUATRO VECES en `atlas.css` (2692, 4278,
+   5173 y 5570) y la última gana: es una tarjeta flotante con radio 9 y margen 6, pintada con
+   `--surface-raised-strong`. El diseño pide una COLUMNA a ras, de 260, con línea de pelo a la
+   derecha. Se deshacen las cuatro cosas que sobran —margen, borde, radio y fondo— en vez de
+   pelearle a cada una donde está escrita. */
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] .session-sidebar[data-aleph-frame="v2"] {
+  --session-sidebar-width: 260px;
+  width: 260px;
+  min-width: 260px;
+  margin-right: 0;
+  border: 0;
+  border-right: 1px solid var(--al-hairline);
+  border-radius: 0;
+  background: var(--al-sidebar);
+  /* El scroll es de la LISTA, no de la barra: si scrollea la barra entera, el pie —Settings
+     y la cuenta— se va de pantalla, y el artboard lo dibuja anclado abajo. */
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+/* ⚠️ EL PLANO DEL CHAT ES EL LIENZO, NO LA TARJETA. Medido: `.session-main` computaba
+   `rgb(255,255,255)` porque la piel mapea `--background-strong/-stronger` a `--al-tarjeta`, y
+   el artboard 3a pinta ese panel de `#f4f3f1`. En el diseño de la casa el sidebar es MÁS
+   CLARO que el lienzo (#f7f6f4 sobre #f4f3f1) — al revés de lo que este stack asumía cuando
+   eligió una «superficie elevada» para el plano, que era correcto contra SU paleta. Con la
+   piel puesta manda la de la casa. */
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] .session-main {
+  background: var(--al-lienzo);
+}
+/* La letra de la barra: el `!important` de la hoja llega a `:root` y a `body`, y este stack
+   vuelve a declarar `--font-family-sans` (Outfit) sobre el `<aside>`. Se apunta el token, no
+   se escribe una familia. */
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] .session-sidebar[data-aleph-frame="v2"],
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] .session-sidebar[data-aleph-frame="v2"] * {
+  font-family: var(--al-ui);
+}
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] .session-sidebar[data-aleph-frame="v2"] .aleph-frame-wordmark {
+  font-family: var(--al-serif);
+}
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] .session-sidebar[data-aleph-frame="v2"] .aleph-frame-grupo-txt,
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] .session-sidebar[data-aleph-frame="v2"] .aleph-frame-grupo-num,
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] .session-sidebar[data-aleph-frame="v2"] .aleph-frame-fila-atajo,
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] .session-sidebar[data-aleph-frame="v2"] .aleph-frame-fila-num {
+  font-family: var(--al-mono);
+}
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] .session-sidebar[data-aleph-frame="v2"] .session-sidebar__actions {
+  display: block;
+  flex: 0 0 auto;
+  gap: 0;
+  padding: 0 6px;
+  border-bottom: 0;
+}
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] .session-sidebar[data-aleph-frame="v2"] .session-sidebar__action-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+/* RECENT SESSIONS y su lista. El artboard: filas de 9/12 con radio 10, punto a la izquierda,
+   título en 300 y el activo en tarjeta blanca con su sombra de 1px. */
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] .session-sidebar[data-aleph-frame="v2"] .session-sidebar__list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0 10px 8px;
+  gap: 1px;
+}
+/* 🔧 [integración · corrección] EL `flex: none` NO ES ADORNO: SIN ÉL LAS FILAS SE APLASTAN.
+   Esta regla le saca a la fila su `min-height: 31px` nativo para que mande el padding de
+   9/12 del artboard. Pero `.session-sidebar__list` es un `flex: 1; overflow-y: auto` en
+   columna, y un ítem de flex encoge por defecto (`flex-shrink: 1`): sin piso Y sin `none`,
+   nada lo detiene. Con 7 filas sobraba lugar y medían los 37px del dibujo; con las 55 de
+   verdad caían a 19 y la barra parecía otra cosa. La lista tiene que DESBORDAR y scrollear,
+   que es lo que su `overflow-y: auto` viene a hacer — no repartir el hueco que falta entre
+   las filas. Se vio sólo al sacar el tope de 7, que lo tapaba. */
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] .session-sidebar[data-aleph-frame="v2"] .session-sidebar__session {
+  min-height: 0;
+  flex: none;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: 10px;
+  color: var(--al-texto2);
+}
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] .session-sidebar[data-aleph-frame="v2"] .session-sidebar__session:hover,
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] .session-sidebar[data-aleph-frame="v2"] .session-sidebar__session:focus-visible {
+  background: var(--al-lienzo2);
+  color: var(--al-tinta);
+}
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] .session-sidebar[data-aleph-frame="v2"] .session-sidebar__session[data-active="true"] {
+  background: var(--al-tarjeta);
+  color: var(--al-tinta);
+  box-shadow: 0 1px 2px rgba(0,0,0,.04);
+}
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] .session-sidebar[data-aleph-frame="v2"] .session-sidebar__session-title {
+  font: 300 13.5px/1.35 var(--al-ui);
+}
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] .session-sidebar[data-aleph-frame="v2"] .session-sidebar__session[data-active="true"] .session-sidebar__session-title {
+  font-weight: 400;
+}
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] .session-sidebar[data-aleph-frame="v2"] .session-sidebar__session[data-actions="true"] {
+  padding-right: 34px;
+}
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] .session-sidebar[data-aleph-frame="v2"] .session-sidebar__empty {
+  padding: 9px 12px;
+  font: 300 13px/1.4 var(--al-ui);
+  color: var(--al-etiqueta);
+}
+/* La sección del espacio arranca con su línea, y `RECENT SESSIONS` con su aire. El artboard
+   pone 14 arriba de la primera y 18 arriba de la segunda. */
+/* Las medidas de la cabecera son las del artboard, contadas desde el borde de la barra:
+   la marca a 16 (`18px 16px 14px`), la fila de Inicio a 10 y las dos líneas a 16. */
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] .session-sidebar[data-aleph-frame="v2"] .aleph-frame-cabecera {
+  flex: 0 0 auto;
+  padding: 0 6px;
+}
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] .session-sidebar[data-aleph-frame="v2"] .aleph-frame-marca {
+  gap: 9px;
+  padding: 18px 10px 14px;
+}
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] .session-sidebar[data-aleph-frame="v2"] .aleph-frame-cabecera .aleph-frame-sep {
+  margin: 8px 10px 0;
+}
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] .session-sidebar[data-aleph-frame="v2"] .session-sidebar__actions .aleph-frame-sep {
+  margin: 14px 10px;
+}
+
+/* ══ EL CHIP DEL MODELO, CUANDO LA CASA TODAVÍA NO CONTESTÓ ═══════════════════════════
+   `aleph-picker-unico.js` reemplaza el trigger de este stack por el chip de Aleph en cuanto
+   la casa le baja el catálogo. Hasta entonces —y si la casa no contesta— el que se ve es el
+   del stack, y el artboard dibuja una PÍLDORA: `#f4f3f1`, radio 999, 8/14.
+   ⚠️ Es la lección del DATO VACÍO: el control no se esconde por no tener todavía su valor.
+   Se le pone la ropa del diseño al que está, que además dice su rótulo por defecto
+   («Select model»), igual que hacía la barra vieja. */
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] form.workspace-composer [data-model-settings-trigger] {
+  border: 0;
+  border-radius: 999px;
+  padding: 8px 14px;
+  background: var(--al-lienzo);
+  color: var(--al-texto2);
+  font: 400 13px var(--al-ui);
+}
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] .session-sidebar[data-aleph-frame="v2"] .aleph-frame-grupo {
+  flex: 0 0 auto;
+  padding: 18px 22px 8px;
+}
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] .session-sidebar[data-aleph-frame="v2"] .session-sidebar__actions .aleph-frame-grupo {
+  /* 6 del contenedor + 16 = 22 desde el borde de la barra, que es donde el artboard pone
+     `CIENCIA` (su contenedor va a 10 y la etiqueta a 12). */
+  padding: 0 16px 8px;
+}
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] .session-sidebar[data-aleph-frame="v2"] .aleph-frame-pie {
+  flex: 0 0 auto;
+}
+
+/* LA BARRA PLEGADA. El artboard dibuja UN control de plegar (antes había dos) y este stack ya
+   sabía encoger a 48: lo que faltaba era decirle qué esconder de las piezas NUEVAS, porque
+   sus reglas de `[data-collapsed]` nombran las clases viejas (`__action-copy`, `__label`…)
+   que con el frame ya no se renderizan. Se esconde el TEXTO, nunca el glifo: una barra
+   plegada sin íconos no es una barra, es un margen. */
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] .session-sidebar[data-aleph-frame="v2"][data-collapsed="true"] .aleph-frame-wordmark,
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] .session-sidebar[data-aleph-frame="v2"][data-collapsed="true"] .aleph-frame-espacio,
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] .session-sidebar[data-aleph-frame="v2"][data-collapsed="true"] .aleph-frame-inicio-txt,
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] .session-sidebar[data-aleph-frame="v2"][data-collapsed="true"] .aleph-frame-grupo,
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] .session-sidebar[data-aleph-frame="v2"][data-collapsed="true"] .aleph-frame-fila-txt,
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] .session-sidebar[data-aleph-frame="v2"][data-collapsed="true"] .aleph-frame-fila-atajo,
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] .session-sidebar[data-aleph-frame="v2"][data-collapsed="true"] .aleph-frame-fila-valor,
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] .session-sidebar[data-aleph-frame="v2"][data-collapsed="true"] .aleph-frame-fila-num,
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] .session-sidebar[data-aleph-frame="v2"][data-collapsed="true"] .aleph-frame-cuenta-txt,
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] .session-sidebar[data-aleph-frame="v2"][data-collapsed="true"] .aleph-frame-pie-item > span:not(.aleph-frame-pie-glifo) {
+  display: none;
+}
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] .session-sidebar[data-aleph-frame="v2"][data-collapsed="true"] .aleph-frame-fila,
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] .session-sidebar[data-aleph-frame="v2"][data-collapsed="true"] .aleph-frame-inicio,
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] .session-sidebar[data-aleph-frame="v2"][data-collapsed="true"] .aleph-frame-pie-item {
+  justify-content: center;
+  padding-inline: 0;
+  gap: 0;
+}
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] .session-sidebar[data-aleph-frame="v2"][data-collapsed="true"] .aleph-frame-inicio {
+  display: flex;
+}
+/* Plegada, la marca se queda con la mascota sola y el botón de plegar sale: el que despliega
+   es el mismo control, y a 48 px no entran los dos. Lo hace `data-collapsed`, que es estado,
+   no un `display:none` sobre una barra duplicada. */
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] .session-sidebar[data-aleph-frame="v2"][data-collapsed="true"] .aleph-frame-marca {
+  justify-content: center;
+  padding-inline: 0;
+}
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] .session-sidebar[data-aleph-frame="v2"][data-collapsed="true"] .aleph-frame-plegar {
+  display: none;
+}
+
+
+/* ══ [CIENCIA · las pantallas sueltas] NINGÚN DEGRADADO ══════════════════════════════
+   La pieza 12 lo dice con todas las letras: «cards planas radio 18 · un solo acento, el
+   índigo · ningún degradado». El lienzo vacío de Ciencia (`.research-launchpad`, la pantalla
+   que abre `New chat`) se pinta con TRES velos radiales —contados en `atlas.css`, líneas
+   1681, 2035 y 4460— de `--color-text` al 3,5–5 %. Son sutiles y son degradados igual.
+   Se apagan con el frame puesto y vuelven enteros con el flag apagado: es piel, no
+   estructura, y por eso se arregla acá y no en su hoja. */
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] .research-launchpad,
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] .research-launchpad__workflow[data-featured="true"] {
+  background: transparent;
+}
+
+/* ══ [CIENCIA · la barrita de chat] ════════════════════════════════════════════════════
+   Medidas leídas del artboard de Ciencia (3a y 2b, que dibujan la MISMA caja): envoltorio de
+   940 con 40 de aire a los lados, tarjeta blanca de radio 22 con hairline y padding 16/18/12,
+   el texto ARRIBA y los controles DEBAJO con 14 de separación, los dos símbolos de 34 con
+   radio 10 —los dos palitos en lavanda—, el chip del modelo, enviar como círculo negro de 38
+   y, debajo de la caja, la pista del atajo en 11.5/300.
+
+   ⚠️ ESTO NO MUEVE UN HANDLER. El clip ya era el botón de adjuntar (`workspace-composer__attach`,
+   con su `fileInputRef.click()`), los dos palitos ya eran el `<details>` con Delegation,
+   Auto-review, Reviewer model, Specialist y Compute adentro, y enviar ya era el `type=submit`.
+   Lo único que cambió en el JSX es el GLIFO del clip —era un «+», y la hoja del estándar dice
+   «el clip, que en algunos aparecía como “+” o como enchufe»— y la línea de la pista, que no
+   existía en ningún lado. */
+/* ⚠️ `width`, NO `max-width`. Medido: con `max-width:940px` el dock seguía saliendo en 740,
+   porque `atlas.css:5099` declara `width: min(100%, 740px)` y un `max-width` no le gana a un
+   `width` más chico. El artboard fija 940 con 40 de aire a los lados. */
+/* 🔧 [integración] LA MISMA MEDIDA QUE LOS OTROS. Los dos artboards que dibujan el lienzo
+   VACÍO —5a de Oficina y 7a de Educación— ponen la barrita en `max-width:900px`, y Finanzas
+   ya está en 900 (`[data-agent-composer] > div`). Ciencia estaba en 940 con 40 de padding, o
+   sea una tarjeta de 860: cuarenta px más angosta que las otras tres. Eran tres medidas para
+   la misma pieza. Ahora la tarjeta mide 900 en los cuatro; el padding de 40 se conserva
+   porque es el aire con el que la columna de mensajes de Ciencia ya está alineada. */
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] .session-prompt-dock__inner {
+  width: min(100%, 980px);
+  max-width: 980px;
+  padding-inline: 40px;
+}
+
+/* 🔧 SIN CONVERSACIÓN, EL SALUDO Y LA BARRITA VAN JUNTOS EN EL MEDIO — lo mismo que ya hace
+   Finanzas con `[data-agent-vacio]`, y por el mismo motivo: la barrita no está clavada abajo
+   con un hilo que todavía no empezó.
+
+   ⚠️ PRIMER INTENTO FALLIDO, Y POR QUÉ. Alcanzaba con `margin-top:auto` en el lienzo y
+   `margin-bottom:auto` en el dock... salvo que el dock de Ciencia es `position:absolute;
+   bottom:0` (`atlas.css:219`) y FLOTA sobre el lienzo: a un absoluto los márgenes automáticos
+   no lo mueven. Resultado medido en pantalla: la mascota asomando POR DETRÁS de la barrita.
+   Así que primero hay que sacarlo del absoluto; recién ahí la columna flex puede repartirlos.
+   Es el mismo error de fondo que el `width` sobre un `<span>` inline: una propiedad correcta
+   sobre un elemento que no la obedece.
+
+   El enganche es el `<main>` del estado vacío, hermano del dock en la misma columna, así que
+   alcanza el combinador de hermano y no hace falta `:has()`. Con conversación el `<main>` no
+   se renderiza, el hermano no matchea, y el dock —ya estático— cae al fondo solo, que es lo
+   que tiene que hacer un chat con hilo. */
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] .research-launchpad {
+  flex: 0 0 auto; margin-top: auto;
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+  overflow: visible;
+  /* El padding de abajo del stack reserva `--prompt-height + 96` para que su contenido no
+     quede debajo del dock flotante. Sin dock flotante, esa reserva sobra y separa de más. */
+  padding-bottom: 34px;
+}
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] .research-launchpad ~ .session-prompt-dock {
+  position: static;
+  pointer-events: auto;
+  margin-bottom: auto;
+  border-top: 0; background: transparent;
+}
+/* El aire de adentro de la caja: 16 arriba, 18 a los lados. El stack lo tenía en 9/11 con 48
+   de reserva a la derecha para los controles, que en el artboard ya no comparten fila con el
+   texto — bajaron a la suya. El texto y el placeholder llevan el MISMO padding o el
+   placeholder salta de lugar al escribir la primera letra. */
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] .workspace-composer [data-component="prompt-input"],
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] .workspace-composer__placeholder {
+  padding: 16px 18px 0;
+}
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] form.workspace-composer {
+  border-radius: 22px;
+  border: 1px solid var(--al-hairline);
+  background: var(--al-tarjeta);
+  box-shadow: 0 1px 3px rgba(0,0,0,.04);
+}
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] form.workspace-composer .workspace-composer__footer {
+  padding: 0 18px 12px;
+}
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] form.workspace-composer .workspace-composer__controls { gap: 8px; }
+/* Los dos símbolos: 34 y radio 10. El clip queda sin caja —el artboard lo dibuja al aire— y
+   los dos palitos llevan el acento, porque son los que abren las opciones de la sesión. */
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] form.workspace-composer .workspace-composer__attach,
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] form.workspace-composer .workspace-composer__overflow > summary {
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  border-radius: 10px;
+}
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] form.workspace-composer .workspace-composer__attach {
+  border-color: transparent;
+  background: transparent;
+  color: var(--al-texto2);
+}
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] form.workspace-composer .workspace-composer__overflow > summary {
+  border-color: transparent;
+  background: var(--al-lavanda);
+  color: var(--al-indigo);
+}
+/* Enviar: círculo de 38 con el primario de la hoja. El stack lo trae en 40 (`size-10`). */
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] form.workspace-composer .workspace-composer__send {
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  border-color: transparent;
+  background: var(--al-boton);
+  color: var(--al-sobre-indigo);
+}
+/* La pista del atajo, debajo de la caja. Es del artboard, palabra por palabra. */
+:root[data-aleph-piel="v2"][data-aleph-ws="ciencia"] .aleph-composer-pista {
+  padding: 8px 0 0 4px;
+  font: 300 11.5px/1.2 var(--al-ui);
+  color: var(--al-etiqueta);
+}
+/* ══════════════════════════════════════════════════════════════════════════════════════
+   LEGAL · EL SHELL  ·  artboard 38a
+   ══════════════════════════════════════════════════════════════════════════════════════
+   Todo lo de acá abajo va ACOTADO a `[data-aleph-ws="legal"]`: las clases del frame
+   (`aleph-frame-*`) las comparten los seis stacks, y las del stack (`.sidebar`,
+   `.nav-item`, `.composer`) son nombres genéricos de dochaus. Sin acotar, un ajuste para
+   Legal le movería la barra a Finanzas — que es exactamente el bug que este archivo ya
+   documentó dos veces.
+
+   Legal NO tenía DOS barras: tiene una sola, la suya, y el frame ya se le escribió adentro
+   en la fase 6. Lo que faltaba era la GEOMETRÍA del artboard y el bloque estándar. */
+
+/* La barra: 260 y el gris del sidebar. MEDIDO ANTES: 264 px sobre BLANCO puro — el
+   `--panel` que dochaus usa para su fondo es la tarjeta, no el sidebar. Es la misma alarma
+   heredada de «la barra de los stacks se ve lavada», con otra forma: acá no estaba lavada,
+   estaba blanca, y contra un lienzo #f4f3f1 la separación la daba sólo el hairline. */
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .sidebar.aleph-frame {
+  width: var(--al-riel);
+  padding: 0;
+  gap: 0;
+  background: var(--al-sidebar);
+  border-right: 1px solid var(--al-hairline);
+}
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .sidebar.aleph-frame.collapsed { width: 56px; }
+
+/* La cabecera: mascota 24 + «Aleph» serif + el nombre del espacio + el glifo de plegar.
+   El artboard la deja en 18/16/14 y sin la línea que el frame dibuja por defecto — acá la
+   línea la pone el separador que viene después de `‹ Inicio`. */
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .aleph-frame-cabecera { padding: 0; gap: 0; }
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .aleph-frame-marca { padding: 18px 16px 14px; gap: 9px; }
+/* ⚠️ EL GLIFO DE PLEGAR SALÍA EN 0 px DE ANCHO. Medido: el `<button>` es un flex y su
+   `<svg>` computaba `width: 0` —el atributo `width="15"` no lo salva, el flex lo encoge—.
+   O sea: el botón estaba, ocupaba su caja, y no se veía nada adentro. La misma familia que
+   «un botón sin cable, en silencio»: acá era un botón sin dibujo. */
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .aleph-frame-plegar > svg { flex: none; }
+
+/* `‹ Inicio`, su renglón y la línea que lo separa del bloque estándar. Mismas medidas que
+   cualquier fila de la barra: no es un botón aparte, es la primera fila del raíz. */
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .aleph-frame-inicio {
+  margin: 0 10px; width: calc(100% - 20px);
+  padding: 10px 12px; border-radius: 11px;
+  font: 400 14px/1.2 var(--al-ui);
+  color: var(--al-texto2);
+}
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .aleph-frame-sep { margin: 8px 16px 0; }
+
+/* EL BLOQUE ESTÁNDAR y las filas del espacio comparten el `.nav-item` del stack, así que
+   la geometría del artboard se escribe UNA vez. Antes: radio 18, padding 8/10, gap 10.
+   Ahora: radio 11, padding 10/12, gap 11, que es lo que dibuja 38a. */
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .sidebar.aleph-frame .sidebar-nav { padding: 0 10px; gap: 2px; }
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .sidebar.aleph-frame .sidebar-estandar { padding-top: 10px; }
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .sidebar.aleph-frame .nav-item {
+  gap: 11px; padding: 10px 12px; border-radius: 11px;
+  font: 400 14px/1.2 var(--al-ui);
+  color: var(--al-texto2);
+}
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .sidebar.aleph-frame .nav-item > svg { flex: none; }
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .sidebar.aleph-frame .nav-item:hover { background: var(--al-lienzo2); }
+
+/* EL ACTIVO. ⚠️ MEDIDO ANTES, y era el peor de los tres textos invisibles: la fila activa
+   computaba `color: rgb(236,234,253)` sobre `background: rgb(242,241,254)` — lavanda sobre
+   lavanda. La causa está arriba (`--accent` pisado); acá va la forma que pide el artboard:
+   PASTILLA BLANCA con una sombra de 1px, índigo y peso 500. Se van las dos cosas que el
+   dibujo no tiene: el relleno lavanda y la barrita indicadora de la izquierda. Y el peso
+   baja de 600 a 500, que es el techo de la hoja del estándar. */
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .sidebar.aleph-frame .nav-item.active {
+  background: var(--al-tarjeta);
+  color: var(--al-indigo);
+  font-weight: 500;
+  box-shadow: 0 1px 2px rgba(0,0,0,.05);
+}
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .sidebar.aleph-frame .nav-item.active::before { display: none; }
+
+/* El rótulo de fila y el atajo. El `⌘⇧F` es DATO: va en mono, como manda la hoja. */
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .sidebar.aleph-frame .nav-item > span:not(.nav-item-atajo) { flex: 1; min-width: 0; }
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .nav-item-atajo {
+  flex: none; font: 400 11px var(--al-mono); color: var(--al-etiqueta);
+}
+
+/* La etiqueta de grupo en mono, con el hilo que la separa de lo de arriba. `LEGAL` sale de
+   la etiqueta que la casa manda en la URL; `RECENT SESSIONS` es fijo. */
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .aleph-frame-grupo {
+  margin: 14px 16px 0; padding: 14px 0 8px 12px;
+  border-top: 1px solid var(--al-hairline);
+}
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .sidebar.aleph-frame .sidebar-surfaces .aleph-frame-grupo,
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .sidebar.aleph-frame .sidebar-convos .aleph-frame-grupo { margin-top: 4px; }
+
+/* Las superficies del expediente abierto (Chat · Review · Documents) y su título. */
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .sidebar.aleph-frame .sidebar-surfaces { padding: 0 10px; gap: 2px; }
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .sidebar.aleph-frame .sidebar-matter {
+  font: 500 11px var(--al-mono); letter-spacing: .11em; text-transform: uppercase;
+  color: var(--al-etiqueta); padding: 14px 12px 8px;
+}
+
+/* RECENT SESSIONS: la lista de conversaciones del expediente. */
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .sidebar.aleph-frame .sidebar-convos { padding: 0 10px; }
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .sidebar.aleph-frame .convo-item {
+  font: 300 13.5px/1.2 var(--al-ui); color: var(--al-texto2);
+  padding: 9px 12px; border-radius: 10px;
+}
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .sidebar.aleph-frame .convo-item.active {
+  font-weight: 400; color: var(--al-tinta);
+  background: var(--al-tarjeta); box-shadow: 0 1px 2px rgba(0,0,0,.04);
+}
+
+/* El pie: el hilo, `⚙ Settings` con la geometría de las demás filas, y nada más. */
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .sidebar.aleph-frame .sidebar-foot {
+  margin-top: auto; padding: 10px;
+  border-top: 1px solid var(--al-hairline);
+  gap: 1px;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════════════════════
+   LEGAL · LA BARRITA DE CHAT  ·  piezas 07 y 09
+   ══════════════════════════════════════════════════════════════════════════════════════
+   Medidas leídas del artboard, no de memoria: caja blanca de radio 22 con hairline y
+   padding 16/18/12, el texto arriba en 300/15, los DOS símbolos de 34 con radio 10 —los
+   dos palitos sobre lavanda—, el hueco flexible, el chip del modelo y enviar como círculo
+   negro de 38. La pista del atajo va FUERA de la caja, debajo, en 300/11.5 apagado. */
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .composer {
+  gap: 14px;
+  padding: 16px 18px 12px;
+  border-radius: 22px;
+  border: 1px solid var(--al-hairline);
+  background: var(--al-tarjeta);
+  box-shadow: 0 1px 3px rgba(0,0,0,.04);
+}
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .composer:focus-within {
+  border-color: var(--al-indigo);
+  box-shadow: 0 1px 3px rgba(0,0,0,.04);
+}
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .composer textarea {
+  padding: 0; min-height: 22px;
+  font: 300 15px/1.5 var(--al-ui);
+  color: var(--al-tinta);
+}
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .composer textarea::placeholder { color: var(--al-etiqueta); }
+
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .composer-fila {
+  display: flex; align-items: center; gap: 8px;
+}
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .composer-simbolo {
+  width: 34px; height: 34px; flex: none;
+  display: flex; align-items: center; justify-content: center;
+  border: 0; border-radius: 10px; background: transparent; cursor: pointer;
+  color: var(--al-texto2);
+}
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .composer-simbolo:hover { background: var(--al-lienzo2); }
+/* ⚠️ MISMA TRAMPA QUE EL GLIFO DE PLEGAR, Y ACÁ MORDIÓ DE NUEVO: el botón es un flex y su
+   `<svg>` es un ítem que ENCOGE. Con la fila holgada no se nota; en cuanto el lienzo se
+   angosta, el clip se midió en 8×18 y los dos palitos en 8×17 —aplastados a un tercio—.
+   Y la caja del botón seguía midiendo 34×34, o sea que medir el CONTENEDOR no es medir el
+   DIBUJO: lo destapó una captura en otro ancho, no una vara. */
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .composer-simbolo > svg { flex: none; }
+/* Los dos palitos llevan el acento porque son los que abren las opciones de la sesión. */
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .composer-simbolo-acento {
+  background: var(--al-lavanda); color: var(--al-indigo);
+}
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .composer-simbolo-acento:hover { background: var(--al-lavanda); }
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .composer-palitos { position: relative; flex: none; }
+
+/* EL HUECO Y EL ANCLA DEL CHIP. El artboard mete acá un `<span style="flex:1">`; el chip
+   del modelo lo pinta la casa por encima, pegado al extremo derecho de este mismo nodo.
+   ⚠️ La ALTURA es load-bearing: `ubicar()` centra el chip con `r.height`, y un nodo de
+   altura 0 lo dejaría pegado al borde de arriba de la fila. */
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .composer-fila > .composer-tools {
+  flex: 1; min-width: 0; min-height: 34px; margin: 0; padding: 0;
+}
+
+/* Enviar: círculo negro de 38, el primario del estándar. */
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .composer-fila .send-btn {
+  width: 38px; height: 38px; border-radius: 999px;
+  background: var(--al-boton); color: var(--al-sobre-indigo);
+}
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .composer-fila .send-btn:hover:not(:disabled) {
+  background: var(--al-boton); transform: translateY(-1px);
+}
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .composer-fila .send-btn:disabled {
+  background: var(--al-boton); opacity: .35; color: var(--al-sobre-indigo);
+}
+
+/* La pista, fuera de la caja. */
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .composer-pista {
+  margin-top: 8px; padding-left: 4px;
+  font: 300 11.5px/1.4 var(--al-ui);
+  color: var(--al-etiqueta);
+}
+
+/* EL MENÚ DE LOS DOS PALITOS. Caja del artboard 35c: 312 de ancho, radio 18, hairline,
+   sombra honda y 8px de aire arriba y abajo. Los controles del stack entran ENTEROS —son
+   sus mismos botones— y acá sólo se los pone en fila: pierden su cápsula y ganan el
+   renglón, que es el formato que la hoja del estándar estandariza («lo estandarizado es el
+   símbolo, el botón, la caja del menú y la fila; las opciones de adentro son las de cada
+   espacio»). */
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .composer-menu {
+  position: absolute; left: 0; bottom: calc(100% + 10px); z-index: 20;
+  width: 312px; padding: 8px 0;
+  background: var(--al-tarjeta);
+  border: 1px solid var(--al-hairline); border-radius: 18px;
+  box-shadow: 0 22px 50px -18px rgba(0,0,0,.3);
+}
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .composer-menu > button,
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .composer-menu .assistant-trigger,
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .composer-menu .workflow-btn {
+  display: flex; align-items: center; gap: 12px; width: 100%;
+  padding: 11px 18px; border: 0; border-radius: 0; background: transparent;
+  box-shadow: none;
+  font: 400 14px/1.3 var(--al-ui);
+  color: var(--al-tinta);
+}
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .composer-menu > button:hover,
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .composer-menu .assistant-trigger:hover:not(:disabled),
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .composer-menu .workflow-btn:hover:not(:disabled) {
+  background: var(--al-lienzo2); border-color: transparent; box-shadow: none;
+}
+/* El rótulo se lleva el renglón y el valor queda a la derecha, como en 35a. */
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .composer-menu .assistant-trigger-label,
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .composer-menu .workflow-btn > span {
+  flex: 1; min-width: 0; font-weight: 400; text-align: left;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .composer-menu .assistant-caret { color: var(--al-etiqueta); }
+
+
+/* ══════════════════════════════════════════════════════════════════════════════════════
+   LEGAL · LAS PANTALLAS SUELTAS  ·  pieza 12, las siete reglas
+   ══════════════════════════════════════════════════════════════════════════════════════
+   Medidas contra las seis de Legal (Matters · Templates · Workflows · Skills · Agents · el
+   expediente abierto), una por una:
+
+     1 · Vive en el shell            ✔ ya se cumplía — las seis son rutas del `<main>` del
+                                       propio shell, sin barra de arriba.
+     2 · El ítem se marca, sin       ✔ ya se cumplía — `NavLink` marca la fila y el árbol
+         breadcrumb                     no tiene un solo nodo `breadcrumb` (contado: 0).
+     3 · UN título 44/300 + un       ⚠️ el `<h1>` ya lo arregla la regla `main h1` de arriba
+         subtítulo gris de UNA línea    (medido 44px/300); el SUBTÍTULO estaba en 13px/400 —
+                                        el artboard lo pone en 16/300. Se corrige acá.
+     4 · Labels de sección en mono   ⚠️ NO se cumplía: los `<h2>` de tarjeta salían en
+                                        Poppins 700 —el bold del navegador, sin declarar—.
+                                        Dos infracciones en una: no eran mono, y 700 pasa el
+                                        techo de 500 de la hoja del estándar.
+     5 · Cards planas, radio 18      ⚠️ NO se cumplía: radio 22 (el `--radius-lg` del stack)
+                                        y sombra `0 3px 12px`. El artboard 38a las dibuja en
+                                        18 con hairline y sin sombra.
+     6 · UN acento y es el índigo    ⚠️ casi: el ÚNICO azul propio que quedaba es el
+                                        `#5a4fd6` clavado en las marcas de cambio del visor
+                                        de documentos —el acento VIEJO de dochaus—, que con
+                                        la piel puesta queda a un tono del nuestro. Se
+                                        re-apunta al token. Lo demás son degradados de
+                                        esqueleto y el PAPEL del visor, que es oficio: un
+                                        contrato tiene que verse como un documento, y una
+                                        marca de cambio es información, no decoración.
+     7 · Los verbos al lado del      ✔ ya se cumplía — `.page-head-actions` es exactamente
+         título                         esa fila, y ninguna pantalla flota sus acciones.
+
+   Y se va la línea bajo el título: el artboard no la dibuja. */
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .page-head {
+  border-bottom: 0; padding-bottom: 0; margin: 0 0 22px; gap: 24px;
+}
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .page-head h1 { line-height: 1.05; }
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .page-sub {
+  margin-top: 6px;
+  font: 300 16px/1.4 var(--al-ui);
+  color: var(--al-etiqueta);
+}
+
+/* Regla 4 · el label de sección: mono, mayúsculas, 11px, tracking .13em, gris. Es el mismo
+   recurso que separa GENERAL de la sección del espacio en Settings. */
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .card h2 {
+  font: 500 11px/1.4 var(--al-mono);
+  letter-spacing: .13em;
+  text-transform: uppercase;
+  color: var(--al-etiqueta);
+  margin-bottom: 16px;
+}
+
+/* Regla 5 · tarjetas planas. */
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .card {
+  border-radius: 18px;
+  border: 1px solid var(--al-hairline);
+  box-shadow: none;
+  padding: 22px 24px;
+}
+
+/* Ningún peso por encima de 500 en el lienzo — el techo de la hoja del estándar. dochaus no
+   usa clases de utilidad, así que la regla `main .font-semibold` de arriba no le llega: acá
+   va por elemento. El 500 se reserva para el estado activo, que ya lo declara su sitio. */
+[data-aleph-piel="v2"][data-aleph-ws="legal"] main h1,
+[data-aleph-piel="v2"][data-aleph-ws="legal"] main h2,
+[data-aleph-piel="v2"][data-aleph-ws="legal"] main h3,
+[data-aleph-piel="v2"][data-aleph-ws="legal"] main h4,
+[data-aleph-piel="v2"][data-aleph-ws="legal"] main b,
+[data-aleph-piel="v2"][data-aleph-ws="legal"] main strong { font-weight: 500; }
+/* ⛔ EL CUERPO DEL DOCUMENTO NO. Un contrato trae sus propias negritas y aplanarlas sería
+   editarle el documento al estudio, que es oficio y no piel. */
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .docx-render b,
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .docx-render strong { font-weight: 700; }
+
+/* Regla 6 · el último azul propio. Las inserciones del visor marcan con el acento VIEJO de
+   dochaus (`#5a4fd6`), clavado en tres propiedades. Con la piel puesta convivía con el
+   nuestro a un tono de distancia, que es peor que dos colores distintos. */
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .docx-render ins,
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .docx-render .docx-insertion {
+  color: var(--al-indigo);
+  background: color-mix(in srgb, var(--al-lavanda) 85%, transparent);
+  text-decoration-color: var(--al-indigo);
+}
+
+/* El chip de ID en cada fila: JetBrains Mono sobre lavanda, como manda la hoja del estándar
+   (`ALEPH-LEGAL-ARTIFACT-001`). El tamaño y el radio salen del artboard 38a. */
+[data-aleph-piel="v2"][data-aleph-ws="legal"] .matter-ref {
+  font: 400 12.5px var(--al-mono);
+  color: var(--al-indigo);
+  background: var(--al-lavanda);
+  border-radius: 6px;
+  padding: 4px 10px;
+}
+
+/* ══ [Diseño · pieza 11 · artboard 38c] EL RIEL DE 260 px ════════════════════════════════
+   Diseño es el único de los ocho que NO tenía barra vertical: su navegación vivía en una
+   barra HORIZONTAL (`TopBar.tsx`) y la barra de la casa era el `aside.ws-riel` del PADRE,
+   afuera del iframe. Dos barras. El diseño pide una, y la escribe el componente
+   (`AlephRail.tsx`), como en los otros cinco desde la fase 6.
+
+   ⚠️ EL HAIRLINE SALE DE `--al-hairline` Y ESO ES EL ARREGLO, NO UN DETALLE. Medido: el
+   sistema de tokens de este stack declara `--color-border`, `-subtle`, `-muted` y `-strong`
+   en **`transparent`** (`packages/ui/src/tokens.css:41-44`) — es una decisión suya, su
+   lenguaje visual no usa bordes. Si el riel tomara sus bordes de ahí, en claro quedaría gris
+   pálido sobre casi blanco y sin la línea que lo separa del lienzo: exactamente la barra
+   lavada que quedó pendiente de las tandas anteriores. Los `--al-*` son de la casa y sí
+   tienen valor en las dos luces.
+
+   Las medidas son las del artboard: el riel padea 0 6px y las filas llevan `margin:0 4px`,
+   así que la fila arranca en 10 y su texto en 22 — los mismos dos números que el dibujo. */
+[data-aleph-piel="v2"] .aleph-riel {
+  width: var(--al-riel); flex: none;
+  display: flex; flex-direction: column; min-height: 0;
+  overflow-y: auto; overflow-x: hidden;
+  background: var(--al-sidebar);
+  border-right: 1px solid var(--al-hairline);
+  font-family: var(--al-ui);
+}
+/* La cabecera del frame, con las medidas del 38c: 18/16/14 y gap 9. */
+[data-aleph-piel="v2"] .aleph-riel .aleph-frame-cabecera { padding: 0 6px 10px; gap: 0; }
+[data-aleph-piel="v2"] .aleph-riel .aleph-frame-marca { padding: 18px 10px 14px; gap: 9px; }
+[data-aleph-piel="v2"] .aleph-riel .aleph-frame-cabecera .aleph-frame-sep { margin: 8px 10px 0; }
+[data-aleph-piel="v2"] .aleph-riel-bloque {
+  padding: 0 6px; display: flex; flex-direction: column; gap: 2px;
+}
+[data-aleph-piel="v2"] .aleph-riel .aleph-frame-sep-bloque { margin: 14px 16px; }
+[data-aleph-piel="v2"] .aleph-riel-relleno { flex: 1 1 auto; min-height: 8px; }
+
+/* Las filas del riel son `<button>` y no `<a>` —no hay router acá dentro, hay estado— así
+   que hay que devolverles el reset que un enlace no necesita. Todo a la misma especificidad
+   (0,2,0) y en orden de archivo, para que el estado activo de abajo gane sin `!important`. */
+[data-aleph-piel="v2"] .aleph-riel .aleph-frame-fila {
+  width: auto; border: 0; background: transparent; cursor: pointer;
+  text-align: left; font-family: var(--al-ui);
+}
+[data-aleph-piel="v2"] .aleph-riel .aleph-frame-fila:hover { background: var(--al-lienzo2); }
+[data-aleph-piel="v2"] .aleph-riel .aleph-frame-fila-txt {
+  flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+/* El atajo, en mono y apagado: `⌘⇧F` al final de la fila `Search`. */
+[data-aleph-piel="v2"] .aleph-riel .aleph-frame-fila-atajo {
+  font: 400 11px/1 var(--al-mono); color: var(--al-etiqueta); flex: none;
+}
+/* El ítem activo. El artboard lo pinta igual que la fila primaria de los otros espacios
+   —tarjeta blanca, sombra de 1px e índigo en 500—, así que es el mismo tratamiento y no un
+   estilo nuevo; el glifo lo hereda por `currentColor`. */
+[data-aleph-piel="v2"] .aleph-riel .aleph-frame-fila-activa,
+[data-aleph-piel="v2"] .aleph-riel .aleph-frame-fila-activa:hover {
+  font-weight: 500;
+  color: var(--al-indigo);
+  background: var(--al-tarjeta);
+  box-shadow: 0 1px 2px rgba(0,0,0,.05);
+}
+/* La etiqueta de grupo arranca pegada al hilo de arriba: acá el aire ya lo puso el separador
+   de bloque, así que no se repite. */
+[data-aleph-piel="v2"] .aleph-riel .aleph-frame-grupo { padding: 0 16px 8px; }
+/* El pie: Settings usa LA MISMA fila que la navegación —el artboard 38c lo dibuja idéntico a
+   `Recientes`, no con el formato de pie más chico de Finanzas— y debajo la cuenta. */
+[data-aleph-piel="v2"] .aleph-riel .aleph-frame-pie { padding: 10px; }
+[data-aleph-piel="v2"] .aleph-riel .aleph-frame-pie-item {
+  gap: 11px; padding: 10px 12px; border-radius: 11px;
+  font: 400 14px/1.2 var(--al-ui); color: var(--al-texto2);
+}
+[data-aleph-piel="v2"] .aleph-riel .aleph-frame-pie-glifo {
+  width: 20px; flex: none; display: flex; align-items: center; justify-content: center;
+  color: inherit;
+}
+
+
+/* ══ [Diseño · piezas 07 y 09] LA BARRITA DE CHAT ════════════════════════════════════════
+   Medidas leídas del artboard de la pieza 07, una por una: tarjeta blanca de radio 22 con
+   hairline y padding 16/18/12, el campo en su propio renglón, la fila de controles con gap 8,
+   los dos símbolos de 34 con radio 10 —los dos palitos en lavanda—, enviar como círculo negro
+   de 38, y debajo de la tarjeta la línea de apoyo en `300 11.5px` apagado.
+
+   ⚠️ ACÁ VA ESCRITO EN CLASES PROPIAS Y NO COLGADO DE `div.rounded-2xl` como en Finanzas: el
+   composer de este stack no tiene esa clase y engancharse a las de Tailwind es engancharse a
+   algo que cambia con el hash del build. El componente pone `aleph-barrita-*`. */
+[data-aleph-piel="v2"] .aleph-barrita {
+  display: flex; flex-direction: column; gap: 14px;
+  background: var(--al-tarjeta);
+  border: 1px solid var(--al-hairline);
+  border-radius: 22px;
+  padding: 16px 18px 12px;
+}
+[data-aleph-piel="v2"] .aleph-barrita-contexto { display: flex; }
+[data-aleph-piel="v2"] textarea.aleph-barrita-campo {
+  display: block; width: 100%; min-height: 0; padding: 0;
+  resize: none; border: 0; background: transparent; outline: none; box-shadow: none;
+  font: 300 15px/1.5 var(--al-ui);
+  color: var(--al-tinta);
+}
+[data-aleph-piel="v2"] textarea.aleph-barrita-campo::placeholder { color: var(--al-etiqueta); }
+[data-aleph-piel="v2"] .aleph-barrita-fila { display: flex; align-items: center; gap: 8px; }
+[data-aleph-piel="v2"] .aleph-barrita-simbolos { display: flex; align-items: center; gap: 8px; }
+[data-aleph-piel="v2"] .aleph-barrita-simbolo {
+  width: 34px; height: 34px; flex: none;
+  display: flex; align-items: center; justify-content: center;
+  border: 0; border-radius: 10px; background: transparent; cursor: pointer;
+  color: var(--al-texto2);
+}
+[data-aleph-piel="v2"] .aleph-barrita-simbolo:hover { background: var(--al-lienzo2); }
+[data-aleph-piel="v2"] .aleph-barrita-simbolo:disabled { opacity: .4; cursor: default; }
+/* Los dos palitos llevan el acento porque son los que abren las opciones de la sesión. */
+[data-aleph-piel="v2"] .aleph-barrita-simbolo-opciones {
+  background: var(--al-lavanda); color: var(--al-indigo);
+}
+[data-aleph-piel="v2"] .aleph-barrita-simbolo-opciones:hover { background: var(--al-lavanda); }
+/* El `<span style="flex:1">` que el artboard mete entre los símbolos y el bloque derecho. */
+[data-aleph-piel="v2"] .aleph-barrita-hueco { flex: 1 1 auto; min-width: 0; }
+[data-aleph-piel="v2"] .aleph-barrita-enviar {
+  width: 38px; height: 38px; flex: none;
+  display: flex; align-items: center; justify-content: center;
+  border: 0; border-radius: 999px; cursor: pointer;
+  background: var(--al-boton); color: var(--al-sobre-indigo);
+}
+[data-aleph-piel="v2"] .aleph-barrita-enviar:disabled { opacity: .35; cursor: default; }
+[data-aleph-piel="v2"] .aleph-barrita-parar { background: var(--al-rojo); }
+/* El menú de los dos palitos. La caja y la fila son LAS ESTANDARIZADAS —la hoja del estándar
+   lo dice: «Lo estandarizado es el símbolo, el botón, la caja del menú y la fila. Las opciones
+   de adentro son las de cada espacio»— y sus medidas salen del artboard 35c de la pieza 09:
+   ancho 312, radio 18, hairline, `0 22px 50px -18px rgba(0,0,0,.3)`, padding 8/0, y filas de
+   `11px 18px` con gap 12 en `400 14px`.
+
+   ⚠️ SE ANCLA A LA TARJETA, NO AL BOTÓN, Y ESTO LO DESTAPÓ LA PANTALLA. Primero colgaba del
+   `<div class="relative">` que envuelve a los dos palitos, o sea de un botón que está 77 px
+   adentro del composer: medido en el lienzo real a 1440, el menú salía en x=337 y terminaba
+   en 635 — 15 px POR FUERA del panel de chat, encima del lienzo del diseño. El artboard lo
+   dibuja anclado al contenedor que envuelve al composer entero (`left:0`, `bottom:calc(100% +
+   10px)`), así que el `position:relative` se le saca al div del botón y se le pone a la
+   tarjeta. `max-width:100%` lo remata para el panel angosto. Ninguna vara lo habría visto:
+   es geometría, y sólo se ve mirando. */
+[data-aleph-piel="v2"] .aleph-barrita { position: relative; }
+[data-aleph-piel="v2"] .aleph-barrita-simbolos > div { position: static; }
+[data-aleph-piel="v2"] .aleph-barrita-menu {
+  position: absolute; left: 0; bottom: calc(100% + 10px); z-index: 30;
+  width: 312px; max-width: 100%; padding: 8px 0; overflow: hidden;
+  background: var(--al-tarjeta);
+  border: 1px solid var(--al-hairline);
+  border-radius: 18px;
+  box-shadow: 0 22px 50px -18px rgba(0,0,0,.3);
+}
+[data-aleph-piel="v2"] .aleph-barrita-menu-item {
+  display: flex; align-items: center; gap: 12px; width: 100%;
+  padding: 11px 18px; border: 0;
+  background: transparent; cursor: pointer; text-align: left;
+  font: 400 14px/1.3 var(--al-ui); color: var(--al-tinta);
+}
+[data-aleph-piel="v2"] .aleph-barrita-menu-item:hover { background: var(--al-lienzo2); }
+[data-aleph-piel="v2"] .aleph-barrita-menu-item:disabled { opacity: .45; cursor: default; }
+[data-aleph-piel="v2"] .aleph-barrita-menu-url {
+  display: flex; align-items: center; gap: 12px; padding: 11px 18px;
+  color: var(--al-etiqueta);
+}
+[data-aleph-piel="v2"] .aleph-barrita-menu-url input {
+  flex: 1; min-width: 0; border: 0; background: transparent; outline: none;
+  font: 400 14px var(--al-ui); color: var(--al-tinta);
+}
+/* La línea de apoyo, FUERA de la tarjeta. El artboard la fija en `300 11.5px` con 4 de
+   sangría; a la derecha entra el dato que ya se mostraba (tokens del último turno, o el
+   cronómetro mientras corre). */
+[data-aleph-piel="v2"] .aleph-barrita-pie {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  min-height: 16px; margin-top: 9px; padding-left: 4px;
+  font: 300 11.5px/1.3 var(--al-ui); color: var(--al-etiqueta);
+}
+[data-aleph-piel="v2"] .aleph-barrita-pie-atajo { min-width: 0; }
+[data-aleph-piel="v2"] .aleph-barrita-pie-estado {
+  display: inline-flex; align-items: center; gap: 6px; min-width: 0;
+}
+[data-aleph-piel="v2"] .aleph-barrita-pulso {
+  width: 6px; height: 6px; flex: none; border-radius: 999px;
+  background: var(--al-indigo); opacity: .75;
+}
+[data-aleph-piel="v2"] .aleph-barrita-pie-num {
+  flex: none; font-family: var(--al-mono); font-variant-numeric: tabular-nums;
+}
+
+
+/* ══ [Diseño · el destino del «68»] LA CABECERA DEL PANEL DE AJUSTES ═══════════════════════
+   Con el frame puesto no hay barra de arriba, así que el «volver» de Ajustes —que vivía en
+   ella— se dibuja acá, en la cabecera del propio panel. Mismo lenguaje que `‹ Inicio` del
+   riel: Poppins 400 13.5, tinta, radio 8 y el mismo apagado al pasar por encima. */
+[data-aleph-piel="v2"] .aleph-panel-cabecera {
+  flex: none; padding: 12px 12px 8px;
+  border-bottom: 1px solid var(--al-hairline);
+  background: var(--al-lienzo);
+}
+[data-aleph-piel="v2"] .aleph-panel-volver {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 10px; border: 0; border-radius: 8px;
+  background: transparent; cursor: pointer;
+  font: 400 13.5px/1.2 var(--al-ui); color: var(--al-tinta);
+}
+[data-aleph-piel="v2"] .aleph-panel-volver:hover { background: var(--al-lienzo2); }
+/* ⚠️ Y SU RIEL INTERNO NECESITA LA LÍNEA. Este stack declara TODOS sus bordes `transparent`
+   —es su lenguaje visual— así que el riel de pestañas de Ajustes quedaba en `--al-sidebar`
+   pegado al riel de Aleph, que es del MISMO color: dos barras del mismo gris sin nada que las
+   separe. Es la misma barra lavada que la hoja viene arreglando en los otros espacios. */
+[data-aleph-piel="v2"] .aleph-panel-ajustes aside {
+  border-right: 1px solid var(--al-hairline);
+}

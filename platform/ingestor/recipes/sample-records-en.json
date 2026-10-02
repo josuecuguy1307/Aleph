@@ -1,0 +1,16 @@
+{
+  "recipe_id": "sample-records-en-v1",
+  "source_kind": "csv",
+  "orientation": "records",
+  "delimiter": ",",
+  "encoding": "utf-8",
+  "header_rows_to_skip": 0,
+  "columns": [
+    { "label": "date", "cleaner": "date", "cleaner_opts": { "formats": ["%Y-%m-%d"] }, "field": "date" },
+    { "label": "metric", "cleaner": "text", "field": "metric" },
+    { "label": "value", "cleaner": "number_en", "field": "value" }
+  ],
+  "source_url": null,
+  "notes": "Fixture CSV (records orientation) en formato numerico ingles. La 3ra fila 'N/A' es blank legitimo (value=None, ok=True). La 4ta 'not_a_number' DEBE fallar el cleaner (ok=False con error) — el ingestor reporta, no inventa.",
+  "schema_version": "ingestor-recipe/v1"
+}

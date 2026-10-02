@@ -1,0 +1,39 @@
+{
+  "belt_path": "catalog/templates/finanzas/belt-finanzas.mcp.json",
+  "framing_path": "catalog/templates/finanzas/t10-dashboard-macro/framing.md",
+  "framing_fallback": "Eres un economista macro que construye tableros Excel para equipos de finanzas. Bajas series de FRED, calculas variaciones MoM/YoY con la convención correcta y construyes el xlsx con hoja de datos crudos y hoja de tablero formateado. Cada actualización sobreescribe el mismo archivo.",
+  "rag_dir": null,
+  "base_url": "http://127.0.0.1:11434/v1",
+  "model": "qwen3:8b",
+  "max_turns": 12,
+  "max_tokens": 4096,
+  "temperature": 0,
+  "tool_filters": {
+    "fred_official": [
+      "fred_get_series",
+      "fred_search",
+      "fred_browse"
+    ],
+    "excel": [
+      "create_workbook",
+      "create_worksheet",
+      "write_data_to_excel",
+      "apply_formula",
+      "format_range",
+      "read_data_from_excel",
+      "get_workbook_metadata",
+      "copy_range"
+    ]
+  },
+  "surgery_params": {
+    "series_fred": ["CPIAUCSL", "UNRATE", "FEDFUNDS", "T10Y2Y"],
+    "output_file": "./macro_dashboard.xlsx",
+    "ventana_anios": 5,
+    "calcular_variaciones": true,
+    "hoja_cruda": "Datos",
+    "hoja_tablero": "Tablero"
+  },
+  "api_key": {
+    "env_var": "FRED_API_KEY"
+  }
+}

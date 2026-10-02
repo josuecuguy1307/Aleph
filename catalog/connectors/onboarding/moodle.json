@@ -1,0 +1,88 @@
+{
+  "connector": "moodle",
+  "auth_method": "personal_token",
+  "tier": "average",
+  "needs_base_url": true,
+  "escape_hatch": true,
+  "requires_sharing": false,
+  "deep_link": "{base_url}/user/managetoken.php",
+  "credential_fields": [
+    {
+      "id": "key",
+      "label": "Tu llave de Moodle",
+      "shape": "(32 caracteres hex)",
+      "secret": true
+    }
+  ],
+  "auth": {
+    "scheme": "query",
+    "param": "wstoken",
+    "value": "{key}"
+  },
+  "steps": [
+    {
+      "txt": "Te llevo a tus llaves de seguridad en Moodle. Ahí debería aparecer tu llave del servicio web — cópiala. (Si no ves ninguna, tu institución tiene que habilitar el acceso por app — ver abajo.)",
+      "emphasis": [
+        "llave del servicio web"
+      ]
+    },
+    {
+      "txt": "Copia la llave (32 letras y números) — cópiala completa."
+    },
+    {
+      "txt": "Pega tu llave aquí."
+    }
+  ],
+  "validate": {
+    "method": "GET",
+    "path": "/webservice/rest/server.php?wsfunction=core_webservice_get_site_info&moodlewsrestformat=json",
+    "identity_field": "fullname"
+  },
+  "permissions": [],
+  "restricted_fallback": "Tu Moodle no tiene el acceso por app habilitado — eso lo activa un admin de la institución. Pedilo a quien administra el Moodle.",
+  "errors": {
+    "invalid": "Esa llave no funcionó o expiró — solicita/genera una nueva en Moodle y pégala.",
+    "wrong_account": "Esa llave es de otro Moodle. Usa la del campus donde están tus cursos.",
+    "wrong_base_url": "No encuentro ese Moodle. Revisa que la dirección sea la de tu institución.",
+    "network": "No pude verificar ahora — prueba de nuevo en un momento."
+  },
+  "capability_line": "Listo — ya puedo ver tus cursos de Moodle.",
+  "trust_line": "Tu llave se guarda cifrada · la quitas cuando quieras.",
+  "verification": {
+    "deep_link_ok": false,
+    "anchor_ok": false,
+    "validated_with_test_key": false,
+    "notes": "⚠️ Moodle = self-hosted (needs_base_url) + los servicios web suelen requerir que un ADMIN los habilite → restricted_fallback. auth = query param 'wstoken' (REST de Moodle). validate = core_webservice_get_site_info (identity fullname). El deep-link /user/managetoken.php existe pero depende de config del sitio. ALTA fricción; podría reclasificarse a institución. Sin test key/sitio real, no validé."
+  },
+  "en": {
+    "steps": [
+      {
+        "txt": "I'll take you to your security keys in Moodle. Your web service key should show up there — copy it. (If you don't see one, your institution has to enable app access — see below.)",
+        "emphasis": [
+          "web service key"
+        ]
+      },
+      {
+        "txt": "Copy the key (32 letters and numbers) — copy the whole thing."
+      },
+      {
+        "txt": "Paste it here."
+      }
+    ],
+    "trust_line": "Your key is stored encrypted · remove it anytime.",
+    "capability_line": "Done — I can now see your Moodle courses.",
+    "errors": {
+      "invalid": "That key didn't work or expired — request/generate a new one in Moodle and paste it.",
+      "wrong_account": "That key is from a different Moodle. Use the one from the campus where your courses live.",
+      "wrong_base_url": "I can't find that Moodle. Check that the address is your institution's.",
+      "network": "I couldn't verify right now — try again in a moment."
+    },
+    "credential_fields": [
+      {
+        "id": "key",
+        "label": "Your Moodle key",
+        "shape": "(32 hex characters)"
+      }
+    ]
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "deleg": {
+      "command": "python3",
+      "args": ["${PUPPET_REPO}/platform/assembler/deleg_fixtures/deleg_server.py"],
+      "description": "Belt de prueba del AGENTE ANIDADO (paso 2): read_data/write_note/slow_op (benignas) + send_email/place_order (SEND/MONEY, gateadas). stdio, solo stdlib, credential-free."
+    }
+  },
+  "_meta": {
+    "slug": "deleg",
+    "base_matrix": "platform/assembler/deleg_fixtures/base_matrix.json"
+  }
+}

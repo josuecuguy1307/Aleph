@@ -1,0 +1,109 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Aleph · vista live</title>
+<!-- _live.html — HERRAMIENTA DE DESARROLLO, no es parte del producto.
+     Envuelve la app en un iframe del MISMO origen para poder (a) forzar recarga sin caché,
+     (b) cambiar de pantalla, (c) cambiar de tema, y (d) auto-refrescar mientras se edita.
+     El caché del navegador era lo que hacía "no veo el cambio": una recarga normal reusa
+     el HTML y el CSS viejos. Acá cada carga lleva cache-buster. Borrable sin consecuencias. -->
+<style>
+ *{box-sizing:border-box}
+ html,body{margin:0;height:100%;background:#0B0B0C;color:#F5F5F6;
+   font:400 13px/1.4 system-ui,-apple-system,sans-serif}
+ body{display:flex;flex-direction:column}
+ header{display:flex;align-items:center;gap:8px;padding:10px 14px;flex:none;flex-wrap:wrap;
+   background:#141416;box-shadow:0 6px 22px rgba(0,0,0,.5);z-index:2}
+ .g{display:flex;gap:1px;padding:3px;border-radius:16px;background:#1C1C1F}
+ button,select{border:0;background:transparent;color:#A0A0A6;font:400 12px system-ui;
+   padding:7px 12px;border-radius:13px;cursor:pointer}
+ button.on{background:rgba(141,139,238,.18);color:#B7B5F5}
+ button:hover:not(.on){color:#F5F5F6}
+ select{background:#1C1C1F;border-radius:14px;padding:8px 12px}
+ .sp{flex:1}
+ .tag{font:400 11px ui-monospace,Menlo,monospace;color:#6B6B70}
+ #live{color:#4E9E77}
+ iframe{flex:1;width:100%;border:0;background:#0B0B0C}
+</style></head><body>
+<header>
+  <span class="tag">aleph-una-tarjeta · :8340</span>
+  <select id="pant">
+    <option value="Home.dc.html">Home</option>
+    <option value="Modelos.dc.html">Modelos</option>
+    <option value="Historial.dc.html">Historial</option>
+    <option value="Biblioteca.dc.html">Biblioteca</option>
+    <option value="Conectores.dc.html">Conectores</option>
+    <option value="Settings.dc.html">Ajustes</option>
+    <option value="Ayuda.dc.html">Ayuda</option>
+    <option value="metodo/metodo.html">Métodos</option>
+    <option value="sala-v2/sala-v2.html">La Sala</option>
+    <option value="Cuarto.dc.html">El Cuarto</option>
+    <option value="Auth.dc.html">Login</option>
+  </select>
+  <div class="g">
+    <button id="td" class="on">Oscuro</button>
+    <button id="tl">Claro</button>
+  </div>
+  <button id="rec" style="background:#F5F5F6;color:#0A0A0A">Recargar</button>
+  <div class="g"><button id="auto">Auto cada 3s</button></div>
+  <div class="sp"></div>
+  <span class="tag" id="live"></span>
+</header>
+<iframe id="f" title="Aleph"></iframe>
+<script>
+(function () {
+  var f = document.getElementById('f'), pant = document.getElementById('pant');
+  var tema = 'dark', timer = null;
+
+  function pintar() {
+    document.getElementById('td').classList.toggle('on', tema === 'dark');
+    document.getElementById('tl').classList.toggle('on', tema === 'light');
+  }
+  // mismo origen ⇒ podemos dejarle el tema puesto ANTES de que la app arranque
+  function aplicarTema() { try { localStorage.setItem('aleph-theme', tema); } catch (e) {} }
+
+  // Poner cache-buster SOLO en la URL de la pantalla no alcanza: el HTML se baja fresco pero
+  // sus <link rel=stylesheet> y <script src> se sirven del caché, así que seguís viendo el CSS
+  // y el JS viejos (fue exactamente el síntoma "no veo el cambio"). Acá se baja el HTML a mano,
+  // se le reescribe CADA subrecurso con su propio cb=, y recién ahí se inyecta en el iframe.
+  function cargar() {
+    aplicarTema();
+    var cb = Date.now();
+    var url = pant.value + (pant.value.indexOf('?') >= 0 ? '&' : '?') + 'cb=' + cb;
+    var dir = pant.value.indexOf('/') >= 0 ? pant.value.replace(/[^/]+$/, '') : '';
+
+    fetch(url, { cache: 'reload' })
+      .then(function (r) { return r.text(); })
+      .then(function (html) {
+        // href="x.css" / src="y.js" → href="x.css?cb=…"  (se saltan absolutas y data:)
+        html = html.replace(/\b(href|src)="([^"#?]+\.(?:css|js))"/g, function (m, a, u) {
+          if (/^(https?:|data:|\/\/)/.test(u)) return m;
+          return a + '="' + u + '?cb=' + cb + '"';
+        });
+        // <base> para que las rutas relativas sigan resolviendo desde la carpeta correcta
+        html = html.replace(/<head([^>]*)>/i, '<head$1><base href="' + location.origin + '/' + dir + '">');
+        var d = f.contentDocument;
+        d.open(); d.write(html); d.close();
+        sello();
+      })
+      .catch(function () { f.src = url; sello(); });
+  }
+
+  function sello() {
+    var d = new Date();
+    document.getElementById('live').textContent = 'recargado ' +
+      String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0') + ':' +
+      String(d.getSeconds()).padStart(2,'0');
+  }
+
+  document.getElementById('td').onclick = function () { tema = 'dark';  pintar(); cargar(); };
+  document.getElementById('tl').onclick = function () { tema = 'light'; pintar(); cargar(); };
+  document.getElementById('rec').onclick = cargar;
+  pant.onchange = cargar;
+  document.getElementById('auto').onclick = function () {
+    if (timer) { clearInterval(timer); timer = null; this.classList.remove('on'); }
+    else { timer = setInterval(cargar, 3000); this.classList.add('on'); }
+  };
+
+  pintar(); cargar();
+})();
+</script>
+</body></html>

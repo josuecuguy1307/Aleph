@@ -1,0 +1,24 @@
+{
+  "schema_version": "v1",
+  "meta": {
+    "name": "F1 · Cálculo",
+    "nicho": "general",
+    "descripcion": "ESLABÓN 2 (el del MEDIO: sin decisión ⇒ sin núcleo, derivado por el motor). Suma DE VERDAD con run_python lo que le entregó el eslabón 1."
+  },
+  "model": {
+    "primary": "openai/gpt-oss-120b",
+    "base_url": "https://api.groq.com/openai/v1",
+    "temperature": 0,
+    "max_tokens": 512,
+    "max_turns": 6
+  },
+  "belt": {
+    "belt_ref": "platform/assembler/fixtures/belt-inline-rich.mcp.json",
+    "tool_filters": { "pysandbox": ["run_python"] }
+  },
+  "framing": {
+    "inline": "Recibes una lista de números separados por comas. SUMALOS ejecutando run_python (ejecución real, jamás de memoria) y devuelves ÚNICAMENTE el resultado numérico, sin palabras ni símbolos. Ejemplo de salida válida: 20"
+  },
+  "rag": { "enabled": false },
+  "gates": { "money_touch": "needs_ok", "send": "needs_ok" }
+}

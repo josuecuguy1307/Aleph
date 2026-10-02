@@ -1,0 +1,796 @@
+"""
+High-level notification manager with database integration.
+"""
+
+from dataclasses import dataclass
+from datetime import datetime, timezone, timedelta
+from enum import Enum
+from typing import Dict, Optional, Any
+from collections import deque
+import threading
+
+from loguru import logger
+
+from ..settings.env_registry import get_env_setting
+from .service import NotificationService
+from .templates import EventType
+from .exceptions import RateLimitError
+from ..utilities.type_utils import unwrap_setting
+from ..constants import DEFAULT_SEARCH_TOOL
+
+
+class NotificationReason(str, Enum):
+    """Precise reason a notification was (not) sent.
+
+    Surfaced in :class:`NotificationResult` so callers and log lines can
+    distinguish, for example, a per-user toggle being off from the
+    server-level master switch being unset — see issue #4877.
+
+    Note: rate-limit refusal is signalled via :class:`RateLimitError`
+    (preserved API for callers that catch it directly) rather than as a
+    ``NotificationResult`` value.
+    """
+
+    SENT = "sent"
+    SERVER_DISABLED = "server_disabled"
+    EVENT_DISABLED = "event_disabled"
+    UNCONFIGURED = "unconfigured"
+    EGRESS_DENIED = "egress_denied"
+    WEBHOOK_FAILED = "webhook_failed"
+    EXCEPTION = "exception"
+
+
+@dataclass(frozen=True)
+class NotificationResult:
+    """Structured outcome of :meth:`NotificationManager.send_notification`.
+
+    ``sent`` keeps the legacy bool contract (``if result:`` keeps working —
+    see ``__bool__``) while ``reason`` names the precise cause so the queue
+    helpers and error reporter can log a useful, non-misleading line.
+    ``detail`` is a short operator-facing explanation complementing reason.
+    """
+
+    sent: bool
+    reason: NotificationReason
+    detail: str = ""
+
+    def __bool__(self) -> bool:
+        return self.sent
+
+
+class NotificationManager:
+    """
+    High-level notification manager that uses settings snapshots for
+    thread-safe access to user settings.
+
+    This manager is designed to be used from background threads (e.g., queue
+    processors) by passing a settings_snapshot dictionary captured from the
+    main thread.
+
+    **Per-User Rate Limiting:**
+    The rate limiter is shared across ALL NotificationManager instances as a
+    singleton, but supports per-user rate limit configuration. Each user has
+    their own rate limits based on their settings, which are configured when
+    the NotificationManager is initialized with the required user_id parameter.
+
+    **How It Works:**
+    - The first NotificationManager instance creates the shared RateLimiter
+      with default limits
+    - Each instance configures user-specific limits by passing user_id to __init__
+    - The rate limiter maintains separate counters and limits for each user
+    - Users are completely isolated - one user's limit doesn't affect others
+
+    Example:
+        >>> # User A with conservative limits
+        >>> snapshot_a = {"notifications.rate_limit_per_hour": 5}
+        >>> manager_a = NotificationManager(snapshot_a, user_id="user_a")
+        >>> # ✅ user_a gets 5/hour
+        >>>
+        >>> # User B with generous limits (doesn't affect User A!)
+        >>> snapshot_b = {"notifications.rate_limit_per_hour": 20}
+        >>> manager_b = NotificationManager(snapshot_b, user_id="user_b")
+        >>> # ✅ user_b gets 20/hour, user_a still has 5/hour
+    """
+
+    # Shared rate limiter instance across all NotificationManager instances
+    # This ensures rate limits are enforced correctly even when multiple
+    # NotificationManager instances are created
+    _shared_rate_limiter: Optional["RateLimiter"] = None
+    _rate_limiter_lock = threading.Lock()
+
+    def __init__(self, settings_snapshot: Dict[str, Any], user_id: str):
+        """
+        Initialize the notification manager.
+
+        Args:
+            settings_snapshot: Dictionary of settings key-value pairs captured
+                             from SettingsManager.get_settings_snapshot().
+                             This allows thread-safe access to user settings
+                             from background threads.
+            user_id: User identifier for per-user rate limiting. The rate limits
+                    from settings_snapshot will be configured for this user.
+
+        Example:
+            >>> # In main thread with database session
+            >>> settings_manager = SettingsManager(session)
+            >>> snapshot = settings_manager.get_settings_snapshot()
+            >>>
+            >>> # In background thread (thread-safe)
+            >>> notification_manager = NotificationManager(
+            ...     settings_snapshot=snapshot,
+            ...     user_id="user123"
+            ... )
+            >>> notification_manager.send_notification(...)
+        """
+        # Store settings snapshot for thread-safe access
+        self._settings_snapshot = settings_snapshot
+        self._user_id = user_id
+
+        # Security: read from server-side environment variable only — never from
+        # user-writable DB settings.  Previously this was read via
+        # _get_setting("notifications.allow_private_ips"), which allowed any
+        # user to bypass SSRF protection through the settings API.
+        # Registered as env-only in settings/env_definitions/security.py
+        # so SettingsManager will always read LDR_NOTIFICATIONS_ALLOW_PRIVATE_IPS
+        # from the environment, never from the database.
+        allow_private_ips = get_env_setting(
+            "notifications.allow_private_ips", False
+        )
+
+        # Server-level master switch (env-only). Distinct from the per-user
+        # notifications.enabled toggle in the UI: this gate is set by the
+        # deployment operator and cannot be flipped via the user-writable
+        # settings API. Disabled by default; enabling it accepts the
+        # documented DNS-rebinding TOCTOU residual risk
+        # (see SECURITY.md "Notification Webhook SSRF").
+        self._outbound_allowed = bool(
+            get_env_setting("notifications.allow_outbound", False)
+        )
+
+        self.service = NotificationService(
+            allow_private_ips=allow_private_ips,
+            outbound_allowed=self._outbound_allowed,
+        )
+
+        # Initialize shared rate limiter on first use
+        # The shared rate limiter now supports per-user limits, so each user's
+        # settings are respected regardless of initialization order.
+        with NotificationManager._rate_limiter_lock:
+            if NotificationManager._shared_rate_limiter is None:
+                # Create shared rate limiter with default limits
+                # (individual users can have different limits)
+                default_max_per_hour = self._get_setting(
+                    "notifications.rate_limit_per_hour", default=10
+                )
+                default_max_per_day = self._get_setting(
+                    "notifications.rate_limit_per_day", default=50
+                )
+
+                logger.info(
+                    f"Initializing shared rate limiter with defaults: "
+                    f"{default_max_per_hour}/hour, {default_max_per_day}/day"
+                )
+
+                NotificationManager._shared_rate_limiter = RateLimiter(
+                    max_per_hour=default_max_per_hour,
+                    max_per_day=default_max_per_day,
+                )
+
+            # Use the shared instance
+            self._rate_limiter = NotificationManager._shared_rate_limiter
+
+            # Configure per-user rate limits
+            max_per_hour = self._get_setting(
+                "notifications.rate_limit_per_hour", default=10
+            )
+            max_per_day = self._get_setting(
+                "notifications.rate_limit_per_day", default=50
+            )
+
+            self._rate_limiter.set_user_limits(
+                user_id, max_per_hour, max_per_day
+            )
+            logger.debug(
+                f"Configured rate limits for user {user_id}: "
+                f"{max_per_hour}/hour, {max_per_day}/day"
+            )
+
+    def _get_setting(self, key: str, default: Any = None) -> Any:
+        """
+        Get a setting value from snapshot.
+
+        Args:
+            key: Setting key
+            default: Default value if not found
+
+        Returns:
+            Setting value or default
+        """
+        return self._settings_snapshot.get(key, default)
+
+    def send_notification(
+        self,
+        event_type: EventType,
+        context: Dict[str, Any],
+        force: bool = False,
+    ) -> NotificationResult:
+        """
+        Send a notification for an event.
+
+        Uses the user_id that was provided during initialization for
+        rate limiting and user preferences.
+
+        Args:
+            event_type: Type of event
+            context: Context data for the notification
+            force: If True, bypass rate limiting
+
+        Returns:
+            :class:`NotificationResult` describing the outcome. The
+            dataclass is truthy iff the notification was actually sent,
+            so legacy ``if manager.send_notification(...):`` callers
+            continue to work without source changes.
+
+        Raises:
+            RateLimitError: If rate limit is exceeded and force=False
+        """
+        logger.debug(
+            f"Sending notification: event_type={event_type.value}, "
+            f"user_id={self._user_id}, force={force}"
+        )
+        logger.debug(f"Context keys: {list(context.keys())}")
+
+        # Server-level master switch (env-only). Disabled by default;
+        # flipping it on is the operator's acknowledgement of the
+        # documented SSRF rebinding residual risk. force=True does NOT
+        # bypass this — it bypasses the per-user event-type and
+        # rate-limit toggles only. WARNING level so an operator wondering
+        # "why aren't notifications firing?" sees the actionable signal
+        # at default log level.
+        if not self._outbound_allowed:
+            logger.warning(
+                "Notification refused: outbound notifications are disabled "
+                "at the server level. Set "
+                "LDR_NOTIFICATIONS_ALLOW_OUTBOUND=true to enable. See "
+                "SECURITY.md 'Notification Webhook SSRF' for the rationale "
+                "and residual risk. (event={}, user={})",
+                event_type.value,
+                self._user_id,
+            )
+            return NotificationResult(
+                sent=False,
+                reason=NotificationReason.SERVER_DISABLED,
+                detail="LDR_NOTIFICATIONS_ALLOW_OUTBOUND is not set",
+            )
+
+        # Check if notifications are enabled for this event type
+        should_notify = self._should_notify(event_type)
+        logger.debug(
+            f"Notification enabled check for {event_type.value}: "
+            f"{should_notify}"
+        )
+
+        if not force and not should_notify:
+            logger.debug(
+                f"Notifications disabled for event type: "
+                f"{event_type.value} (user: {self._user_id})"
+            )
+            return NotificationResult(
+                sent=False,
+                reason=NotificationReason.EVENT_DISABLED,
+                detail=f"notifications.on_{event_type.value} is off",
+            )
+
+        # Check rate limit using the manager's user_id
+        rate_limit_ok = self._rate_limiter.is_allowed(self._user_id)
+        logger.debug(f"Rate limit check for {self._user_id}: {rate_limit_ok}")
+
+        if not force and not rate_limit_ok:
+            logger.warning(f"Rate limit exceeded for user {self._user_id}")
+            raise RateLimitError(
+                "Notification rate limit exceeded. "
+                "Please wait before sending more notifications."
+            )
+
+        try:
+            # Get service URLs from settings (snapshot or database)
+            service_urls = self._get_setting(
+                "notifications.service_url", default=""
+            )
+
+            if not service_urls or not service_urls.strip():
+                logger.debug(
+                    f"No notification service URLs configured for user "
+                    f"{self._user_id}"
+                )
+                return NotificationResult(
+                    sent=False,
+                    reason=NotificationReason.UNCONFIGURED,
+                    detail="notifications.service_url is not configured",
+                )
+
+            # Egress policy: gate each parsed webhook URL against the
+            # user's scope. Apprise URLs can be Slack/Discord/SMTP/HTTP —
+            # we treat anything with a host as an HTTP egress and ask
+            # evaluate_url. Schemes without a hostname (e.g. mailto)
+            # pass through; SSRF + provider-side checks still apply.
+            allowed_urls = self._filter_urls_by_egress_policy(service_urls)
+            if not allowed_urls:
+                logger.bind(policy_audit=True).warning(
+                    "all notification URLs refused by egress policy",
+                    user=self._user_id,
+                    event=event_type.value,
+                )
+                return NotificationResult(
+                    sent=False,
+                    reason=NotificationReason.EGRESS_DENIED,
+                    detail="all configured URLs refused by egress policy",
+                )
+
+            # Send notification with the allowed subset.
+            logger.debug(f"Calling service.send_event for {event_type.value}")
+            sent = self.service.send_event(
+                event_type, context, service_urls=allowed_urls
+            )
+
+            # Log to database if enabled
+            if sent:
+                self._log_notification(event_type, context)
+                logger.info(
+                    f"Notification sent: {event_type.value} to user "
+                    f"{self._user_id}"
+                )
+                return NotificationResult(
+                    sent=True,
+                    reason=NotificationReason.SENT,
+                    detail="",
+                )
+            logger.warning(
+                f"Notification failed: {event_type.value} to user "
+                f"{self._user_id}"
+            )
+            return NotificationResult(
+                sent=False,
+                reason=NotificationReason.WEBHOOK_FAILED,
+                detail="Apprise dispatch returned False",
+            )
+
+        except Exception as exc:
+            # The exception string may contain webhook URLs with embedded
+            # tokens, SMTP credentials, or payload content. Log the raw
+            # exception for operators via logger.exception above, but only
+            # expose the exception class name (and not the message) in the
+            # structured result so downstream callers can't echo it into
+            # logs or UI surfaces verbatim.
+            logger.exception(
+                f"Error sending notification for {event_type.value} to user "
+                f"{self._user_id}"
+            )
+            return NotificationResult(
+                sent=False,
+                reason=NotificationReason.EXCEPTION,
+                detail=f"dispatch raised {type(exc).__name__}",
+            )
+
+    def test_service(self, url: str) -> Dict[str, Any]:
+        """
+        Test a notification service.
+
+        Args:
+            url: Service URL to test
+
+        Returns:
+            Dict with test results
+        """
+        # Egress policy precheck before forwarding to Apprise.
+        # /api/notifications/test-url is a user-supplied URL endpoint.
+        allowed = self._filter_urls_by_egress_policy(url)
+        if not allowed:
+            return {
+                "status": "error",
+                "message": (
+                    "URL refused by egress policy. Set Egress Scope to "
+                    "'Unprotected' (or pick a local webhook) to test this URL."
+                ),
+            }
+        return self.service.test_service(allowed)
+
+    def _filter_urls_by_egress_policy(self, service_urls: str) -> str:
+        """Filter an Apprise URL string (space- or comma-separated) by
+        the user's egress policy. Returns the joined string of allowed
+        URLs (may be empty). When no snapshot / context is available,
+        returns the input unchanged (back-compat — the snapshot-less
+        path was already used in older callers).
+        """
+        snapshot = getattr(self, "_settings_snapshot", None)
+        if not snapshot:
+            return service_urls
+        try:
+            from ..security.egress.policy import (
+                EgressScope,
+                PolicyDeniedError,
+                context_from_snapshot,
+                evaluate_url,
+            )
+        except ImportError:
+            logger.debug(
+                "egress_policy unavailable in notifications manager; "
+                "URLs will not be scope-gated"
+            )
+            return service_urls
+
+        primary_raw = unwrap_setting(
+            snapshot.get("search.tool", DEFAULT_SEARCH_TOOL)
+        )
+        try:
+            ctx = context_from_snapshot(
+                snapshot, primary_raw or DEFAULT_SEARCH_TOOL
+            )
+        except (PolicyDeniedError, ValueError) as exc:
+            # Snapshot present but policy cannot be evaluated. The
+            # previous bare-except dropped to "return service_urls"
+            # here, which dispatched every URL unfiltered — fail-open
+            # on a misconfigured policy. Now refuse all URLs instead
+            # so an Apprise dispatch with no scope check is impossible.
+            logger.bind(policy_audit=True).warning(
+                "all notification URLs refused: egress policy could "
+                "not be evaluated",
+                reason=str(exc),
+            )
+            return ""
+
+        # Apprise accepts space- or comma- separated URLs. Apprise has
+        # its own non-http schemes (discord://, slack://, telegram://,
+        # mailto://, msteams://, ntfy://, ...) that dispatch to EXTERNAL
+        # vendor APIs. evaluate_url only understands http/https.
+        #
+        # Under PRIVATE_ONLY ("nothing leaves the box") we cannot verify a
+        # vendor token resolves to a local endpoint, so a non-http scheme is
+        # refused — fail closed. A self-hosted notifier (local ntfy, SMTP)
+        # should be addressed by its http(s):// URL, which evaluate_url then
+        # allows as a private host. Under the other scopes the prior
+        # pass-through stands (the modeled threat there is internal-http
+        # SSRF via a raw webhook, not vendor APIs).
+        parts = []
+        for url_entry in service_urls.replace(",", " ").split():
+            url_entry = url_entry.strip()
+            if not url_entry:
+                continue
+            scheme = (
+                url_entry.split(":", 1)[0].lower() if ":" in url_entry else ""
+            )
+            if scheme not in ("http", "https"):
+                if ctx.scope == EgressScope.PRIVATE_ONLY:
+                    logger.bind(policy_audit=True).warning(
+                        "notification refused under PRIVATE_ONLY egress "
+                        "scope: non-http vendor scheme cannot be verified "
+                        "local",
+                        scheme=scheme or "(none)",
+                    )
+                    continue
+                parts.append(url_entry)
+                continue
+            decision = evaluate_url(url_entry, ctx)
+            if decision.allowed:
+                parts.append(url_entry)
+            else:
+                logger.bind(policy_audit=True).warning(
+                    "notification URL refused by egress policy",
+                    url=url_entry,
+                    scope=ctx.scope.value,
+                    reason=decision.reason,
+                )
+        return " ".join(parts)
+
+    def _should_notify(self, event_type: EventType) -> bool:
+        """
+        Check if notifications should be sent for this event type.
+
+        Uses the manager's settings snapshot to determine if the event type
+        is enabled for the user.
+
+        Args:
+            event_type: Event type to check
+
+        Returns:
+            True if notifications should be sent
+        """
+        try:
+            # Check event-specific setting (from snapshot or database)
+            setting_key = f"notifications.on_{event_type.value}"
+            enabled = self._get_setting(setting_key, default=False)
+
+            return bool(enabled)
+
+        except Exception:
+            logger.warning("Error checking notification preferences")
+            # Default to disabled on error to avoid infinite loops during login
+            return False
+
+    def _log_notification(
+        self, event_type: EventType, context: Dict[str, Any]
+    ) -> None:
+        """
+        Log a sent notification (simplified logging to application logs only).
+
+        Uses the manager's user_id for logging.
+
+        Args:
+            event_type: Event type
+            context: Notification context
+        """
+        try:
+            title = (
+                context.get("query")
+                or context.get("subscription_name")
+                or "Unknown"
+            )
+            logger.info(
+                f"Notification sent: {event_type.value} - {title} "
+                f"(user: {self._user_id})"
+            )
+        except Exception as e:
+            logger.debug(f"Failed to log notification: {e}")
+
+
+class RateLimiter:
+    """
+    Simple in-memory rate limiter for notifications with per-user limit support.
+
+    This rate limiter tracks notification counts per user and enforces
+    configurable rate limits. Each user can have their own rate limits,
+    which are stored separately from the notification counts.
+
+    **Per-User Limits:**
+    Rate limits can be configured per-user using `set_user_limits()`.
+    If no user-specific limits are set, the default limits (passed to
+    __init__) are used.
+
+    **Memory Storage:**
+    This implementation stores rate limits in memory only, which means
+    limits are reset when the server restarts. This is acceptable for normal
+    users since they cannot restart the server. If an admin restarts the server,
+    rate limits reset which is reasonable behavior.
+
+    **Thread Safety:**
+    This implementation is thread-safe using threading.Lock() for concurrent
+    requests from the same user.
+
+    **Multi-Worker Limitation:**
+    In multi-worker deployments, each worker process maintains its own rate
+    limit counters. Users could potentially bypass rate limits by distributing
+    requests across different workers, getting up to N × max_per_hour
+    notifications (where N = number of workers). For single-worker deployments
+    (the default for LDR), this is not a concern. For production multi-worker
+    deployments, consider implementing Redis-based rate limiting.
+
+    Example:
+        >>> limiter = RateLimiter(max_per_hour=10, max_per_day=50)
+        >>> # Set custom limits for specific user
+        >>> limiter.set_user_limits("user_a", max_per_hour=5, max_per_day=25)
+        >>> limiter.set_user_limits("user_b", max_per_hour=20, max_per_day=100)
+        >>> # Users get their configured limits
+        >>> limiter.is_allowed("user_a")  # Limited to 5/hour
+        >>> limiter.is_allowed("user_b")  # Limited to 20/hour
+        >>> limiter.is_allowed("user_c")  # Uses defaults: 10/hour
+    """
+
+    def __init__(
+        self,
+        max_per_hour: int = 10,
+        max_per_day: int = 50,
+        cleanup_interval_hours: int = 24,
+    ):
+        """
+        Initialize rate limiter with default limits.
+
+        Args:
+            max_per_hour: Default maximum notifications per hour per user
+            max_per_day: Default maximum notifications per day per user
+            cleanup_interval_hours: How often to run cleanup of inactive users (hours)
+        """
+        # Default limits used when no user-specific limits are set
+        self.max_per_hour = max_per_hour
+        self.max_per_day = max_per_day
+        self.cleanup_interval_hours = cleanup_interval_hours
+
+        # Per-user rate limit configuration (user_id -> (max_per_hour, max_per_day))
+        self._user_limits: Dict[str, tuple[int, int]] = {}
+
+        # Per-user notification counts
+        self._hourly_counts: Dict[str, deque] = {}
+        self._daily_counts: Dict[str, deque] = {}
+
+        self._last_cleanup = datetime.now(timezone.utc)
+        self._lock = threading.Lock()  # Thread safety for all operations
+
+    def set_user_limits(
+        self, user_id: str, max_per_hour: int, max_per_day: int
+    ) -> None:
+        """
+        Set rate limits for a specific user.
+
+        This allows each user to have their own rate limit configuration.
+        If not set, the user will use the default limits passed to __init__.
+
+        Args:
+            user_id: User identifier
+            max_per_hour: Maximum notifications per hour for this user
+            max_per_day: Maximum notifications per day for this user
+
+        Example:
+            >>> limiter = RateLimiter(max_per_hour=10, max_per_day=50)
+            >>> limiter.set_user_limits("power_user", max_per_hour=20, max_per_day=100)
+            >>> limiter.set_user_limits("limited_user", max_per_hour=5, max_per_day=25)
+        """
+        with self._lock:
+            self._user_limits[user_id] = (max_per_hour, max_per_day)
+            logger.debug(
+                f"Set rate limits for user {user_id}: "
+                f"{max_per_hour}/hour, {max_per_day}/day"
+            )
+
+    def get_user_limits(self, user_id: str) -> tuple[int, int]:
+        """
+        Get the effective rate limits for a user.
+
+        Returns the user-specific limits if set, otherwise returns defaults.
+
+        Args:
+            user_id: User identifier
+
+        Returns:
+            Tuple of (max_per_hour, max_per_day)
+        """
+        with self._lock:
+            return self._user_limits.get(
+                user_id, (self.max_per_hour, self.max_per_day)
+            )
+
+    def is_allowed(self, user_id: str) -> bool:
+        """
+        Check if a notification is allowed for a user.
+
+        Uses per-user rate limits if configured via set_user_limits(),
+        otherwise uses the default limits from __init__.
+
+        Args:
+            user_id: User identifier
+
+        Returns:
+            True if notification is allowed, False if rate limit exceeded
+        """
+        with self._lock:
+            now = datetime.now(timezone.utc)
+
+            # Periodic cleanup of inactive users
+            self._cleanup_inactive_users_if_needed(now)
+
+            # Initialize queues for user if needed
+            if user_id not in self._hourly_counts:
+                self._hourly_counts[user_id] = deque()
+                self._daily_counts[user_id] = deque()
+
+            # Clean old entries
+            self._clean_old_entries(user_id, now)
+
+            # Get user-specific limits or defaults
+            max_per_hour, max_per_day = self._user_limits.get(
+                user_id, (self.max_per_hour, self.max_per_day)
+            )
+
+            # Check limits
+            hourly_count = len(self._hourly_counts[user_id])
+            daily_count = len(self._daily_counts[user_id])
+
+            if hourly_count >= max_per_hour:
+                logger.warning(
+                    f"Hourly rate limit exceeded for user {user_id}: "
+                    f"{hourly_count}/{max_per_hour}"
+                )
+                return False
+
+            if daily_count >= max_per_day:
+                logger.warning(
+                    f"Daily rate limit exceeded for user {user_id}: "
+                    f"{daily_count}/{max_per_day}"
+                )
+                return False
+
+            # Record this notification
+            self._hourly_counts[user_id].append(now)
+            self._daily_counts[user_id].append(now)
+
+            return True
+
+    def _clean_old_entries(self, user_id: str, now: datetime) -> None:
+        """
+        Remove old entries from rate limit counters.
+
+        Args:
+            user_id: User identifier
+            now: Current time
+        """
+        hour_ago = now - timedelta(hours=1)
+        day_ago = now - timedelta(days=1)
+
+        # Clean hourly queue
+        while (
+            self._hourly_counts[user_id]
+            and self._hourly_counts[user_id][0] < hour_ago
+        ):
+            self._hourly_counts[user_id].popleft()
+
+        # Clean daily queue
+        while (
+            self._daily_counts[user_id]
+            and self._daily_counts[user_id][0] < day_ago
+        ):
+            self._daily_counts[user_id].popleft()
+
+    def reset(self, user_id: Optional[str] = None) -> None:
+        """
+        Reset rate limits for a user or all users.
+
+        Args:
+            user_id: User to reset, or None for all users
+        """
+        with self._lock:
+            if user_id:
+                self._hourly_counts.pop(user_id, None)
+                self._daily_counts.pop(user_id, None)
+            else:
+                self._hourly_counts.clear()
+                self._daily_counts.clear()
+
+    def _cleanup_inactive_users_if_needed(self, now: datetime) -> None:
+        """
+        Periodically clean up data for inactive users to prevent memory leaks.
+
+        Args:
+            now: Current timestamp
+        """
+        # Check if cleanup is needed
+        if now - self._last_cleanup < timedelta(
+            hours=self.cleanup_interval_hours
+        ):
+            return
+
+        logger.debug("Running periodic cleanup of inactive notification users")
+
+        # Define inactive threshold (users with no activity for 7 days)
+        inactive_threshold = now - timedelta(days=7)
+
+        inactive_users = []
+
+        # Find users with no recent activity
+        # Convert to list to avoid "dictionary changed size during iteration" error
+        for user_id in list(self._hourly_counts.keys()):
+            # Check if user has any recent entries
+            hourly_entries: list = list(self._hourly_counts.get(user_id, []))
+            daily_entries: list = list(self._daily_counts.get(user_id, []))
+
+            # If no entries or all entries are old, mark as inactive
+            has_recent_activity = False
+            for entry in hourly_entries + daily_entries:
+                if entry > inactive_threshold:
+                    has_recent_activity = True
+                    break
+
+            if not has_recent_activity:
+                inactive_users.append(user_id)
+
+        # Remove inactive users
+        for user_id in inactive_users:
+            self._hourly_counts.pop(user_id, None)
+            self._daily_counts.pop(user_id, None)
+            logger.debug(
+                f"Cleaned up inactive user {user_id} from rate limiter"
+            )
+
+        if inactive_users:
+            logger.info(
+                f"Cleaned up {len(inactive_users)} inactive users from rate limiter"
+            )
+
+        self._last_cleanup = now

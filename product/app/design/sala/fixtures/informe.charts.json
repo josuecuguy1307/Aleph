@@ -1,0 +1,5 @@
+{
+ "type": "informe",
+ "title": "Informe con charts (fixture)",
+ "content": "## Cierre mensual\n\nResumen con los cuatro tipos de gráfico del contrato.\n\n```chart\n{\"type\":\"bar\",\"title\":\"Ventas (k)\",\"labels\":[\"Abr\",\"May\",\"Jun\"],\"series\":[{\"name\":\"Ingreso\",\"data\":[10.2,25.1,30.4]}]}\n```\n\n```chart\n{\"type\":\"area\",\"title\":\"Margen (k)\",\"labels\":[\"Abr\",\"May\",\"Jun\"],\"series\":[{\"name\":\"Margen\",\"data\":[4.3,10.5,12.8]}]}\n```\n\n```chart\n{\"type\":\"scatter\",\"title\":\"Precio vs unidades\",\"series\":[{\"name\":\"SKUs\",\"points\":[[9.9,120],[19.9,64],[29.9,33]]}]}\n```\n\n```chart\n{\"type\":\"candlestick\",\"title\":\"Acción (10d)\",\"labels\":[\"d1\",\"d2\",\"d3\",\"d4\",\"d5\",\"d6\",\"d7\",\"d8\",\"d9\",\"d10\"],\"ohlc\":[[42,43.5,41.2,43.1],[43.1,44,42.5,42.8],[42.8,43.2,41.9,42.1],[42.1,43.8,42,43.6],[43.6,44.9,43.4,44.5],[44.5,44.8,43.1,43.4],[43.4,44.2,42.8,44],[44,45.5,43.9,45.2],[45.2,45.6,44.1,44.4],[44.4,46,44.2,45.8]]}\n```\n"
+}

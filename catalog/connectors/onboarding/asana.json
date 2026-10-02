@@ -1,0 +1,87 @@
+{
+  "connector": "asana",
+  "auth_method": "personal_token",
+  "tier": "average",
+  "needs_base_url": false,
+  "escape_hatch": true,
+  "requires_sharing": false,
+  "deep_link": "https://app.asana.com/0/my-apps",
+  "api_base": "https://app.asana.com",
+  "credential_fields": [
+    {
+      "id": "key",
+      "label": "Tu llave de Asana",
+      "shape": "2/1199…:7c4f… (token personal)",
+      "secret": true
+    }
+  ],
+  "auth": {
+    "scheme": "bearer",
+    "token": "{key}"
+  },
+  "steps": [
+    {
+      "txt": "Te llevo a tus apps de Asana. Ahí: en «Personal access tokens» toca «+ Create new token» → pon un nombre (ej. 'Mi asistente') → Crear.",
+      "emphasis": [
+        "Create new token",
+        "Crear"
+      ]
+    },
+    {
+      "txt": "Copia la llave que aparece. Es la única vez que Asana te la muestra — cópiala completa."
+    },
+    {
+      "txt": "Pega tu llave aquí."
+    }
+  ],
+  "validate": {
+    "method": "GET",
+    "path": "/api/1.0/users/me",
+    "identity_field": "name"
+  },
+  "permissions": [],
+  "errors": {
+    "invalid": "Esa llave no funcionó o se revocó — genera una nueva en tus apps de Asana y pégala.",
+    "wrong_account": "Esa llave es de otra cuenta de Asana. Usa la de la cuenta donde está tu trabajo.",
+    "network": "No pude verificar ahora — prueba de nuevo en un momento."
+  },
+  "capability_line": "Listo — ya puedo ver tus proyectos y tareas de Asana.",
+  "trust_line": "Tu llave se guarda cifrada · la quitas cuando quieras.",
+  "verification": {
+    "deep_link_ok": true,
+    "anchor_ok": false,
+    "validated_with_test_key": false,
+    "notes": "Asana PAT = acceso del usuario (sin permisos seleccionables). auth bearer (estándar). NO confirmé en vivo label 'Create new token' ni el prefijo exacto del PAT. Sin test key, no validé."
+  },
+  "en": {
+    "steps": [
+      {
+        "txt": "I'll take you to your Asana apps. There: under «Personal access tokens» tap «+ Create new token» → give it a name (e.g. 'My assistant') → Create.",
+        "emphasis": [
+          "Create new token",
+          "Create"
+        ]
+      },
+      {
+        "txt": "Copy the key that appears. This is the only time Asana shows it to you — copy the whole thing."
+      },
+      {
+        "txt": "Paste it here."
+      }
+    ],
+    "trust_line": "Your key is stored encrypted · remove it anytime.",
+    "capability_line": "Done — I can now see your Asana projects and tasks.",
+    "errors": {
+      "invalid": "That key didn't work or was revoked — generate a new one in your Asana apps and paste it.",
+      "wrong_account": "That key belongs to a different Asana account. Use the one for the account where your work lives.",
+      "network": "I couldn't verify right now — try again in a moment."
+    },
+    "credential_fields": [
+      {
+        "id": "key",
+        "label": "Your Asana key",
+        "shape": "2/1199…:7c4f… (personal token)"
+      }
+    ]
+  }
+}
