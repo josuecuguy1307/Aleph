@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "aleph_version": "0.1.2",
+  "source_commit": "58121ccb8c9f780641d97ffb467d8d7f3cf88cfc",
+  "distribution": "GitHub Release assets; not normal Git blobs or Git LFS",
+  "redistribution_status": "cleared",
+  "published": false,
+  "source_regeneration_recipe": "pending; no full-image or bit-for-bit regeneration claim",
+  "compliance_audit": "deploy/guest/COMPLIANCE_AUDIT.json",
+  "distribution_condition": "Publish both unchanged binaries, this corresponding-source/notices asset and release documentation together with equivalent public source download access.",
+  "corresponding_source_asset": {
+    "filename": "aleph-0.1.2-guest-sources.tar.zst",
+    "bytes": 1513920651,
+    "sha256": "5e6e4b0cb527ddf240ac7ace4bbfc050e2578756bd9c092f355746ad7601f85f",
+    "license": "Per-component; original source, license texts, exceptions and notices retained",
+    "packages_accounted": 206,
+    "kernel_source_config_patch_provenance": "complete",
+    "published": false
+  },
+  "assets": [
+    {
+      "filename": "Image.arm64",
+      "bytes": 36241408,
+      "sha256": "e698a107e4d04117db1a7b0daee99bdae5f0647fba2af50f3cd020a666950ab9",
+      "identity": "Alpine Linux 6.18.52-0-virt aarch64",
+      "license": "GPL-2.0-only",
+      "provenance": "Byte-identical to the decompressed official Alpine 3.24.2 netboot vmlinuz-virt and certified commit/app."
+    },
+    {
+      "filename": "rootfs.arm64.cpio.gz",
+      "bytes": 279676469,
+      "sha256": "7115a4dc8d846e24fa1b3482d504b4f0dce234362323987a6c46b9cd6dcad141",
+      "identity": "Alpine 3.24.2 aarch64 base, 190 signed offline APKs and Aleph init/runner",
+      "license": "Per-component; see PACKAGES.tsv and THIRD_PARTY_NOTICES",
+      "provenance": "Official base regular-file comparison, 190 APK RSA signatures and signed payload digests verified; certified commit/app hashes match."
+    }
+  ]
+}

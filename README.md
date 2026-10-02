@@ -24,9 +24,16 @@ exclusions, and snapshot-only changes.
 
 Start with [BUILDING.md](BUILDING.md). The existing official application entry point
 is `./deploy/fase4/build_app.sh public`; its 40 GiB disk safety gate is unchanged.
-This source-only snapshot excludes compiled runtimes, virtual environments and
-dependency caches. Some required external build inputs must be materialized first;
-the missing guest-image regeneration procedure is documented rather than hidden.
+Git excludes compiled runtimes, virtual environments and dependency caches.
+The OSS release plan includes the **exact certified guest kernel/rootfs as separate
+GitHub Release assets**, not ordinary Git blobs. Their hashes and upstream origin
+are verified. Their **206-package license/source compliance is cleared locally**;
+the matching sources/notices are a separate Release asset too. Nothing has been
+published. See [deploy/guest/ASSETS.md](deploy/guest/ASSETS.md) for all three assets,
+and [deploy/guest/COMPLIANCE.md](deploy/guest/COMPLIANCE.md) for the explicit review.
+Some required external build inputs must be materialized first.
+The complete recipe to regenerate those guest assets from source is still pending;
+distributing exact binaries does not establish source reproducibility.
 No binary rebuild or clean-checkout build certification was performed for this snapshot.
 
 Onshape is **optional / not certified**. No live Onshape verification is claimed.

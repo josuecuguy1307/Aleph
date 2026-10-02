@@ -1,0 +1,207 @@
+scope	package	version	source_origin	aports_commit	declared_license	resolved_license	source_required	source_directory	source_version_verified	notice_file_count	disposition
+base-installed	alpine-baselayout	3.7.2-r1	alpine-baselayout	60a7585bbab2fa0f762504eb617dbca90216e31f	GPL-2.0-only	GPL-2.0-only	True	components/alpine-baselayout-60a7585bbab2	True	0	CLEARED
+base-installed	alpine-baselayout-data	3.7.2-r1	alpine-baselayout	60a7585bbab2fa0f762504eb617dbca90216e31f	GPL-2.0-only	GPL-2.0-only	True	components/alpine-baselayout-60a7585bbab2	True	0	CLEARED
+base-installed	alpine-keys	2.6-r0	alpine-keys	b9f23becced4d7b3ccc0fa0f28530243ccd314a0	MIT	MIT	False	components/alpine-keys-b9f23becced4	True	0	CLEARED
+base-installed	alpine-release	3.24.2-r0	alpine-base	d9d560d5de74ff9a7a73f3c903d6f126a0bf3142	MIT	MIT	False	components/alpine-base-d9d560d5de74	True	0	CLEARED
+base-installed	apk-tools	3.0.8-r0	apk-tools	4588b452722bd4800efdc6cce4f6e980e02a997f	GPL-2.0-only	GPL-2.0-only	True	components/apk-tools-4588b452722b	True	2	CLEARED
+base-installed	busybox	1.37.0-r31	busybox	c3ef5d10e6ef6528852c51f0564963e2f8c1be19	GPL-2.0-only	GPL-2.0-only	True	components/busybox-c3ef5d10e6ef	True	3	CLEARED
+base-installed	busybox-binsh	1.37.0-r31	busybox	c3ef5d10e6ef6528852c51f0564963e2f8c1be19	GPL-2.0-only	GPL-2.0-only	True	components/busybox-c3ef5d10e6ef	True	3	CLEARED
+base-installed	ca-certificates-bundle	20260909-r0	ca-certificates	eb7078df3a16d666e8f7723f94bb92e00d4b9236	MPL-2.0 AND MIT	MPL-2.0 AND MIT	True	components/ca-certificates-eb7078df3a16	True	3	CLEARED
+base-installed	libapk	3.0.8-r0	apk-tools	4588b452722bd4800efdc6cce4f6e980e02a997f	GPL-2.0-only	GPL-2.0-only	True	components/apk-tools-4588b452722b	True	2	CLEARED
+base-installed	libcrypto3	3.5.8-r0	openssl	013edf8b29199933e8ea34dde460b5584b979042	Apache-2.0	Apache-2.0	False	components/openssl-013edf8b2919	True	7	CLEARED
+base-installed	libssl3	3.5.8-r0	openssl	013edf8b29199933e8ea34dde460b5584b979042	Apache-2.0	Apache-2.0	False	components/openssl-013edf8b2919	True	7	CLEARED
+base-installed	musl	1.2.6-r2	musl	f5640d3a10f664c9119720c60515265d3d6f6d01	MIT	MIT	False	components/musl-f5640d3a10f6	True	1	CLEARED
+base-installed	musl-utils	1.2.6-r2	musl	f5640d3a10f664c9119720c60515265d3d6f6d01	MIT AND BSD-2-Clause AND GPL-2.0-or-later	MIT AND BSD-2-Clause AND GPL-2.0-or-later	True	components/musl-f5640d3a10f6	True	1	CLEARED
+base-installed	scanelf	1.3.9-r1	pax-utils	c61801eeacb3ffcd9c2025b09e402153bb93fb39	GPL-2.0-only	GPL-2.0-only	True	components/pax-utils-c61801eeacb3	True	1	CLEARED
+base-installed	ssl_client	1.37.0-r31	busybox	c3ef5d10e6ef6528852c51f0564963e2f8c1be19	GPL-2.0-only	GPL-2.0-only	True	components/busybox-c3ef5d10e6ef	True	3	CLEARED
+base-installed	zlib	1.3.2-r0	zlib	f248b33b5943c7dc69bf691031d7612ab2e8ed93	Zlib	Zlib	False	components/zlib-f248b33b5943	True	3	CLEARED
+offline-apk	alsa-lib	1.2.15.3-r0	alsa-lib	2939b0cfc6acaf6eeb012f4e371d46c537d4e9f9	LGPL-2.1-or-later	LGPL-2.1-or-later	True	components/alsa-lib-2939b0cfc6ac	True	2	CLEARED
+offline-apk	arpack	3.9.1-r0	arpack	6e6cf00261ee36f65f6fe154a915af840e1f0fa7	BSD-3-Clause	BSD-3-Clause	False	components/arpack-6e6cf00261ee	True	1	CLEARED
+offline-apk	at-spi2-core-libs	2.60.5-r0	at-spi2-core	127aabdda292243f9eddbf9d4690d52a167de5c3	LGPL-2.1-or-later	LGPL-2.1-or-later	True	components/at-spi2-core-127aabdda292	True	1	CLEARED
+offline-apk	avahi-libs	0.9_rc4-r0	avahi	c8147a84799898ff9780bc4f3c179ccc141e8e67	LGPL-2.1-or-later	LGPL-2.1-or-later	True	components/avahi-c8147a847998	True	4	CLEARED
+offline-apk	brotli-libs	1.2.0-r1	brotli	1ee249c9da168084b1c6c9f7488bdffa2ac33c84	MIT	MIT	False	components/brotli-1ee249c9da16	True	1	CLEARED
+offline-apk	bubblewrap	0.12.0-r0	bubblewrap	21ce0edacfd8b359eeb3abc29fbd0b49b023ca1b	LGPL-2.1-or-later	LGPL-2.1-or-later	True	components/bubblewrap-21ce0edacfd8	True	1	CLEARED
+offline-apk	c-ares	1.34.8-r0	c-ares	138a6bf9dea5974644e48fef4826b7c474f2f7d8	MIT	MIT	False	components/c-ares-138a6bf9dea5	True	2	CLEARED
+offline-apk	cairo	1.18.4-r1	cairo	e54632f6ef658146c2393a8cbd0368a3707d4991	LGPL-2.1-or-later OR MPL-1.1	LGPL-2.1-or-later OR MPL-1.1	True	components/cairo-e54632f6ef65	True	10	CLEARED
+offline-apk	cairo-gobject	1.18.4-r1	cairo	e54632f6ef658146c2393a8cbd0368a3707d4991	LGPL-2.1-or-later OR MPL-1.1	LGPL-2.1-or-later OR MPL-1.1	True	components/cairo-e54632f6ef65	True	10	CLEARED
+offline-apk	cups-libs	2.4.19-r0	cups	85d0a49d09a152b4c9cf7a3cd78eeaf809aa258d	Apache-2.0	Apache-2.0	False	components/cups-85d0a49d09a1	True	4	CLEARED
+offline-apk	dbus-libs	1.16.2-r2	dbus	0dac2d7bf76016e3bb78ccc734edbb157a1d4b51	AFL-2.1 OR GPL-2.0-or-later	AFL-2.1 OR GPL-2.0-or-later	True	components/dbus-0dac2d7bf760	True	22	CLEARED
+offline-apk	double-conversion	3.4.0-r0	double-conversion	f5a68812ed21e88e804fcc91715517696d37d6a3	BSD-3-Clause	BSD-3-Clause	False	components/double-conversion-f5a68812ed21	True	3	CLEARED
+offline-apk	duktape-libs	2.7.0-r3	duktape	a9e2a2dc46f377eb25884f7fea9834492de7f518	MIT	MIT	False	components/duktape-a9e2a2dc46f3	True	14	CLEARED
+offline-apk	eudev-libs	3.2.14-r6	eudev	4133df77f8cc98f92679b79de07736589fa48bff	GPL-2.0-or-later	GPL-2.0-or-later	True	components/eudev-4133df77f8cc	True	1	CLEARED
+offline-apk	fftw-double-libs	3.3.11-r0	fftw	961fdd748f4623133dcddb51b1169967b1657175	GPL-2.0-or-later	GPL-2.0-or-later	True	components/fftw-961fdd748f46	True	7	CLEARED
+offline-apk	fftw-single-libs	3.3.11-r0	fftw	961fdd748f4623133dcddb51b1169967b1657175	GPL-2.0-or-later	GPL-2.0-or-later	True	components/fftw-961fdd748f46	True	7	CLEARED
+offline-apk	file	5.47-r2	file	a05d36fa86411cd0ce86d756f818e525d0eee1c3	BSD-2-Clause	BSD-2-Clause	False	components/file-a05d36fa8641	True	3	CLEARED
+offline-apk	fontconfig	2.17.1-r1	fontconfig	07061cb5a28861b108b09adc09ebd4fd962e549f	MIT	MIT	False	components/fontconfig-07061cb5a288	True	2	CLEARED
+offline-apk	freetype	2.14.3-r0	freetype	ad16b0afc1a315c4095a75ff72ebbe3cfa29b671	FTL OR GPL-2.0-or-later	FTL OR GPL-2.0-or-later	True	components/freetype-ad16b0afc1a3	True	5	CLEARED
+offline-apk	fribidi	1.0.16-r3	fribidi	5c9b8291bfb31116907f54dad1c7e03fec51eddb	LGPL-2.1-or-later	LGPL-2.1-or-later	True	components/fribidi-5c9b8291bfb3	True	2	CLEARED
+offline-apk	gdbm	1.26-r0	gdbm	1ea03990396db618edfcc8a9a0bc6b72662bac8f	GPL-3.0-or-later	GPL-3.0-or-later	True	components/gdbm-1ea03990396d	True	2	CLEARED
+offline-apk	gdk-pixbuf	2.44.7-r1	gdk-pixbuf	a21007f809f4d279cbce1345fb3c29af0887ffdc	LGPL-2.1-or-later	LGPL-2.1-or-later	True	components/gdk-pixbuf-a21007f809f4	True	1	CLEARED
+offline-apk	ghostscript-fonts	8.11-r5	ghostscript-fonts	5bb2b5d0e4307b098c3efe12e9d716645530086d	GPL-2.0-or-later	GPL-2.0-or-later	True	components/ghostscript-fonts-5bb2b5d0e430	True	1	CLEARED
+offline-apk	git	2.54.0-r0	git	b3ed5f8f4ce6b2ef13adeaf7494557add6546bda	GPL-2.0-only	GPL-2.0-only	True	components/git-b3ed5f8f4ce6	True	10	CLEARED
+offline-apk	glib	2.88.1-r1	glib	bd96e2db11c9ba7d7795454d16af620d577614c7	LGPL-2.1-or-later	LGPL-2.1-or-later	True	components/glib-bd96e2db11c9	True	24	CLEARED
+offline-apk	glpk	5.0-r3	glpk	4abb594c94c1732af39079a47eee0bc7f82ebffc	GPL-3.0-only	GPL-3.0-only	True	components/glpk-4abb594c94c1	True	5	CLEARED
+offline-apk	glu	9.0.3-r4	glu	93a84065c1b158732c478604e47d8a090ff98359	SGI-B-1.1 AND SGI-B-2.0	SGI-B-2.0	False	components/glu-93a84065c1b1	True	190	CLEARED
+offline-apk	gmp	6.3.0-r4	gmp	206e7b39f7884d62a174aba4d33a42454518c1c2	LGPL-3.0-or-later OR GPL-2.0-or-later	LGPL-3.0-or-later OR GPL-2.0-or-later	True	components/gmp-206e7b39f788	True	6	CLEARED
+offline-apk	gnutls	3.8.13-r0	gnutls	c09f2e94a4b0b4077da49683cf0faa09ed63fb5b	LGPL-2.1-or-later	LGPL-2.1-or-later	True	components/gnutls-c09f2e94a4b0	True	15	CLEARED
+offline-apk	gobject-introspection	1.86.0-r1	gobject-introspection	f48701aa97c725aaabe89f85bb040ce56954d0bd	LGPL-2.0-or-later AND GPL-2.0-or-later AND MIT	LGPL-2.0-or-later AND GPL-2.0-or-later AND MIT	True	components/gobject-introspection-f48701aa97c7	True	8	CLEARED
+offline-apk	graphicsmagick	1.3.47-r0	graphicsmagick	5d60c17bca1f7af02ee94835a14453ae9556840e	MIT	MIT	False	components/graphicsmagick-5d60c17bca1f	True	16	CLEARED
+offline-apk	graphicsmagick-c++	1.3.47-r0	graphicsmagick	5d60c17bca1f7af02ee94835a14453ae9556840e	MIT	MIT	False	components/graphicsmagick-5d60c17bca1f	True	16	CLEARED
+offline-apk	graphite2	1.3.14-r6	graphite2	0016c47e531622da02431c8958156d300ba3ec12	LGPL-2.1-or-later OR MPL-1.1	LGPL-2.1-or-later OR MPL-1.1	True	components/graphite2-0016c47e5316	True	3	CLEARED
+offline-apk	gtk+3.0	3.24.52-r0	gtk+3.0	81ac3343fbf0ae01ce4105c13ae592294cad8843	LGPL-2.1-or-later	LGPL-2.1-or-later	True	components/gtk+3.0-81ac3343fbf0	True	2	CLEARED
+offline-apk	harfbuzz	13.2.1-r0	harfbuzz	0e23da21a00fc68f2e5ddc352354a9d11d12ee24	MIT	MIT	False	components/harfbuzz-0e23da21a00f	True	6	CLEARED
+offline-apk	hdf5	1.14.4.2-r1	hdf5	2e7ebce2af74de9232216d3214bc561b3de7b5ee	custom	LicenseRef-HDF5-1.14.4-2	False	components/hdf5-2e7ebce2af74	True	35	CLEARED
+offline-apk	hicolor-icon-theme	0.18-r0	hicolor-icon-theme	0d5b763d2fa803e7d71b4d2272a138842e4966fa	GPL-2.0-or-later	GPL-2.0-or-later	True	components/hicolor-icon-theme-0d5b763d2fa8	True	1	CLEARED
+offline-apk	hwdata-pci	0.408-r0	hwdata	6f27b0b36ae7a3874f59cedf8c361b4016ee30ac	GPL-2.0-or-later OR XFree86-1.1	GPL-2.0-or-later OR XFree86-1.1	True	components/hwdata-6f27b0b36ae7	True	2	CLEARED
+offline-apk	icu-data-full	78.1-r0	icu	6755fdb21483ba250d374c3244f0f48bc63447e2	ICU	Unicode-3.0 AND ICU AND BSD-3-Clause AND BSD-2-Clause AND MIT AND Public-Domain	False	components/icu-6755fdb21483	True	4	CLEARED
+offline-apk	icu-libs	78.1-r0	icu	6755fdb21483ba250d374c3244f0f48bc63447e2	ICU	Unicode-3.0 AND ICU AND BSD-3-Clause AND BSD-2-Clause AND MIT AND Public-Domain	False	components/icu-6755fdb21483	True	4	CLEARED
+offline-apk	jack	1.9.22-r4	jack	f55d8d2dd5f289f1b8c5f069f00c830666d5625d	GPL-2.0-or-later	GPL-2.0-or-later	True	components/jack-f55d8d2dd5f2	True	5	CLEARED
+offline-apk	lame-libs	3.100-r5	lame	ffd76e0bae9921b604c4d3fab6e236e6c7b4039a	LGPL-2.0-or-later	LGPL-2.0-or-later	True	components/lame-ffd76e0bae99	True	4	CLEARED
+offline-apk	lcms2	2.19-r0	lcms2	b103184b887bd33a5672484a96704363084b2901	MIT	MIT	False	components/lcms2-b103184b887b	True	5	CLEARED
+offline-apk	libatk-1.0	2.60.5-r0	at-spi2-core	127aabdda292243f9eddbf9d4690d52a167de5c3	LGPL-2.1-or-later	LGPL-2.1-or-later	True	components/at-spi2-core-127aabdda292	True	1	CLEARED
+offline-apk	libatk-bridge-2.0	2.60.5-r0	at-spi2-core	127aabdda292243f9eddbf9d4690d52a167de5c3	LGPL-2.1-or-later	LGPL-2.1-or-later	True	components/at-spi2-core-127aabdda292	True	1	CLEARED
+offline-apk	libb2	0.98.1-r3	libb2	4f8157b2e125ac222cade929bb25bda16305fefc	CC0-1.0	CC0-1.0	False	components/libb2-4f8157b2e125	True	1	CLEARED
+offline-apk	libblkid	2.42.3-r1	util-linux	d98c55af59055e6ca60fbe36e171546918709965	LGPL-2.1-or-later	LGPL-2.1-or-later	True	components/util-linux-d98c55af5905	True	20	CLEARED
+offline-apk	libbsd	0.12.2-r0	libbsd	02365e78d654a7beb23fd35d7d69f4a649009ede	BSD-3-Clause	BSD-3-Clause	False	components/libbsd-02365e78d654	True	1	CLEARED
+offline-apk	libbz2	1.0.8-r6	bzip2	33283848034c9885d984c8e8697c645c57324938	bzip2-1.0.6	bzip2-1.0.6	False	components/bzip2-33283848034c	True	1	CLEARED
+offline-apk	libcap2	2.78-r0	libcap	0c35848136c4c16a1b1672cb812efa88fffef1c2	BSD-3-Clause OR GPL-2.0-only	BSD-3-Clause OR GPL-2.0-only	True	components/libcap-0c35848136c4	True	4	CLEARED
+offline-apk	libcurl	8.22.0-r0	curl	ab53c408436ac7199ed5b67bde204aaca73003bd	curl	curl	False	components/curl-ab53c408436a	True	2	CLEARED
+offline-apk	libdav1d	1.5.3-r0	dav1d	6a13170ddff8fdf27712aa7d0e5437aa2407ff56	BSD-2-Clause	BSD-2-Clause	False	components/dav1d-6a13170ddff8	True	1	CLEARED
+offline-apk	libde265	1.0.18-r0	libde265	3b1048d5a397b4e68f22e19f30c57332712d6b84	LGPL-3.0-or-later	LGPL-3.0-or-later	True	components/libde265-3b1048d5a397	True	5	CLEARED
+offline-apk	libdrm	2.4.134-r0	libdrm	2015800769b781bef45917b668d10bffe2ac538f	MIT	MIT	False	components/libdrm-2015800769b7	True	1	CLEARED
+offline-apk	libeconf	0.8.3-r0	libeconf	62db33049768522f381410614d59c7d732f72c3a	MIT	MIT	False	components/libeconf-62db33049768	True	1	CLEARED
+offline-apk	libelf	0.195-r0	elfutils	8f13294206888f3dd44ed74a8eb3dd9934499e81	GPL-3.0-or-later AND ( GPL-2.0-or-later OR LGPL-3.0-or-later )	GPL-3.0-or-later AND ( GPL-2.0-or-later OR LGPL-3.0-or-later )	True	components/elfutils-8f1329420688	True	5	CLEARED
+offline-apk	libepoxy	1.5.10-r1	libepoxy	6bd45b53fb316dc01bda59f5feaf1e127eb64f22	MIT	MIT	False	components/libepoxy-6bd45b53fb31	True	1	CLEARED
+offline-apk	libevdev	1.13.6-r0	libevdev	2af4dd0082956420a61fe680bb3da04034e67e34	MIT	MIT	False	components/libevdev-2af4dd008295	True	2	CLEARED
+offline-apk	libexpat	2.8.4-r0	expat	08d1eb8641965d3807628f6a4ff15914be5b79ae	MIT	MIT	False	components/expat-08d1eb864196	True	2	CLEARED
+offline-apk	libffi	3.5.2-r1	libffi	2c2a7bb4a8b16066834e90402567b2c19403a790	MIT	MIT	False	components/libffi-2c2a7bb4a8b1	True	2	CLEARED
+offline-apk	libflac	1.4.3-r2	flac	253ee9b07f7696cc02f7dda9df81793e506a6c2d	BSD-3-Clause AND GPL-2.0-or-later	BSD-3-Clause AND GPL-2.0-or-later	True	components/flac-253ee9b07f76	True	12	CLEARED
+offline-apk	libfltk	1.3.11-r1	fltk	7a02ccbc115c031eddb5836df5ed9bf41fb3bd8a	LGPL-2.0-only WITH FLTK-exception	LGPL-2.0-only WITH FLTK-exception	True	components/fltk-7a02ccbc115c	True	5	CLEARED
+offline-apk	libfltk_gl	1.3.11-r1	fltk	7a02ccbc115c031eddb5836df5ed9bf41fb3bd8a	LGPL-2.0-only WITH FLTK-exception	LGPL-2.0-only WITH FLTK-exception	True	components/fltk-7a02ccbc115c	True	5	CLEARED
+offline-apk	libgcc	15.2.0-r5	gcc	423a8ad043d07f2c7546c8ec3e2b0384cda360ae	GPL-2.0-or-later AND LGPL-2.1-or-later	GPL-3.0-or-later WITH GCC-exception-3.1 AND LGPL-2.1-or-later	True	components/gcc-423a8ad043d0	True	271	CLEARED
+offline-apk	libgfortran	15.2.0-r5	gcc	423a8ad043d07f2c7546c8ec3e2b0384cda360ae	GPL-2.0-or-later AND LGPL-2.1-or-later	GPL-3.0-or-later WITH GCC-exception-3.1 AND LGPL-2.1-or-later	True	components/gcc-423a8ad043d0	True	271	CLEARED
+offline-apk	libglycin	2.1.5-r0	libglycin	ce376ccfea45bbc2bede2c6646f170c477c383c1	MPL-2.0 OR LGPL-2.0-or-later	MPL-2.0 OR LGPL-2.0-or-later	True	components/libglycin-ce376ccfea45	True	5	CLEARED
+offline-apk	libgomp	15.2.0-r5	gcc	423a8ad043d07f2c7546c8ec3e2b0384cda360ae	GPL-2.0-or-later AND LGPL-2.1-or-later	GPL-3.0-or-later WITH GCC-exception-3.1 AND LGPL-2.1-or-later	True	components/gcc-423a8ad043d0	True	271	CLEARED
+offline-apk	libheif	1.23.0-r0	libheif	67776d4983526735866f12662cff4f1531f54d3f	LGPL-3.0-or-later	LGPL-3.0-or-later	True	components/libheif-67776d498352	True	3	CLEARED
+offline-apk	libheif-dav1d	1.23.0-r0	libheif	67776d4983526735866f12662cff4f1531f54d3f	LGPL-3.0-or-later	LGPL-3.0-or-later	True	components/libheif-67776d498352	True	3	CLEARED
+offline-apk	libheif-libde265	1.23.0-r0	libheif	67776d4983526735866f12662cff4f1531f54d3f	LGPL-3.0-or-later	LGPL-3.0-or-later	True	components/libheif-67776d498352	True	3	CLEARED
+offline-apk	libice	1.1.2-r0	libice	d4941e833167c30aa1172e6d8420d084698254ab	X11	X11	False	components/libice-d4941e833167	True	2	CLEARED
+offline-apk	libidn2	2.3.8-r0	libidn2	8240e09aa2fdd8f9979b2016be082273965aff0c	GPL-2.0-or-later OR LGPL-3.0-or-later	GPL-2.0-or-later OR LGPL-3.0-or-later	True	components/libidn2-8240e09aa2fd	True	6	CLEARED
+offline-apk	libinput-libs	1.31.3-r0	libinput	3241f28bdb5504c76850ce79362f9f38d44d4fa6	MIT	MIT	False	components/libinput-3241f28bdb55	True	2	CLEARED
+offline-apk	libintl	1.0-r0	gettext	a0b12dbf67fb047e79a1b76c6dfe6f2904d0d391	LGPL-2.1-or-later	LGPL-2.1-or-later	True	components/gettext-a0b12dbf67fb	True	24	CLEARED
+offline-apk	libjpeg-turbo	3.1.3-r0	libjpeg-turbo	5fe6bebf850fc964a8525c81548397c39cb6f7cd	BSD-3-Clause AND IJG AND Zlib	BSD-3-Clause AND IJG AND Zlib	False	components/libjpeg-turbo-5fe6bebf850f	True	8	CLEARED
+offline-apk	libltdl	2.6.0-r1	libtool	21b05914806e37e3e9de9d1e5a037fc688cbebd6	LGPL-2.0-or-later AND GPL-2.0-or-later	LGPL-2.0-or-later AND GPL-2.0-or-later	True	components/libtool-21b05914806e	True	6	CLEARED
+offline-apk	libmagic	5.47-r2	file	a05d36fa86411cd0ce86d756f818e525d0eee1c3	BSD-2-Clause	BSD-2-Clause	False	components/file-a05d36fa8641	True	3	CLEARED
+offline-apk	libmd	1.2.0-r0	libmd	87b78bc6890645c317d3167bdbb0187502d0cda9	BSD-3-Clause AND BSD-2-Clause AND ISC AND Beerware AND Public Domain	BSD-3-Clause AND BSD-2-Clause AND ISC AND Beerware AND Public Domain	False	components/libmd-87b78bc68906	True	1	CLEARED
+offline-apk	libmount	2.42.3-r1	util-linux	d98c55af59055e6ca60fbe36e171546918709965	LGPL-2.1-or-later	LGPL-2.1-or-later	True	components/util-linux-d98c55af5905	True	20	CLEARED
+offline-apk	libncursesw	6.6_p20260516-r0	ncurses	2cee8a7328d061418336ad327b512d96bcd7bc5e	X11	X11	False	components/ncurses-2cee8a7328d0	True	9	CLEARED
+offline-apk	libogg	1.3.6-r0	libogg	c17e8cd839de47006a648ae64294616569946b3f	BSD-3-Clause	BSD-3-Clause	False	components/libogg-c17e8cd839de	True	2	CLEARED
+offline-apk	libpanelw	6.6_p20260516-r0	ncurses	2cee8a7328d061418336ad327b512d96bcd7bc5e	X11	X11	False	components/ncurses-2cee8a7328d0	True	9	CLEARED
+offline-apk	libpciaccess	0.19-r0	libpciaccess	d5de88aad8098d25c1b9e53d4ca5e6ff6c90e234	X11	X11	False	components/libpciaccess-d5de88aad809	True	2	CLEARED
+offline-apk	libpcre2-16	10.48-r0	pcre2	abc383a51f67922cd61e338b1461cddaa1814b28	BSD-3-Clause	BSD-3-Clause	False	components/pcre2-abc383a51f67	True	5	CLEARED
+offline-apk	libpng	1.6.58-r1	libpng	47f0ce2db0f841ad73afd91ff4d71bca0f46ad05	Libpng	Libpng	False	components/libpng-47f0ce2db0f8	True	8	CLEARED
+offline-apk	libproxy	0.5.12-r0	libproxy	851c5e6677e09a71066d12f6585699453fd3d245	LGPL-2.0-or-later	LGPL-2.0-or-later	True	components/libproxy-851c5e6677e0	True	1	CLEARED
+offline-apk	libpsl	0.21.5-r3	libpsl	6bd45b53fb316dc01bda59f5feaf1e127eb64f22	MIT	MIT	False	components/libpsl-6bd45b53fb31	True	4	CLEARED
+offline-apk	libsamplerate	0.2.2-r3	libsamplerate	33283848034c9885d984c8e8697c645c57324938	BSD-2-Clause	BSD-2-Clause	False	components/libsamplerate-33283848034c	True	3	CLEARED
+offline-apk	libseccomp	2.6.0-r2	libseccomp	5c5f3eb6cfaaa7596d548e4de2ec8dbe95d5b206	LGPL-2.1-or-later	LGPL-2.1-or-later	True	components/libseccomp-5c5f3eb6cfaa	True	1	CLEARED
+offline-apk	libsharpyuv	1.6.0-r0	libwebp	af8b48fabd19b69b00f5efe192f461896a38cf74	BSD-3-Clause	BSD-3-Clause	False	components/libwebp-af8b48fabd19	True	2	CLEARED
+offline-apk	libsm	1.2.6-r0	libsm	4eaa957537767ad0344894ad0e609068b26bf85d	MIT	MIT	False	components/libsm-4eaa95753776	True	2	CLEARED
+offline-apk	libsndfile	1.2.2-r2	libsndfile	3acdcc403bf369664fa1f448972400bc9e79cb98	LGPL-2.1-or-later	LGPL-2.1-or-later	True	components/libsndfile-3acdcc403bf3	True	3	CLEARED
+offline-apk	libstdc++	15.2.0-r5	gcc	423a8ad043d07f2c7546c8ec3e2b0384cda360ae	GPL-2.0-or-later AND LGPL-2.1-or-later	GPL-3.0-or-later WITH GCC-exception-3.1 AND LGPL-2.1-or-later	True	components/gcc-423a8ad043d0	True	271	CLEARED
+offline-apk	libsz	1.1.6-r0	libaec	9645d8e92a65bead40d811068a593515bdd70502	BSD-2-Clause	BSD-2-Clause	False	components/libaec-9645d8e92a65	True	2	CLEARED
+offline-apk	libtasn1	4.21.0-r0	libtasn1	771f180774aa0d9d3783d7f4eb9e3788c615658b	LGPL-2.1-or-later	LGPL-2.1-or-later	True	components/libtasn1-771f180774aa	True	4	CLEARED
+offline-apk	libunistring	1.4.2-r0	libunistring	30d9f19340385b2cd16eaf1cc6a9a8b30c4afe1c	GPL-2.0-or-later OR LGPL-3.0-or-later	GPL-2.0-or-later OR LGPL-3.0-or-later	True	components/libunistring-30d9f1934038	True	6	CLEARED
+offline-apk	libuuid	2.42.3-r1	util-linux	d98c55af59055e6ca60fbe36e171546918709965	BSD-3-Clause	BSD-3-Clause	False	components/util-linux-d98c55af5905	True	20	CLEARED
+offline-apk	libvorbis	1.3.7-r2	libvorbis	fc95c59998285564fbcb0bfb2443898c62e10171	BSD-3-Clause	BSD-3-Clause	False	components/libvorbis-fc95c5999828	True	2	CLEARED
+offline-apk	libwebp	1.6.0-r0	libwebp	af8b48fabd19b69b00f5efe192f461896a38cf74	BSD-3-Clause	BSD-3-Clause	False	components/libwebp-af8b48fabd19	True	2	CLEARED
+offline-apk	libwebpmux	1.6.0-r0	libwebp	af8b48fabd19b69b00f5efe192f461896a38cf74	BSD-3-Clause	BSD-3-Clause	False	components/libwebp-af8b48fabd19	True	2	CLEARED
+offline-apk	libwmflite	0.2.13-r1	libwmf	378cc0a9a354d37681ee34ea90acf691d6367a11	LGPL-2.0-or-later	LGPL-2.0-or-later	True	components/libwmf-378cc0a9a354	True	3	CLEARED
+offline-apk	libx11	1.8.13-r0	libx11	f993bc30142d46271ede4a746c1abefaa1a78eee	X11	X11	False	components/libx11-f993bc30142d	True	4	CLEARED
+offline-apk	libxau	1.0.12-r0	libxau	6bd45b53fb316dc01bda59f5feaf1e127eb64f22	MIT	MIT	False	components/libxau-6bd45b53fb31	True	2	CLEARED
+offline-apk	libxcb	1.17.0-r2	libxcb	5e1b822309fb17cc2ebd46d6fbacb1763acbcdd1	MIT	MIT	False	components/libxcb-5e1b822309fb	True	1	CLEARED
+offline-apk	libxcomposite	0.4.7-r0	libxcomposite	c0827d5370257f42994fa6711c985015efdf9037	MIT	MIT	False	components/libxcomposite-c0827d537025	True	2	CLEARED
+offline-apk	libxcursor	1.2.3-r0	libxcursor	1d6d12ed6f5cc1fc2e382d0bdc6fc90712745e8a	MIT	MIT	False	components/libxcursor-1d6d12ed6f5c	True	4	CLEARED
+offline-apk	libxdamage	1.1.7-r0	libxdamage	5ef54777a8564f6c7515d1e0b04883cbd11ffa32	MIT	MIT	False	components/libxdamage-5ef54777a856	True	2	CLEARED
+offline-apk	libxdmcp	1.1.5-r1	libxdmcp	614e9166706cec427fc3d907b8d981390a42e088	MIT	MIT	False	components/libxdmcp-614e9166706c	True	2	CLEARED
+offline-apk	libxext	1.3.7-r0	libxext	4ec252fa3e6e8edf16d0d6da3fe6dd39e2263942	MIT	MIT	False	components/libxext-4ec252fa3e6e	True	2	CLEARED
+offline-apk	libxfixes	6.0.2-r0	libxfixes	9d33b3af389f39ad78c80e3274aaf5adbbdb8150	MIT	MIT	False	components/libxfixes-9d33b3af389f	True	2	CLEARED
+offline-apk	libxft	2.3.9-r0	libxft	9a4062b0f278b43370faa58195206c5ef94e7899	MIT	MIT	False	components/libxft-9a4062b0f278	True	2	CLEARED
+offline-apk	libxi	1.8.3-r0	libxi	472fb58e237c5ace7489b1073b2758d28658d80d	MIT AND X11	MIT AND X11	False	components/libxi-472fb58e237c	True	1	CLEARED
+offline-apk	libxinerama	1.1.6-r0	libxinerama	4b83e9a57e623461c4173c3cf261045b7f225b44	MIT	MIT	False	components/libxinerama-4b83e9a57e62	True	1	CLEARED
+offline-apk	libxkbcommon	1.13.1-r0	libxkbcommon	76aa0b70442b4172a6770da5875b1bcbe38f3965	MIT AND MIT-open-group AND HPND AND HPND-sell-variant AND LicenseRef-digital-equipment-corporation	MIT AND MIT-open-group AND HPND AND HPND-sell-variant AND LicenseRef-digital-equipment-corporation	False	components/libxkbcommon-76aa0b70442b	True	2	CLEARED
+offline-apk	libxkbcommon-x11	1.13.1-r0	libxkbcommon	76aa0b70442b4172a6770da5875b1bcbe38f3965	MIT AND MIT-open-group AND HPND AND HPND-sell-variant AND LicenseRef-digital-equipment-corporation	MIT AND MIT-open-group AND HPND AND HPND-sell-variant AND LicenseRef-digital-equipment-corporation	False	components/libxkbcommon-76aa0b70442b	True	2	CLEARED
+offline-apk	libxml2	2.13.9-r2	libxml2	f1bd5b6767a0e7fdda380c95138a1c938eb6e102	MIT	MIT	False	components/libxml2-f1bd5b6767a0	True	4	CLEARED
+offline-apk	libxmu	1.3.1-r0	libxmu	6975763371783f76ea45b6a55d224ca72b73d090	MIT	MIT	False	components/libxmu-697576337178	True	1	CLEARED
+offline-apk	libxrandr	1.5.5-r0	libxrandr	4a608248a9e09710a60f3d9027f19a14a5971dac	MIT	MIT	False	components/libxrandr-4a608248a9e0	True	2	CLEARED
+offline-apk	libxrender	0.9.12-r0	libxrender	74030d4140b68e8d4d36a357751f156ab31840c2	MIT	MIT	False	components/libxrender-74030d4140b6	True	2	CLEARED
+offline-apk	libxshmfence	1.3.3-r0	libxshmfence	8bac74716d06c84627ab02d101fd9d2bafd0a34c	MIT	MIT	False	components/libxshmfence-8bac74716d06	True	1	CLEARED
+offline-apk	libxt	1.3.1-r0	libxt	60222ebeadec75e483e49194130c6963d0fcbf75	MIT	MIT	False	components/libxt-60222ebeadec	True	3	CLEARED
+offline-apk	libxxf86vm	1.1.7-r0	libxxf86vm	ac89fbb35d37756385378e461847c2b0a61613dd	MIT	MIT	False	components/libxxf86vm-ac89fbb35d37	True	1	CLEARED
+offline-apk	llvm22-libs	22.1.3-r0	llvm22	4067b1fd9a40691da357b0ae07a700c6a458b1bd	Apache-2.0	Apache-2.0 WITH LLVM-exception	False	components/llvm22-4067b1fd9a40	True	1657	CLEARED
+offline-apk	mesa	26.1.6-r0	mesa	b94e73658216f4e91c701bfdeb420e6874910a74	MIT AND SGI-B-2.0 AND BSL-1.0	MIT AND SGI-B-2.0 AND BSL-1.0	False	components/mesa-b94e73658216	True	34	CLEARED
+offline-apk	mesa-egl	26.1.6-r0	mesa	b94e73658216f4e91c701bfdeb420e6874910a74	MIT AND SGI-B-2.0 AND BSL-1.0	MIT AND SGI-B-2.0 AND BSL-1.0	False	components/mesa-b94e73658216	True	34	CLEARED
+offline-apk	mesa-gbm	26.1.6-r0	mesa	b94e73658216f4e91c701bfdeb420e6874910a74	MIT AND SGI-B-2.0 AND BSL-1.0	MIT AND SGI-B-2.0 AND BSL-1.0	False	components/mesa-b94e73658216	True	34	CLEARED
+offline-apk	mesa-gl	26.1.6-r0	mesa	b94e73658216f4e91c701bfdeb420e6874910a74	MIT AND SGI-B-2.0 AND BSL-1.0	MIT AND SGI-B-2.0 AND BSL-1.0	False	components/mesa-b94e73658216	True	34	CLEARED
+offline-apk	mesa-gles	26.1.6-r0	mesa	b94e73658216f4e91c701bfdeb420e6874910a74	MIT AND SGI-B-2.0 AND BSL-1.0	MIT AND SGI-B-2.0 AND BSL-1.0	False	components/mesa-b94e73658216	True	34	CLEARED
+offline-apk	mpdecimal	4.0.1-r0	mpdecimal	c0519b85456e9b838e3142e1d233aab0b433b476	BSD-2-Clause	BSD-2-Clause	False	components/mpdecimal-c0519b85456e	True	2	CLEARED
+offline-apk	mpfr4	4.2.2-r0	mpfr4	011955c827a3e7545ea82225e1f20c6a06617c7a	LGPL-3.0-or-later	LGPL-3.0-or-later	True	components/mpfr4-011955c827a3	True	6	CLEARED
+offline-apk	mpg123-libs	1.33.5-r0	mpg123	017919108b432743fd6862fb290980809c9cf60f	LGPL-2.1-only	LGPL-2.1-only	True	components/mpg123-017919108b43	True	3	CLEARED
+offline-apk	mtdev	1.1.7-r0	mtdev	6867e384dbfbd0b8efadbca989e9778190e89496	MIT	MIT	False	components/mtdev-6867e384dbfb	True	1	CLEARED
+offline-apk	ncurses-terminfo-base	6.6_p20260516-r0	ncurses	2cee8a7328d061418336ad327b512d96bcd7bc5e	X11	X11	False	components/ncurses-2cee8a7328d0	True	9	CLEARED
+offline-apk	nettle	3.10.2-r0	nettle	bf898e6d067c1c0ecc0f5ff39c79fc893399acd8	GPL-2.0-or-later OR LGPL-3.0-or-later	GPL-2.0-or-later OR LGPL-3.0-or-later	True	components/nettle-bf898e6d067c	True	4	CLEARED
+offline-apk	nghttp2-libs	1.69.0-r0	nghttp2	2f3038c86a2a055b2becb5a8c4fd86365f77347a	MIT	MIT	False	components/nghttp2-2f3038c86a2a	True	14	CLEARED
+offline-apk	octave	11.1.0-r0	octave	4eb0eccd89391326cd247e57bdf2e1c95d93ee1e	GPL-3.0-or-later	GPL-3.0-or-later	True	components/octave-4eb0eccd8939	True	17	CLEARED
+offline-apk	openblas	0.3.30-r2	openblas	2999d76115d643bfc87ed25f3e241b7d7f3f27f1	BSD-3-Clause	BSD-3-Clause	False	components/openblas-2999d76115d6	True	8	CLEARED
+offline-apk	opus	1.6.1-r0	opus	6664b23b1c7a2d0887ff2cb0edc93fccb1474c8b	BSD-3-Clause	BSD-3-Clause	False	components/opus-6664b23b1c7a	True	2	CLEARED
+offline-apk	p11-kit	0.26.2-r0	p11-kit	922ca1ffc9cc326f7d95b093b365e31da5cba1a9	BSD-3-Clause	BSD-3-Clause	False	components/p11-kit-922ca1ffc9cc	True	2	CLEARED
+offline-apk	pandoc-cli	3.10-r0	pandoc-cli	77901f1086be8541ce5a5bf4da07651770e0d375	GPL-2.0-or-later	GPL-2.0-or-later	True	components/pandoc-cli-77901f1086be	True	1	CLEARED
+offline-apk	pango	1.57.1-r0	pango	18857621f16b29e66140dace710d0ad4016d9a90	LGPL-2.1-or-later	LGPL-2.1-or-later	True	components/pango-18857621f16b	True	5	CLEARED
+offline-apk	pcre2	10.48-r0	pcre2	abc383a51f67922cd61e338b1461cddaa1814b28	BSD-3-Clause	BSD-3-Clause	False	components/pcre2-abc383a51f67	True	5	CLEARED
+offline-apk	pixman	0.46.4-r0	pixman	9337ac809a431f004386ea3e279e3d55f770e7d3	MIT	MIT	False	components/pixman-9337ac809a43	True	1	CLEARED
+offline-apk	pkgconf	2.5.1-r0	pkgconf	c6f80aa8e59c70d19e2d556c526f151656058536	ISC	ISC	False	components/pkgconf-c6f80aa8e59c	True	2	CLEARED
+offline-apk	portaudio	19.7.0-r3	portaudio	e521443b971d4ca837238b45f1d5c6357de5701c	MIT	MIT	False	components/portaudio-e521443b971d	True	6	CLEARED
+offline-apk	py3-iniconfig	2.3.0-r1	py3-iniconfig	b435e246328144be4270de9c4382ec40d8972028	MIT	MIT	False	components/py3-iniconfig-b435e2463281	True	2	CLEARED
+offline-apk	py3-packaging	26.2-r0	py3-packaging	8752a7b58577daa7f37849591e675172eadb4055	Apache-2.0 AND BSD-2-Clause	Apache-2.0 AND BSD-2-Clause	False	components/py3-packaging-8752a7b58577	True	7	CLEARED
+offline-apk	py3-parsing	3.3.2-r1	py3-parsing	91175ae0a18da54ff1f4fbe77636c8d4ca7ec024	MIT	MIT	False	components/py3-parsing-91175ae0a18d	True	2	CLEARED
+offline-apk	py3-pluggy	1.6.0-r1	py3-pluggy	9a092f3f44d4bb23737b4fee92e78092f7ba4b04	MIT	MIT	False	components/py3-pluggy-9a092f3f44d4	True	1	CLEARED
+offline-apk	py3-py	1.11.0-r5	py3-py	b3791c1d825f1f0e7c6f0a8c97eb1a446e7769ab	MIT	MIT	False	components/py3-py-b3791c1d825f	True	4	CLEARED
+offline-apk	py3-pygments	2.20.0-r0	py3-pygments	6c26bdb30b887a803c06b3b635099ee21bc72190	BSD-2-Clause	BSD-2-Clause	False	components/py3-pygments-6c26bdb30b88	True	5	CLEARED
+offline-apk	py3-pytest	9.0.3-r0	py3-pytest	752bc0532f3a44abb93cb877eb5cc8d9822f7da8	MIT	MIT	False	components/py3-pytest-752bc0532f3a	True	8	CLEARED
+offline-apk	python3	3.14.7-r1	python3	d17c5866a2f2c56b63c19dac9070091d6519b167	PSF-2.0	PSF-2.0	False	components/python3-d17c5866a2f2	True	29	CLEARED
+offline-apk	qhull	2020.2-r3	qhull	1e83619daf25d8409bda53ef3a2e49af7ae6f996	custom	LicenseRef-Qhull-2020	False	components/qhull-1e83619daf25	True	1	CLEARED
+offline-apk	qrupdate	1.1.5-r1	qrupdate	eab9f044bf2bbf63b3d48e4fda826c1aad06f3d3	GPL-3.0-only	GPL-3.0-only	True	components/qrupdate-eab9f044bf2b	True	2	CLEARED
+offline-apk	qscintilla	2.14.1-r4	qscintilla	07069465506dc11e4151b65491fc5bf3481f4d0c	GPL-3.0-only	GPL-3.0-only	True	components/qscintilla-07069465506d	True	7	CLEARED
+offline-apk	qt5-qtbase	5.15.18_git20251101-r0	qt5-qtbase	2be453c7ad76c8c217e1425cec1b7981cb8285cb	LGPL-2.1-only AND LGPL-3.0-only AND GPL-3.0-only AND Qt-GPL-exception-1.0	LGPL-2.1-only AND LGPL-3.0-only AND GPL-3.0-only AND Qt-GPL-exception-1.0	True	components/qt5-qtbase-2be453c7ad76	True	111	CLEARED
+offline-apk	qt5-qtbase-x11	5.15.18_git20251101-r0	qt5-qtbase	2be453c7ad76c8c217e1425cec1b7981cb8285cb	LGPL-2.1-only AND LGPL-3.0-only AND GPL-3.0-only AND Qt-GPL-exception-1.0	LGPL-2.1-only AND LGPL-3.0-only AND GPL-3.0-only AND Qt-GPL-exception-1.0	True	components/qt5-qtbase-2be453c7ad76	True	111	CLEARED
+offline-apk	qt6-qt5compat	6.11.1-r0	qt6-qt5compat	6a90a193c394ac5e57468bbf61e7176aa894927e	LGPL-2.1-only AND LGPL-3.0-only AND GPL-3.0-only AND Qt-GPL-exception-1.0	LGPL-2.1-only AND LGPL-3.0-only AND GPL-3.0-only AND Qt-GPL-exception-1.0	True	components/qt6-qt5compat-6a90a193c394	True	16	CLEARED
+offline-apk	qt6-qtbase	6.11.1-r0	qt6-qtbase	6a90a193c394ac5e57468bbf61e7176aa894927e	LGPL-2.1-only AND LGPL-3.0-only AND GPL-3.0-only AND Qt-GPL-exception-1.0	LGPL-2.1-only AND LGPL-3.0-only AND GPL-3.0-only AND Qt-GPL-exception-1.0	True	components/qt6-qtbase-6a90a193c394	True	139	CLEARED
+offline-apk	qt6-qtbase-sqlite	6.11.1-r0	qt6-qtbase	6a90a193c394ac5e57468bbf61e7176aa894927e	LGPL-2.1-only AND LGPL-3.0-only AND GPL-3.0-only AND Qt-GPL-exception-1.0	LGPL-2.1-only AND LGPL-3.0-only AND GPL-3.0-only AND Qt-GPL-exception-1.0	True	components/qt6-qtbase-6a90a193c394	True	139	CLEARED
+offline-apk	qt6-qtbase-wayland	6.11.1-r0	qt6-qtbase	6a90a193c394ac5e57468bbf61e7176aa894927e	LGPL-2.1-only AND LGPL-3.0-only AND GPL-3.0-only AND Qt-GPL-exception-1.0	LGPL-2.1-only AND LGPL-3.0-only AND GPL-3.0-only AND Qt-GPL-exception-1.0	True	components/qt6-qtbase-6a90a193c394	True	139	CLEARED
+offline-apk	qt6-qtbase-x11	6.11.1-r0	qt6-qtbase	6a90a193c394ac5e57468bbf61e7176aa894927e	LGPL-2.1-only AND LGPL-3.0-only AND GPL-3.0-only AND Qt-GPL-exception-1.0	LGPL-2.1-only AND LGPL-3.0-only AND GPL-3.0-only AND Qt-GPL-exception-1.0	True	components/qt6-qtbase-6a90a193c394	True	139	CLEARED
+offline-apk	qt6-qtdeclarative	6.11.1-r0	qt6-qtdeclarative	6a90a193c394ac5e57468bbf61e7176aa894927e	LGPL-2.1-only AND LGPL-3.0-only AND GPL-3.0-only AND Qt-GPL-exception-1.0	LGPL-2.1-only AND LGPL-3.0-only AND GPL-3.0-only AND Qt-GPL-exception-1.0	True	components/qt6-qtdeclarative-6a90a193c394	True	86	CLEARED
+offline-apk	qt6-qtshadertools	6.11.1-r0	qt6-qtshadertools	6a90a193c394ac5e57468bbf61e7176aa894927e	LGPL-2.1-only AND LGPL-3.0-only AND GPL-3.0-only AND Qt-GPL-exception-1.0	LGPL-2.1-only AND LGPL-3.0-only AND GPL-3.0-only AND Qt-GPL-exception-1.0	True	components/qt6-qtshadertools-6a90a193c394	True	18	CLEARED
+offline-apk	qt6-qtsvg	6.11.1-r0	qt6-qtsvg	6a90a193c394ac5e57468bbf61e7176aa894927e	LGPL-2.1-only AND LGPL-3.0-only AND GPL-3.0-only AND Qt-GPL-exception-1.0	LGPL-2.1-only AND LGPL-3.0-only AND GPL-3.0-only AND Qt-GPL-exception-1.0	True	components/qt6-qtsvg-6a90a193c394	True	10	CLEARED
+offline-apk	qt6-qttools-libs	6.11.1-r0	qt6-qttools	6a90a193c394ac5e57468bbf61e7176aa894927e	LGPL-2.1-only AND LGPL-3.0-only AND GPL-3.0-only AND Qt-GPL-exception-1.0	LGPL-2.1-only AND LGPL-3.0-only AND GPL-3.0-only AND Qt-GPL-exception-1.0	True	components/qt6-qttools-6a90a193c394	True	29	CLEARED
+offline-apk	readline	8.3.3-r1	readline	a854c03acdac188901fb012f7acbee70a36e8041	GPL-3.0-or-later	GPL-3.0-or-later	True	components/readline-a854c03acdac	True	1	CLEARED
+offline-apk	shared-mime-info	2.4-r7	shared-mime-info	74df86bcbb3a36bdffe8a4738fadbd44ede405bc	GPL-2.0-or-later	GPL-2.0-or-later	True	components/shared-mime-info-74df86bcbb3a	True	7	CLEARED
+offline-apk	spirv-tools	1.4.341.0-r0	spirv-tools	5115d4d26db3422769415dddaf4c909f8aca0017	Apache-2.0	Apache-2.0	False	components/spirv-tools-5115d4d26db3	True	6	CLEARED
+offline-apk	sqlite-libs	3.53.4-r0	sqlite	a9c3ba8b9129ec0f294d0a9bf538c2f1632bb016	blessing	blessing	False	components/sqlite-a9c3ba8b9129	True	7	CLEARED
+offline-apk	suitesparse	7.8.2-r0	suitesparse	21e0b7b2444680c19b3860ac26f053c28c9a1fa5	BSD-3-Clause AND LGPL-2.1-or-later AND GPL-2.0-or-later	BSD-3-Clause AND LGPL-2.1-or-later AND GPL-2.0-or-later	True	components/suitesparse-21e0b7b24446	True	52	CLEARED
+offline-apk	tiff	4.7.1-r0	tiff	259914876552dabe6576835e874adc99129b58ae	libtiff	libtiff	False	components/tiff-259914876552	True	7	CLEARED
+offline-apk	tslib	1.24-r0	tslib	a83fa360ad5763f7af99da39c0e948c824f0926b	LGPL-2.0-or-later	LGPL-2.0-or-later	True	components/tslib-a83fa360ad57	True	3	CLEARED
+offline-apk	tzdata	2026d-r0	tzdata	a19caf9fe771707618d4d9e4fa2dd9db8155b461	Public-Domain	Public-Domain	False	components/tzdata-a19caf9fe771	True	10	CLEARED
+offline-apk	wayland-libs-client	1.25.0-r0	wayland	5960a969742897aba03257e84f0aa40f3c1e84d6	MIT	MIT	False	components/wayland-5960a9697428	True	1	CLEARED
+offline-apk	wayland-libs-cursor	1.25.0-r0	wayland	5960a969742897aba03257e84f0aa40f3c1e84d6	MIT	MIT	False	components/wayland-5960a9697428	True	1	CLEARED
+offline-apk	wayland-libs-egl	1.25.0-r0	wayland	5960a969742897aba03257e84f0aa40f3c1e84d6	MIT	MIT	False	components/wayland-5960a9697428	True	1	CLEARED
+offline-apk	xcb-util	0.4.1-r3	xcb-util	33283848034c9885d984c8e8697c645c57324938	MIT	MIT	False	components/xcb-util-33283848034c	True	1	CLEARED
+offline-apk	xcb-util-cursor	0.1.5-r0	xcb-util-cursor	6867e384dbfbd0b8efadbca989e9778190e89496	MIT	MIT	False	components/xcb-util-cursor-6867e384dbfb	True	1	CLEARED
+offline-apk	xcb-util-image	0.4.1-r0	xcb-util-image	6867e384dbfbd0b8efadbca989e9778190e89496	MIT	MIT	False	components/xcb-util-image-6867e384dbfb	True	1	CLEARED
+offline-apk	xcb-util-keysyms	0.4.1-r0	xcb-util-keysyms	6867e384dbfbd0b8efadbca989e9778190e89496	MIT	MIT	False	components/xcb-util-keysyms-6867e384dbfb	True	1	CLEARED
+offline-apk	xcb-util-renderutil	0.3.10-r0	xcb-util-renderutil	72959c97a7f1a16c7cac34bca08b11266602e244	MIT	MIT	False	components/xcb-util-renderutil-72959c97a7f1	True	1	CLEARED
+offline-apk	xcb-util-wm	0.4.2-r0	xcb-util-wm	6867e384dbfbd0b8efadbca989e9778190e89496	MIT	MIT	False	components/xcb-util-wm-6867e384dbfb	True	1	CLEARED
+offline-apk	xdg-utils	1.2.1-r1	xdg-utils	6867e384dbfbd0b8efadbca989e9778190e89496	MIT	MIT	False	components/xdg-utils-6867e384dbfb	True	1	CLEARED
+offline-apk	xkeyboard-config	2.47-r0	xkeyboard-config	ec89b244a8f186e061fdc6433d384e93c4155ff7	MIT	MIT	False	components/xkeyboard-config-ec89b244a8f1	True	2	CLEARED
+offline-apk	xprop	1.2.8-r0	xprop	6867e384dbfbd0b8efadbca989e9778190e89496	MIT	MIT	False	components/xprop-6867e384dbfb	True	1	CLEARED
+offline-apk	xset	1.2.5-r1	xset	e1b77cbba8275696e70cc7c1c4c8d25961f84393	MIT	MIT	False	components/xset-e1b77cbba827	True	1	CLEARED
+offline-apk	xz-libs	5.8.4-r0	xz	0c088d609f9fe69eedd6b4c7f4b99cdad847c20a	GPL-2.0-or-later AND 0BSD AND Public-Domain AND LGPL-2.1-or-later	GPL-2.0-or-later AND 0BSD AND Public-Domain AND LGPL-2.1-or-later	True	components/xz-0c088d609f9f	True	7	CLEARED
+offline-apk	zstd-libs	1.5.7-r2	zstd	3c6e2ee2b16f403d53eab39c4426eb61f003c322	BSD-3-Clause OR GPL-2.0-or-later	BSD-3-Clause OR GPL-2.0-or-later	True	components/zstd-3c6e2ee2b16f	True	3	CLEARED

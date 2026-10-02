@@ -1,0 +1,9 @@
+# Preserve these original upstream license texts byte-for-byte, including their
+# upstream whitespace. Generated inventories use canonical LF line endings.
+deploy/guest/licenses/hdf5/COPYING -text whitespace=-blank-at-eol,-blank-at-eof
+deploy/guest/licenses/hdf5/COPYING_LBNL_HDF5 -text whitespace=-blank-at-eol,-blank-at-eof
+deploy/guest/licenses/icu/LICENSE -text whitespace=-blank-at-eol,-blank-at-eof
+deploy/guest/licenses/libxkbcommon/LICENSE -text whitespace=-blank-at-eol,-blank-at-eof
+deploy/guest/licenses/qhull/COPYING.txt -text whitespace=-blank-at-eol,-blank-at-eof
+deploy/guest/COMPLIANCE.tsv text eol=lf
+deploy/guest/PACKAGES.tsv text eol=lf

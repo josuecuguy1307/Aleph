@@ -107,7 +107,7 @@
     },
     {
       "path": "README.md",
-      "sha256": "e9add5e9637b472ad08f353e705b5a7dff51a8dd36b9ad813144862c00adba7c"
+      "sha256": "b4cc8e8ce256fd61b3173a9029ebeea77d4601214845d0effb25018ac950961a"
     },
     {
       "path": "CONTRIBUTING.md",
@@ -118,12 +118,16 @@
       "sha256": "01f4459694b599ff69a8d79803394ab647912d0909a1698dba038da235592309"
     },
     {
+      "path": ".gitattributes",
+      "sha256": "3bb245a6a61210e196d746a9453dfa5f113ebf55ed5f382bdd3d8123e1f0034c"
+    },
+    {
       "path": "THIRD_PARTY_NOTICES",
-      "sha256": "d1378fd7e17289dacd1333d014507ec6dd84b3f4936e46c9138c825848117c14"
+      "sha256": "9e42989da391dc24ab9f7d50fa8dceee0174701dfe5dfe4a901fa3da5b6afb49"
     },
     {
       "path": "BUILDING.md",
-      "sha256": "587206cad4eb8bee88d7f7d23822f01e139581dc0614026096a614064137ce7e"
+      "sha256": "f29321880b3bea891f318090bdbc6b808bd1994d39da7392758c95fcb25158d3"
     },
     {
       "path": "tools/oss/scan_secrets.py",
@@ -132,6 +136,58 @@
     {
       "path": "tools/oss-reviewed-secret-matches.json",
       "sha256": "d7f41d67a48db4ee6c54b319bf0f36757587e062f5f629f1a1304579e14c30ce"
+    },
+    {
+      "path": "deploy/guest/ASSETS.md",
+      "sha256": "b6a0e2b9284a0195a5a9517671a59ea8d56cbc86eee22717eacaa67be8dd8955"
+    },
+    {
+      "path": "deploy/guest/assets.json",
+      "sha256": "ea8166fe1a36cbc9d882a777b99956d1bc4d120e313506ac95f23808d332b59d"
+    },
+    {
+      "path": "deploy/guest/PACKAGES.tsv",
+      "sha256": "64506305306b2db50cd659abca5c4009a7a5d52cf8aa11695bb635e2ba0d4d40"
+    },
+    {
+      "path": "deploy/guest/fetch_assets.py",
+      "sha256": "16d2841bf8258654cf89b0ba3409a9ba7e5623796934d9691905d0ad639944e2"
+    },
+    {
+      "path": "deploy/guest/COMPLIANCE.md",
+      "sha256": "0276318d4b615a80ce911c1982fee037de4a97fe2ca9411391e94fa650ec1478"
+    },
+    {
+      "path": "deploy/guest/COMPLIANCE.tsv",
+      "sha256": "f2714567e3104c66622dafce32585879616af831aa02841bf88e230512da1bc4"
+    },
+    {
+      "path": "deploy/guest/COMPLIANCE_AUDIT.json",
+      "sha256": "31d28fdc687b597c73497500ce38136b9db5fdc7e7c94301a1095f225e491bc8"
+    },
+    {
+      "path": "deploy/guest/KERNEL_PROVENANCE.json",
+      "sha256": "a4bb1068dd18edf86eb4473c0087ec840a570e7fb0a7c48d3cdb9330d74d4b83"
+    },
+    {
+      "path": "deploy/guest/licenses/hdf5/COPYING",
+      "sha256": "587b532c4c27b64ecff3192d6189e149231934a00c753a401d4559231af7f7a7"
+    },
+    {
+      "path": "deploy/guest/licenses/hdf5/COPYING_LBNL_HDF5",
+      "sha256": "b92bc72a342e6dbfa552439adc80945a42168f6bc4a3d81c3618c3bff780db72"
+    },
+    {
+      "path": "deploy/guest/licenses/icu/LICENSE",
+      "sha256": "e55522d81edc687a341a4411e0776e54ca654e90147f354a90458aaced4116af"
+    },
+    {
+      "path": "deploy/guest/licenses/libxkbcommon/LICENSE",
+      "sha256": "967e97b28658f0037bbe164a237bdfb0c3ec790e67f6c29372ea5b09306f61f3"
+    },
+    {
+      "path": "deploy/guest/licenses/qhull/COPYING.txt",
+      "sha256": "106d55c931fd6a84822e5345d900273d059f1c27310d02567ccb313c5d18c55d"
     }
   ],
   "omitted_build_inputs": [
@@ -172,8 +228,29 @@
       "included": false
     }
   ],
+  "guest_release_plan": {
+    "distribution": "Exact certified kernel/rootfs and complete corresponding-source/notices bundle as separate GitHub Release assets, not ordinary Git blobs or Git LFS.",
+    "manifest": "deploy/guest/assets.json",
+    "provenance_verified": true,
+    "redistribution_status": "cleared",
+    "corresponding_source_asset": {
+      "filename": "aleph-0.1.2-guest-sources.tar.zst",
+      "bytes": 1513920651,
+      "sha256": "5e6e4b0cb527ddf240ac7ace4bbfc050e2578756bd9c092f355746ad7601f85f",
+      "license": "Per-component; original source, license texts, exceptions and notices retained",
+      "packages_accounted": 206,
+      "kernel_source_config_patch_provenance": "complete",
+      "published": false
+    },
+    "compliance_audit": "deploy/guest/COMPLIANCE_AUDIT.json",
+    "packages_accounted": 206,
+    "distribution_condition": "Publish both unchanged binaries, this corresponding-source/notices asset and release documentation together with equivalent public source download access.",
+    "published": false,
+    "full_source_regeneration_recipe": "pending"
+  },
   "build_readiness_limitations": [
     "No complete exact guest kernel/rootfs regeneration recipe in certified source.",
+    "Exact guest binaries and corresponding-source/notices are prepared and locally compliance-cleared; no upload performed and explicit release approval still required.",
     "Precompiled upstream inputs and phase6 prebuild outputs must be materialized independently.",
     "No clean-host rebuild or bit-for-bit rebuild certification performed in this source-only task."
   ],

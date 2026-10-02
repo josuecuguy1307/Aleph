@@ -47,4 +47,77 @@ PDFium-related license texts: deploy/fase4/aleph-shell/src-tauri/resources/PDFIU
 docs/THIRD-PARTY-MATRIX.json indexes the retained runtime notice files. Licenses of
 dependencies installed during a future build are governed by their packages and
 locks; this source snapshot is not an inventory of a newly built binary.
-No SearXNG runtime, guest Linux image, compiled .app or DMG is included here.
+No SearXNG runtime, compiled .app or DMG is included in Git.
+
+Guest assets prepared for the OSS release (not published)
+--------------------------------------------------------
+Image.arm64: Alpine linux-virt 6.18.52-r0 (6.18.52-0-virt), GPL-2.0-only.
+It is byte-identical to the decompressed kernel in the official Alpine 3.24.2
+aarch64 netboot vmlinuz-virt. The exact Alpine build/patch/config sources are at
+aports commit 09a165f4c951edf370eddde03b2d1d5fd71805ed, main/linux-lts.
+Kernel syscall headers have the documented Linux-syscall-note; this does not
+relicense the kernel binary under Apache-2.0.
+
+rootfs.arm64.cpio.gz: Alpine minirootfs 3.24.2 aarch64 (83 base regular files
+match the official archive), Aleph init/runner source and 190 signed offline
+APKs. There are also 16 packages already installed in the base. All 190 APK RSA
+signatures and payload hashes were verified with the Alpine signing key from
+the checksum-verified official minirootfs. Each package retains its original
+license, not the root Apache-2.0 license. The full package/version/license/origin
+and pinned Alpine source-commit inventory is in deploy/guest/PACKAGES.tsv.
+
+The payload includes GPL-2.0, GPL-3.0, LGPL-2.x/3.0, MPL, MIT/BSD, Apache-2.0,
+Qt exceptions, font/data and other license expressions. Exact corresponding
+sources, Alpine patches/config/build/install metadata and original notice texts
+are in the separate release asset aleph-0.1.2-guest-sources.tar.zst.
+All 206 package versions match their pinned recipes; all 509 packaging inputs
+are checked by SHA-512. Kernel source/config/patch provenance is complete.
+Pandoc's 257 locked Haskell dependencies and libglycin's 303 checksum-pinned
+Rust crates are included, with original notices and recovered workspace licenses.
+
+qhull 2020.2 is not generic BSD: its original COPYING.txt, all copyrights and
+source-availability notice (www.qhull.org) accompany this distribution.
+Modifications require person/date/reason; no Aleph Qhull source patch was made.
+See deploy/guest/licenses/qhull/COPYING.txt.
+
+HDF5 1.14.4-2 is not generic BSD: preserve full THG/UIUC/UC/LBNL/DOE notices,
+conditions and disclaimers in source and binary accompanying materials, no
+endorsement, voluntary-enhancement grant terms and dated changes where required.
+Complete original COPYING, COPYING_LBNL_HDF5 and examples notices are retained.
+Alpine uses BSD libaec, not an unlicensed SZIP binary.
+See deploy/guest/licenses/hdf5/ and the source bundle's LICENSES.md.
+
+GLU's full SGI-B-1.1/B-2.0 texts, Exhibit A and additional OpenGL notices remain
+available. SGI-B-1.1 Section 8 permits a later SGI license: SGI-B-2.0 is elected
+for original SGI code, avoiding incompatible old restrictions on GPL-linked use.
+Digital Equipment/libxkbcommon's complete license, copyrights and supporting-
+documentation/no-publicity conditions are in deploy/guest/licenses/libxkbcommon/.
+ICU's complete original license includes Unicode V3 and all dictionary/data,
+BSD/MIT and build-script/Autoconf exception notices; see deploy/guest/licenses/icu/.
+GCC/LLVM runtime/compiler exception texts and all Qt/Python/font notices remain
+in the source bundle, not replaced by broader/older APK metadata.
+
+This product includes FreeType developed by David Turner, Robert Wilhelm and
+Werner Lemberg; software based in part on the work of the Independent JPEG Group;
+and applicable software developed by The XFree86 Project, Inc. and contributors.
+Original required acknowledgements/disclaimers are retained. No endorsement is
+implied; upstream names may not be used in promotion contrary to original terms.
+
+The complete per-package disposition is deploy/guest/COMPLIANCE.tsv and the
+bundle's PACKAGE_COMPLIANCE.json. Full original copyrights, exceptions and notices
+are indexed in ORIGINAL_NOTICES.json; supplemental canonical texts do not replace
+them. INSTALLATION.md and ELF_LINKAGE.json document modified-library/image
+replacement without private signing secrets. No extra restrictions on third-party
+modification or debugging/reverse engineering are imposed.
+
+GUEST REDISTRIBUTION: CLEARED for these prepared assets plus source/notice
+materials, with 206/206 accounted and zero unresolved classifications, required
+notices or corresponding-source obligations. No upload is authorized/performed
+here. Publish both unchanged images and the source/notices bundle at the same
+tagged Release with equivalent public access and conspicuous source links.
+Never release the binaries alone or remove their notice/source collateral.
+See deploy/guest/ASSETS.md and COMPLIANCE.md for hashes and review.
+
+Apache-2.0 applies only to Aleph-owned source. The full Aleph guest-image
+regeneration recipe remains pending; no clean-host/bit-for-bit reconstruction
+claim is made. Onshape is OPTIONAL / NOT CERTIFIED.

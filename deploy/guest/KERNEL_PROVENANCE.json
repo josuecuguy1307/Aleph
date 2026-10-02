@@ -1,0 +1,318 @@
+{
+  "origin": "linux-lts",
+  "aports_commit": "09a165f4c951edf370eddde03b2d1d5fd71805ed",
+  "repository": "main",
+  "aports_path": "main/linux-lts",
+  "packaging_url": "https://gitlab.alpinelinux.org/api/v4/projects/alpine%2Faports/repository/archive.tar.gz?sha=09a165f4c951edf370eddde03b2d1d5fd71805ed&path=main%2Flinux-lts",
+  "packaging_sha256": "5acf579577856d4cae2e820b6ce04f6a7a04f9f990f5e4120417b3d57061c2b8",
+  "packaging_file_count": 21,
+  "inputs": [
+    {
+      "filename": "patch-6.18.52.patch.xz",
+      "sha512": "f1c32303a8eb7f20c7f5c8d592a23140ff880075d0e4151bf96d5b0365ff64b35324753894d8ba822ad797e673b2a878f18d6a2f557dd6d3aca1fcc8d4e5764d"
+    },
+    {
+      "filename": "linux-6.18.tar.xz",
+      "sha512": "88599ffdec96d150c1feb9b261ba93bb0301a9d0e1ad6bef7aeab1f5372cbfc57d8b43c7e902bd8f76921d1dbd8189663c142ea869e51d0e2b483b150ee00fe0"
+    },
+    {
+      "filename": "0001-powerpc-boot-wrapper-Add-z-notext-flag-for-ppc64le.patch",
+      "sha512": "b296717ef0cd63978142b4d47b3bc49faa04daf77e115e702ba611cc254a6e782cdab7d5639e724cd5f029cfb6a3dc33c3036f346d681d1fdfe0df723c7e0321"
+    },
+    {
+      "filename": "0002-x86-Compress-vmlinux-with-zstd-19-instead-of-22.patch",
+      "sha512": "055e10e7b3e00bb3621389315d5206a8feb5022a1f0dc51c3aa107facfe83d191da05a502a0c62488be7299677a63c1da84f87c42cbf3125788c56db67e810ee"
+    },
+    {
+      "filename": "0003-kexec-add-kexec_load_disabled-boot-option.patch",
+      "sha512": "e1d2d5358f5b8189236108973395f00eafce8db6d5baaf55025b1360f08ab7cffc930d3818719f220b98e7e8541cc8a7f056611b6e290f224a102c1addbe34ac"
+    },
+    {
+      "filename": "0004-objtool-respect-AWK-setting.patch",
+      "sha512": "28c83be4c97152001381cd5e3a8acb8552a42d9dac9aaec8f096e3762b7944035aa5a4363fb4602f9bb427c4f72cfd2f996a0a725f7f9e07ab250317985aff9e"
+    },
+    {
+      "filename": "0005-powerpc-config-defang-gcc-check-for-stack-protector-.patch",
+      "sha512": "5ce79416f8f111c36393718656e3eeb4cb0adccd117dcf661876d1564010e5c58b6351cc4116d187d0a9a838bcca0fecc236d81ac71afb940b89ccb14f21e179"
+    },
+    {
+      "filename": "0001-x86-CPU-AMD-avoid-printing-reset-reasons-on-Xen-domU.patch",
+      "sha512": "4e72af8e77a555d2a850837b64a525a51d5d118048584dc3ea0d0e8620bb56bf56b69a94aa67dac879b841c9ba033e33d94610da0028fde7b6602ad2fe63f02f"
+    },
+    {
+      "filename": "sophgo-fixes.patch",
+      "sha512": "855522b816bbb2b0738251cf24714c2566c7aacad39aaf6adcebd0a256d11f64ff2762ecdace0ab1bac38db87fd579863f852f799356a368f057c166e4deb03c"
+    },
+    {
+      "filename": "lts.aarch64.config",
+      "sha512": "fc69158d31d9d3c951d057aee01397f46c5a72462334f14b79aa538294c1900338bc6af154c9bda051fb29eff11541d8c1893d735a12b7bafb86cdb0f98a5485"
+    },
+    {
+      "filename": "lts.armv7.config",
+      "sha512": "e8036dc7b74ffa09f84c0d13246a637aa7326df3da3729a158177be9b47036ff06d5ded2886b567b55fac44dcb937ca7271751ca5dc5a7bfed5a91df1ecaf4ce"
+    },
+    {
+      "filename": "lts.loongarch64.config",
+      "sha512": "6b2af88167234828c9793aeefc8ccc0ed5ae7d6814bbaff30a91c0b336b95e2008697608c9630e8507a493e02d3a7fc798e490467eac969ede14db9b92e21e17"
+    },
+    {
+      "filename": "lts.ppc64le.config",
+      "sha512": "77a84a8a3b1ae289fe88aef9183f2eafc49379f55e7745700534801a56c0f7f0d900af19a231d25e48c7acab46f23a88df15044d9efe4ff16881c43984cdc40c"
+    },
+    {
+      "filename": "lts.riscv64.config",
+      "sha512": "2bf106cd7ddc04dcb69c69ae73e9a1f95b964190301c272856ea7ee68820d77aceaa90ededa741da0ec9355fc942ad9647ef3e3c49b232455d93a4f727b8bcd9"
+    },
+    {
+      "filename": "lts.s390x.config",
+      "sha512": "34622b02baf05ac9f9dfa3cbcd817368b9ea0bc2056a55e4cab770e0e0100f8cdc9ddb0b68bbdfe381f6f3d8b1a81bbd55f56db43a824b691f8788907ed6fa23"
+    },
+    {
+      "filename": "lts.x86.config",
+      "sha512": "33903e3a877734ab5f3fd2b03589817dc996f5114e66a34abe30ae137b61de6960478fd4d33174da319939bf4b77d7aba809ccf5566acf46946fca476f03e35f"
+    },
+    {
+      "filename": "lts.x86_64.config",
+      "sha512": "32db10060987654c515342eabad99ff68471aca739159a6dcbf79b2157e0dbe15138be67bd25acf326eae13e1790f07c77f179e3f21f9ba9ffd340a91006d5cd"
+    },
+    {
+      "filename": "virt.aarch64.config",
+      "sha512": "ffbe61069184a46baf90cbffeba5512df7e0d0b11c2404f629ad698bdfb6199269618013abdc2895a9bc960bb5e0425ee4f8a928fca08aae5b5ff97e49023e3f"
+    },
+    {
+      "filename": "virt.armv7.config",
+      "sha512": "77b6dfe665ddd3a896a4a9e7807d6d2aff7d3270eb98a7342cd08a5304446a62d4755ad80e5a0df404e1809738f5b9e82201743289c3348993074d723b5990c1"
+    },
+    {
+      "filename": "virt.ppc64le.config",
+      "sha512": "7145644f2950ff16a158060cb4266431b3f696bfba23bc84d570e8135889024f3e92cdeac61bdf4ff490cf0e6f0065ca7ebd0508efff6a91e1eab8e6f655eef4"
+    },
+    {
+      "filename": "virt.x86.config",
+      "sha512": "6acc6d3e54a70eb8cfc35da824589ad45167c1380e0c4a01bc479f965a24de9c07ec17c7e5ba045a9ce0a11a7858ff1659eac9888ebb6174c6bdd341e514b834"
+    },
+    {
+      "filename": "virt.x86_64.config",
+      "sha512": "0da34fd867f797004369e75157e764604093d1ae957fc686fe2343ecb30a271bc5c0ad876526fe5954cf5bf6e3affb71dba3a802f9089271cd51e1c2fa411201"
+    }
+  ],
+  "pkgver_assignment": [
+    "6.18.52"
+  ],
+  "pkgrel_assignment": [
+    "0"
+  ],
+  "package": "linux-virt",
+  "package_version": "6.18.52-r0",
+  "uname_release": "6.18.52-0-virt",
+  "architecture": "aarch64",
+  "license": "GPL-2.0-only",
+  "source_directory": "components/linux-lts-09a165f4c951",
+  "source_inputs": [
+    {
+      "filename": "patch-6.18.52.patch.xz",
+      "sha512": "f1c32303a8eb7f20c7f5c8d592a23140ff880075d0e4151bf96d5b0365ff64b35324753894d8ba822ad797e673b2a878f18d6a2f557dd6d3aca1fcc8d4e5764d",
+      "origin": "linux-lts",
+      "url": "https://distfiles.alpinelinux.org/distfiles/v3.24/patch-6.18.52.patch.xz",
+      "location": "components/linux-lts-09a165f4c951/sources/patch-6.18.52.patch.xz",
+      "verified": true,
+      "sha256": "396db87b90e7de10ffe068802f642ce3efa4a866aedf3345317fe63f648ccfb6",
+      "bytes": 3996672
+    },
+    {
+      "filename": "linux-6.18.tar.xz",
+      "sha512": "88599ffdec96d150c1feb9b261ba93bb0301a9d0e1ad6bef7aeab1f5372cbfc57d8b43c7e902bd8f76921d1dbd8189663c142ea869e51d0e2b483b150ee00fe0",
+      "origin": "linux-lts",
+      "url": "https://distfiles.alpinelinux.org/distfiles/v3.24/linux-6.18.tar.xz",
+      "location": "components/linux-lts-09a165f4c951/sources/linux-6.18.tar.xz",
+      "verified": true,
+      "sha256": "9106a4605da9e31ff17659d958782b815f9591ab308d03b0ee21aad6c7dced4b",
+      "bytes": 154309096
+    },
+    {
+      "filename": "0001-powerpc-boot-wrapper-Add-z-notext-flag-for-ppc64le.patch",
+      "sha512": "b296717ef0cd63978142b4d47b3bc49faa04daf77e115e702ba611cc254a6e782cdab7d5639e724cd5f029cfb6a3dc33c3036f346d681d1fdfe0df723c7e0321",
+      "origin": "linux-lts",
+      "location": "components/linux-lts-09a165f4c951/aports/0001-powerpc-boot-wrapper-Add-z-notext-flag-for-ppc64le.patch",
+      "verified": true,
+      "sha256": "5a69e7352716b95d15d37dac1682629b9f7f8b375bad12b4eae267bf928de067",
+      "bytes": 812
+    },
+    {
+      "filename": "0002-x86-Compress-vmlinux-with-zstd-19-instead-of-22.patch",
+      "sha512": "055e10e7b3e00bb3621389315d5206a8feb5022a1f0dc51c3aa107facfe83d191da05a502a0c62488be7299677a63c1da84f87c42cbf3125788c56db67e810ee",
+      "origin": "linux-lts",
+      "location": "components/linux-lts-09a165f4c951/aports/0002-x86-Compress-vmlinux-with-zstd-19-instead-of-22.patch",
+      "verified": true,
+      "sha256": "2b1433795c145ef1979d53806db17ce46d6c87df297c67db41c2ffad21374d12",
+      "bytes": 1088
+    },
+    {
+      "filename": "0003-kexec-add-kexec_load_disabled-boot-option.patch",
+      "sha512": "e1d2d5358f5b8189236108973395f00eafce8db6d5baaf55025b1360f08ab7cffc930d3818719f220b98e7e8541cc8a7f056611b6e290f224a102c1addbe34ac",
+      "origin": "linux-lts",
+      "location": "components/linux-lts-09a165f4c951/aports/0003-kexec-add-kexec_load_disabled-boot-option.patch",
+      "verified": true,
+      "sha256": "919d4e8fcb4f12a22f5224c9f012b9fcb544766830aadf19a2e15044adb3fb7b",
+      "bytes": 1712
+    },
+    {
+      "filename": "0004-objtool-respect-AWK-setting.patch",
+      "sha512": "28c83be4c97152001381cd5e3a8acb8552a42d9dac9aaec8f096e3762b7944035aa5a4363fb4602f9bb427c4f72cfd2f996a0a725f7f9e07ab250317985aff9e",
+      "origin": "linux-lts",
+      "location": "components/linux-lts-09a165f4c951/aports/0004-objtool-respect-AWK-setting.patch",
+      "verified": true,
+      "sha256": "2b5228aff141f02d67a3ed4c8e5c0cb9ca2c0aebf939badb472dd3a8fdb8fa3a",
+      "bytes": 766
+    },
+    {
+      "filename": "0005-powerpc-config-defang-gcc-check-for-stack-protector-.patch",
+      "sha512": "5ce79416f8f111c36393718656e3eeb4cb0adccd117dcf661876d1564010e5c58b6351cc4116d187d0a9a838bcca0fecc236d81ac71afb940b89ccb14f21e179",
+      "origin": "linux-lts",
+      "location": "components/linux-lts-09a165f4c951/aports/0005-powerpc-config-defang-gcc-check-for-stack-protector-.patch",
+      "verified": true,
+      "sha256": "37ee66d4894f1daf6086d5bf546b0f8640f8719895eeb647147f54a86f69deab",
+      "bytes": 1399
+    },
+    {
+      "filename": "0001-x86-CPU-AMD-avoid-printing-reset-reasons-on-Xen-domU.patch",
+      "sha512": "4e72af8e77a555d2a850837b64a525a51d5d118048584dc3ea0d0e8620bb56bf56b69a94aa67dac879b841c9ba033e33d94610da0028fde7b6602ad2fe63f02f",
+      "origin": "linux-lts",
+      "location": "components/linux-lts-09a165f4c951/aports/0001-x86-CPU-AMD-avoid-printing-reset-reasons-on-Xen-domU.patch",
+      "verified": true,
+      "sha256": "ca3a6ead247a6168fd4db8eea803715dca6f6a2451cc36356b6b2c223301fdd9",
+      "bytes": 1362
+    },
+    {
+      "filename": "sophgo-fixes.patch",
+      "sha512": "855522b816bbb2b0738251cf24714c2566c7aacad39aaf6adcebd0a256d11f64ff2762ecdace0ab1bac38db87fd579863f852f799356a368f057c166e4deb03c",
+      "origin": "linux-lts",
+      "location": "components/linux-lts-09a165f4c951/aports/sophgo-fixes.patch",
+      "verified": true,
+      "sha256": "e462aecb428768a9c688055db1aa53e336e13fe113602c70a56706f5eb7302dc",
+      "bytes": 15448
+    },
+    {
+      "filename": "lts.aarch64.config",
+      "sha512": "fc69158d31d9d3c951d057aee01397f46c5a72462334f14b79aa538294c1900338bc6af154c9bda051fb29eff11541d8c1893d735a12b7bafb86cdb0f98a5485",
+      "origin": "linux-lts",
+      "location": "components/linux-lts-09a165f4c951/aports/lts.aarch64.config",
+      "verified": true,
+      "sha256": "d1c051dffc0a7ad5641c89d07c32e807e1b845cbc7bdcee934e1684e7d7fef27",
+      "bytes": 75302
+    },
+    {
+      "filename": "lts.armv7.config",
+      "sha512": "e8036dc7b74ffa09f84c0d13246a637aa7326df3da3729a158177be9b47036ff06d5ded2886b567b55fac44dcb937ca7271751ca5dc5a7bfed5a91df1ecaf4ce",
+      "origin": "linux-lts",
+      "location": "components/linux-lts-09a165f4c951/aports/lts.armv7.config",
+      "verified": true,
+      "sha256": "a15c520b53136c5dd4e0f7fa126bea9af26b75ba009abf2ffa6322010ca5e1f6",
+      "bytes": 53255
+    },
+    {
+      "filename": "lts.loongarch64.config",
+      "sha512": "6b2af88167234828c9793aeefc8ccc0ed5ae7d6814bbaff30a91c0b336b95e2008697608c9630e8507a493e02d3a7fc798e490467eac969ede14db9b92e21e17",
+      "origin": "linux-lts",
+      "location": "components/linux-lts-09a165f4c951/aports/lts.loongarch64.config",
+      "verified": true,
+      "sha256": "eb73b9253350c2b2e06ea40e87944c9e11af26e1b7503704b3ff91f354c9ff29",
+      "bytes": 21980
+    },
+    {
+      "filename": "lts.ppc64le.config",
+      "sha512": "77a84a8a3b1ae289fe88aef9183f2eafc49379f55e7745700534801a56c0f7f0d900af19a231d25e48c7acab46f23a88df15044d9efe4ff16881c43984cdc40c",
+      "origin": "linux-lts",
+      "location": "components/linux-lts-09a165f4c951/aports/lts.ppc64le.config",
+      "verified": true,
+      "sha256": "3154ca131ed0b78be189b43392524d941a0eaeff520cb1cff1a06eeafe02484a",
+      "bytes": 21611
+    },
+    {
+      "filename": "lts.riscv64.config",
+      "sha512": "2bf106cd7ddc04dcb69c69ae73e9a1f95b964190301c272856ea7ee68820d77aceaa90ededa741da0ec9355fc942ad9647ef3e3c49b232455d93a4f727b8bcd9",
+      "origin": "linux-lts",
+      "location": "components/linux-lts-09a165f4c951/aports/lts.riscv64.config",
+      "verified": true,
+      "sha256": "e23616456d32ee2a2ad91449cfca528bf6b0bd560d44a89da540fd3307974b47",
+      "bytes": 25731
+    },
+    {
+      "filename": "lts.s390x.config",
+      "sha512": "34622b02baf05ac9f9dfa3cbcd817368b9ea0bc2056a55e4cab770e0e0100f8cdc9ddb0b68bbdfe381f6f3d8b1a81bbd55f56db43a824b691f8788907ed6fa23",
+      "origin": "linux-lts",
+      "location": "components/linux-lts-09a165f4c951/aports/lts.s390x.config",
+      "verified": true,
+      "sha256": "7d5e8db3d77678bc7103ffe3c479ff48e7fb429ff28c9ee9d639245140dd1e0f",
+      "bytes": 24387
+    },
+    {
+      "filename": "lts.x86.config",
+      "sha512": "33903e3a877734ab5f3fd2b03589817dc996f5114e66a34abe30ae137b61de6960478fd4d33174da319939bf4b77d7aba809ccf5566acf46946fca476f03e35f",
+      "origin": "linux-lts",
+      "location": "components/linux-lts-09a165f4c951/aports/lts.x86.config",
+      "verified": true,
+      "sha256": "140c4aa5b6e1adb87defc22312b72e6c2041a2b00a9f321fa82e2a31994fab7b",
+      "bytes": 67222
+    },
+    {
+      "filename": "lts.x86_64.config",
+      "sha512": "32db10060987654c515342eabad99ff68471aca739159a6dcbf79b2157e0dbe15138be67bd25acf326eae13e1790f07c77f179e3f21f9ba9ffd340a91006d5cd",
+      "origin": "linux-lts",
+      "location": "components/linux-lts-09a165f4c951/aports/lts.x86_64.config",
+      "verified": true,
+      "sha256": "d96e636b7f8bb257a38209af661e17ca3b79f1de4de8818a82d57c62bb12483b",
+      "bytes": 76728
+    },
+    {
+      "filename": "virt.aarch64.config",
+      "sha512": "ffbe61069184a46baf90cbffeba5512df7e0d0b11c2404f629ad698bdfb6199269618013abdc2895a9bc960bb5e0425ee4f8a928fca08aae5b5ff97e49023e3f",
+      "origin": "linux-lts",
+      "location": "components/linux-lts-09a165f4c951/aports/virt.aarch64.config",
+      "verified": true,
+      "sha256": "120ebd889badde4bcaf394325aae2fab73ce2ef3c18d30ad40f9443b3ba26b69",
+      "bytes": 26633
+    },
+    {
+      "filename": "virt.armv7.config",
+      "sha512": "77b6dfe665ddd3a896a4a9e7807d6d2aff7d3270eb98a7342cd08a5304446a62d4755ad80e5a0df404e1809738f5b9e82201743289c3348993074d723b5990c1",
+      "origin": "linux-lts",
+      "location": "components/linux-lts-09a165f4c951/aports/virt.armv7.config",
+      "verified": true,
+      "sha256": "be2cbade202ac1f7314d8cde6a287e26280df24d8cff17884498dd26e059320a",
+      "bytes": 25113
+    },
+    {
+      "filename": "virt.ppc64le.config",
+      "sha512": "7145644f2950ff16a158060cb4266431b3f696bfba23bc84d570e8135889024f3e92cdeac61bdf4ff490cf0e6f0065ca7ebd0508efff6a91e1eab8e6f655eef4",
+      "origin": "linux-lts",
+      "location": "components/linux-lts-09a165f4c951/aports/virt.ppc64le.config",
+      "verified": true,
+      "sha256": "c958cd848ab19d8c702b1e57aa36cf7f0d258913d7fd9e54e6f0c57d4858ffc6",
+      "bytes": 24654
+    },
+    {
+      "filename": "virt.x86.config",
+      "sha512": "6acc6d3e54a70eb8cfc35da824589ad45167c1380e0c4a01bc479f965a24de9c07ec17c7e5ba045a9ce0a11a7858ff1659eac9888ebb6174c6bdd341e514b834",
+      "origin": "linux-lts",
+      "location": "components/linux-lts-09a165f4c951/aports/virt.x86.config",
+      "verified": true,
+      "sha256": "e25b0907879f6292d3e7805390fb2e6d475111c9583885232c39e8a449ff44e2",
+      "bytes": 26192
+    },
+    {
+      "filename": "virt.x86_64.config",
+      "sha512": "0da34fd867f797004369e75157e764604093d1ae957fc686fe2343ecb30a271bc5c0ad876526fe5954cf5bf6e3affb71dba3a802f9089271cd51e1c2fa411201",
+      "origin": "linux-lts",
+      "location": "components/linux-lts-09a165f4c951/aports/virt.x86_64.config",
+      "verified": true,
+      "sha256": "29227c7be79eab3e2b7d0a03b2d31634974983c24c892320a735406e80a60c67",
+      "bytes": 27208
+    }
+  ],
+  "disposition": "CLEARED",
+  "kernel_sha256": "e698a107e4d04117db1a7b0daee99bdae5f0647fba2af50f3cd020a666950ab9",
+  "upstream_vmlinuz_sha256": "e45e1f6083d1ed45db6647b422e32b6ae6dc54de7b8190b7b97744fb293412e3",
+  "gzip_payload_offset": 51832,
+  "compiler_evidence": "Kernel identifies GCC 15.2.0 and GNU ld 2.45.1; aports build/config/patch inputs supplied. No bit-for-bit recompilation is claimed."
+}
