@@ -5,15 +5,25 @@ need to build an agent before you can start using it.
 
 ## Install and open
 
-The current public source release is [0.1.2](https://github.com/josuecuguy1307/Aleph/releases/tag/v0.1.2).
-Its final macOS DMG is **not published yet**. Do not use the guest kernel or root
-filesystem as an application installer.
+Download the [Aleph 0.1.2 macOS installer](https://github.com/josuecuguy1307/Aleph/releases/latest/download/Aleph-macOS-arm64.dmg).
+This release is for **Apple silicon (arm64)**.
 
-Once that DMG is available, follow the official download link on the
-[Aleph website](https://aleph-site-jade.vercel.app/), open it, and drag Aleph to
-Applications. Open Aleph and follow its setup prompts. For installation help,
-see the [website's installation guide](https://aleph-site-jade.vercel.app/docs/installation/).
-Developers who want to build their own copy should use [BUILDING.md](../BUILDING.md).
+1. Open the downloaded DMG.
+2. Drag **Aleph.app** to **Applications** in the DMG window.
+3. Open **Aleph** from Applications and follow its setup prompts.
+
+Aleph 0.1.2 is ad-hoc signed and not notarized. If macOS blocks the first open,
+try opening the app once, then use **System Settings → Privacy & Security → Open
+Anyway**. See [Apple's instructions](https://support.apple.com/102445). Only
+continue if you trust the download from the official Aleph release.
+
+Do not use the guest kernel or root filesystem release assets as the macOS
+application installer. Developers who want to build their own copy should use
+[BUILDING.md](../BUILDING.md).
+
+Homebrew users can install the same release with
+`brew install --cask josuecuguy1307/tap/aleph`; the first-open macOS security
+prompt still applies.
 
 ## Connect a model
 

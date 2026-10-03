@@ -2,26 +2,52 @@
 
 **One space. Infinite work.**
 
-Aleph is a desktop workspace that brings your AI models, tools, and files together.
-Work in La Sala, explore specialized workspaces, and compose reusable agents and
-workflows in **The Workshop / El Cuarto** — without being tied to a single model.
+Aleph is a macOS workspace for bringing AI models, tools, and files together —
+then using them across focused workspaces and reusable agents.
+
+[⬇ Download Aleph 0.1.2 for macOS (Apple silicon)](https://github.com/josuecuguy1307/Aleph/releases/latest/download/Aleph-macOS-arm64.dmg)
 
 [Website](https://aleph-site-jade.vercel.app/) ·
-[Source release v0.1.2](https://github.com/josuecuguy1307/Aleph/releases/tag/v0.1.2) ·
-[Getting Started](docs/GETTING_STARTED.md) ·
-[Build from source](BUILDING.md)
+[Release notes](https://github.com/josuecuguy1307/Aleph/releases/tag/v0.1.2) ·
+[Getting Started](docs/GETTING_STARTED.md)
 
-> **macOS 0.1.2 download:** the final DMG is not published yet. The current
-> [0.1.2 release](https://github.com/josuecuguy1307/Aleph/releases/tag/v0.1.2)
-> contains source and guest assets, not a macOS installer.
+### Install
+
+#### macOS · Apple silicon
+
+1. Download `Aleph-macOS-arm64.dmg`.
+2. Open the downloaded DMG.
+3. Drag **Aleph.app** to **Applications** in the window that opens.
+4. Open **Aleph** from Applications.
+
+<details>
+<summary>If macOS blocks Aleph on first open</summary>
+
+Aleph 0.1.2 is ad-hoc signed and not notarized, so macOS may ask you to approve
+it. After trying to open it, go to **System Settings → Privacy & Security → Open
+Anyway**. Only continue if you trust the download from this official release.
+See [Apple's instructions](https://support.apple.com/102445).
+
+</details>
+
+<details>
+<summary>Install with Homebrew</summary>
+
+```sh
+brew install --cask josuecuguy1307/tap/aleph
+```
+
+This installs the same Apple-silicon app and has the same first-open macOS
+security prompt.
+
+</details>
 
 ![Aleph brings Science, Education, Office, Finance, Legal, and Design into one workspace](assets/readme/workspaces-map.png)
 
 ## How to use Aleph
 
-1. **Download and install on macOS.** Once the 0.1.2 DMG is published, use the
-   official download linked from the [website](https://aleph-site-jade.vercel.app/).
-   Open the DMG and move Aleph to Applications.
+1. **Download and install on macOS.** Use the download button above, open the
+   DMG, and move Aleph to Applications.
 2. **Open Aleph.** Follow the setup prompts and choose your preferred language.
 3. **Choose your model.** Connect an API provider or an installed, authenticated
    CLI provider such as Claude Code or Codex. Use your own provider access.
@@ -71,11 +97,12 @@ Want to contribute? Start with [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Current release
 
-**0.1.2** · [Source release and release notes](https://github.com/josuecuguy1307/Aleph/releases/tag/v0.1.2)
+**0.1.2** · [macOS installer and source release](https://github.com/josuecuguy1307/Aleph/releases/tag/v0.1.2)
 
-The exact guest kernel, root filesystem, and matching third-party source bundle
-are available as separate release assets. [Guest asset details](deploy/guest/ASSETS.md)
-and [compliance](deploy/guest/COMPLIANCE.md) remain accessible for developers;
+The release page separates the macOS installer from the developer-only guest
+assets. The exact guest kernel, root filesystem, and matching third-party source
+bundle are also available there. [Guest asset details](deploy/guest/ASSETS.md)
+and [compliance](deploy/guest/COMPLIANCE.md) remain available for developers;
 full guest-image regeneration from source is not yet claimed.
 
 The certified source baseline and snapshot scope are recorded in
