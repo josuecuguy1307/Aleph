@@ -11,6 +11,12 @@ then using them across focused workspaces and reusable agents.
 [Release notes](https://github.com/josuecuguy1307/Aleph/releases/tag/v0.1.2) ·
 [Getting Started](docs/GETTING_STARTED.md)
 
+### Watch the Aleph trailer
+
+[![Watch the Aleph product trailer](assets/readme/aleph-trailer-poster.jpg)](assets/readme/aleph-trailer.mp4)
+
+[▶ Watch the 55-second trailer](assets/readme/aleph-trailer.mp4)
+
 ### Install
 
 #### macOS · Apple silicon
