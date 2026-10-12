@@ -2,6 +2,8 @@
 
 [English](README.md) · **Español**
 
+<img src="assets/readme/aleph-app-icon.png" alt="Ícono de la app Aleph" width="128">
+
 # Aleph
 
 ### Un solo espacio. Trabajo infinito.

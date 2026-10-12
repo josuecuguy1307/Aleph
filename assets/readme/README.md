@@ -2,6 +2,7 @@
 
 | File | What it is | Source |
 | --- | --- | --- |
+| `aleph-app-icon.png` | The Aleph app icon, as macOS shows it | The `icon.icns` of the installed Aleph app (identical to `deploy/fase4/aleph-shell/src-tauri/icons/icon.png`), transparent margin trimmed, scaled to 256 px |
 | `hero-workshop.webp` | Animated preview of The Workshop (agents on the board, nested agent) | Screen recording of a development build of Aleph, 2026-09-14, unchanged except scaling (1100 px, 12 fps) |
 | `screen-home.jpg` | Home, English UI | Frame from the same recordings, scaled |
 | `screen-science-molecule.jpg` | Science: molecule viewer | Frame from the same recordings, cropped to the viewer and scaled |
