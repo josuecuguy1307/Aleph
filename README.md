@@ -6,9 +6,13 @@
 
 # Aleph
 
-### One space. Infinite work.
+## Freedom to create.
 
-A macOS workspace that brings your AI models, tools and files together, then puts them to work across focused workspaces and agents you build yourself.
+### Build your own AI agents, piece by piece, in The Workshop.
+
+No code required. You place a model on a live board, plug in the tools it needs, test every piece and watch your agent come to life. Then you put it to work on your Mac.
+
+<sub><b>One space. Infinite work.</b></sub>
 
 [![Download for macOS](https://img.shields.io/badge/Download-macOS%20·%20Apple%20silicon-1f1b4d?style=for-the-badge&logo=apple&logoColor=white)](https://github.com/josuecuguy1307/Aleph/releases/latest/download/Aleph-macOS-arm64.dmg)
 
@@ -24,6 +28,7 @@ A macOS workspace that brings your AI models, tools and files together, then put
 ![CLI: Codex](https://img.shields.io/badge/CLI-Codex-10a37f?logo=gnometerminal&logoColor=white)
 
 [Website](https://aleph-site-jade.vercel.app/) &nbsp;·&nbsp;
+[Build an agent](#your-agent-your-way) &nbsp;·&nbsp;
 [Watch the trailer](#watch-the-trailer) &nbsp;·&nbsp;
 [Install](#install) &nbsp;·&nbsp;
 [How to use it](#how-to-use-aleph) &nbsp;·&nbsp;
@@ -31,15 +36,26 @@ A macOS workspace that brings your AI models, tools and files together, then put
 
 <img src="assets/readme/hero-workshop.webp" alt="The Workshop in Aleph: agents and their tools arranged on an isometric board, opened one level down to edit an agent" width="900">
 
-<sub>The Workshop: build an agent by placing its model and tools on the board, then step inside it to edit it.</sub>
+<sub>The Workshop. Every piece you add shows up on the board. Agents can hold other agents, and you can step inside any of them to shape it.</sub>
 
 </div>
 
 ---
 
+## Your agent, your way
+
+| | | |
+|---|---|---|
+| 🧠 | **Start with a Core** | Pick its model, give it an identity and a goal. That's your agent. |
+| 🧩 | **Equip pieces** | Add tools from the catalog, or describe what you want in your own words and let the Guide propose them. |
+| 🔌 | **Open the MCP door** | Connect an app with OAuth or a key, and its real tools drop onto the board as pieces you can equip. |
+| 🟢 | **Test every piece** | Each piece tells you whether it's verified, untested or broken, and why, so you know before you rely on it. |
+| 🔒 | **Stay in charge** | Anything that reaches the outside world, like email or messages, passes through a lock that asks for your OK first. |
+| ▶️ | **Save it. Run it.** | Your agent lands in *My agents*. Put it to work in The Room. |
+
 ## Why Aleph
 
-Your AI work is scattered: one app for chat, another for files, a terminal for the CLI agent, a browser tab for every service. Aleph puts it in **one space**.
+Your AI work is scattered: one app for chat, another for files, a terminal for the CLI agent, a browser tab for every service. Aleph puts it in **one space**, and lets you build the agents that work in it.
 
 <table>
 <tr>

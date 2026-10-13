@@ -6,9 +6,13 @@
 
 # Aleph
 
-### Un solo espacio. Trabajo infinito.
+## Libertad para crear.
 
-Un espacio de trabajo para macOS que reúne tus modelos de IA, tus herramientas y tus archivos, y los pone a trabajar en espacios especializados y en agentes que armas tú.
+### Crea tus propios agentes de IA, pieza por pieza, en El Cuarto.
+
+Sin escribir código. Colocas un modelo en un tablero vivo, le conectas las herramientas que necesita, pruebas cada pieza y ves cómo tu agente cobra vida. Después lo pones a trabajar en tu Mac.
+
+<sub><b>Un solo espacio. Trabajo infinito.</b></sub>
 
 [![Descargar para macOS](https://img.shields.io/badge/Descargar-macOS%20·%20Apple%20silicon-1f1b4d?style=for-the-badge&logo=apple&logoColor=white)](https://github.com/josuecuguy1307/Aleph/releases/latest/download/Aleph-macOS-arm64.dmg)
 
@@ -24,6 +28,7 @@ Un espacio de trabajo para macOS que reúne tus modelos de IA, tus herramientas 
 ![CLI: Codex](https://img.shields.io/badge/CLI-Codex-10a37f?logo=gnometerminal&logoColor=white)
 
 [Sitio web](https://aleph-site-jade.vercel.app/) &nbsp;·&nbsp;
+[Crear un agente](#tu-agente-a-tu-manera) &nbsp;·&nbsp;
 [Ver el tráiler](#mira-el-tráiler) &nbsp;·&nbsp;
 [Instalar](#instalar) &nbsp;·&nbsp;
 [Cómo se usa](#cómo-usar-aleph) &nbsp;·&nbsp;
@@ -31,15 +36,26 @@ Un espacio de trabajo para macOS que reúne tus modelos de IA, tus herramientas 
 
 <img src="assets/readme/hero-workshop.webp" alt="El Cuarto en Aleph: agentes y sus herramientas sobre un tablero isométrico, abierto un nivel hacia adentro para editar un agente" width="900">
 
-<sub>El Cuarto: arma un agente colocando su modelo y sus herramientas en el tablero, y luego entra en él para editarlo. (Interfaz en inglés.)</sub>
+<sub>El Cuarto. Cada pieza que agregas aparece en el tablero. Un agente puede contener otros agentes, y puedes entrar en cualquiera para darle forma. (Interfaz en inglés.)</sub>
 
 </div>
 
 ---
 
+## Tu agente, a tu manera
+
+| | | |
+|---|---|---|
+| 🧠 | **Empieza con un Núcleo** | Elige su modelo, dale una identidad y un objetivo. Ese es tu agente. |
+| 🧩 | **Equipa piezas** | Agrega herramientas del catálogo, o describe con tus palabras lo que quieres y deja que el Guía te las proponga. |
+| 🔌 | **Abre la puerta MCP** | Conecta una app con OAuth o una clave, y sus herramientas reales caen en el tablero como piezas que puedes equipar. |
+| 🟢 | **Prueba cada pieza** | Cada pieza te dice si está verificada, sin probar o rota, y por qué, para que lo sepas antes de depender de ella. |
+| 🔒 | **Tú tienes el control** | Todo lo que sale al mundo, como correos o mensajes, pasa por un candado que primero te pide el OK. |
+| ▶️ | **Guárdalo. Ejecútalo.** | Tu agente queda en *Mis agentes*. Ponlo a trabajar en La Sala. |
+
 ## Por qué Aleph
 
-Tu trabajo con IA está desperdigado: una app para el chat, otra para los archivos, una terminal para el agente de línea de comandos, una pestaña por cada servicio. Aleph lo pone todo en **un solo espacio**.
+Tu trabajo con IA está desperdigado: una app para el chat, otra para los archivos, una terminal para el agente de línea de comandos, una pestaña por cada servicio. Aleph lo pone todo en **un solo espacio**, y te deja crear los agentes que trabajan en él.
 
 <table>
 <tr>
