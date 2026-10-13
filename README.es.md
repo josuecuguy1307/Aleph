@@ -42,6 +42,15 @@ Sin escribir código. Colocas un modelo en un tablero vivo, le conectas las herr
 
 ---
 
+## ¿Estás creando tu propio espacio de trabajo con IA?
+
+- **Dale una estrella a Aleph** para seguir el proyecto y ayudar a otros creadores a descubrirlo.
+- **[Pruébalo en macOS con Apple silicon](#instalar)** o [revisa la compilación desde el código fuente](BUILDING.md).
+- **[Crea tus propios agentes](#tu-agente-a-tu-manera)** con los modelos y herramientas disponibles en tu entorno; revisa los [límites de modelos y conectores](#tus-modelos-tus-herramientas) antes de experimentar con modelos locales, MCP o agentes de línea de comandos.
+- **[Únete a la conversación](https://github.com/josuecuguy1307/Aleph/discussions)**: comparte flujos de trabajo, integraciones, problemas de instalación e ideas.
+
+---
+
 ## Tu agente, a tu manera
 
 | | | |

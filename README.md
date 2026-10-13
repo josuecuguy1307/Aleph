@@ -42,6 +42,15 @@ No code required. You place a model on a live board, plug in the tools it needs,
 
 ---
 
+## Building your own AI workspace?
+
+- **Star Aleph** to follow the project and help other builders discover it.
+- **[Try it on Apple silicon macOS](#install)** or [inspect the source build](BUILDING.md).
+- **[Build your own agents](#your-agent-your-way)** with the models and tools available in your setup; see [models and connector limits](#your-models-your-tools) before experimenting with local models, MCP or coding CLIs.
+- **[Join the conversation](https://github.com/josuecuguy1307/Aleph/discussions)**: share workflows, integrations, installation problems and ideas.
+
+---
+
 ## Your agent, your way
 
 | | | |
