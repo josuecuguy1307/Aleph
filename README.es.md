@@ -2,7 +2,7 @@
 
 [English](README.md) · **Español**
 
-<img src="assets/readme/aleph-app-icon.png" alt="Ícono de la app Aleph" width="128">
+<img src="assets/readme/aleph-app-icon.png" alt="Ícono de la app Aleph" width="128"><img src="assets/readme/cli-logos.svg" alt="Funciona con Claude Code, Grok y Codex" height="128">
 
 # Aleph
 
