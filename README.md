@@ -18,6 +18,10 @@ A macOS workspace that brings your AI models, tools and files together, then put
 ![Model-agnostic](https://img.shields.io/badge/models-bring%20your%20own-8a7fd6)
 ![English · Español](https://img.shields.io/badge/app-English%20·%20Español-8a7fd6)
 
+![MCP connectors](https://img.shields.io/badge/MCP-connectors-1f1b4d?logo=modelcontextprotocol&logoColor=white)
+![CLI: Claude Code](https://img.shields.io/badge/CLI-Claude%20Code-D97757?logo=claude&logoColor=white)
+![CLI: Codex](https://img.shields.io/badge/CLI-Codex-10a37f?logo=gnometerminal&logoColor=white)
+
 [Website](https://aleph-site-jade.vercel.app/) &nbsp;·&nbsp;
 [Watch the trailer](#watch-the-trailer) &nbsp;·&nbsp;
 [Install](#install) &nbsp;·&nbsp;

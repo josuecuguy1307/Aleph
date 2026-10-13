@@ -18,6 +18,10 @@ Un espacio de trabajo para macOS que reúne tus modelos de IA, tus herramientas 
 ![Cualquier modelo](https://img.shields.io/badge/modelos-trae%20el%20tuyo-8a7fd6)
 ![English · Español](https://img.shields.io/badge/app-English%20·%20Español-8a7fd6)
 
+![Conectores MCP](https://img.shields.io/badge/MCP-conectores-1f1b4d?logo=modelcontextprotocol&logoColor=white)
+![CLI: Claude Code](https://img.shields.io/badge/CLI-Claude%20Code-D97757?logo=claude&logoColor=white)
+![CLI: Codex](https://img.shields.io/badge/CLI-Codex-10a37f?logo=gnometerminal&logoColor=white)
+
 [Sitio web](https://aleph-site-jade.vercel.app/) &nbsp;·&nbsp;
 [Ver el tráiler](#mira-el-tráiler) &nbsp;·&nbsp;
 [Instalar](#instalar) &nbsp;·&nbsp;
