@@ -2,7 +2,7 @@
 
 [English](README.md) · **Español**
 
-<img src="assets/readme/aleph-app-icon.png" alt="Ícono de la app Aleph" width="128"><img src="assets/readme/cli-logos.svg" alt="Funciona con Claude Code, Grok y Codex" height="128">
+<img src="assets/readme/aleph-app-icon.png" alt="Ícono de la app Aleph" width="128"><img src="assets/readme/cli-logos.svg" alt="Funciona con Claude Code, Grok y Codex" width="494">
 
 # Aleph
 
@@ -20,6 +20,7 @@ Un espacio de trabajo para macOS que reúne tus modelos de IA, tus herramientas 
 
 ![Conectores MCP](https://img.shields.io/badge/MCP-conectores-1f1b4d?logo=modelcontextprotocol&logoColor=white)
 ![CLI: Claude Code](https://img.shields.io/badge/CLI-Claude%20Code-D97757?logo=claude&logoColor=white)
+![CLI: Grok](https://img.shields.io/badge/CLI-Grok-000000?logo=x&logoColor=white)
 ![CLI: Codex](https://img.shields.io/badge/CLI-Codex-10a37f?logo=gnometerminal&logoColor=white)
 
 [Sitio web](https://aleph-site-jade.vercel.app/) &nbsp;·&nbsp;
