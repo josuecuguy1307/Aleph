@@ -45,7 +45,7 @@ so dependency resolution is not fully reproducible.
 
 The existing build also expects these inputs, which are deliberately not included
 in ordinary Git history. The two guest images and matching source/notices bundle
-are prepared release assets, locally compliance-cleared but not uploaded:
+are published as assets of the [immutable v0.1.2 release](https://github.com/josuecuguy1307/Aleph/releases/tag/v0.1.2):
 
 | Input location | Version/provenance |
 | --- | --- |
@@ -62,13 +62,13 @@ embedded there. Obtain/recreate inputs independently and verify their provenance
 licenses and digests before building. The guest release plan and verified hashes
 are in `deploy/guest/ASSETS.md` and `deploy/guest/assets.json`.
 `deploy/guest/fetch_assets.py` (Python 3.11+) retrieves the exact two binary assets
-from an assigned immutable public Release into the locations already consumed by
+from the immutable public Release into the locations already consumed by
 the official build. It does not download the 1.41 GiB source bundle automatically.
 Download `aleph-0.1.2-guest-sources.tar.zst` from that **same Release** for sources,
 Alpine build metadata and original notices; verify its recorded SHA-256, then use
 `zstd -dc aleph-0.1.2-guest-sources.tar.zst | tar -xf -`. All three must accompany
-redistribution, with equivalent public source access. No Release URL is assigned
-or published by this task. Do not silently reuse an installed app or replace a
+redistribution, with equivalent public source access. Use the `v0.1.2` Release
+linked above. Do not silently reuse an installed app or replace a
 canonical historical release.
 
 The official build **copies** the precompiled Swift guest runner and supplied
@@ -84,9 +84,8 @@ checkout. `resolve_apks.py` alone is not that recipe. This snapshot therefore is
 not yet certified as a turnkey public .app build. Exact certified images exist
 locally and their upstream provenance is verified. Their corresponding-source
 and notice materials are now assembled, version/hash-verified and locally cleared
-in `deploy/guest/COMPLIANCE.md`. Publication still requires explicit release
-approval and all three assets together. Availability of those images, once
-released, will not resolve source reproducibility.
+in `deploy/guest/COMPLIANCE.md`. All three guest assets are available together on
+the `v0.1.2` Release. Their availability does not resolve source reproducibility.
 
 Once verified prerequisites are present, the unchanged official command is:
 

@@ -181,6 +181,8 @@ brew install --cask josuecuguy1307/tap/aleph
 
 Bring the provider you want and connect the services your work needs. Models, CLI agents and connectors are separate capabilities: connecting one does not authorize the others.
 
+For contributors, [Models, tools and MCP](docs/INTEGRATIONS.md) maps the integration paths to their source and prerequisites.
+
 | Models and CLI providers | Connected tools |
 | --- | --- |
 | ![Illustration of model APIs and CLI providers, including Claude Code and Codex](assets/readme/models-and-cli.png) | ![Illustration of connectors for communication, knowledge, files, and workflows](assets/readme/connect-tools.png) |
